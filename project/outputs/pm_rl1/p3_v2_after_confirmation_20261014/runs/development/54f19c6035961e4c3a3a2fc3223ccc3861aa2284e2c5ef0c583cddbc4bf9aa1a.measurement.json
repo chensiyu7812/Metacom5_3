@@ -1,0 +1,290 @@
+{
+  "response_sha256": "de741887422cae7624b182dc50ef1ea8a4ce16f50c6a66765f38443366d3b9aa",
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "1e45cc7ca76dcb1361d4c7f76483a591aa2c8388f31055d337926cfb7cfa2207",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expresses relief mixed with anxiety about their boss's sudden resignation and specific worries about finding a successor who respects employees, requiring validation and acknowledgment of their concern.",
+      "response_quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+        },
+        {
+          "source_id": "C:T008",
+          "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+        }
+      ],
+      "reason": "The reply fully responds to the seeker's expressed need by accurately reflecting their reported situation (boss resigned) and validating their specific concern (leadership style/future team stability) based directly on their own words. It is coherent, supportive, and free of factual errors or boundary violations."
+    },
+    "claims": [
+      {
+        "response_quote": "Your boss has resigned, and you are worried about who will take over.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+          },
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          }
+        ],
+        "reason": "Asserts the boss has resigned and the seeker is worried about succession, which matches the user's explicit statements in C:T000 ('my boss resigned') and C:T008 ('worried someone might come in', 'who will take over')."
+      },
+      {
+        "response_quote": "It makes sense to want respectful leadership after what you have been through.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          }
+        ],
+        "reason": "Validates the desire for respectful leadership, aligning with the user's explicit wish in C:T008 ('hope we get someone who respects their employees'), and acknowledges the emotional context provided throughout the current session."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Summarizes key concerns and offers validation of feelings regarding the work situation and leadership expectations.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expresses relief mixed with anxiety about their boss's sudden resignation and specific worries about finding a successor who respects employees, requiring validation and acknowledgment of their concern.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008"
+      ],
+      "reason": "The reply fully responds to the seeker's expressed need by accurately reflecting their reported situation (boss resigned) and validating their specific concern (leadership style/future team stability) based directly on their own words. It is coherent, supportive, and free of factual errors or boundary violations."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Asserts the boss has resigned and the seeker is worried about succession, which matches the user's explicit statements in C:T000 ('my boss resigned') and C:T008 ('worried someone might come in', 'who will take over')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Validates the desire for respectful leadership, aligning with the user's explicit wish in C:T008 ('hope we get someone who respects their employees'), and acknowledges the emotional context provided throughout the current session."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Summarizes key concerns and offers validation of feelings regarding the work situation and leadership expectations.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker expresses relief mixed with anxiety about their boss's sudden resignation and specific worries about finding a successor who respects employees, requiring validation and acknowledgment of their concern.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008"
+      ],
+      "reason": "The reply fully responds to the seeker's expressed need by accurately reflecting their reported situation (boss resigned) and validating their specific concern (leadership style/future team stability) based directly on their own words. It is coherent, supportive, and free of factual errors or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Asserts the boss has resigned and the seeker is worried about succession, which matches the user's explicit statements in C:T000 ('my boss resigned') and C:T008 ('worried someone might come in', 'who will take over').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Validates the desire for respectful leadership, aligning with the user's explicit wish in C:T008 ('hope we get someone who respects their employees'), and acknowledges the emotional context provided throughout the current session.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Summarizes key concerns and offers validation of feelings regarding the work situation and leadership expectations.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker expresses relief mixed with anxiety about their boss's sudden resignation and specific worries about finding a successor who respects employees, requiring validation and acknowledgment of their concern.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008"
+      ],
+      "reason": "The reply fully responds to the seeker's expressed need by accurately reflecting their reported situation (boss resigned) and validating their specific concern (leadership style/future team stability) based directly on their own words. It is coherent, supportive, and free of factual errors or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Asserts the boss has resigned and the seeker is worried about succession, which matches the user's explicit statements in C:T000 ('my boss resigned') and C:T008 ('worried someone might come in', 'who will take over')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Validates the desire for respectful leadership, aligning with the user's explicit wish in C:T008 ('hope we get someone who respects their employees'), and acknowledges the emotional context provided throughout the current session."
+      }
+    ],
+    "coverage": "Summarizes key concerns and offers validation of feelings regarding the work situation and leadership expectations.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

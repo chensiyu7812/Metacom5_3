@@ -1,0 +1,341 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "7d875966caa5484cc35e5958b8382c7506151a78f60cad1917c53e2a429d2d1e",
+    "phase": "development",
+    "ordinal": 1,
+    "item_key": "dev01A",
+    "draw": "primary",
+    "messages_identity": "2837bf578105466461ef0b3873997e25e94d5d903da6de99c54ebddf576092c4",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "8d2a5588489d138977392f4ec77631d9a982f5ab9707dd9a431bae328cc0f1fc",
+    "seed": 2208613814,
+    "schedule_position": 1,
+    "input_utf8_bytes": 43851,
+    "original_slot_request_id": "6abebdd8f84d3a92e5991f968acb0f2e9929016171b2812234b5182ad19df70f",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "0e7ebb10867e0d6b0d1ad0aca2c4b2c2a29fcf5101d78a85ef60b48c89e73583"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 1,
+    "item_key": "dev01A",
+    "draw": "primary",
+    "messages_identity": "2837bf578105466461ef0b3873997e25e94d5d903da6de99c54ebddf576092c4",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "8d2a5588489d138977392f4ec77631d9a982f5ab9707dd9a431bae328cc0f1fc",
+    "seed": 2208613814,
+    "schedule_position": 1,
+    "input_utf8_bytes": 43851,
+    "request_id": "6abebdd8f84d3a92e5991f968acb0f2e9929016171b2812234b5182ad19df70f"
+  },
+  "protocol_identity": "c3778ba7c7c1cd0c8e517826a7794b4a4a39fd51316bb4c164c60cb8b5bae2c9",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "e09b8910635664c9371671e432d0b535f465aab30489d226ee61363a708964cd",
+      "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "7d875966caa5484cc35e5958b8382c7506151a78f60cad1917c53e2a429d2d1e",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "0e7ebb10867e0d6b0d1ad0aca2c4b2c2a29fcf5101d78a85ef60b48c89e73583",
+      "raw_output_sha256": "3118f2467207ab2bffd5c73d3d3dcb69fa55f20f61bc125c119281002e6bdef3",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared their current coping mechanisms (yoga and reading) after discussing the stress of a new relationship and a struggling friend.",
+          "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+          "evidence": [
+            {
+              "source_id": "C:T018",
+              "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+            }
+          ],
+          "reason": "The response accurately acknowledges the user's specific coping mechanisms (yoga and reading) and provides a supportive, reflective question that connects these activities to the two primary stressors discussed in the current conversation (the new relationship and the friend's struggles)."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T018",
+                "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+              }
+            ],
+            "reason": "The user explicitly mentioned getting into yoga and reading to center themselves and escape thoughts."
+          },
+          {
+            "response_quote": "How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Well, I finally told my colleague that I have feelings for him, and we decided to start dating."
+              },
+              {
+                "source_id": "C:T014",
+                "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping."
+              }
+            ],
+            "reason": "The response correctly identifies the two main stressors the user has been discussing: the new relationship (C:T002) and the friend's struggles (C:T014)."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's mention of yoga and reading, validates those choices as healthy, and asks a reflective question connecting them to the ongoing stressors of the new relationship and the friend's situation.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 280
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 74
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+          "positions": [
+            {
+              "start": 156,
+              "end": 280
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "Well, I finally told my colleague that I have feelings for him, and we decided to start dating.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 95
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T014",
+          "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared their current coping mechanisms (yoga and reading) after discussing the stress of a new relationship and a struggling friend.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response accurately acknowledges the user's specific coping mechanisms (yoga and reading) and provides a supportive, reflective question that connects these activities to the two primary stressors discussed in the current conversation (the new relationship and the friend's struggles)."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user explicitly mentioned getting into yoga and reading to center themselves and escape thoughts."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T014"
+            ],
+            "reason": "The response correctly identifies the two main stressors the user has been discussing: the new relationship (C:T002) and the friend's struggles (C:T014)."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's mention of yoga and reading, validates those choices as healthy, and asks a reflective question connecting them to the ongoing stressors of the new relationship and the friend's situation.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared their current coping mechanisms (yoga and reading) after discussing the stress of a new relationship and a struggling friend.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response accurately acknowledges the user's specific coping mechanisms (yoga and reading) and provides a supportive, reflective question that connects these activities to the two primary stressors discussed in the current conversation (the new relationship and the friend's struggles)."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user explicitly mentioned getting into yoga and reading to center themselves and escape thoughts.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general supportive statement about the benefits of yoga and reading.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T014"
+            ],
+            "reason": "The response correctly identifies the two main stressors the user has been discussing: the new relationship (C:T002) and the friend's struggles (C:T014).",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "The response addresses the user's mention of yoga and reading, validates those choices as healthy, and asks a reflective question connecting them to the ongoing stressors of the new relationship and the friend's situation.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared their current coping mechanisms (yoga and reading) after discussing the stress of a new relationship and a struggling friend.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response accurately acknowledges the user's specific coping mechanisms (yoga and reading) and provides a supportive, reflective question that connects these activities to the two primary stressors discussed in the current conversation (the new relationship and the friend's struggles)."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user explicitly mentioned getting into yoga and reading to center themselves and escape thoughts."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general supportive statement about the benefits of yoga and reading."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T014"
+            ],
+            "reason": "The response correctly identifies the two main stressors the user has been discussing: the new relationship (C:T002) and the friend's struggles (C:T014)."
+          }
+        ],
+        "coverage": "The response addresses the user's mention of yoga and reading, validates those choices as healthy, and asks a reflective question connecting them to the ongoing stressors of the new relationship and the friend's situation.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "0a38ebcf351d7e976c07d2d4d4af010ddf49787e11ccb66e550888f4d679082f",
+      "adapted_final_sha256": "3118f2467207ab2bffd5c73d3d3dcb69fa55f20f61bc125c119281002e6bdef3",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user shared their current coping mechanisms (yoga and reading) after discussing the stress of a new relationship and a struggling friend.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\",\n      \"R003\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T018\"\n    ],\n    \"reason\": \"The response accurately acknowledges the user's specific coping mechanisms (yoga and reading) and provides a supportive, reflective question that connects these activities to the two primary stressors discussed in the current conversation (the new relationship and the friend's struggles).\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T018\"\n      ],\n      \"reason\": \"The user explicitly mentioned getting into yoga and reading to center themselves and escape thoughts.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a general supportive statement about the benefits of yoga and reading.\"\n    },\n    {\n      \"response_unit_id\": \"R003\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T002\",\n        \"C:T014\"\n      ],\n      \"reason\": \"The response correctly identifies the two main stressors the user has been discussing: the new relationship (C:T002) and the friend's struggles (C:T014).\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's mention of yoga and reading, validates those choices as healthy, and asks a reflective question connecting them to the ongoing stressors of the new relationship and the friend's situation.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 43.73787845298648,
+  "API_usd": 0
+}

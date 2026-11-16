@@ -1,0 +1,94 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 3161,
+      "reserved_prompt_tokens": 3289,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 129
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "e8fa224cbb1ac9558a475a33760205f8e5a2d2a95027c845fe08396bc5dee21b",
+    "prior_profile_sha256": "62cba53b353a889f9b02c7cb547d941e382606e1de4c038a0d8a5afada2d3279",
+    "request_payload_sha256": "d5d7f0dcdd8e37fdf30b1869f985a88f8bb1f2c9e637dd3fd77bae4967e827d3"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p15",
+      "s": "esc86",
+      "p": [
+        {
+          "i": "p15-esc86-p1",
+          "t": "education",
+          "k": "current_academic_program",
+          "v": "senior thesis work",
+          "s": [
+            {
+              "i": "esc86:4"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p15-esc86-e1",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "struggles with motivation and perfectionism while working on senior thesis",
+          "s": [
+            {
+              "i": "esc86:4"
+            },
+            {
+              "i": "esc86:15"
+            }
+          ]
+        },
+        {
+          "i": "p15-esc86-e2",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feels guilty and fearful about falling behind on thesis progress and avoiding advisor communication",
+          "s": [
+            {
+              "i": "esc86:9"
+            }
+          ]
+        },
+        {
+          "i": "p15-esc86-e3",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "has an advisor who is perceived as tough and makes the experience miserable",
+          "s": [
+            {
+              "i": "esc86:22"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "2aa0f01234f87ad4b1637009a6539d08f74f891a6fa73bcf649c2f32232a2114",
+    "usage": {
+      "prompt_tokens": 3163,
+      "completion_tokens": 367,
+      "total_tokens": 3530
+    },
+    "latency_ms": 4691.168295015814,
+    "provider_finish_reason": "stop"
+  }
+}

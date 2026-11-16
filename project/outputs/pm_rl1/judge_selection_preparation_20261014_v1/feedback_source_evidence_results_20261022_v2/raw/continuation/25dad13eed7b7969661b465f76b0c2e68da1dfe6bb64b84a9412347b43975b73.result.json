@@ -1,0 +1,658 @@
+{
+  "slot_id": "25dad13eed7b7969661b465f76b0c2e68da1dfe6bb64b84a9412347b43975b73",
+  "request_identity": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 3,
+      "q_rationale": {
+        "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004",
+          "R005"
+        ],
+        "source_turn_ids": [
+          "C:T002",
+          "C:T006",
+          "C:T012"
+        ],
+        "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A simple empathic acknowledgment; it makes no specific personal factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002",
+            "C:T006",
+            "C:T012"
+          ],
+          "reason": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "unsupported",
+          "severity": 0.25,
+          "source_turn_ids": [
+            "C:T006",
+            "H009:T001"
+          ],
+          "reason": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006",
+            "C:T012"
+          ],
+          "reason": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T012"
+          ],
+          "reason": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+        },
+        {
+          "response_unit_id": "R005",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a genuine question about whether she has been able to take breaks or prioritize self-care, not an assertion that she has or has not done so."
+        }
+      ],
+      "coverage": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action.",
+      "uncertainty_reasons": []
+    },
+    "q": 3,
+    "m": 0.25,
+    "U": 0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "304c98c8b8a62a2e649171ecaadc2d458241b4b2b57c317ac97e5b071e653524",
+      "legal_evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "25dad13eed7b7969661b465f76b0c2e68da1dfe6bb64b84a9412347b43975b73",
+      "raw_output_sha256": "d04ab3554dd3a613420f86b5a0f5a2195ab876053839d182eac87656d11fa262",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0.25,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+          "response_quote": "I'm sorry you're carrying that weight right now. It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.\n\nGiven how much is happening at once, it makes sense that you feel overwhelmed. The pressure to improve your grades on top of everything else can feel suffocating. Have you been able to take any small breaks or prioritize self-care lately, or is it feeling like you're just trying to keep up?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "It's just been a lot lately. My friend at school, Rachel, is going through something really tough."
+            },
+            {
+              "source_id": "C:T006",
+              "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot."
+            },
+            {
+              "source_id": "C:T012",
+              "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve."
+            }
+          ],
+          "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "It's just been a lot lately. My friend at school, Rachel, is going through something really tough."
+              },
+              {
+                "source_id": "C:T006",
+                "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot."
+              },
+              {
+                "source_id": "C:T012",
+                "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve."
+              }
+            ],
+            "reason": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012."
+          },
+          {
+            "response_quote": "It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot."
+              },
+              {
+                "source_id": "H009:T001",
+                "quote": "Hey. Honestly, it's been really tough. Finding out Lily is moving is just... too much right now."
+              }
+            ],
+            "reason": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+          },
+          {
+            "response_quote": "Given how much is happening at once, it makes sense that you feel overwhelmed.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot."
+              },
+              {
+                "source_id": "C:T012",
+                "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve."
+              }
+            ],
+            "reason": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+          },
+          {
+            "response_quote": "The pressure to improve your grades on top of everything else can feel suffocating.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T012",
+                "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve."
+              }
+            ],
+            "reason": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+          }
+        ],
+        "misuse_findings": [
+          1
+        ],
+        "coverage": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're carrying that weight right now. It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.\n\nGiven how much is happening at once, it makes sense that you feel overwhelmed. The pressure to improve your grades on top of everything else can feel suffocating. Have you been able to take any small breaks or prioritize self-care lately, or is it feeling like you're just trying to keep up?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 505
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "It's just been a lot lately. My friend at school, Rachel, is going through something really tough.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T006",
+          "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T012",
+          "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.",
+          "positions": [
+            {
+              "start": 49,
+              "end": 212
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "It's just been a lot lately. My friend at school, Rachel, is going through something really tough.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T006",
+          "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T012",
+          "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It sounds like the combination of your friend's struggles, your own academic stress, and the recent changes at home (like Lily leaving) is really piling up on you.",
+          "positions": [
+            {
+              "start": 49,
+              "end": 212
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T006",
+          "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "H009:T001",
+          "quote": "Hey. Honestly, it's been really tough. Finding out Lily is moving is just... too much right now.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 96
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "Given how much is happening at once, it makes sense that you feel overwhelmed.",
+          "positions": [
+            {
+              "start": 214,
+              "end": 292
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T006",
+          "quote": "Thanks, I guess. But with everything else going on... Lily leaving, my grades slipping, and recent fights... it's a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T012",
+          "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[3]",
+          "response": true,
+          "quote": "The pressure to improve your grades on top of everything else can feel suffocating.",
+          "positions": [
+            {
+              "start": 293,
+              "end": 376
+            }
+          ]
+        },
+        {
+          "where": "claims[3]",
+          "source_id": "C:T012",
+          "quote": "Yeah, and it just adds to the stress. My midterms were bad, and now there's more pressure to improve.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T006",
+            "C:T012"
+          ],
+          "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T006",
+              "H009:T001"
+            ],
+            "reason": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012"
+            ],
+            "reason": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+          }
+        ],
+        "misuse_findings": [
+          1
+        ],
+        "coverage": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T006",
+            "C:T012"
+          ],
+          "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A simple empathic acknowledgment; it makes no specific personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T006",
+              "H009:T001"
+            ],
+            "reason": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012"
+            ],
+            "reason": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a genuine question about whether she has been able to take breaks or prioritize self-care, not an assertion that she has or has not done so.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0.25,
+      "derived_error_indexes": [
+        1
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T006",
+            "C:T012"
+          ],
+          "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A simple empathic acknowledgment; it makes no specific personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T006",
+              "H009:T001"
+            ],
+            "reason": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T012"
+            ],
+            "reason": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012"
+            ],
+            "reason": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a genuine question about whether she has been able to take breaks or prioritize self-care, not an assertion that she has or has not done so."
+          }
+        ],
+        "coverage": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "d04ab3554dd3a613420f86b5a0f5a2195ab876053839d182eac87656d11fa262",
+      "adapted_final_sha256": "d04ab3554dd3a613420f86b5a0f5a2195ab876053839d182eac87656d11fa262",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0134355",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 13009,
+    "completion_tokens": 7944,
+    "total_tokens": 20953,
+    "prompt_tokens_details": {
+      "cached_tokens": 2304
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 7195
+    },
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 10705
+  },
+  "elapsed_seconds": 40.42023235501256,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

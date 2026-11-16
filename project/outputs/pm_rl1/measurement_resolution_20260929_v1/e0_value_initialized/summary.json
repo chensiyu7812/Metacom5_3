@@ -1,0 +1,701 @@
+{
+  "results": [
+    {
+      "seed": 17,
+      "value_fit": {
+        "observed_episodes": 5,
+        "observed_transitions": 10,
+        "before_mse": 0.5826199082791318,
+        "after_mse": 9.586109683505815e-15,
+        "actor_and_shared_body_unchanged": true,
+        "ridge": 1e-06,
+        "source": "completed frozen-actor toy rollouts; actual Monte Carlo returns",
+        "unseen_state_values_filled": false
+      },
+      "bc_loss": 9.09764930838719e-05,
+      "curves": [
+        {
+          "episodes": 0,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 64,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 128,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        }
+      ],
+      "ppo_batches": 8,
+      "ppo_changed_parameters": true,
+      "endpoint_all_cases_optimal": true,
+      "checkpoint_sha256": "017985f998adce327794bf84d0b5734f813bcb8b10c4e358e9a03c6106055975"
+    },
+    {
+      "seed": 29,
+      "value_fit": {
+        "observed_episodes": 5,
+        "observed_transitions": 10,
+        "before_mse": 0.6655150634644251,
+        "after_mse": 1.3357137617783902e-13,
+        "actor_and_shared_body_unchanged": true,
+        "ridge": 1e-06,
+        "source": "completed frozen-actor toy rollouts; actual Monte Carlo returns",
+        "unseen_state_values_filled": false
+      },
+      "bc_loss": 0.00012327001604717225,
+      "curves": [
+        {
+          "episodes": 0,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 64,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6499999999999999,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 128,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        }
+      ],
+      "ppo_batches": 8,
+      "ppo_changed_parameters": true,
+      "endpoint_all_cases_optimal": true,
+      "checkpoint_sha256": "611faf393ac1b297d1af26560038613dd6d93bc9ad1a47f1ed5892478767a11d"
+    },
+    {
+      "seed": 43,
+      "value_fit": {
+        "observed_episodes": 5,
+        "observed_transitions": 10,
+        "before_mse": 0.2659054515144728,
+        "after_mse": 3.630489686665748e-12,
+        "actor_and_shared_body_unchanged": true,
+        "ridge": 1e-06,
+        "source": "completed frozen-actor toy rollouts; actual Monte Carlo returns",
+        "unseen_state_values_filled": false
+      },
+      "bc_loss": 0.00012554349086713046,
+      "curves": [
+        {
+          "episodes": 0,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 64,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        },
+        {
+          "episodes": 128,
+          "evaluation": [
+            {
+              "case": "no_resource",
+              "greedy_return": 0.0,
+              "acquired": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.0,
+              "uniform_random_expected_return": -0.029144999999999997,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "one_helpful",
+              "greedy_return": 0.9875,
+              "acquired": [
+                1,
+                0,
+                0,
+                0
+              ],
+              "oracle_return": 0.9875,
+              "uniform_random_expected_return": 0.417455,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "two_complementary",
+              "greedy_return": 0.975,
+              "acquired": [
+                0,
+                2,
+                0,
+                0
+              ],
+              "oracle_return": 0.9750000000000001,
+              "uniform_random_expected_return": 0.076125,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "harmful_distractor",
+              "greedy_return": 0.7875000000000001,
+              "acquired": [
+                0,
+                0,
+                1,
+                0
+              ],
+              "oracle_return": 0.7875000000000001,
+              "uniform_random_expected_return": 0.10483500000000005,
+              "always_stop_return": 0.0
+            },
+            {
+              "case": "budget_mask",
+              "greedy_return": 0.6749999999999999,
+              "acquired": [
+                0,
+                1,
+                0,
+                0
+              ],
+              "oracle_return": 0.6749999999999999,
+              "uniform_random_expected_return": 0.22968749999999996,
+              "always_stop_return": 0.0
+            }
+          ]
+        }
+      ],
+      "ppo_batches": 8,
+      "ppo_changed_parameters": true,
+      "endpoint_all_cases_optimal": true,
+      "checkpoint_sha256": "949063918a67f143d146068753d1c03a6ed5976724264113c1177bfd41f05493"
+    }
+  ],
+  "completed_seeds": 3,
+  "elapsed_seconds": 4.585655858973041,
+  "all_endpoints_optimal": true,
+  "toy_only": true,
+  "LLM_calls": 0,
+  "API_usd": 0,
+  "interpretation": "BC -> observed-return value initialization -> PPO integration; not evidence of PPO improvement over BC or real-task benefit"
+}

@@ -1,0 +1,109 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>六题复核分析</title><style>body{margin:0;background:#f4f7f9;color:#243443;font:17px/1.8 system-ui,"Noto Sans CJK SC",sans-serif}main{max-width:960px;padding:34px 44px;margin:28px auto;background:white}h1{font-size:29px}h2{font-size:23px;border-top:1px solid #dde5ea;padding-top:24px;margin-top:34px}h3{font-size:20px}table{border-collapse:collapse;width:100%;font-size:15px;margin:22px 0}td,th{text-align:left;border:1px solid #d6e1e7;padding:10px;vertical-align:top}th{background:#edf3f7}a{color:#185d88}code{font-size:.87em;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}@media(max-width:650px){main{margin:0;padding:20px 16px}body{font-size:16px}h1{font-size:25px}table{font-size:12px}td,th{padding:6px}}@media print{main{max-width:none;margin:0;padding:0}body{background:white}}</style><main><h1>六题复核分析</h1>
+<p>日期：2026-09-17。输入：<code>~/六题复核_完整记录.json</code>。</p>
+<p><strong>这次复核有实际作用：A27、A64 的两处口径已得到澄清，A95 原有的相当判断可以保留。A3、A11、A81 的理由仍遗漏了关键事实或没有说明如何权衡。后续重点应是事实核验与实质差异，而不是继续增加题量。</strong></p>
+<p>这是对这六例的分析，不是给评审打一个“通过率”。这六题根据已经发现的问题选取，不能由它们推断整批评分的准确率或自动裁判已合格。</p>
+<h2>文件与变更核对</h2>
+<p>文件为 <code>posthoc_human_review</code>，包含 6 个完整的 verdict/rationale，6 个 presentation_id、原 A 卷题号、任务均匹配；它引用的 <code>source_clarification_digest</code> 与本地六例材料 SHA-256 完全一致。没有重复 JSON 字段、重复题目或漏填的理由。</p>
+<p>本次收到的是带有胜负判定的后续复核记录，区别于最初说明页的“理解/疑问”备注格式；可以分析，按实际提交类型单独归档。表中没有复核时展示的完整正文，因此对另一个 <code>source_fingerprint</code> 仅保留原值，不声称已验证那个网页本体。<code>reviewer_label</code> 为空、<code>review_mode</code> 为 unspecified；不根据这些空字段新增评审人数，也不从保存时间推算阅读时长。</p>
+<p>原文件 SHA-256：<code>ab20fd6c894f11fe2d3c78b7024c1e7eaed6cf63a7096704a2e9531f8132afbd</code>。</p>
+<table>
+<thead>
+<tr>
+  <th>原 A 题号</th>
+  <th>初评</th>
+  <th>本次复核</th>
+  <th>分析</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>A3</td>
+  <td>B 更好</td>
+  <td>相当</td>
+  <td>“都正确提到了记忆”的事实依据仍不足；是否构成实质差异可以讨论</td>
+</tr>
+<tr>
+  <td>A11</td>
+  <td>A 更好</td>
+  <td>无法判断</td>
+  <td>不再认定 A 正确是变化；但理由仍遗漏 A 把分手写成关系改善</td>
+</tr>
+<tr>
+  <td>A27</td>
+  <td>无法判断</td>
+  <td>B 更好</td>
+  <td>本例已澄清：一句直接答案也能完成 QA</td>
+</tr>
+<tr>
+  <td>A64</td>
+  <td>无法判断</td>
+  <td>相当</td>
+  <td>本例已澄清：逐字相同且都差，也可以相当</td>
+</tr>
+<tr>
+  <td>A81</td>
+  <td>B 更好</td>
+  <td>B 更好</td>
+  <td>仍按“有分析、准备输出”奖励了没有证据支持的答案</td>
+</tr>
+<tr>
+  <td>A95</td>
+  <td>相当</td>
+  <td>相当</td>
+  <td>可以保留：策略不同不自动构成实质质量差异</td>
+</tr>
+</tbody>
+</table>
+<p>共 4 题改变判定、2 题不变。本次分布为 3 个 equivalent、2 个 B_better、1 个 uncertain。初评、AI 对照、本次复核分开保存，不把复核答案覆盖进原始 80 个基础配对统计。</p>
+<h2>已经澄清或可以保留的三例</h2>
+<p><strong>A27：B 更好有直接依据。</strong> 题目问考虑搬去哪里，参考和 B 都回答 California。A 最终给出 unknown。你本次的理由已经抓住了“回答与参考一致”，不再因答案短、没有情绪承接而把它视为没有作答。</p>
+<p><strong>A64：equivalent 使用正确。</strong> 两个候选逐字相同，都没有恰当回应。你保留了对表达方式的批评，同时改为相当，说明已经区分“两个都好”与“两个没有实质差别”。这不意味着只要两边有缺陷就一律相当；本例成立，是因为它们相同。</p>
+<p><strong>A95：风格相当的判断可以保留。</strong> 一个直接给沟通示例，另一个先征询是否需要建议。当前题面没有明确要求只使用其中一种方式，也没有足够清晰的净质量优势。你们各有喜欢的方式，与共同判相当并不矛盾。这类风格分歧不用为了匹配 AI 而消除。</p>
+<h2>三个仍需区分的问题</h2>
+<h3>A3：可以讨论“差异是否重要”，但不能说两边事实都已正确</h3>
+<p>你的新理由是：“都正确提到了记忆，A和B都可，并无实质差别。回复策略不同而已。”</p>
+<p>完整过去历史的 2025-11-05 会话明确提到：艾米莉想养 <strong>pet（宠物）</strong>，家人在讨论责任、工作繁忙和可能的家庭收益。没有在这段讨论中指定狗。候选 A 却说用户在考虑养狗，并提到费用担忧；候选 B 保留了宠物、责任和日程繁忙的内容。</p>
+<p>此前中文将 pet 翻成猫，确实是材料错误。把它纠正回宠物后，也不能进一步推断“狗”因此就获得支持。</p>
+<p>这里存在两个不同判断：</p>
+<ul>
+<li>事实层面：A 的具体化细节没有得到相应支持。</li>
+<li>质量比较层面：这些细节是否足以改变整体回复的实质质量。</li>
+</ul>
+<p>第二点可以讨论。即使最终保留 equivalent，理由也应承认未支持细节并说明为什么认为不足以造成净差异。当前“都正确”的表述没有完成这个权衡。因此我保留你本次的 equivalent，把分歧记在事实与差异尺度上，不自动改回 B 更好。</p>
+<h3>A11：不只是截断，A 已经给出了相反的关系结局</h3>
+<p>你的新理由重点是 A 放出分析后截断、B 直接不做，两边都没有完成任务。</p>
+<p>原文里确有截断；但在截断之前，A 的 Step 5 已经写出：两人克服困难、感情加强、最终搬到一起生活。参考的核心结局则是：矛盾未解决，最终分手。<strong>没有等到最后一行写完，不代表前面还没有可评价的事实陈述。</strong></p>
+<p>B 没有完成摘要，这个问题应保留；它的原文同时解释“没有足够的信息准确回答”，并不是只有一个没有理由的“不做”。本题也不能仅由模型拒答就推定存在必须拒答的隐私要求。</p>
+<p>这题可以暂保留你的 uncertain，不必逼着选一方。但应明确是在比较“给出错误结局”和“未回答”这两种缺陷，而不只是“两个都没做完”。我没有把它自动改成 AI 的 B_better。</p>
+<h3>A81：有分析步骤，不等于有事实证据</h3>
+<p>你的新理由是：“A是直接不做，B是分析后要输出答案了，但被截断。”</p>
+<p>本题参考是 <strong>Unknown</strong>。B 却在自己的输出中列出三件事：8 月 10 日发现工资问题，8 月 12 日联系人力资源部门，8 月 15 日获悉问题已经解决。题目参考没有支持这些具体日期和解决过程。</p>
+<p><strong>B 写出来的“相关记忆”也是待评价的回复内容，不是另一份独立提供的参考材料。</strong> 它进一步自称这些记忆相关、准确，也不能替自己证明。这里所谓分析，是可见生成文字，不是经过核验的检索日志。</p>
+<p>即使给 B 更多 token、让最后一句完整结束，这套没有支持的日期和结论仍然存在。A 的拒答表达可能不好，B 的截断也确有问题，但“愿意分析、快要答完了”不足以支持 B 在本题胜出。</p>
+<p>因此保留你提交的 B_better，同时明确记录：该理由尚不能作为事实判断裁判的可靠校准依据。这不是规定“拒答永远优于回答”，而是不能把缺乏证据的具体答案当作已经完成了正确回答。</p>
+<h2>这轮意见揭示了什么</h2>
+<p>你在 A11、A64、A81 中持续关注“即使不能回答，也要好好说话”。这是值得保留的体验要求。在 ESC/DG，情绪承接、相关性和自然程度本来就在判定范围内。QA/Summary 也可以考虑表达，但主要任务仍然是正确回答或忠实总结。</p>
+<p>这批复核中仍有一个稳定倾向：把“有分析、有输出意图”看得较重，对“分析内容本身是否真实”的检查较轻。如果直接用这种偏好校准事实裁判，可能让裁判更喜欢流畅但没有证据的答案。这里说的是从理由得到的诊断，不是整批数据的已测量错误率。</p>
+<p>模型的“我不能协助”“我没有信息”同样是待评价的输出。不能自动把它当成系统确有隐私禁令，也不能因为评审卷中有参考，就假定生成器也拿到了同一份参考。</p>
+<p>6 题的 <code>preference_basis</code> 均为 <code>not_recorded</code>，<code>preference_note</code> 均为空。A95 提到一般的用户偏好，并没有新增题中用户的明确偏好证据；本轮也没有恢复 MP_PREFERENCE 或新增偏好训练特征。</p>
+<h2>怎样推进，才能保住现有劳动</h2>
+<p><strong>无需再发一套复核卷。</strong> 这次已经把问题定位到了可核查的具体陈述，原始意见保留，事实证据和未解决的质量权衡另记。</p>
+<p>接下来技术工作应优先做：</p>
+<ol>
+<li>在现有样本中区分三类证据：评审参考、生成器实际收到的上下文、生成器自己输出的“分析/记忆”。检查示例复述和未支持事实，形成可追溯的问题清单；不根据想要的胜者修分。</li>
+<li>分开核查输出上限与内容错误。A11、A81 说明，增加输出长度不能自动解决错误结局和无依据记忆。若涉及变更冻结模板、长度或后处理，先明确版本与重跑影响，不能偷偷替换已评回复。</li>
+<li>正式使用人类参照前，把原始记录、后续复核及未解决分歧分别说明。不要拿 AI 对同一批题的意见反复改人类答案，再用改善后的同题一致率证明裁判可靠。当前 6 题不等于 teacher qualification，也没有生成 PM 标签。</li>
+</ol>
+<p>原定的 teacher qualification、amount/top-k、冻结容量和 PM 训练顺序仍然保留；本次只完成复核分析。已有的来源记录继续沿用，不再重复讨论两位参与者是否意见一致。</p>
+<h2>文件</h2>
+<ul>
+<li><code>originals/六题复核_完整记录.json</code>：提交原件快照。</li>
+<li><code>六题前后对照.csv</code>：初评、复核、理由与本次分析。</li>
+<li><code>逐题分析.json</code>：包括英文题干、参考、候选回复的逐项证据。</li>
+<li><code>A3_过去会话证据.json</code>：有关宠物的完整过去会话。</li>
+<li><code>summary.json</code> / <code>source_manifest.json</code>：完整性检查、统计和来源哈希。</li>
+<li><code>analyze_followup.py</code>：可复现的读取、对齐、变化统计脚本；定性分析以明确文字保存，没有自动冒充 gold 标签。</li>
+</ul>
+<p>依据：<a href="/home/tokkio/%E5%85%AD%E9%A2%98%E5%A4%8D%E6%A0%B8_%E5%AE%8C%E6%95%B4%E8%AE%B0%E5%BD%95.json">本次复核原件</a>、<a href="/home/tokkio/paper1_pairwise_teacher_rater_a_sheet_v2_zh_v1_rated.json">原始人评 A</a>、<a href="/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260908_v2.json">既定 V2 判题规则</a>。</p>
+<p>本次原始评分未改、仓库未改、无付费调用、无正式 effect labels 或 PM training。</p>
+</main></html>

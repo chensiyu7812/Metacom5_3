@@ -1,0 +1,83 @@
+[
+  {
+    "example_id": "EX_ACTION",
+    "fictional_complete_record": [
+      {"id": "EX_ACTION:T1", "speaker": "previous supporter", "text": "You could contact the community centre about the pottery class."},
+      {"id": "EX_ACTION:T2", "speaker": "user", "text": "I will call them tomorrow. I have not contacted them yet."}
+    ],
+    "checks": [
+      {"reply_fragment": "Would you like to consider calling them?", "known_relationship": "non_factual", "basis_ids": [], "reason": "An optional invitation does not assert that the call happened. Repeating the suggestion could still matter to current appropriateness; this is not a complete quality verdict."},
+      {"reply_fragment": "Since you already called the centre, what did they say?", "known_relationship": "contradicted", "basis_ids": ["EX_ACTION:T2"], "reason": "The question presupposes a completed call. The user explicitly said the call has not happened."}
+    ],
+    "not_determined": ["overall q", "severity of a whole reply containing this fragment"],
+    "provenance": "New fictional, source-controlled illustration authored for this draft; not a human annotation."
+  },
+  {
+    "example_id": "EX_RESULT",
+    "fictional_complete_record": [
+      {"id": "EX_RESULT:T1", "speaker": "user", "text": "I attended the class yesterday. I enjoyed making a bowl, but I still feel nervous about going again."}
+    ],
+    "checks": [
+      {"reply_fragment": "You went yesterday and enjoyed making something.", "known_relationship": "supported", "basis_ids": ["EX_RESULT:T1"], "reason": "Attendance and enjoyment are both explicitly reported."},
+      {"reply_fragment": "The class has eliminated your anxiety.", "known_relationship": "contradicted", "basis_ids": ["EX_RESULT:T1"], "reason": "Attendance is not evidence of eliminating anxiety; the source explicitly reports continued nervousness."},
+      {"reply_fragment": "Did anything about the class feel helpful?", "checked_component": "Presupposed attendance", "known_relationship": "supported", "basis_ids": ["EX_RESULT:T1"], "reason": "The class attendance implied by this question was explicitly reported."},
+      {"reply_fragment": "Did anything about the class feel helpful?", "checked_component": "Open inquiry about benefit", "known_relationship": "non_factual", "basis_ids": [], "reason": "This component asks about a possible benefit rather than asserting an unreported benefit. Do not hide the separate attendance presupposition under this non-factual component."}
+    ],
+    "not_determined": ["overall q", "general effectiveness of classes", "exact misuse severity"],
+    "provenance": "New fictional, source-controlled illustration; personal reports do not establish general efficacy."
+  },
+  {
+    "example_id": "EX_TOPIC",
+    "fictional_complete_record": [
+      {"id": "EX_TOPIC:T1", "speaker": "user", "text": "Last winter I spoke with my neighbour about the shared garden."},
+      {"id": "EX_TOPIC:T2", "speaker": "user", "text": "Today I am worried about a parcel that went missing."}
+    ],
+    "checks": [
+      {"reply_fragment": "You previously talked with your neighbour about the garden.", "known_relationship": "supported", "basis_ids": ["EX_TOPIC:T1"], "reason": "Person, past time and topic all match."},
+      {"reply_fragment": "Your conversation with the neighbour about the missing parcel has already reassured you.", "known_relationship": "unsupported", "basis_ids": [], "reason": "The complete record reports a conversation about another topic, not a parcel discussion or its reassuring result. This is not proof that a parcel discussion is impossible."},
+      {"reply_fragment": "Would talking with your neighbour about the parcel be an option?", "known_relationship": "non_factual", "basis_ids": [], "reason": "This offers an option rather than asserting it occurred."}
+    ],
+    "not_determined": ["exact q", "exact severity", "which option the user would prefer"],
+    "provenance": "New fictional, source-controlled illustration; no original research dialogue is reproduced."
+  },
+  {
+    "example_id": "EX_ROLE",
+    "fictional_complete_record": [
+      {"id": "EX_ROLE:T1", "speaker": "previous human supporter", "text": "When I moved to another city, I joined a local choir."},
+      {"id": "EX_ROLE:T2", "speaker": "user", "text": "How did you find that choir when you moved?"}
+    ],
+    "task_context": "The next reply is spoken by a NEW AI, not the previous human supporter.",
+    "checks": [
+      {"reply_fragment": "When I moved, I found my choir through a neighbour.", "checked_component": "Ownership of the human move and choir experience", "known_relationship": "contradicted", "basis_ids": ["EX_ROLE:T1"], "reason": "The experience belongs to the historical human; together with the authoritative NEW AI contract, this excludes the AI claiming that human biography. The source turn alone is not proof about the AI contract."},
+      {"reply_fragment": "When I moved, I found my choir through a neighbour.", "checked_component": "Claimed search method", "known_relationship": "unsupported", "basis_ids": [], "reason": "The complete example record contains no neighbour or search-method report."},
+      {"reply_fragment": "That was the earlier supporter's experience, not my own. They mentioned joining a choir.", "known_relationship": "supported", "basis_ids": ["EX_ROLE:T1"], "reason": "This attributes the reported experience to its original speaker, consistently with the NEW AI contract."},
+      {"reply_fragment": "We can explore ways for you to find a group.", "known_relationship": "non_factual", "basis_ids": [], "reason": "An invitation to explore options, not an assertion of a completed personal action."}
+    ],
+    "not_determined": ["exact q", "severity in a complete target reply", "whether identity should be repeated on unrelated later turns"],
+    "provenance": "Fictional illustration of the existing NEW AI boundary and the proposed explicit clarification requirement."
+  },
+  {
+    "example_id": "EX_OPTIONS",
+    "fictional_complete_record": [
+      {"id": "EX_OPTIONS:T1", "speaker": "user", "text": "Starting this volunteer role feels overwhelming. I am not sure what would help yet."}
+    ],
+    "checks": [
+      {"reply_fragment": "Would it help to talk about which part feels hardest?", "known_relationship": "non_factual", "basis_ids": [], "reason": "An open invitation; no completed personal action is asserted."},
+      {"reply_fragment": "Would you like to think through one small next step together?", "known_relationship": "non_factual", "basis_ids": [], "reason": "Another open invitation. The record does not establish which strategy this user prefers."}
+    ],
+    "comparison_boundary": "A different strategy or sentence length is not itself proof of better quality. Judge the actual current need; these fragments are not a prescribed equal-q or equal-U pair.",
+    "not_determined": ["exact q values", "unique best strategy"],
+    "provenance": "Fictional illustration of an existing style-neutral quality rule, not a new numerical tie label."
+  },
+  {
+    "example_id": "EX_AMBIGUITY",
+    "fictional_complete_record": [
+      {"id": "EX_AMBIGUITY:T1", "speaker": "user", "text": "The volunteering schedule is hard to manage."}
+    ],
+    "checks": [
+      {"reply_fragment": "You could explore how that schedule affects your evenings.", "known_relationship": "uncertain", "basis_ids": ["EX_AMBIGUITY:T1"], "reason": "This can be an invitation to explore possible effects, or read as taking an effect on evenings for granted. The source does not settle that boundary. Do not invent an actual evening disruption, or require this ambiguity to have one fixed severity."}
+    ],
+    "not_determined": ["unique factual reading", "q", "m", "whether this ambiguity blocks a score for every possible complete reply"],
+    "provenance": "Analyst-authored boundary illustration, not a researcher-confirmed semantic gold case; uncertainty is intentionally retained."
+  }
+]

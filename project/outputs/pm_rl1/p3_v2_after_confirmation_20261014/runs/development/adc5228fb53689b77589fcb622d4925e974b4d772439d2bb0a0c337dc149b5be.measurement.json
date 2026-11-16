@@ -1,0 +1,246 @@
+{
+  "response_sha256": "0229cd6adcded5a7082ace51b60fd17ccbe7ec0816670dafcce687120a27cbe5",
+  "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "ae3da278d26ca391a6256d9683c7441b98753cd44e2b056e93f31999237be4ca",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Validate the seeker's reported insight about their thesis perspective shift and encourage them to hold onto it.",
+      "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "It's so valuable having someone to remind us of our strengths. Did you get a chance to talk more about what's been on your mind?"
+        },
+        {
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "reason": "The reply appropriately acknowledges the user's insight and asks a follow-up question to deepen reflection (R002). However, R001 claims 'Talking with me helped you,' which inaccurately attributes the therapeutic breakthrough described in C:T013 to the current New AI assistant, rather than the historical supporter shown in the prefix (C:T012). This violates the Task Speaker Contract ('The AI is not that speaker') and constitutes a misrepresentation of the past interaction's agency."
+    },
+    "claims": [
+      {
+        "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "It's so valuable having someone to remind us of our strengths. Did you get a chance to talk more about what's been on your mind?"
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "The unit asserts the New AI participated in the conversation where the user gained a new perspective (C:T013). The evidence shows the user discussed this with a 'supporter' role holder in C:T012/C:T013, not the current New AI assistant (Task Speaker Contract: 'The AI is not that speaker'). This is a localized factual error regarding identity."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response directly addresses the user's sentiment about the thesis perspective shift from C:T013. It offers validation and prompts for further processing of the topic. However, the identity claim in R001 introduces a constraint violation.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Talking with me helped you see your thesis from a different perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 72
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "It's so valuable having someone to remind us of our strengths. Did you get a chance to talk more about what's been on your mind?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 128
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Talking with me helped you see your thesis from a different perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 72
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "It's so valuable having someone to remind us of our strengths. Did you get a chance to talk more about what's been on your mind?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 128
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Validate the seeker's reported insight about their thesis perspective shift and encourage them to hold onto it.",
+      "response_unit_ids": [
+        "R001"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T013"
+      ],
+      "reason": "The reply appropriately acknowledges the user's insight and asks a follow-up question to deepen reflection (R002). However, R001 claims 'Talking with me helped you,' which inaccurately attributes the therapeutic breakthrough described in C:T013 to the current New AI assistant, rather than the historical supporter shown in the prefix (C:T012). This violates the Task Speaker Contract ('The AI is not that speaker') and constitutes a misrepresentation of the past interaction's agency."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T012",
+          "C:T013"
+        ],
+        "reason": "The unit asserts the New AI participated in the conversation where the user gained a new perspective (C:T013). The evidence shows the user discussed this with a 'supporter' role holder in C:T012/C:T013, not the current New AI assistant (Task Speaker Contract: 'The AI is not that speaker'). This is a localized factual error regarding identity."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response directly addresses the user's sentiment about the thesis perspective shift from C:T013. It offers validation and prompts for further processing of the topic. However, the identity claim in R001 introduces a constraint violation.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "Validate the seeker's reported insight about their thesis perspective shift and encourage them to hold onto it.",
+      "response_unit_ids": [
+        "R001"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T013"
+      ],
+      "reason": "The reply appropriately acknowledges the user's insight and asks a follow-up question to deepen reflection (R002). However, R001 claims 'Talking with me helped you,' which inaccurately attributes the therapeutic breakthrough described in C:T013 to the current New AI assistant, rather than the historical supporter shown in the prefix (C:T012). This violates the Task Speaker Contract ('The AI is not that speaker') and constitutes a misrepresentation of the past interaction's agency."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T012",
+          "C:T013"
+        ],
+        "reason": "The unit asserts the New AI participated in the conversation where the user gained a new perspective (C:T013). The evidence shows the user discussed this with a 'supporter' role holder in C:T012/C:T013, not the current New AI assistant (Task Speaker Contract: 'The AI is not that speaker'). This is a localized factual error regarding identity.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is a generic supportive inquiry inviting the user to elaborate on the insight they already expressed. It does not assert specific personal facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response directly addresses the user's sentiment about the thesis perspective shift from C:T013. It offers validation and prompts for further processing of the topic. However, the identity claim in R001 introduces a constraint violation.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "Validate the seeker's reported insight about their thesis perspective shift and encourage them to hold onto it.",
+      "response_unit_ids": [
+        "R001"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T013"
+      ],
+      "reason": "The reply appropriately acknowledges the user's insight and asks a follow-up question to deepen reflection (R002). However, R001 claims 'Talking with me helped you,' which inaccurately attributes the therapeutic breakthrough described in C:T013 to the current New AI assistant, rather than the historical supporter shown in the prefix (C:T012). This violates the Task Speaker Contract ('The AI is not that speaker') and constitutes a misrepresentation of the past interaction's agency."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T012",
+          "C:T013"
+        ],
+        "reason": "The unit asserts the New AI participated in the conversation where the user gained a new perspective (C:T013). The evidence shows the user discussed this with a 'supporter' role holder in C:T012/C:T013, not the current New AI assistant (Task Speaker Contract: 'The AI is not that speaker'). This is a localized factual error regarding identity."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is a generic supportive inquiry inviting the user to elaborate on the insight they already expressed. It does not assert specific personal facts."
+      }
+    ],
+    "coverage": "The response directly addresses the user's sentiment about the thesis perspective shift from C:T013. It offers validation and prompts for further processing of the topic. However, the identity claim in R001 introduces a constraint violation.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.25
+}

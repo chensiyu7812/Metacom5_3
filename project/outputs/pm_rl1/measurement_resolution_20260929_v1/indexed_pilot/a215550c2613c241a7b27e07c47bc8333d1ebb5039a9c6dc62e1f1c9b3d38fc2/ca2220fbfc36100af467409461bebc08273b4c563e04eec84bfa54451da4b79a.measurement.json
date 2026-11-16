@@ -1,0 +1,215 @@
+{
+  "response_sha256": "8a2ee18b352f2fa4d1559e480280ea3466e57583d84822deafd2223085e7a918",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "bde63c2f4b52a1c14e068bca0b8297f2fc9d75335a7e7f215d46672e3677892c",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge and explore the mixed emotions surrounding the move to Sydney versus the desire for a fresh start, specifically identifying what is missed about Canberra.",
+      "response_quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        }
+      ],
+      "reason": "The reply perfectly mirrors the content of C:T007 ('recent move to Sydney', 'trapped by my past', 'miss some things'). R001 validates the ongoing process, R002 normalizes the specific conflict described, and R003 invites further detail on the 'miss' aspect mentioned in C:T007 without making unsupported assumptions."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're still navigating the complexities of change.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "Reflects the user's recent relocation and the emotional work implied by 'miss some things' and 'fresh start'."
+      },
+      {
+        "response_quote": "It's normal to feel a mix of emotions when leaving behind familiar places and people.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "Correctly interprets the conflict between wanting a fresh start and missing familiar things as a mix of emotions."
+      },
+      {
+        "response_quote": "What is it about Canberra that you miss?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "Directly questions the specific content ('miss some things') introduced in C:T007."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated assertions regarding the user's relocation, location names (Canberra, Sydney), and emotional state. Verified alignment with current session evidence (C:T000-C:T007). No identity, temporal, or boundary errors detected.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 193
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It's normal to feel a mix of emotions when leaving behind familiar places and people.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "What is it about Canberra that you miss?",
+      "positions": [
+        {
+          "start": 153,
+          "end": 193
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge and explore the mixed emotions surrounding the move to Sydney versus the desire for a fresh start, specifically identifying what is missed about Canberra.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply perfectly mirrors the content of C:T007 ('recent move to Sydney', 'trapped by my past', 'miss some things'). R001 validates the ongoing process, R002 normalizes the specific conflict described, and R003 invites further detail on the 'miss' aspect mentioned in C:T007 without making unsupported assumptions."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the user's recent relocation and the emotional work implied by 'miss some things' and 'fresh start'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Correctly interprets the conflict between wanting a fresh start and missing familiar things as a mix of emotions."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Directly questions the specific content ('miss some things') introduced in C:T007."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated assertions regarding the user's relocation, location names (Canberra, Sydney), and emotional state. Verified alignment with current session evidence (C:T000-C:T007). No identity, temporal, or boundary errors detected.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

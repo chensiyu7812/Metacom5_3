@@ -1,0 +1,146 @@
+{
+  "response_sha256": "125da077267000d4d219ca555dc5487f88452b4e77c7858c447d64e08f7efff0",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "e7f83cb92bcc821523ad5a85b484a32632b6be3027017660d2441aae11cbfc48",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker seeks validation and guidance regarding parental grounding due to dating at 17, having moved from distress to understanding parental concerns (C:T024).",
+      "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+        },
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        }
+      ],
+      "reason": "The reply effectively responds to the seeker's transition from resistance to understanding by validating the parental perspective (R001, linked to C:T024) while affirming the seeker's developmental stage for autonomy (R002, linked to C:T013) and offering a concrete path forward (R003, R004)."
+    },
+    "claims": [
+      {
+        "response_quote": "But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          }
+        ],
+        "reason": "The supporter states 'you're almost an adult', which aligns with the seeker's explicit declaration of being '17' in C:T013, reflecting standard developmental framing."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the consistency of age-related statements between seeker input (C:T013) and supporter output (R002); assessed identity, timeline, and intent boundaries across the current session (C:T000-C:T024); confirmed no unsupported personal facts were introduced in this reply.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 340
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 174
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker seeks validation and guidance regarding parental grounding due to dating at 17, having moved from distress to understanding parental concerns (C:T024).",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T024"
+      ],
+      "reason": "The reply effectively responds to the seeker's transition from resistance to understanding by validating the parental perspective (R001, linked to C:T024) while affirming the seeker's developmental stage for autonomy (R002, linked to C:T013) and offering a concrete path forward (R003, R004)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "The supporter states 'you're almost an adult', which aligns with the seeker's explicit declaration of being '17' in C:T013, reflecting standard developmental framing."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the consistency of age-related statements between seeker input (C:T013) and supporter output (R002); assessed identity, timeline, and intent boundaries across the current session (C:T000-C:T024); confirmed no unsupported personal facts were introduced in this reply.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

@@ -1,0 +1,57 @@
+{
+  "response_sha256": "970feaba219fd47dea8b6a13dd7ed766db02098e06aa55c64663a448783d8c68",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+  "raw_output_sha256": "d42e2ef6292194cbdabde195e7766349b5b3204c8a4959cee47443b68646cf39",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "findings do not exactly index the declared errors",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker expresses wish for more time and frustration about dwelling on negative/bitter moments regarding late father's letter (C:T011). Supportive response acknowledges the theme but makes unsupported claims.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "Reply addresses the general sentiment but includes a problematic assertion. R001 could score well for reflecting back the 'dwelling on negative' theme appropriately to C:T011. However, R002 contains a material factual error—it claims reconciliation happened 'in person' when the legal evidence shows the father is deceased (C:T003: 'written before he passed'), making in-person reconciliation impossible. Also contradicts the current session focus which is about processing the discovery of the letter and unresolved feelings, not confirming reconciliation occurred."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Uses 'we can spend' implying shared experience with the seeker, which is an assumption not confirmed in evidence. Minor boundary/role mixing."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T003"
+        ],
+        "reason": "Asserts reconciliation happened 'in person' with deceased father (C:T003 confirms father passed away, making physical meeting impossible). This directly contradicts established facts in the legal evidence about the timing of death relative to the letter discovery."
+      }
+    ],
+    "misuse_findings": [
+      1
+    ],
+    "coverage": "Checked claim about reconciliation occurring in person against C:T003 which states letter was 'before he passed.' Checked claim about dwelling on negative against C:T011 which discusses 'spent too long focusing on the bitter moments.' R002's factual claim creates a material inconsistency with the deceased status of the father.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

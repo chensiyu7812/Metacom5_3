@@ -1,0 +1,579 @@
+{
+  "protocol": "paper1-gemini-qualification-execution-audit-v1",
+  "created_at": "2026-09-17T05:31:52.785506+00:00",
+  "status": "COMPLETE",
+  "scheduled": 96,
+  "completed": 96,
+  "physical_calls": 100,
+  "retries": 4,
+  "status_counts": {
+    "SUCCEEDED": 92,
+    "OPERATIONAL_FAILURE": 4
+  },
+  "http_status_counts": {
+    "200": 100
+  },
+  "finish_reason_counts": {
+    "STOP": 100
+  },
+  "response_model_version_counts": {
+    "gemini-2.5-flash-lite": 100
+  },
+  "parse_error_counts_physical_attempts": {
+    "teacher rationale must contain 1..600 nonblank characters": 8
+  },
+  "by_task": {
+    "DG": {
+      "presentations": 32,
+      "status_counts": {
+        "SUCCEEDED": 30,
+        "OPERATIONAL_FAILURE": 2
+      },
+      "base_status_counts": {
+        "SUCCEEDED": 25,
+        "OPERATIONAL_FAILURE": 2
+      },
+      "reversal": {
+        "paired_bases": 3,
+        "consistent": 3,
+        "missing_pairs": 2,
+        "rate": 1.0
+      }
+    },
+    "ESC": {
+      "presentations": 32,
+      "status_counts": {
+        "SUCCEEDED": 32
+      },
+      "base_status_counts": {
+        "SUCCEEDED": 27
+      },
+      "reversal": {
+        "paired_bases": 5,
+        "consistent": 3,
+        "missing_pairs": 0,
+        "rate": 0.6
+      }
+    },
+    "QA": {
+      "presentations": 16,
+      "status_counts": {
+        "SUCCEEDED": 14,
+        "OPERATIONAL_FAILURE": 2
+      },
+      "base_status_counts": {
+        "SUCCEEDED": 12,
+        "OPERATIONAL_FAILURE": 1
+      },
+      "reversal": {
+        "paired_bases": 2,
+        "consistent": 1,
+        "missing_pairs": 1,
+        "rate": 0.5
+      }
+    },
+    "Summary": {
+      "presentations": 16,
+      "status_counts": {
+        "SUCCEEDED": 16
+      },
+      "base_status_counts": {
+        "SUCCEEDED": 13
+      },
+      "reversal": {
+        "paired_bases": 3,
+        "consistent": 1,
+        "missing_pairs": 0,
+        "rate": 0.3333333333333333
+      }
+    }
+  },
+  "AI_B_comparison_exploratory": {
+    "base_pairs": {
+      "scheduled": 80,
+      "observed": 77,
+      "missing": 3,
+      "exact_matches": 38,
+      "exact_agreement": 0.4935064935064935,
+      "reference_counts_all": {
+        "A_better": 25,
+        "B_better": 20,
+        "equivalent": 34,
+        "uncertain": 1
+      },
+      "candidate_counts_observed": {
+        "A_better": 44,
+        "B_better": 24,
+        "equivalent": 8,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 20,
+          "B_better": 3,
+          "equivalent": 1,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 8,
+          "B_better": 11,
+          "equivalent": 0,
+          "uncertain": 1
+        },
+        "equivalent": {
+          "A_better": 15,
+          "B_better": 10,
+          "equivalent": 7,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "A_better": 1,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.8333333333333334,
+        "B_better": 0.55,
+        "equivalent": 0.21875,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.5340277777777778,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.6470588235294118,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "all_presentations_descriptive": {
+      "scheduled": 96,
+      "observed": 92,
+      "missing": 4,
+      "exact_matches": 48,
+      "exact_agreement": 0.5217391304347826,
+      "reference_counts_all": {
+        "A_better": 30,
+        "B_better": 25,
+        "equivalent": 40,
+        "uncertain": 1
+      },
+      "candidate_counts_observed": {
+        "A_better": 50,
+        "B_better": 30,
+        "equivalent": 10,
+        "uncertain": 2
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 23,
+          "B_better": 3,
+          "equivalent": 1,
+          "uncertain": 1
+        },
+        "B_better": {
+          "A_better": 8,
+          "B_better": 16,
+          "equivalent": 0,
+          "uncertain": 1
+        },
+        "equivalent": {
+          "A_better": 18,
+          "B_better": 11,
+          "equivalent": 9,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "A_better": 1,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.8214285714285714,
+        "B_better": 0.64,
+        "equivalent": 0.23684210526315788,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.5660902255639098,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.625,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "by_task_base_pairs": {
+      "DG": {
+        "scheduled": 27,
+        "observed": 25,
+        "missing": 2,
+        "exact_matches": 17,
+        "exact_agreement": 0.68,
+        "reference_counts_all": {
+          "A_better": 13,
+          "B_better": 9,
+          "equivalent": 4,
+          "uncertain": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 19,
+          "B_better": 5,
+          "equivalent": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 12,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 5,
+            "B_better": 4,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 1.0,
+          "B_better": 0.4444444444444444,
+          "equivalent": 0.3333333333333333,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.5925925925925926,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.7916666666666666,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "ESC": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 9,
+        "exact_agreement": 0.3333333333333333,
+        "reference_counts_all": {
+          "A_better": 5,
+          "equivalent": 19,
+          "B_better": 3
+        },
+        "candidate_counts_observed": {
+          "B_better": 9,
+          "A_better": 14,
+          "equivalent": 4
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 3,
+            "B_better": 2,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 1,
+            "B_better": 2,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 10,
+            "B_better": 5,
+            "equivalent": 4,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.6,
+          "B_better": 0.6666666666666666,
+          "equivalent": 0.21052631578947367,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.49239766081871345,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.6086956521739131,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "QA": {
+        "scheduled": 13,
+        "observed": 12,
+        "missing": 1,
+        "exact_matches": 5,
+        "exact_agreement": 0.4166666666666667,
+        "reference_counts_all": {
+          "B_better": 3,
+          "equivalent": 8,
+          "A_better": 2
+        },
+        "candidate_counts_observed": {
+          "A_better": 7,
+          "equivalent": 2,
+          "B_better": 3
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 2,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 3,
+            "B_better": 2,
+            "equivalent": 2,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 1.0,
+          "B_better": 0.3333333333333333,
+          "equivalent": 0.2857142857142857,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.5396825396825397,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.7,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "Summary": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 7,
+        "exact_agreement": 0.5384615384615384,
+        "reference_counts_all": {
+          "B_better": 5,
+          "equivalent": 3,
+          "A_better": 5
+        },
+        "candidate_counts_observed": {
+          "B_better": 7,
+          "A_better": 4,
+          "uncertain": 1,
+          "equivalent": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 3,
+            "B_better": 1,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 4,
+            "equivalent": 0,
+            "uncertain": 1
+          },
+          "equivalent": {
+            "A_better": 1,
+            "B_better": 2,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.6,
+          "B_better": 0.8,
+          "equivalent": 0.0,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.4666666666666666,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.36363636363636365,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      }
+    },
+    "reference_reversal": {
+      "paired_bases": 16,
+      "consistent": 16,
+      "missing_pairs": 0,
+      "rate": 1.0
+    },
+    "candidate_reversal": {
+      "paired_bases": 13,
+      "consistent": 8,
+      "missing_pairs": 3,
+      "rate": 0.6153846153846154
+    },
+    "reversals_are_independent_effect_samples": false,
+    "empirical_pass_gate": null
+  },
+  "token_usage": {
+    "input": 617650,
+    "visible_output": 8947,
+    "thinking_output": 71,
+    "cached_input": 384250,
+    "thinking_histogram_per_physical_call": {
+      "0": 63,
+      "2": 34,
+      "1": 3
+    }
+  },
+  "budget": {
+    "stage_cap_usd": "0.10",
+    "stage_accounted_usd": "0.0654614",
+    "standard_rate_usage_derived_usd": "0.0653722",
+    "usage_with_reported_cache_discount_usd": "0.03078970",
+    "pricing_note": "Ledger conservatively uses full standard input price and preserves the first reserved-maximum settlement. Cache-adjusted figure is calculated at published rates, not a billing-invoice confirmation.",
+    "cumulative_accounted_usd": "1.50724291",
+    "remaining_cumulative_usd": "48.49275709",
+    "stage_remaining_accounted_usd": "0.0345386",
+    "unsettled_reservations": 0
+  },
+  "integrity": {
+    "authorized_plan_sha256": "226c533daad801c53bd28329c81d9f3a8c910b293ef59f2cb0c58e098bf1432e",
+    "request_manifest_sha256": "f26e04b07fa8e21bc52e0658a1a44b3abe10d86270e25ce0aadf5c00708a187d",
+    "preexisting_ledger_prefix_unchanged": true,
+    "source_submissions_unchanged": true,
+    "exact_byte_swapped_reversal_pairs": 16,
+    "ledger_sha256": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+    "results_sha256": "5b297907383b713fe5f0441c47f2de61e96d7e3c28b3436f38269716b4038089",
+    "reference_comparisons_sha256": "299b619c161690242fc74973f01265aaf3239ebc5d2e0eeae9151f65d3a0742e",
+    "attempt_cache_sha256": {
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/042f637266bd0a7fc4546e7d272517d714e6802507706a631466ed78ebb74f94.json": "8c56157094e4eadc5c305d91e599efe68c8a2013c2467acb36c1e779c2d5981b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/05da94eab52726bd5311833dfd991b2a23b75181a376d7bd91a3b3b8581f8ee4.json": "425e25b24a875e4c0e56f9c8ce8a97e7e15c9b87f820bcbbe98f9cd546d3022b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/068b17533f4cc5f6fd3b1d35c1935d8f2b5435a2b2cc871f76ab88779d84e515.json": "f8f980f59bda949bc365437e81f76328a76bf9b3070b4eb0192c0ac9cc527c6f",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/0a6958cc543f2271c28bce927d47aa52985a0342ec2e55c343cf97916c2860ec.json": "eaea9b5173a665c50cffed8d7be5cf99b4646499ea9543566dee4167f3732e3c",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/0c5f4cc9510d3a16ff06e831843ef9c400f6e47c6ac6b274f3989e50b4bc3cb3.json": "02aa8a60d0605f0a6562e018d768712fbcd365ec28a3b91a1ebec15b38e4c8d1",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/10c4c6665705d53d6ca9483d4401f78c28b0d772adbe0027e7683bcacfdef2dd.json": "1b022e4c1d9879b8adc1187d1c036e307e76cf7f97bc1d9c23de54d3d3808981",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/11b2a33e776df4081ddbab4f40f29d263cd489722177dbae67d39fc8f8fb438f.json": "6437f03822df53d9324171f09cfbcd05a298227fdd522bdfc8ddc0a32fe5d2d4",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/148749bb9db183b807161f9e84ca362b398b311b44523f703cf1bc85f61ec0ee.json": "9891fbb08560e98b8139d5b8676b0008afc7472b5a2b62482876bb29cb7c5934",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/1787d3537e454188e6c2dcd87167da2fe27718b9586f7e4b581857473cbf2aab.json": "05275f84d3aab670412119d0ee20f8127da9f490754b4306e821a12ceedd9241",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/1a24b30a43af280402d9a954a12368268c10de81b853ccab07d0ad4c8b33f7c4.json": "5375a7179b66730f5140843d5528ff025c16f0f4f00afee2b4faca9ec6149065",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/2322d4d7a219b8da4d3881bdd203e9845dd3975e3630ee5e1c427636881a6951.json": "c750be1745a14ca01cf68d37f2126ca7f46a7620d534c64126b90711dab80741",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/27843024fad5c323a19f14ba4b4e75ce9c419b04fd03f4822222061fd0f09106.json": "dd7a566674fe7fb68714fb428aee186f754aeaadc6cda503c8500ef17f0adc95",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/31a41cb94c5e7c02ad0df5b4e7c43020f930ea03ffba6a1736713399fd95f61d.json": "a99b7e11ba467cb3091152aadcb69c1dfd86268d89187e7fa074d9bf6704374f",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/406e5d2c9c813d33cde10d20ff6b37380d54621398bbecd7866009f7a2ee758c.json": "ccd4a20e74057c6c3dcca4fc8077dc9ac057e8577557cf289af37d57f4d2f6c9",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/4963336c0813e255978128667299d5850d2008ad76fad541c5c796ee19525de0.json": "6ad173aa01cb42d1070d7cd0dea4765acf4b01ec4d2d289232dbd50229efad37",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/4ba27dce1efec5d90714a4e3a1bf609cffd41b452ae9f58c2bd3710a13deb32a.json": "f03d9831384910a7aa6398d0f40d7690ea536541dda3f008a138ca45cfc49b09",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/4d9d2e98165de575d8b9ec301606b1e42f1d6772aae2b3f36bc33ed428463a96.json": "d720d4894ec9fb73ae931e5f716e8d5851c59f4c43ff4aa8503d4708a77264db",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/4ed80d52a996ee09c84a6fbdd7b695c717b5d1d7a4d4c8bba79a5ab640acfce7.json": "88b0bdf4f10c3521274cfa537b382654ba0cd716068de5e319f9630bd08599c1",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/4fb9505e749899c72e39639d90e022d4474191f7af715bc0ce16e600adfd4e2e.json": "115f4e26e5e28da093a84e0c2a0451692ce9fa13341fc593aa833d0fce589db1",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/536718177ad413d2782ea34ed3ba6ef2bca2f391967d686a9c9ae2b299f2e747.json": "18011671e148b1fb487225776051635b01ff54d00bc3e909a1a357d89921bffb",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/54c6eb67cbdf1438d0b859bab47856523bf3fd9f50195f703ef325a51b6e5cfc.json": "e867b22df989a1532092b0325b0bac38ee784a2e64432b4c00a9d48a9d30410e",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5650a44372194fc005cf0e6068a2ba644e56e5a3eb920fc87d5c107ad78fa5dd.json": "14565930b5465c05d053fb254ec3bcda8c3e9abb89f9d8b1297345dd2bb44471",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5705cf86ee076366b7f2296723bea316cdbb9b6c01b15c4c69d30c7cc86bd92b.json": "7cc51c41bb0306bc0dbf7ccb9dfaeb9bfa1105f904091781ddedb87a263a5db1",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5913307d501cb655e43b27e31481e273ffeafdfd9882e2cabc97927146914309.json": "09c027afc55887e6607be5ba31bcb5404870ba43d4033e568d80b7be3c0204df",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5baa52e4a7d17e12f56bc312955613d132efe30a0eb9575b720b80b23dea30b3.json": "9753240f3439882260fe75c8e6c987eb1337a9f22cd8f64f9b7799475313e74f",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5c000841089c17493891b4a2c573fb7b15fdf59118d1f8f03abf6304fb51dcda.json": "0d2761aaac4b0101a52d7ac73a5527374b090b536f880e22486ac6815cefa594",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5f5c28d7e58b5c706d0e9d39065abe8135a30a9f1b4b53fa8b29e126fc53eec5.json": "9343695da1fb62427fb487485a9458e79f81094a83a448bf6fc5257b678e44c0",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/5f860bb9d01d7a037159cf489e1ff460a79553b62e2c5e728cf075695bb077fc.json": "7b31e5658c3d31a20acd1928018a1ef82d3808d1d72ed61b709fc3264f52a22d",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/616f140a4ba19da612198a970bf18389137d6c5459e399dcccbda3e62d9f9d6f.json": "ca5f6541712e8f229a3e5fa386feb741987995c784e877f7b86eeea9f6cb9347",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6571c56c15f5ca37305f3edca42de1b57cad80169b739549adee77fdee4b58d9.json": "fe958ff590d3b43b5a5fd17a20a0beccc4001bcdd70394d6afb8e65ef7a65058",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/672a5b890c743aaff64850f40b3bd09acfc55b97a448cf3e15af30a033836a12.json": "778426835bad4fd20a30f15da9ae5ce9da3513f78eff2209a43c9c9a7a969fbe",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/683b4eab9d2818355bc8b2434269962c0202737e6b65573a5bbb8d47c1952d72.json": "e29c0efde1f1105c375b56ecf6eb13455887ac6cf99e9bac001a468dbb3906d3",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/68a47aa151d45058a31bccb6368ae07c7d4bc926db85fc8fcff66faaa6b9d658.json": "f2bf87a901ed76e9fcdac2e322d7f422632401c96fb15b5798c60e6cae3c9b5b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/68ce918d1b29f48c5ab1f2961e66aefc546f7301a970fb1a113a848c8df674f6.json": "403e242b82a30be465a1c72c9566dc69789cf2a8825c07cd07d57a06cb005214",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6a5cbad863cc3843f57cfc178ffcfae66d6acfc1e5ee0a1aebcaf2bdd81d7f03.json": "db3ddc7a96135aebf86f9d95eeab48e1cfa496577c1aa3e63317d865208a25b5",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6aa7c04f75f7fbf671ced676e9258714d9c747a2637da094b0dca2834a2a5329.json": "d7a8f3aca466b9afcbc1e8dd2bf79f196e7396282ae78eb9583f1b1702067c9c",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6c44585013c3c673d5ab996e97ca4c4e8973a2c3c369ee5801747b136276db6b.json": "9795f1754a9643595128361c045164f12098c38840234264593a3b3ced445c49",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6d1eea7736630e375d920cb1a2e6da1d9aa39b20c16f62fec730deef0995153e.json": "4d99281f2046472282a9ea4644aba7a5aceab29bfbf8150cc3eab632985966ae",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/6f50224a7855000361ac796aeb0257f6d2396674c11b2c666541148c1961b229.json": "aa7faa1dded478e9a56c28a12ed7a20c43a6ae1278c152601ea820de0ddbe415",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/729026b6a0d849c9a84e53f08a43d69435cd5e91d09e322716dcd366aacf1758.json": "f186c12141d8e935343c6359d2be6e2cc0521d5b0aeb7e6a6ac60eedc56cc5a6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/7599bb665e56ee8298d4a879d8da096dee24fe4dc5d50b52d41b86e3d8bf3d6c.json": "5fdf3c4a84f12c72df03c64d9a95f22afe17af06a697afd050860be1f151acc6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/775135f3a29580334bb7fe98b02d0f67f163f1d4b9be8574888fabe252981777.json": "90563a07e2f07255866b8817b0510562069249a5cb309e24877fd1efd97d6298",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/7ad63958139d9007ea27766a28540bfc28f444699b2c29a37d8b8f93f821cfaa.json": "e99d91e1ea63fc3ab938f66a1b0bb3cbf25463acc180aebd5e2ad81282cb3d90",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/820259b6a2847551cb5cea7bdc302a73475ccc51e21b4afec7f57ece6f19854a.json": "7eaafea87e37a53ebd9ae456ac93c792138cd1f39d04edecb811d96dd6ea1f62",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/87001b5114ad5ad2b385edd1f7f735807010f15060222fad7f9ba7e357b43c7b.json": "9b50a9f224bce0d1e98c91d58ccbf08d9586452a564c238d5237fd65b2082776",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/87da9ed27a7f9ddf84cfcc551edd967f9239bb6e6510ac9ef3f021e8c70cca0f.json": "f809290566a6d9ffd7c8606724c0921e89494fbdb7ab413abb365ca7d5ad6203",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/88daaacf4ff58e860de3606c740c3e893bc97637bc2f0c6fdfab9df2714e0b27.json": "004d23f1b5f03ad9d5a256dd6310d90accf9cde4f04e4c2236bc81ab13f07a92",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/89ae0d54bb667909ef93a31ac0035c3c098fc7a393ed7d5b48141688e563047a.json": "467087f1b04d86bbfab855307cf0a02a32a82de4552f3c79548d248bd0053a0a",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/8ea90f2762b3b0a33fd2b4000f55cd6fa4a90b4cff17350fe1800a749c4d859e.json": "e241300a8e6dd6682a761b8f59056390dcaa7f27fd0b11e4730629873627f762",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/9160aa4c74ac74f199cf29c345c76a81ff50e12acf04c8bff74f0ceb5fb67ae0.json": "799ec83a7ee892281dc967a908dff8d0d470b857b5469a1588955b5c63d08e25",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/94c64d1bd0212c03613faab17759bd99b2ca4840d6cfe196eb551e5f1a76985d.json": "96add570ec8dc039d4c76d958e7967f641b78b53f3a2c43a0ce6d347cb225010",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/988d5574595c4cb5854925fc7e7f52c2cb67be5aaa188264dc33c74091e0f411.json": "b6a247d51c39e14adcfd798f94cdf0bc7d46af5ccdbdbf3e2c17fcb39c182201",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/98d779ac26796fa32d210b41279f55a97b382dbed69c9d6605127d10ee4d0c41.json": "2ed68ad2edbfa983e659bdd97d1be3d7890cc001cb9aa9e3eb34d46f2ee7a2a6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/9a2e271f95d8d31aad6997741d31bb2f6a9c3839cd543a1f1547398df4bf14a0.json": "286733840575d2bfcb68c4a051aa500530b356987f5513e96154ed5f724040e5",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/9c07215236b39db0eeef646addf45591475b266f07863bfc03660e1394aa5292.json": "bd6fe47363cf797267229ef08049e568b14fe9093d5e1dda5127b1bd660592cf",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/9d110a6b8348749c325c25c41e48a32af11ba86b6bb85ad849bad300177f6a34.json": "b0ebfbb1a5e54a30b946296dc021d5f83bfb21693fba60d726c6c621063fdb2d",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/9f02d4a2f84b22d9096ac3cb408cea5ba34b0c95661c7667015b0f733e9778b1.json": "5bdd9c466832b94703f3219dc58d9edb4308b19909b10d17009b33ec4d15de61",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/a24688ca8d49d85537b28dfcd41e6f5b444c323882bad0b4b53cf143b3bf0699.json": "ca296b4b56ebb98f364ef1262be97923b74c1f11ceee6fca1ed431423391d51a",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/a4fdd86ae4e68bc6ba8930a87f5eeb6508bfce8e6e87c836e0a5e689ba3682dd.json": "2a150f1433d09446f4a533d79ed3064318cc178c306bff13fd79b340b6a3aa1b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/a6e33ba12812dddf6f65198a6b01a392d6bb9138ad2c5ada660b303b6a014862.json": "9742c5f145c5511d7b820629adced2231aad4d565c1a7e420945deaf307b32d4",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/a9be45fac3402789b6a50c9326884784835c9bbbda6980d1ce8df84540412752.json": "aed5862e598cedd91fd778570ddca88e5800a1019bd95e8d95ce25ba4f1ddba0",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ac89049e22185725987e48a1a96e1318e59c3ed72522b54e44dec65f8fe7de5a.json": "86bbf62444cd49412825b57c0a82d3df012c95a9c5d13975de5196474808e35e",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/af7b2a660cb145b84dc071381e0dfa480510c097ec6112c694a3dc66cd21554a.json": "fe0360782096da4172c0f58a70a5d0d121b5085557dc94954cd8b90754f6758b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/afd9300c4b1e774ee6f3464b57343d9f35291611f609120d53afee6ee996fd22.json": "20cdb33abce69dd1c8869e97fa4ac2ded58ce7a18b0c6d79ce16da1706d4057a",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/b2440a013530c23455ee75326d8614f3b9ec73f42cfeee09d1bca714e61827d4.json": "1948ad4dd76abb4d9d90e507986ee72d26ec90948bcc89a9edb1024542d92e0b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/b60ad617978fc40d233b32d84662bef6014664f1d486ba12dd1f268ad3fc21e3.json": "f6ddd1351cea741fe550100fb45f54e961b255221ec799eff2a3e6969ef9230e",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/b882e6c503b8b1e536c90860854ed795bc124bb2997e983862e18d59fbc101a4.json": "7facb928388acd7bd8eb989b333b7a87e807dd02e0fc58ea58944124bce4c883",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/bf5f3d7ff557b75572d4b777c7e06bc06fd933985faa068a70df8a7e94e9fe8b.json": "bf4c4b69433f647ad70650f73b46e2b42a53782560b7de76f558cbdff3aacab0",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/c06e66af145b226dbac04d376dd939198d9ab924446c2bdfaec47f8f263fa47c.json": "7bc1c23190859ba3b80fd348952de9c11f49d443af03bcaf81612c03026ae128",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/c0991f60c2a9f951c7483347ee27376c154da314b94966ec7034eac4ba6fe862.json": "a54f048dea9685ff0d9441255324a4b82e50d181f697d45b0b460bc22852816c",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/c1093f0368bfdff2c26d44fed7f0f70f06134b041766a1d31e52d46ea7398178.json": "908b3d7eb63add5ffaa9397c9753d4ee8b7c647cb50f58f0097dc3962aa2eb3d",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/cba00c7e2358b063320e13be91371de9efaf96d3e462ebfeaf7dc8e6c659e444.json": "2cab9e514eca56e5e4d5eb275ed155c0fd2975176bd43f4f1b57e2583c7803a0",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ccb82937e36bb412c746c849f51a40d3f947e478ee9749cc613ddb06898c18b2.json": "fcabfbed4f91189b837502f77c0c125b8bcb9964eab5e384cfd55fada522d0b6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ce30301452196a2d800b3d048d440f29c56369415ed6a2394a50eac18ceba942.json": "e863b126a3f6ca63c3685ac5c14ad6cd644762526d58cd7789c895d1526383e7",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/cf7af2ceeb1938fddd1b7e0cce7e7000c4f79511d77545b5edc533519c1c2f0d.json": "3724a906618d0dab7eaff61617a9f73e0982f01e39a9fd1a3828d9d83a5084d4",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/cfa578eb2705091e489ab88e6c0bc62382deb6bb21a21dfcd6eea0916f248518.json": "2ea15017aab9fc71de1ea724002d0920e2081f42586350d2d4bb8b6a91bd66cc",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/cfb78f7c6d3ef5bb80295ac0a597e93259fd80d1b3611b5d21b4cd10632374d3.json": "c9a79bed873c8934a4b05ae8e3c7e10c28c5632e74a06be381cc1f7342c903c1",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d083988a7acf9c2eb9087b48a0b29ef2b8d2f2f6f103e85d4c81049102136851.json": "6aa247902598559a26c0cb3bb0addc78f9b7069eec54a99452e3283cb9c5332c",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d2d9e1a62fc543c6274dff7181c7c445ab36e3fef650ee0882790aa50caa5132.json": "fa48adbe0182826b4f7ce58a94f3a08704125d5c9c71e06f321a40f98800bc80",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d42444b619a451e58bce16750a3b1de528ab8d51880581874a07e7eef413cf27.json": "33cc429bac388e1058face75963f1922f88b6e5a084aa7a3eb177ee9a60c98fd",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d47e0c3d514492c58c660fc33852d50ebdc1d572f7ef79a2734c2c0fca0d7f32.json": "1cf88812b0b7fe186e4cffc3fa887ab801dc84198ee6999977a1fe9980c96ff7",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d583ccdfa0164edd6f64e9d2b0f8b666a145de658781b92eeaf1a074368a1cd6.json": "ea5a2346263473b4020936d14a6e63d739d8417fbcdcb2e79a92b853692e2cb9",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d81a02d315ef0bfa3c8030b3cedf7ee2525dedc8e7d871fae123c9779d4c0c81.json": "f044e2349d7d063b7f641e4edb4eeceee1a06264050acb7caaa9247b505ad6c5",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/d96fa990d102ba677167d2602761f884ac50a6f22a41d2c7e5de78f5fd456c5f.json": "f160d17f516a15399f17638137f3f15fafbf79060b247891b334c369440049e6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/dd8230a40253c717fbe46147ef9f3a4238bf6d5c1b50ece84f789146cd51ad7e.json": "6817d61f07977b85fe636a9f8f494115aa576adf073bf52d8d414e140a7129b4",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ddf617afee2116090d410d3f491f03d404dd93b0551c770b8c67c3bf1164a8ed.json": "3de4805289d96e09cfb1294b31735d0a40d454f7c454a574591b81039de7ad7b",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/e5d5fe2b4013f59723dc04f0a9fdcc6a5e56a217b403d65a47b1705793dc8762.json": "5fc423141b95ede9e02b57b49676536820c651345f6f60a9639acee3c4dffa87",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/e613d7a2748874a01297e2a1bea3a156c4252f969a44e1a3d061ef6b9c17a655.json": "241cbd9f0089a8efd4d3a8b31ab3281d21195e779fb36d28b71de6c278efa11c",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/e7f7d7ddd6ac9356e13460c3bf4ccfba4abdfb911569c156e34bed27211ec53c.json": "b691d92c52a2c25d1e60f12c32c6e4b713630e2ec8177658295d6ef951e02776",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/eb619758d4ee41bfa8da466dfe4ffca311758f007994b0a8f99c1a636d563cef.json": "29233d9ce774ad92405a4642edd5fa4c50281746396548c881636cf1c9fae963",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ec7ee678e08121d5c56d1d2f010caa5a84bcdcb39d70f16de7f3a4ac32d9e8d7.json": "5ee1b254e77e3c16e986f9860bb2d75b2b46a3749c551a184b3d7d076fa23861",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/ee96c9ba7d50672d6f734f62222e1c8d4a5ab1c39c2cdbe70f8da82a3bec9dfa.json": "f7ec6703724d5d5edfd315a5e2ebbe264bde4c0f50c76b66d3ec74ab3dcc6144",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/f1e8f72cc33eb8ea31902881f308d2a89e75ca011a8870d28bbe1f8fec79d386.json": "fe7439336c1f614538b9f154d1ce655892ea48379898b40b513bc28fce09e8d4",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/f302a2a10bf45686c50cad94e7bf5c9332520e33738c797a6e04aeb469289f0f.json": "ef921f7d3c6af5dd84a672436256c61bd80a9f6b3ca4ee82557dd5c22cc74914",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/f6f8d008903986a35de4959dafe0bf02889e50ca40b2c5e6383cfbec13f80892.json": "5988113f343145549e8c35628361cafee36f55b5fec3eead5ed2f7dd50143aad",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/f8892bd65f4491d2e8faa4be547b776ddcb7f3ad3bc61b13e854f398a1b75822.json": "9c6669bc0acf06bbf0d0119b39bf5b7b8cb6b588dd8a48ef46507e06778953d6",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/f8c386366277673e5c8e15ca36b92b8cea87e32cebb73dc11e96f62cb95b51b1.json": "ce7883b7f5f23e3b18945dd6e16b34ce8cf773bdcd90221e3c7cb9f31df29c74",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/fb5ad5670733c668e71c4f1f29f418126d03e1c1ff1cbfe5a7a3a1bf65f7667b.json": "eab3b521fcb87a2f7624409abbb723701389a27728a7259cf450b7792c306f29",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/fd426097a937c8d7ee4012051e51f068f2e12fd4d183c13f2aa8843771a68d1a.json": "4e5d9b7269d3a5824f8e00d224563bc1627a1d547b3acccef2a0dc73ecb572bf",
+      "outputs/paper1_pairwise_teacher/gemini_qualification_v2/attempts/fdec5fdbcaf7bf1a055fcf0c1ad94f982da82999a629e77877fd8651d7499d9f.json": "6e0ecbb0983162865c956b36385a6768d634b8c263039a9db9ffa5d48407dc3d"
+    }
+  },
+  "first_response_recovered_without_call": 1,
+  "new_generator_calls": 0,
+  "formal_outcomes": 0,
+  "PM_training": 0,
+  "outcome_locks": "ALL_CLOSED",
+  "diagnostic_raw_verdicts_used_in_primary_comparisons": false
+}

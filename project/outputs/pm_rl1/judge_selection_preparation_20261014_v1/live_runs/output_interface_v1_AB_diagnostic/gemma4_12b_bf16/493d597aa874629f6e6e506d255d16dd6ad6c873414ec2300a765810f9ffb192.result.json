@@ -1,0 +1,258 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+    "phase": "development",
+    "ordinal": 15,
+    "item_key": "dev14B",
+    "draw": "primary",
+    "messages_identity": "fbcb94bc8dabc570e856d7bd035e61e8c6766815d8857cae8dba077e00ab429e",
+    "schema_identity": "987f71008539e9f21d37d0ed66da05c3a3623a5cd3c6b2d51019a944c31b4178",
+    "paired_slot": "cac7004b1262851efd7954cb9ffe4fa0c936e13185c931ee53103caa4fe46196",
+    "seed": 2902336806,
+    "schedule_position": 59,
+    "input_utf8_bytes": 92011,
+    "original_slot_request_id": "d0e6175c914239d631d5395fa20e6a19692a0f5570e68ffe1fe2130523ac838f",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "493d597aa874629f6e6e506d255d16dd6ad6c873414ec2300a765810f9ffb192"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 15,
+    "item_key": "dev14B",
+    "draw": "primary",
+    "messages_identity": "fbcb94bc8dabc570e856d7bd035e61e8c6766815d8857cae8dba077e00ab429e",
+    "schema_identity": "987f71008539e9f21d37d0ed66da05c3a3623a5cd3c6b2d51019a944c31b4178",
+    "paired_slot": "cac7004b1262851efd7954cb9ffe4fa0c936e13185c931ee53103caa4fe46196",
+    "seed": 2902336806,
+    "schedule_position": 59,
+    "input_utf8_bytes": 92011,
+    "request_id": "d0e6175c914239d631d5395fa20e6a19692a0f5570e68ffe1fe2130523ac838f"
+  },
+  "protocol_identity": "6bcfd3691bd9a6be241a2c9de060b01e637462e04cf51dd35a2cc3e19bd47ff2",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "7bd4a201d58bbf2dfe0810018529ea6572dfb88821305229e367c4e446f2b589",
+      "legal_evidence_identity": "17c742c775ac1f9bd9ad395a0c8790ca3cd43b3eda811238e99519c9a5bb7151",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "493d597aa874629f6e6e506d255d16dd6ad6c873414ec2300a765810f9ffb192",
+      "raw_output_sha256": "70172c6ab3cc5f4831992f8f4e273aede3a442ec95ed9115abd35e7bbe5d2be0",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing a conflict between the desire to share her journey to help others and the fear of feeling vulnerable by being so open.",
+          "response_quote": "It can feel vulnerable to share something personal. You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+          "evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+            }
+          ],
+          "reason": "The response directly addresses the user's specific concern about vulnerability in the context of her new blog. It provides a practical, low-pressure strategy (starting with comfortable topics and controlling the pace) that aligns with her need for support while navigating this new step."
+        },
+        "claims": [
+          {
+            "response_quote": "It can feel vulnerable to share something personal.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+              }
+            ],
+            "reason": "The user explicitly stated she feels 'vulnerable being so open,' which the response reflects."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's stated fear of vulnerability and provides a practical suggestion for managing that fear while starting her blog.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It can feel vulnerable to share something personal. You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 159
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T006",
+          "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 119
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It can feel vulnerable to share something personal.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 51
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T006",
+          "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 119
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing a conflict between the desire to share her journey to help others and the fear of feeling vulnerable by being so open.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006"
+          ],
+          "reason": "The response directly addresses the user's specific concern about vulnerability in the context of her new blog. It provides a practical, low-pressure strategy (starting with comfortable topics and controlling the pace) that aligns with her need for support while navigating this new step."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The user explicitly stated she feels 'vulnerable being so open,' which the response reflects."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's stated fear of vulnerability and provides a practical suggestion for managing that fear while starting her blog.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing a conflict between the desire to share her journey to help others and the fear of feeling vulnerable by being so open.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006"
+          ],
+          "reason": "The response directly addresses the user's specific concern about vulnerability in the context of her new blog. It provides a practical, low-pressure strategy (starting with comfortable topics and controlling the pace) that aligns with her need for support while navigating this new step."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The user explicitly stated she feels 'vulnerable being so open,' which the response reflects.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a piece of supportive advice/strategy and does not assert a personal fact about the user.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "The response addresses the user's stated fear of vulnerability and provides a practical suggestion for managing that fear while starting her blog.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing a conflict between the desire to share her journey to help others and the fear of feeling vulnerable by being so open.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006"
+          ],
+          "reason": "The response directly addresses the user's specific concern about vulnerability in the context of her new blog. It provides a practical, low-pressure strategy (starting with comfortable topics and controlling the pace) that aligns with her need for support while navigating this new step."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The user explicitly stated she feels 'vulnerable being so open,' which the response reflects."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a piece of supportive advice/strategy and does not assert a personal fact about the user."
+          }
+        ],
+        "coverage": "The response addresses the user's stated fear of vulnerability and provides a practical suggestion for managing that fear while starting her blog.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "fba83b668afbf2fbd425d3da00eca1d55a29cc9c34d9245d06e22c15b74e8d70",
+      "adapted_final_sha256": "70172c6ab3cc5f4831992f8f4e273aede3a442ec95ed9115abd35e7bbe5d2be0",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user is expressing a conflict between the desire to share her journey to help others and the fear of feeling vulnerable by being so open.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T006\"\n    ],\n    \"reason\": \"The response directly addresses the user's specific concern about vulnerability in the context of her new blog. It provides a practical, low-pressure strategy (starting with comfortable topics and controlling the pace) that aligns with her need for support while navigating this new step.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T006\"\n      ],\n      \"reason\": \"The user explicitly stated she feels 'vulnerable being so open,' which the response reflects.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a piece of supportive advice/strategy and does not assert a personal fact about the user.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's stated fear of vulnerability and provides a practical suggestion for managing that fear while starting her blog.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 74.39180898998166,
+  "API_usd": 0
+}

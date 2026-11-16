@@ -1,0 +1,179 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2774,
+      "reserved_prompt_tokens": 2902,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 588
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "57697842ce9b73acd51ea670384aab0fa5ccf74721bfd612e3bea48fe20826f2",
+    "prior_profile_sha256": "0c630408889ae1a9414c72acc5ef8633df840db078216f5336fd2c039f76fc7d",
+    "request_payload_sha256": "46bf3df7101492fe0f2b3a28703c0632215f4955a11b29e7c4d393a7d814029e"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p4",
+      "s": "p4_conv_9",
+      "p": [
+        {
+          "i": "p4p1",
+          "k": "geographic_preference_for_career_practice",
+          "t": "enduring_preference",
+          "v": "prefers working in California due to alignment with career goals and personal aspirations",
+          "s": [
+            {
+              "i": "p4_conv_9:4"
+            },
+            {
+              "i": "p4_conv_9:6"
+            },
+            {
+              "i": "p4_conv_9:8"
+            }
+          ]
+        },
+        {
+          "i": "p4p2",
+          "k": "romantic_relationship_coexistence_plan",
+          "t": "stable_relationship_role",
+          "v": "has a mutual plan with romantic partner to live together after college, with consideration of moving to California",
+          "s": [
+            {
+              "i": "p4_conv_9:4"
+            },
+            {
+              "i": "p4_conv_9:8"
+            },
+            {
+              "i": "p4_conv_9:14"
+            }
+          ]
+        },
+        {
+          "i": "p4p3",
+          "k": "family_relationship_stress_trigger",
+          "t": "durable_health_constraint",
+          "v": "experiences significant emotional distress when facing potential estrangement from parents due to life decisions",
+          "s": [
+            {
+              "i": "p4_conv_9:6"
+            },
+            {
+              "i": "p4_conv_9:12"
+            },
+            {
+              "i": "p4_conv_9:14"
+            }
+          ]
+        },
+        {
+          "i": "p4p4",
+          "k": "coping_strategy_through_nature_activities",
+          "t": "enduring_preference",
+          "v": "uses hiking and time in nature as a primary method for emotional regulation and decision-making clarity",
+          "s": [
+            {
+              "i": "p4_conv_9:10"
+            },
+            {
+              "i": "p4_conv_9:12"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p4e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "had a heated conversation with parents about the potential move to California with romantic partner",
+          "s": [
+            {
+              "i": "p4_conv_9:4"
+            },
+            {
+              "i": "p4_conv_9:6"
+            }
+          ]
+        },
+        {
+          "i": "p4e2",
+          "t": "state_onset",
+          "z": "ongoing_stage",
+          "n": "began experiencing intense guilt and emotional conflict after parents threatened to cease contact over relocation plans",
+          "s": [
+            {
+              "i": "p4_conv_9:6"
+            },
+            {
+              "i": "p4_conv_9:12"
+            }
+          ]
+        },
+        {
+          "i": "p4e3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "engaged in reflective hiking and joined conversations with others in the hiking club to gain perspective on relationship and family conflict",
+          "s": [
+            {
+              "i": "p4_conv_9:10"
+            },
+            {
+              "i": "p4_conv_9:12"
+            }
+          ]
+        },
+        {
+          "i": "p4e4",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "gained insight from a member of the hiking club who had faced a similar family-relationship dilemma",
+          "s": [
+            {
+              "i": "p4_conv_9:12"
+            }
+          ]
+        },
+        {
+          "i": "p4e5",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "decided to initiate a calm, explanatory conversation with parents to express personal needs and reassure ongoing connection",
+          "s": [
+            {
+              "i": "p4_conv_9:16"
+            },
+            {
+              "i": "p4_conv_9:18"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "dfd85a4d8cd6f7f3c337701d6540d446bbe427e920914972ccc7dbc8b88c1661",
+    "usage": {
+      "prompt_tokens": 2776,
+      "completion_tokens": 934,
+      "total_tokens": 3710
+    },
+    "latency_ms": 11536.681288998807,
+    "provider_finish_reason": "stop"
+  }
+}

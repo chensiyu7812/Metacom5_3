@@ -1,0 +1,119 @@
+{
+  "scope": "AI-assisted exploratory content review, not qualified q/m",
+  "cases": [
+    {
+      "case": "N02",
+      "analysis_zh": "关键历史已由首次MS取得；C与B是同一输入。E只改变近义表达。旧C02对6MS回复的近似判断保留，不复制为新回复的分数。",
+      "interpretation": "source_available_and_retrieved; helpfulness_unresolved",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N03",
+      "analysis_zh": "原ME把希望前任表达清晰意图写成用户已向前任沟通，修订只改这一断言。修订后回复仍是倾诉邀请，措辞改变不能当质量改善。",
+      "interpretation": "source_claim_repaired_in_probe; no_demonstrated_helpfulness_gain",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N04",
+      "analysis_zh": "完整注入原先未取到的H014；C/E没有明确使用换工作、灵活时间或前同事冲突这些预期增量。边界主题已在当前对话；不能由此单独断言G不会使用信息。",
+      "interpretation": "retrieval_gap_confirmed; hypothesized_increment_not_explicit_in_reply",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N05",
+      "analysis_zh": "H018从初始第10名直接送入，C主要重述当前已有晋升和家人疾病；E转而提旧主管经历并建议预演对话。历史未显示所有顾虑已消失，晋升不是状态完全翻转。收益仍须区别策略偏好和真正帮助。",
+      "interpretation": "selection_and_layout_change_focus; helpfulness_unresolved",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N18",
+      "analysis_zh": "定向完整MS的C带入近期主管分歧，E却未保留该细节。D引用真实过去的失恋，把当前工作警告转向情绪模式与旧关系；这是正确引用仍可能偏离当前需要的例子，不自动判为有害。",
+      "interpretation": "correct_history_can_shift_topic; helpfulness_unresolved",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N19",
+      "analysis_zh": "包含车修费用和财务压力的完整H011已注入，但C/E均未明确体现财务约束。当前轮重在工作压力和自疑，不能预设此时必须讨论经济可行性。",
+      "interpretation": "candidate_constraint_delivered; not_explicitly_used; usefulness_unknown",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N21",
+      "analysis_zh": "B已取到目标H005，C与B同输入。E使用H005:T015的晨跑自述，原C没有；实际所用是同会话中的应对方式，而不是预先标出的夫妻轮休要点。已仅就E/C实际帮助提出一个新比较，不能用事后换F伪装原假设成功。",
+      "interpretation": "same_source_layout_changes_evidence_use; human_comparison_pending",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    },
+    {
+      "case": "N23",
+      "analysis_zh": "C/E逐字同回复；D恰与B相同输入，且比C多639资源tokens，不能算独立或严格长度匹配的对照。当前已沟通并受到敷衍，旧邀请不对等细节未明确进入回复。",
+      "interpretation": "layout_text_identical; distractor_control_limited",
+      "human_label": false,
+      "q": null,
+      "m": null,
+      "reward": null
+    }
+  ],
+  "anchors": [
+    {
+      "case": "N18",
+      "arm": "C_target_full_MS",
+      "quote": "the disagreement with your manager earlier",
+      "start": 169,
+      "end": 211,
+      "reply_identity": "c2152bd7a967ec1be01185588a1a8ccf766c2b3712aceb662a795f1c713b3a16",
+      "source": "H010:T003/H010:T005",
+      "helpfulness": null
+    },
+    {
+      "case": "N18",
+      "arm": "D_other_topic_full_MS",
+      "quote": "your past struggles with heartbreak and feeling stuck",
+      "start": 176,
+      "end": 229,
+      "reply_identity": "69a784ba6c4944179ede6074f7bb11102d613e3cbd5c4de634f21bd053635989",
+      "source": "H004",
+      "helpfulness": null
+    },
+    {
+      "case": "N21",
+      "arm": "E_same_full_turn_layout",
+      "quote": "you're trying to go for a run in the mornings to clear your head",
+      "start": 423,
+      "end": 487,
+      "reply_identity": "dcd7867725405f692483b234d814fd6c638541451026090b1b8dda4f53f6afde",
+      "source": "H005:T015",
+      "helpfulness": null
+    },
+    {
+      "case": "N05",
+      "arm": "E_same_full_turn_layout",
+      "quote": "prepare for different possible responses",
+      "start": 310,
+      "end": 350,
+      "reply_identity": "5d4bb6b15b69d69dddc779fbeabf93cd2f0a5306aef131166b1052286d3b65a5",
+      "source": "analyst action observation, not a sourced personal fact",
+      "helpfulness": null
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "response_sha256": "579a33e6bea33abce32dcdb42d9acd447801dcb03643ff46a3167187e6087033",
+  "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "361818a34de57fc20496b0276c63f4ec0bab991dfbf8ef4a956f40876c38c949",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+  "raw_output_sha256": "9d2b5a90479ef7a701b67beedc0440235bab18ef00fc1b0fb21d82beabae7bb0",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Respond empathetically to the positive report of sibling communication, validate the user's feelings of relief, and explore the practical impact on their stated stressors (academic direction, parental conflict).",
+      "response_quote": "It can be really tough to navigate all those challenges at once. It's great that you felt comfortable sharing those things with your siblings. Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+        }
+      ],
+      "reason": "The reply is fully responsive and coherent, validating the user's positive experience with siblings while immediately linking it to the specific unresolved issues disclosed in C:T004 (questioning direction, parental argument). It avoids making unsubstantiated claims and asks a targeted question that invites further processing without pushing advice, meeting all constraints of the current turn."
+    },
+    "claims": [
+      {
+        "response_quote": "It's great that you felt comfortable sharing those things with your siblings.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+          },
+          {
+            "source_id": "C:T002",
+            "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+          }
+        ],
+        "reason": "R002 affirms the user felt comfortable sharing with siblings. This is directly supported by C:T002 ('felt I could open up to them') and C:T000's mention of feeling different in a good way due to the siblings."
+      },
+      {
+        "response_quote": "Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T004",
+            "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+          }
+        ],
+        "reason": "R003 queries about the user's feeling on 'direction' and 'parents'. C:T004 explicitly discloses 'questioning my direction' and bringing up 'the argument between Mom and Dad', validating the terms used in the question."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the supporter's assertions regarding user comfort with siblings and the relevance of follow-up questions against the user's disclosures in the current session.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to navigate all those challenges at once. It's great that you felt comfortable sharing those things with your siblings. Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 276
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's great that you felt comfortable sharing those things with your siblings.",
+      "positions": [
+        {
+          "start": 65,
+          "end": 142
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+      "positions": [
+        {
+          "start": 143,
+          "end": 276
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Respond empathetically to the positive report of sibling communication, validate the user's feelings of relief, and explore the practical impact on their stated stressors (academic direction, parental conflict).",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T004"
+      ],
+      "reason": "The reply is fully responsive and coherent, validating the user's positive experience with siblings while immediately linking it to the specific unresolved issues disclosed in C:T004 (questioning direction, parental argument). It avoids making unsubstantiated claims and asks a targeted question that invites further processing without pushing advice, meeting all constraints of the current turn."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "R002 affirms the user felt comfortable sharing with siblings. This is directly supported by C:T002 ('felt I could open up to them') and C:T000's mention of feeling different in a good way due to the siblings."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "R003 queries about the user's feeling on 'direction' and 'parents'. C:T004 explicitly discloses 'questioning my direction' and bringing up 'the argument between Mom and Dad', validating the terms used in the question."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the supporter's assertions regarding user comfort with siblings and the relevance of follow-up questions against the user's disclosures in the current session.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

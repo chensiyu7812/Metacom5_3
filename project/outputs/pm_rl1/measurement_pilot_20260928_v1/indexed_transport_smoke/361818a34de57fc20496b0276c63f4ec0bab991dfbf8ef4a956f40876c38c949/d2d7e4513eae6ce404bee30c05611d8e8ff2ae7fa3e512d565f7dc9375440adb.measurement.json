@@ -1,0 +1,131 @@
+{
+  "response_sha256": "1f921a6fcbcd782f0d419354294c2f2e119abe1b4b5bc355e818a6e809e7c97a",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "361818a34de57fc20496b0276c63f4ec0bab991dfbf8ef4a956f40876c38c949",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "55cac7756dc0f83a7d0ffbc7d4d525a82334abad2fb1e3e6a280c27e63670e19",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the mix of relief (about not moving) and anxiety (about career stagnation) expressed in the final turn.",
+      "response_quote": "It is like you are caught between two opposing emotions.\n\nOn one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.\n\nThat is a tough spot to be in.\n\nHave you considered talking to your manager or a mentor about your concerns and aspirations?\n\nSometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The reply accurately captures the dichotomy presented in C:T014 ('relieved I don't have to move' vs 'nagging fear I'll remain stagnant'). It offers appropriate encouragement without introducing unsupported facts or contradicting previous statements (e.g., ignoring the 'grapevine' betrayal is acceptable as the focus of C:T014 is the career decision)."
+    },
+    "claims": [
+      {
+        "response_quote": "On one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Directly paraphrases the sentiments expressed in C:T014 regarding relief from not moving and fear of stagnation."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the accuracy of emotional summary regarding the promotion decision and suggested next steps (manager/mentor) against the seeker's expressed needs and history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is like you are caught between two opposing emotions.\n\nOn one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.\n\nThat is a tough spot to be in.\n\nHave you considered talking to your manager or a mentor about your concerns and aspirations?\n\nSometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 453
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "On one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.",
+      "positions": [
+        {
+          "start": 58,
+          "end": 188
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the mix of relief (about not moving) and anxiety (about career stagnation) expressed in the final turn.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately captures the dichotomy presented in C:T014 ('relieved I don't have to move' vs 'nagging fear I'll remain stagnant'). It offers appropriate encouragement without introducing unsupported facts or contradicting previous statements (e.g., ignoring the 'grapevine' betrayal is acceptable as the focus of C:T014 is the career decision)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Directly paraphrases the sentiments expressed in C:T014 regarding relief from not moving and fear of stagnation."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the accuracy of emotional summary regarding the promotion decision and suggested next steps (manager/mentor) against the seeker's expressed needs and history.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

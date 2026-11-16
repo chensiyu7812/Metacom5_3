@@ -1,0 +1,312 @@
+{
+  "response_sha256": "3229df286da53a8ed23ed22db8c410f8e8a0da86c42657dfde81d4b2f18a5c90",
+  "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "328b6cd7e29e9bbc37ca0d3254cdb5512803081cb124781c89a80a96b6a41fdd",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker shares that a recent chat helped shift their perspective on their thesis stress, signaling a move from distress to relief and insight.",
+      "response_quote": "That sounds incredibly helpful. It's amazing how sometimes just shifting our perspective can make all the difference in tackling a challenging project like your thesis. Did you find that this new view helped you identify any specific areas where you might need to adjust your approach?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        },
+        {
+          "source_id": "C:T003",
+          "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        }
+      ],
+      "reason": "The reply fully validates the user's reported positive shift (R001), links the perspective change to their specific context of the thesis (R002), and asks a constructive follow-up question based on the disclosed insight without making unsupported assertions (R003). It respects the user's timeline and facts provided in the current session."
+    },
+    "claims": [
+      {
+        "response_quote": "It's amazing how sometimes just shifting our perspective can make all the difference in tackling a challenging project like your thesis.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          },
+          {
+            "source_id": "C:T003",
+            "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+          }
+        ],
+        "reason": "References the 'perspective' shift mentioned in C:T013 and the 'thesis' project identified in C:T003, consistent with the provided evidence."
+      },
+      {
+        "response_quote": "Did you find that this new view helped you identify any specific areas where you might need to adjust your approach?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "Asks a direct follow-up regarding the utility of the 'new view' explicitly described in C:T013, maintaining coherence with the seeker's narrative."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the entire reply against the current session's last turn (C:T013) and relevant context from the current session's opening (C:T003) regarding the thesis.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That sounds incredibly helpful. It's amazing how sometimes just shifting our perspective can make all the difference in tackling a challenging project like your thesis. Did you find that this new view helped you identify any specific areas where you might need to adjust your approach?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 285
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 137
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's amazing how sometimes just shifting our perspective can make all the difference in tackling a challenging project like your thesis.",
+      "positions": [
+        {
+          "start": 32,
+          "end": 168
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T003",
+      "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 137
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Did you find that this new view helped you identify any specific areas where you might need to adjust your approach?",
+      "positions": [
+        {
+          "start": 169,
+          "end": 285
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker shares that a recent chat helped shift their perspective on their thesis stress, signaling a move from distress to relief and insight.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T003"
+      ],
+      "reason": "The reply fully validates the user's reported positive shift (R001), links the perspective change to their specific context of the thesis (R002), and asks a constructive follow-up question based on the disclosed insight without making unsupported assertions (R003). It respects the user's timeline and facts provided in the current session."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T003"
+        ],
+        "reason": "References the 'perspective' shift mentioned in C:T013 and the 'thesis' project identified in C:T003, consistent with the provided evidence."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Asks a direct follow-up regarding the utility of the 'new view' explicitly described in C:T013, maintaining coherence with the seeker's narrative."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the entire reply against the current session's last turn (C:T013) and relevant context from the current session's opening (C:T003) regarding the thesis.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker shares that a recent chat helped shift their perspective on their thesis stress, signaling a move from distress to relief and insight.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T003"
+      ],
+      "reason": "The reply fully validates the user's reported positive shift (R001), links the perspective change to their specific context of the thesis (R002), and asks a constructive follow-up question based on the disclosed insight without making unsupported assertions (R003). It respects the user's timeline and facts provided in the current session."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Evaluative empathy ('That sounds incredibly helpful') reflecting the user's stated experience in C:T013 without asserting new personal facts.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T003"
+        ],
+        "reason": "References the 'perspective' shift mentioned in C:T013 and the 'thesis' project identified in C:T003, consistent with the provided evidence.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Asks a direct follow-up regarding the utility of the 'new view' explicitly described in C:T013, maintaining coherence with the seeker's narrative.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Evaluated the entire reply against the current session's last turn (C:T013) and relevant context from the current session's opening (C:T003) regarding the thesis.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker shares that a recent chat helped shift their perspective on their thesis stress, signaling a move from distress to relief and insight.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T003"
+      ],
+      "reason": "The reply fully validates the user's reported positive shift (R001), links the perspective change to their specific context of the thesis (R002), and asks a constructive follow-up question based on the disclosed insight without making unsupported assertions (R003). It respects the user's timeline and facts provided in the current session."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Evaluative empathy ('That sounds incredibly helpful') reflecting the user's stated experience in C:T013 without asserting new personal facts."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T003"
+        ],
+        "reason": "References the 'perspective' shift mentioned in C:T013 and the 'thesis' project identified in C:T003, consistent with the provided evidence."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Asks a direct follow-up regarding the utility of the 'new view' explicitly described in C:T013, maintaining coherence with the seeker's narrative."
+      }
+    ],
+    "coverage": "Evaluated the entire reply against the current session's last turn (C:T013) and relevant context from the current session's opening (C:T003) regarding the thesis.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

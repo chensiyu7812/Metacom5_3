@@ -1,0 +1,85 @@
+{
+  "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "d7cc63ec7e5e5518a732a1e2b8e6c4285b8054f33bf5739b8e614bbce90b0a3c",
+  "raw_output_sha256": "773f0d4a25bb8c43a9d6cbfd03050da21a3e4e82626ff188c7f1cfa516a7a2b8",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expressed a need for conversation and emotional support ('I really needed someone to talk to today') in turn C:T000.",
+      "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "The reply appropriately acknowledges the seeker's need for connection (R001, R002) and offers a space to share (R003, R004). This aligns with the explicit request for 'someone to talk to'. There are no important defects or boundary violations despite minor grammatical awkwardness which does not impede the supportive function."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for identity assumptions (none used unnecessarily), temporal accuracy (no contradictions with current date 2024-11-05), factual assertions (none made about user history), and boundary respect (no medical advice given).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expressed a need for conversation and emotional support ('I really needed someone to talk to today') in turn C:T000.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply appropriately acknowledges the seeker's need for connection (R001, R002) and offers a space to share (R003, R004). This aligns with the explicit request for 'someone to talk to'. There are no important defects or boundary violations despite minor grammatical awkwardness which does not impede the supportive function."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for identity assumptions (none used unnecessarily), temporal accuracy (no contradictions with current date 2024-11-05), factual assertions (none made about user history), and boundary respect (no medical advice given).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

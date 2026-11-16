@@ -1,0 +1,115 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2689,
+      "reserved_prompt_tokens": 2817,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 407
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "2f4a47bb0bce572df0c115d6e0373388744569db0707e225fe6ae0761c60d6ef",
+    "prior_profile_sha256": "17de31dcbe94918e4ac9d043caac46a91699a25547f3a10b5ecb886d358765f4",
+    "request_payload_sha256": "b45e864d87510752be5359a021aef5fd0f3bde8d17a2ff684d302767fdf4ea9a"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p8",
+      "s": "p8_conv_7",
+      "p": [
+        {
+          "i": "mp_1",
+          "t": "durable_health_constraint",
+          "k": "current_alcohol_use_and_concern",
+          "v": "experienced a recent relapse by drinking at a family gathering due to overwhelming pressure",
+          "s": [
+            {
+              "i": "p8_conv_7:4"
+            }
+          ]
+        },
+        {
+          "i": "mp_2",
+          "t": "durable_health_constraint",
+          "k": "current_job_performance_and_work_stress",
+          "v": "actively considering strategies like boundary-setting and mediation to manage ongoing work stress and improve relationship with manager",
+          "s": [
+            {
+              "i": "p8_conv_7:14"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "me_1",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "reached out to Bob from AA meetings after relapsing at a family gathering",
+          "s": [
+            {
+              "i": "p8_conv_7:8"
+            }
+          ],
+          "a": "reached out to Bob",
+          "o": "Bob was supportive"
+        },
+        {
+          "i": "me_2",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "received reassurance from Bob that recovery is about progress, not perfection, after relapse",
+          "s": [
+            {
+              "i": "p8_conv_7:10"
+            }
+          ]
+        },
+        {
+          "i": "me_3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considered setting clearer boundaries with manager and using mediation to address work stress",
+          "s": [
+            {
+              "i": "p8_conv_7:14"
+            }
+          ]
+        },
+        {
+          "i": "me_4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "planned to re-evaluate workload and adopt proactive planning to manage work stress",
+          "s": [
+            {
+              "i": "p8_conv_7:16"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "6b137de5e5629bfab06d4d465841b8e101c5446580668fe8c555f01ac0980d50",
+    "usage": {
+      "prompt_tokens": 2691,
+      "completion_tokens": 541,
+      "total_tokens": 3232
+    },
+    "latency_ms": 6637.685016001342,
+    "provider_finish_reason": "stop"
+  }
+}

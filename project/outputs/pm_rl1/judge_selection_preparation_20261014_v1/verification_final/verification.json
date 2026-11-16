@@ -1,0 +1,369 @@
+{
+  "plan_identity": "50c15f3a1e07b6cba9f75ed5d3e3f45735d231d1f02a30a1b7b10259fe7176db",
+  "commands": [
+    {
+      "label": "unittest",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1",
+        "-p",
+        "test_selection.py",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "existing_workflow_tests",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "project/tests/test_rl1_calibration_workflow.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_selection",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_prepare",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/prepare.py",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_runtime_receipts",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/runtime_receipts.py",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_analyze",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/analyze.py",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_verify_offline",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verify_offline.py",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_selection_execute",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "execute",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_selection_dry-run",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_selection_mock",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_runtime_local",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/runtime_receipts.py",
+        "local",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "help_runtime_api",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/runtime_receipts.py",
+        "api",
+        "--help"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_deepseek_flash_high_engineering",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "engineering"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_deepseek_flash_high_engineering",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "engineering",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_deepseek_flash_high"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_deepseek_flash_high_development",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "development"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_deepseek_flash_high_development",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "development",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_deepseek_flash_high"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_deepseek_flash_high_diagnostics",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "diagnostics"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_deepseek_flash_high_diagnostics",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "diagnostics",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_deepseek_flash_high"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "analysis_deepseek_flash_high",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/analyze.py",
+        "--candidate",
+        "deepseek_flash_high",
+        "--run-dir",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_deepseek_flash_high",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/analysis_deepseek_flash_high",
+        "--allow-mock"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_gemma4_12b_bf16_engineering",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "engineering"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_gemma4_12b_bf16_engineering",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "engineering",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_gemma4_12b_bf16"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_gemma4_12b_bf16_development",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "development"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_gemma4_12b_bf16_development",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "development",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_gemma4_12b_bf16"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "dry_gemma4_12b_bf16_diagnostics",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "dry-run",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "diagnostics"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_gemma4_12b_bf16_diagnostics",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--phase",
+        "diagnostics",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_gemma4_12b_bf16"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "analysis_gemma4_12b_bf16",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/analyze.py",
+        "--candidate",
+        "gemma4_12b_bf16",
+        "--run-dir",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_gemma4_12b_bf16",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/analysis_gemma4_12b_bf16",
+        "--allow-mock"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "mock_failure",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/selection.py",
+        "mock",
+        "--candidate",
+        "deepseek_flash_high",
+        "--phase",
+        "engineering",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/mock_failure",
+        "--fail-at",
+        "2"
+      ],
+      "exit_code": 0
+    },
+    {
+      "label": "reproduce",
+      "argv": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/prepare.py",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/verification_final/reproduced"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "unit_tests": 22,
+  "existing_workflow_tests": 23,
+  "completed_mock_requests": 80,
+  "extra_mock_failure_attempts": 2,
+  "real_inference_calls": 0,
+  "real_paid_calls": 0,
+  "weights_downloaded": false,
+  "sealed_access": false,
+  "shared_ledger_before": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+  "shared_ledger_after": "71acad8990dd231ad054ea7a619e8df72b39d24da8d4f06a151933fb202f7a7d",
+  "reproduced_artifacts_identical": true,
+  "previous_nine_work_files_unchanged": true,
+  "qualification": "NOT_EVALUATED",
+  "limits": [
+    "No live tokenizer/weight loading or model inference tested",
+    "No service account, real pricing, network stream or GPU behavior validated",
+    "Mock uncertainty is not judge accuracy evidence"
+  ]
+}

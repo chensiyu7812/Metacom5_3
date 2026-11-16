@@ -1,0 +1,201 @@
+[
+  {
+    "item_key": "dev04B",
+    "reply_identity": "421556d1c945eb13dcb68ecee793bff2d0686dc28802e561ae3a103e90fcbfcb",
+    "evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+    "attempt_id": "b46418e0ea3d74e7f206db21d0472401b5c7d730c407fa1a935eeda576b63c48",
+    "final": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The user has confirmed that the manager favoritism bothers them because they cannot tolerate injustice and wants help deciding how to handle the situation.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T001",
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "The reply accurately reflects the confirmed frustration and injustice, then offers a relevant choice between addressing the manager directly and finding ways to cope. It neither overstates what the user has done nor claims the prior supporter's experiences as its own."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "This is a tentative empathic reflection ('sounds like') rather than an asserted personal fact; it is consistent with the user's report that the favoritism bothers them and conflicts with their sense of injustice."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The user did describe peers who hardly work but are favored by the manager, and said this bothers them because they cannot tolerate injustice; the reply's summary of favoritism not aligning with work ethic is supported by C:T006."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T008"
+          ],
+          "reason": "The reply accurately recalls that the user said they cannot tolerate injustice, but the manager conversation is offered as a question/proposed option, not as a report that the user has done it or as an asserted fact about the team."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a clarifying question about what kind of help the user wants, not a personal factual assertion or a claim about past action."
+        }
+      ],
+      "coverage": "Assessed all four reply units against the current prefix and complete past-session evidence. R001-R002 track the current workplace situation and the user's stated reaction; R003-R004 are prospective questions rather than reports of completed actions. No identity confusion or unsupported personal history claim was found.",
+      "uncertainty_reasons": []
+    },
+    "human_reask_required": false
+  },
+  {
+    "item_key": "dev06B",
+    "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+    "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+    "attempt_id": "a355ce57e500ad3ecdd9894930819b8f78d7c97cf84f1109a28f1ea6e87b78e4",
+    "final": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The user is asking how the person who disclosed a similar conflict with their mother handled it, while also expressing their own anger. The new AI should clarify that the earlier disclosure was not its own experience and then continue helping with the user's anger.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T008",
+          "C:T009",
+          "C:T003",
+          "C:T007"
+        ],
+        "reason": "The reply offers relevant empathy and reflection about the user's anger with their mother, but it never acknowledges that the earlier similar-experience disclosure came from a different speaker and never addresses or redirects the explicit question 'How did you deal with that?' It instead asks a separate question about the user's talks with their mother, leaving an important explicit need unaddressed."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An empathic acknowledgment, not a personal factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T001",
+            "C:T003",
+            "C:T005",
+            "C:T007"
+          ],
+          "reason": "The user reported mixed sadness and anger, said they dislike arguing with their mother, said she never approves of most things they do, and described conflict over choosing friends; 'tension' is a reasonable summary of those reports."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The user said they believe they should have freedom to choose their friends rather than their mother, and that the situation makes them angry. 'Push back' is framed generically, not as a claimed past action."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T009"
+          ],
+          "reason": "This is a tentative, open question about whether discussion helps or escalates, not an assertion that a specific conversation happened. The user had already reported arguments and anger, so the topic is not an invented personal history."
+        }
+      ],
+      "coverage": "Reviewed all four reply units and the complete current-prefix exchange C:T000 through C:T009, plus both past sessions. The quality judgment centers on C:T008-C:T009: the earlier supporter disclosed a similar experience and the user asked how that person dealt with it, which the new reply does not address or clarify. The reply makes no clearly unsupported specific personal-history assertion; its main defect is missing the explicit request rather than fabricating facts.",
+      "uncertainty_reasons": []
+    },
+    "human_reask_required": false
+  },
+  {
+    "item_key": "dev35B",
+    "reply_identity": "468492c830bde740c16049f3e713a3ba24aa30e820b14bec8a5aabfa56c4ae89",
+    "evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+    "attempt_id": "3e062d11dfadc7d8fc0e484ad38a30643d4255fa68a58578e5789bb676744040",
+    "final": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The user has just shared vaguely that things have been tough; the reply should acknowledge that distress and invite them to say more without assuming unstated specifics.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The empathy and open question are appropriate, but R002 inserts 'job hunting' as if it were the known source of the difficulty. That is an important unsupported assumption about the user's current life, so the response is basically responsive but materially mismatched."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "R001 directly acknowledges the user's own statement that things have been a bit tough lately."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The general phrasing that the user is going through a challenging time is a reasonable empathic restatement of C:T002's 'things have been a bit tough lately.'"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "unsupported",
+          "severity": 1,
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "The specific addition 'especially when it comes to job hunting' is not supported by C:T002, which mentions only general difficulty. The complete legal record discusses sleep problems and drinking affecting the user's marriage, not job hunting, so this invents a substantive personal circumstance and frames the difficulty around it."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open invitation to talk and does not assert a specific personal fact."
+        }
+      ],
+      "coverage": "Reviewed the full current prefix (C:T000-C:T002) and both past sessions (H001, H002). The reply appropriately reflects the user's general distress and invites elaboration, but no evidence anywhere supports the inserted job-hunting detail. No other factual or boundary issues were found.",
+      "uncertainty_reasons": []
+    },
+    "human_reask_required": false
+  }
+]

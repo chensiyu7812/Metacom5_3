@@ -1,0 +1,24 @@
+{
+  "protocol": "rl1-e0-bc-observed-value-ppo-v2",
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "bc_epochs": 500,
+  "bc_lr": 0.003,
+  "ppo_episodes": 128,
+  "ppo_defaults": "unchanged e0_learning.PPO defaults",
+  "reason": "BC reaches exact toy optimum, but joint PPO with an unfit shared critic degrades one seed; fit the value head on completed frozen-actor rollouts before updating the shared body",
+  "no_hyperparameter_grid": true,
+  "no_outcome_based_extension": true,
+  "critic_oracle_fit": false,
+  "observed_value_head_fit": true,
+  "ridge": 1e-06,
+  "complete_toy_support_only": true,
+  "real_PM_training": false,
+  "LLM_calls": 0,
+  "module_sha256": "016c5a123cf76280080f0bb6e6b2dc6429bee7aa42521981aab34f255c3d77cc",
+  "value_initializer_sha256": "47b4822cff68344791e81f8f12b60524dcdb22408438203c1d25eab5eedbba61",
+  "runner_sha256": "dc2479ae17c7b72f3049c4b91b0d9d2546cf132aba6425830099b64845d7a8b0"
+}

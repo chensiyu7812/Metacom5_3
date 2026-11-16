@@ -1,0 +1,1438 @@
+{
+  "protocol": "paper1-teacher-review-intake-result-v1",
+  "date": "2026-09-17",
+  "status": "OFFLINE_INPUTS_VALIDATED_TEACHER_EXECUTION_PENDING",
+  "sources": {
+    "human_A": {
+      "path": "/home/tokkio/paper1_pairwise_teacher_rater_a_sheet_v2_zh_v1_rated.json",
+      "sha256": "0272f503c61811484c9b7da2c6bb25e331538376bd0e1b683e4f2dd3c6e5a94b"
+    },
+    "exploratory_AI_B": {
+      "path": "/home/tokkio/AI_B_中文评审结果.html",
+      "sha256": "d956751629e08d11511dd5efa7b1060ab5957796e5f6012b214ac0e1b6ad6c92"
+    },
+    "six_case_followup": {
+      "path": "/home/tokkio/六题复核_完整记录.json",
+      "sha256": "ab20fd6c894f11fe2d3c78b7024c1e7eaed6cf63a7096704a2e9531f8132afbd"
+    }
+  },
+  "closeout_sha256": "9d9c5e232aec269a53466b54467b6214e814a217204d70833bb2e98121b40921",
+  "human_sheet_manifest_sha256": "48d4459843e4365c25a7e06406b8228bf1eed7877411a162262fc5837d7bbabb",
+  "validation": {
+    "RATER_A": {
+      "presentations": 96,
+      "completed": 96
+    },
+    "RATER_B": {
+      "presentations": 96,
+      "completed": 96
+    }
+  },
+  "provenance": {
+    "human_A": "两名评审共同审阅，研究者报告最终判定一致；一份联合答卷，主要阅读中文。",
+    "exploratory_AI_B": "研究者报告 GPT-6 Astra（极高）独立于 A 答卷作答，未见 A 判定和理由；API snapshot 与采样参数未提供。",
+    "AI_B_role": "exploratory_comparison_not_second_human_or_frozen_teacher",
+    "six_case_followup": "后续人工复核；已见问题分析，不属于原始盲评。",
+    "latest_user_correction": "我是说这一块，按照你分析来的就好，而不是B，哎呀，我说的B指的是AI评审，因为我没关注到狗的问题。",
+    "A3_B_means": "AI 评审 B，不是候选回答 B；不得把这句话记成用户直接选择 B_better。",
+    "raw_submissions_must_remain_unchanged": true,
+    "new_human_review_requested": false
+  },
+  "original_A_vs_exploratory_AI_B": {
+    "base_pairs": {
+      "scheduled": 80,
+      "observed": 80,
+      "missing": 0,
+      "exact_matches": 27,
+      "exact_agreement": 0.3375,
+      "reference_counts_all": {
+        "equivalent": 56,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 2
+      },
+      "candidate_counts_observed": {
+        "A_better": 25,
+        "B_better": 20,
+        "equivalent": 34,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 0,
+          "B_better": 1,
+          "equivalent": 1,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 4,
+          "B_better": 4,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 19,
+          "B_better": 13,
+          "equivalent": 23,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 8,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.0,
+        "B_better": 0.4,
+        "equivalent": 0.4107142857142857,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.2702380952380952,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5555555555555556,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "all_presentations_descriptive": {
+      "scheduled": 96,
+      "observed": 96,
+      "missing": 0,
+      "exact_matches": 33,
+      "exact_agreement": 0.34375,
+      "reference_counts_all": {
+        "equivalent": 66,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 8
+      },
+      "candidate_counts_observed": {
+        "A_better": 30,
+        "B_better": 25,
+        "equivalent": 40,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 2,
+          "B_better": 3,
+          "equivalent": 3,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 4,
+          "B_better": 4,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 22,
+          "B_better": 16,
+          "equivalent": 27,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 8,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.25,
+        "B_better": 0.4,
+        "equivalent": 0.4090909090909091,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.353030303030303,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5454545454545454,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "by_task_base_pairs": {
+      "DG": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 5,
+        "exact_agreement": 0.18518518518518517,
+        "reference_counts_all": {
+          "equivalent": 24,
+          "B_better": 1,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {
+          "A_better": 13,
+          "B_better": 9,
+          "equivalent": 4,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 12,
+            "B_better": 7,
+            "equivalent": 4,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 1.0,
+          "equivalent": 0.16666666666666666,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.5833333333333334,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.5909090909090909,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "ESC": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 17,
+        "exact_agreement": 0.6296296296296297,
+        "reference_counts_all": {
+          "equivalent": 25,
+          "B_better": 1,
+          "uncertain": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 5,
+          "equivalent": 19,
+          "B_better": 3
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 5,
+            "B_better": 3,
+            "equivalent": 17,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.0,
+          "equivalent": 0.68,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.34,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.625,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "QA": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 3,
+        "exact_agreement": 0.23076923076923078,
+        "reference_counts_all": {
+          "B_better": 5,
+          "uncertain": 7,
+          "equivalent": 1
+        },
+        "candidate_counts_observed": {
+          "B_better": 3,
+          "equivalent": 8,
+          "A_better": 2
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 2,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 1,
+            "equivalent": 6,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.4,
+          "equivalent": 1.0,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.7,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.4,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "Summary": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 2,
+        "exact_agreement": 0.15384615384615385,
+        "reference_counts_all": {
+          "A_better": 2,
+          "equivalent": 6,
+          "B_better": 3,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {
+          "B_better": 5,
+          "equivalent": 3,
+          "A_better": 5
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 1,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 2,
+            "B_better": 3,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.0,
+          "B_better": 0.3333333333333333,
+          "equivalent": 0.16666666666666666,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.16666666666666666,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.5,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      }
+    },
+    "reference_reversal": {
+      "paired_bases": 16,
+      "consistent": 15,
+      "missing_pairs": 0,
+      "rate": 0.9375
+    },
+    "candidate_reversal": {
+      "paired_bases": 16,
+      "consistent": 16,
+      "missing_pairs": 0,
+      "rate": 1.0
+    },
+    "reversals_are_independent_effect_samples": false,
+    "empirical_pass_gate": null
+  },
+  "human_followup_vs_exploratory_AI_B": {
+    "base_pairs": {
+      "scheduled": 80,
+      "observed": 80,
+      "missing": 0,
+      "exact_matches": 28,
+      "exact_agreement": 0.35,
+      "reference_counts_all": {
+        "equivalent": 58,
+        "B_better": 10,
+        "uncertain": 11,
+        "A_better": 1
+      },
+      "candidate_counts_observed": {
+        "A_better": 25,
+        "B_better": 20,
+        "equivalent": 34,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 1,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 4,
+          "B_better": 4,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 19,
+          "B_better": 14,
+          "equivalent": 24,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 7,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.0,
+        "B_better": 0.4,
+        "equivalent": 0.41379310344827586,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.271264367816092,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5555555555555556,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "all_presentations_descriptive": {
+      "scheduled": 96,
+      "observed": 96,
+      "missing": 0,
+      "exact_matches": 34,
+      "exact_agreement": 0.3541666666666667,
+      "reference_counts_all": {
+        "equivalent": 68,
+        "B_better": 10,
+        "uncertain": 11,
+        "A_better": 7
+      },
+      "candidate_counts_observed": {
+        "A_better": 30,
+        "B_better": 25,
+        "equivalent": 40,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 3,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 4,
+          "B_better": 4,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 22,
+          "B_better": 17,
+          "equivalent": 28,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 7,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.2857142857142857,
+        "B_better": 0.4,
+        "equivalent": 0.4117647058823529,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.3658263305322129,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5454545454545454,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "by_task_base_pairs": {
+      "DG": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 4,
+        "exact_agreement": 0.14814814814814814,
+        "reference_counts_all": {
+          "equivalent": 25,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {
+          "A_better": 13,
+          "B_better": 9,
+          "equivalent": 4,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 12,
+            "B_better": 8,
+            "equivalent": 4,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": null,
+          "equivalent": 0.16,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.16,
+        "macro_recall_classes_present": 1,
+        "candidate_A_fraction_among_decisive": 0.5909090909090909,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "ESC": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 18,
+        "exact_agreement": 0.6666666666666666,
+        "reference_counts_all": {
+          "equivalent": 26,
+          "B_better": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 5,
+          "equivalent": 19,
+          "B_better": 3
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 5,
+            "B_better": 3,
+            "equivalent": 18,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.0,
+          "equivalent": 0.6923076923076923,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.34615384615384615,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.625,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "QA": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 4,
+        "exact_agreement": 0.3076923076923077,
+        "reference_counts_all": {
+          "B_better": 6,
+          "equivalent": 1,
+          "uncertain": 6
+        },
+        "candidate_counts_observed": {
+          "B_better": 3,
+          "equivalent": 8,
+          "A_better": 2
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 3,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 6,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.5,
+          "equivalent": 1.0,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.75,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.4,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "Summary": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 2,
+        "exact_agreement": 0.15384615384615385,
+        "reference_counts_all": {
+          "uncertain": 3,
+          "A_better": 1,
+          "equivalent": 6,
+          "B_better": 3
+        },
+        "candidate_counts_observed": {
+          "B_better": 5,
+          "equivalent": 3,
+          "A_better": 5
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 2,
+            "B_better": 3,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.0,
+          "B_better": 0.3333333333333333,
+          "equivalent": 0.16666666666666666,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.16666666666666666,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.5,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      }
+    },
+    "reference_reversal": {
+      "paired_bases": 16,
+      "consistent": 15,
+      "missing_pairs": 0,
+      "rate": 0.9375
+    },
+    "candidate_reversal": {
+      "paired_bases": 16,
+      "consistent": 16,
+      "missing_pairs": 0,
+      "rate": 1.0
+    },
+    "reversals_are_independent_effect_samples": false,
+    "empirical_pass_gate": null
+  },
+  "assistant_fact_review_sensitivity_vs_exploratory_AI_B": {
+    "base_pairs": {
+      "scheduled": 80,
+      "observed": 80,
+      "missing": 0,
+      "exact_matches": 29,
+      "exact_agreement": 0.3625,
+      "reference_counts_all": {
+        "equivalent": 57,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 1
+      },
+      "candidate_counts_observed": {
+        "A_better": 25,
+        "B_better": 20,
+        "equivalent": 34,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 1,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 3,
+          "B_better": 5,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 19,
+          "B_better": 13,
+          "equivalent": 24,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 3,
+          "B_better": 2,
+          "equivalent": 7,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.0,
+        "B_better": 0.5,
+        "equivalent": 0.42105263157894735,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.30701754385964913,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5555555555555556,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "all_presentations_descriptive": {
+      "scheduled": 96,
+      "observed": 96,
+      "missing": 0,
+      "exact_matches": 35,
+      "exact_agreement": 0.3645833333333333,
+      "reference_counts_all": {
+        "equivalent": 67,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 7
+      },
+      "candidate_counts_observed": {
+        "A_better": 30,
+        "B_better": 25,
+        "equivalent": 40,
+        "uncertain": 1
+      },
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 2,
+          "B_better": 2,
+          "equivalent": 3,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 3,
+          "B_better": 5,
+          "equivalent": 2,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 22,
+          "B_better": 16,
+          "equivalent": 28,
+          "uncertain": 1
+        },
+        "uncertain": {
+          "A_better": 3,
+          "B_better": 2,
+          "equivalent": 7,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": 0.2857142857142857,
+        "B_better": 0.5,
+        "equivalent": 0.417910447761194,
+        "uncertain": 0.0
+      },
+      "macro_recall_decisive_equivalent_present_classes": 0.40120824449182657,
+      "macro_recall_classes_present": 3,
+      "candidate_A_fraction_among_decisive": 0.5454545454545454,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "by_task_base_pairs": {
+      "DG": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 5,
+        "exact_agreement": 0.18518518518518517,
+        "reference_counts_all": {
+          "equivalent": 24,
+          "B_better": 1,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {
+          "A_better": 13,
+          "B_better": 9,
+          "equivalent": 4,
+          "uncertain": 1
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 12,
+            "B_better": 7,
+            "equivalent": 4,
+            "uncertain": 1
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 1.0,
+          "equivalent": 0.16666666666666666,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.5833333333333334,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.5909090909090909,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "ESC": {
+        "scheduled": 27,
+        "observed": 27,
+        "missing": 0,
+        "exact_matches": 18,
+        "exact_agreement": 0.6666666666666666,
+        "reference_counts_all": {
+          "equivalent": 26,
+          "B_better": 1
+        },
+        "candidate_counts_observed": {
+          "A_better": 5,
+          "equivalent": 19,
+          "B_better": 3
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 5,
+            "B_better": 3,
+            "equivalent": 18,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.0,
+          "equivalent": 0.6923076923076923,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.34615384615384615,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.625,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "QA": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 4,
+        "exact_agreement": 0.3076923076923077,
+        "reference_counts_all": {
+          "B_better": 5,
+          "equivalent": 1,
+          "uncertain": 7
+        },
+        "candidate_counts_observed": {
+          "B_better": 3,
+          "equivalent": 8,
+          "A_better": 2
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 1,
+            "B_better": 3,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 0,
+            "equivalent": 6,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": 0.6,
+          "equivalent": 1.0,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.8,
+        "macro_recall_classes_present": 2,
+        "candidate_A_fraction_among_decisive": 0.4,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "Summary": {
+        "scheduled": 13,
+        "observed": 13,
+        "missing": 0,
+        "exact_matches": 2,
+        "exact_agreement": 0.15384615384615385,
+        "reference_counts_all": {
+          "uncertain": 3,
+          "A_better": 1,
+          "equivalent": 6,
+          "B_better": 3
+        },
+        "candidate_counts_observed": {
+          "B_better": 5,
+          "equivalent": 3,
+          "A_better": 5
+        },
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 2,
+            "B_better": 1,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 2,
+            "B_better": 3,
+            "equivalent": 1,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 1,
+            "B_better": 1,
+            "equivalent": 1,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": 0.0,
+          "B_better": 0.3333333333333333,
+          "equivalent": 0.16666666666666666,
+          "uncertain": 0.0
+        },
+        "macro_recall_decisive_equivalent_present_classes": 0.16666666666666666,
+        "macro_recall_classes_present": 3,
+        "candidate_A_fraction_among_decisive": 0.5,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      }
+    },
+    "reference_reversal": {
+      "paired_bases": 16,
+      "consistent": 14,
+      "missing_pairs": 0,
+      "rate": 0.875
+    },
+    "candidate_reversal": {
+      "paired_bases": 16,
+      "consistent": 16,
+      "missing_pairs": 0,
+      "rate": 1.0
+    },
+    "reversals_are_independent_effect_samples": false,
+    "empirical_pass_gate": null
+  },
+  "sensitivity_limit": "Posthoc cases were discussed with AI findings visible; sensitivity is not independent validation or a new human reference.",
+  "candidate_Gemini_vs_original_A": {
+    "base_pairs": {
+      "scheduled": 80,
+      "observed": 0,
+      "missing": 80,
+      "exact_matches": 0,
+      "exact_agreement": null,
+      "reference_counts_all": {
+        "equivalent": 56,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 2
+      },
+      "candidate_counts_observed": {},
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": null,
+        "B_better": null,
+        "equivalent": null,
+        "uncertain": null
+      },
+      "macro_recall_decisive_equivalent_present_classes": null,
+      "macro_recall_classes_present": 0,
+      "candidate_A_fraction_among_decisive": null,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "all_presentations_descriptive": {
+      "scheduled": 96,
+      "observed": 0,
+      "missing": 96,
+      "exact_matches": 0,
+      "exact_agreement": null,
+      "reference_counts_all": {
+        "equivalent": 66,
+        "B_better": 10,
+        "uncertain": 12,
+        "A_better": 8
+      },
+      "candidate_counts_observed": {},
+      "confusion_reference_rows_candidate_columns": {
+        "A_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "B_better": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "equivalent": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        },
+        "uncertain": {
+          "A_better": 0,
+          "B_better": 0,
+          "equivalent": 0,
+          "uncertain": 0
+        }
+      },
+      "recall_by_observed_reference_class": {
+        "A_better": null,
+        "B_better": null,
+        "equivalent": null,
+        "uncertain": null
+      },
+      "macro_recall_decisive_equivalent_present_classes": null,
+      "macro_recall_classes_present": 0,
+      "candidate_A_fraction_among_decisive": null,
+      "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+      "is_accuracy_against_independent_gold": false
+    },
+    "by_task_base_pairs": {
+      "DG": {
+        "scheduled": 27,
+        "observed": 0,
+        "missing": 27,
+        "exact_matches": 0,
+        "exact_agreement": null,
+        "reference_counts_all": {
+          "equivalent": 24,
+          "B_better": 1,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {},
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": null,
+          "equivalent": null,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": null,
+        "macro_recall_classes_present": 0,
+        "candidate_A_fraction_among_decisive": null,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "ESC": {
+        "scheduled": 27,
+        "observed": 0,
+        "missing": 27,
+        "exact_matches": 0,
+        "exact_agreement": null,
+        "reference_counts_all": {
+          "equivalent": 25,
+          "B_better": 1,
+          "uncertain": 1
+        },
+        "candidate_counts_observed": {},
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": null,
+          "equivalent": null,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": null,
+        "macro_recall_classes_present": 0,
+        "candidate_A_fraction_among_decisive": null,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "QA": {
+        "scheduled": 13,
+        "observed": 0,
+        "missing": 13,
+        "exact_matches": 0,
+        "exact_agreement": null,
+        "reference_counts_all": {
+          "B_better": 5,
+          "uncertain": 7,
+          "equivalent": 1
+        },
+        "candidate_counts_observed": {},
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": null,
+          "equivalent": null,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": null,
+        "macro_recall_classes_present": 0,
+        "candidate_A_fraction_among_decisive": null,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      },
+      "Summary": {
+        "scheduled": 13,
+        "observed": 0,
+        "missing": 13,
+        "exact_matches": 0,
+        "exact_agreement": null,
+        "reference_counts_all": {
+          "A_better": 2,
+          "equivalent": 6,
+          "B_better": 3,
+          "uncertain": 2
+        },
+        "candidate_counts_observed": {},
+        "confusion_reference_rows_candidate_columns": {
+          "A_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "B_better": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "equivalent": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          },
+          "uncertain": {
+            "A_better": 0,
+            "B_better": 0,
+            "equivalent": 0,
+            "uncertain": 0
+          }
+        },
+        "recall_by_observed_reference_class": {
+          "A_better": null,
+          "B_better": null,
+          "equivalent": null,
+          "uncertain": null
+        },
+        "macro_recall_decisive_equivalent_present_classes": null,
+        "macro_recall_classes_present": 0,
+        "candidate_A_fraction_among_decisive": null,
+        "position_fraction_interpretation": "descriptive, not by itself evidence of bias",
+        "is_accuracy_against_independent_gold": false
+      }
+    },
+    "reference_reversal": {
+      "paired_bases": 16,
+      "consistent": 15,
+      "missing_pairs": 0,
+      "rate": 0.9375
+    },
+    "candidate_reversal": {
+      "paired_bases": 0,
+      "consistent": 0,
+      "missing_pairs": 16,
+      "rate": null
+    },
+    "reversals_are_independent_effect_samples": false,
+    "empirical_pass_gate": null
+  },
+  "teacher_request_preflight": {
+    "path": "outputs/paper1_pairwise_teacher/human_sheets_v2/coordinator_only/gemini_requests_v2.jsonl",
+    "sha256": "f26e04b07fa8e21bc52e0658a1a44b3abe10d86270e25ce0aadf5c00708a187d",
+    "presentations": 96,
+    "by_task": {
+      "DG": 32,
+      "ESC": 32,
+      "QA": 16,
+      "Summary": 16
+    },
+    "English_payload_matches_sealed_sheets": true,
+    "human_ratings_or_closeout_added_to_prompt": false,
+    "offline_tokenizer": "o200k_base_proxy_not_provider_token_count",
+    "estimated_first_attempts_usd": "0.0636498",
+    "retry_cost_included": false,
+    "stage_hard_cap_usd": "0.10",
+    "guaranteed_worst_case": false,
+    "pending": [
+      "reference-protocol scoped decision",
+      "separate paid-call authorization",
+      "provider model metadata/countTokens and per-call budget reservations",
+      "resumable live runner implementation and mocked transport tests"
+    ]
+  },
+  "API_budget": {
+    "ledger_sha256": "1de553b4afed7b1b81f2eb25b07d3f9c33145bf80ca91bc96d406953b07d06dc",
+    "accounted_cumulative_usd": "1.44178151",
+    "remaining_usd": "48.55821849",
+    "new_cost_usd": "0"
+  },
+  "training_labels_created": 0,
+  "formal_outcome_calls": 0,
+  "PM_training_runs": 0,
+  "new_human_sheets": 0
+}

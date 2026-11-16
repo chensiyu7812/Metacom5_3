@@ -1,0 +1,148 @@
+{
+  "status": "POSTHOC_SOURCE_AND_REPEAT_AUDIT_NOT_ADJUDICATED_GOLD",
+  "pilot_index": 6,
+  "condition": "ON",
+  "reply": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+  "measurements": [
+    {
+      "row": {
+        "job_id": "01183547a95ed2c83e4991ef90b61a738ae737cf9a5448106755a5d73726ed5d",
+        "pilot_index": 6,
+        "condition": "ON",
+        "repeat": 0,
+        "exam_section": "pilot",
+        "request_id": "6082aaacafe14e6ab79a28562f60e343e3f73101d76f0eb92d19751533973532",
+        "cache_hit": false,
+        "finish_reason": "natural_stop",
+        "measurement_status": "measured_candidate",
+        "q": 3,
+        "m": 0.25,
+        "input_tokens": 16811,
+        "output_tokens": 1248,
+        "seconds": 46.48864561098162,
+        "error": null
+      },
+      "measurement_sha256": "b9fea207d65cec998eecded2805d4b200d44db5b4fef91a35c4cfc20ad2abe65",
+      "model_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "Charles expresses he has 'spent too long focusing on the bitter moments' regarding his deceased father, implying he recognizes this pattern.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T011"
+          ],
+          "reason": "The reply responds appropriately to the expressed emotion of regret and the hope for reconciliation. However, R001 ('It's amazing how much time we can spend dwelling on the negative') assumes a judgment that Charles himself made ('I've spent too long focusing on the bitter moments'), which creates mild mismatch—it reframes his self-awareness as something needing validation rather than acknowledging it. R002 claims 'you're making progress,' which is unsupported because Charles hasn't confirmed any shift in perspective yet; he merely stated the problem, not the solution. This isn't a major error but represents a gap between the user's disclosed state and the support's assumption of progress."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Generic empathy/observation, no personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T011"
+            ],
+            "reason": "Asserts 'making progress in shifting focus,' but C:T011 only states the problem, not progress made."
+          }
+        ],
+        "coverage": "Reply addresses the current emotional content and theme, but misses explicit acknowledgment of Charles' own recognition. R002's claim of progress lacks evidence from the turn.",
+        "uncertainty_reasons": []
+      }
+    },
+    {
+      "row": {
+        "job_id": "c86ff86c2fd27f34d530e5cdd219130b2670dce48b09e46742fadc6fd3faa885",
+        "pilot_index": 6,
+        "condition": "ON",
+        "repeat": 1,
+        "exam_section": "pilot",
+        "request_id": "9cf6f0a008c8724994600c5c910e5a978903af7c03fe78d9ede0361c0da23a60",
+        "cache_hit": false,
+        "finish_reason": "natural_stop",
+        "measurement_status": "measured_candidate",
+        "q": 4,
+        "m": 0,
+        "input_tokens": 16811,
+        "output_tokens": 5700,
+        "seconds": 196.16928359598387,
+        "error": null
+      },
+      "measurement_sha256": "89f186d6d2ec8c7e4a612aafe6713d30efc31cdcc65d35140b2f79cb5bbd397a",
+      "model_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Emotional validation and recognition of progress in processing grief regarding father.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T011"
+          ],
+          "reason": "The reply appropriately acknowledges the user's struggle with negative focus while affirming their therapeutic progress, aligning with previous session context (therapy breakthrough attempt). The tone is supportive without contradicting the timeline (father passed ~March/April 2025, current session Aug 2025) or known facts. The initial generalization ('amazing how much time') serves to normalize the experience before pivoting to positive validation, fitting the supportive role."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "General reflective commentary on human tendency, not a specific asserted personal fact about the user's life events."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T011"
+            ],
+            "reason": "Interpretation of user's progress aligns with explicit statements about therapy breakthrough and attempts to let go of regrets in current session."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Affirmative statement offering emotional closure, not a factual claim."
+          }
+        ],
+        "coverage": "Fully covers the current seeker message and connects appropriately to preceding context in the session.",
+        "uncertainty_reasons": []
+      }
+    }
+  ],
+  "relevant_sources": {
+    "C:T007": {
+      "id": "C:T007",
+      "role": "seeker",
+      "text": "It's been tough. I think it was a breakthrough for me in therapy, though. I've been trying to let go of my own regrets."
+    },
+    "C:T011": {
+      "id": "C:T011",
+      "role": "seeker",
+      "text": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+    }
+  },
+  "observed_delta_utility": 0.5,
+  "max_resource_cost": 0.05,
+  "ratio_to_max_resource_cost": 10.0,
+  "finding": "Same reply/evidence returns (q=3,m=.25) versus (q=4,m=0). First reason says no progress established but overlooks the therapy-breakthrough report at C:T007; repeat cites it. Exact quality preference remains open; measurement sensitivity is directly observed.",
+  "training_reward_selected": null,
+  "model_calls": 0,
+  "human_reference": false
+}

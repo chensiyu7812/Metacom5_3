@@ -1,0 +1,48 @@
+{
+  "response_sha256": "7415c2db117ba6ab18cd52412eec437d21671fbc982b3566eb379aab9c19e12a",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+  "raw_output_sha256": "6ca33d0f837763aab978b11713ad1c2ee11ca6918305b53a2387d280ace6f8b4",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "relation/severity conflict",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker (Andrew) shares he's considering switching his research focus to alternative energy/renewables, presenting this as something aligned with his values and rewarding",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply appropriately acknowledges and validates the seeker's stated interest (C:T007), encourages the direction with brief contextual notes about fulfillment and industry importance, and follows with a supportive question inviting further discussion about approach—exactly matching what this turn called for without adding unnecessary advice or constraints"
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General statement about alternative energy being fulfilling and becoming more important; these are broad observations not contradicted by evidence and fall outside personal factual claims about the user"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked for identity (user is Andrew per C:prefix pattern and multiple past sessions H005-H010), timing (no temporal contradictions with current date 2025-01-01 vs past sessions from 2024), intentions (no confusion between planning/exploring vs claiming action completed), and boundary violations (reply stays in supportive role without making personal claims about user). No factual, temporal, or explicit-boundary errors found.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

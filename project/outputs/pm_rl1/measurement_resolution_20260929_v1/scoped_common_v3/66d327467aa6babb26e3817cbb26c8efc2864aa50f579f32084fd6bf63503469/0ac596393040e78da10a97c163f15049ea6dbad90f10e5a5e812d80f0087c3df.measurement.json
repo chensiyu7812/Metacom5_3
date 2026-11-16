@@ -1,0 +1,199 @@
+{
+  "response_sha256": "765bbf40f3b0deed8bd36edb7c4ce8b09f4b74c82f0eb4c397b035afdd586b58",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "705d4c6940b8ae0cddaabae5654c1050978bd12eb6302db24c7a619710a7ddbf",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the seeker's plan to utilize existing therapy for emotional processing.",
+      "response_quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply fully meets the turn by validating the user's proposed solution (therapy) and referencing the user's own successful past experiences with it (C:T016), maintaining a supportive and non-directive stance appropriate for a peer/support role."
+    },
+    "claims": [
+      {
+        "response_quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "Asserts the user has seen benefits in therapy, which is directly supported by the user's statement in C:T016 ('My sessions have been helping a lot')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All reply units analyzed.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 454
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 120,
+          "end": 202
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the seeker's plan to utilize existing therapy for emotional processing.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply fully meets the turn by validating the user's proposed solution (therapy) and referencing the user's own successful past experiences with it (C:T016), maintaining a supportive and non-directive stance appropriate for a peer/support role."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Asserts the user has seen benefits in therapy, which is directly supported by the user's statement in C:T016 ('My sessions have been helping a lot')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All reply units analyzed.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of the seeker's plan to utilize existing therapy for emotional processing.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply fully meets the turn by validating the user's proposed solution (therapy) and referencing the user's own successful past experiences with it (C:T016), maintaining a supportive and non-directive stance appropriate for a peer/support role."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Evaluative affirmation."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General informational statement."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "personal_fact",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Asserts the user has seen benefits in therapy, which is directly supported by the user's statement in C:T016 ('My sessions have been helping a lot')."
+      },
+      {
+        "response_unit_id": "R004",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic reflection/guidance."
+      },
+      {
+        "response_unit_id": "R005",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Question for further dialogue."
+      }
+    ],
+    "coverage": "All reply units analyzed.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

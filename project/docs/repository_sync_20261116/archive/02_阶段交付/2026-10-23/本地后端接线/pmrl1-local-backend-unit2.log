@@ -1,0 +1,71 @@
+..........FF                                                             [100%]
+=================================== FAILURES ===================================
+___________ test_complete_fixed_probe_is_source_bound_and_idempotent ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-42/test_complete_fixed_probe_is_s0')
+
+    def test_complete_fixed_probe_is_source_bound_and_idempotent(tmp_path):
+        from metacom_pm.rl1.local_integration import run_probe
+>       p,cases,episodes,b,events=probe_fixture(tmp_path)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_rl1_local_backend.py:174: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-42/test_complete_fixed_probe_is_s0')
+
+    def probe_fixture(tmp_path):
+        from dataclasses import asdict
+        from metacom_pm.rl1.local_integration import trace,select_cases
+        from metacom_pm.rl1.learning_preparation import TerminalCandidate
+        from metacom_pm.rl1.schema import HEADS,PublicTurn
+        b,_,_,_,events,spec,r=setup(tmp_path)
+        episodes={};candidates=[]
+        for i,head in enumerate(HEADS):
+            s=replace(spec,prefix=replace(spec.prefix,session_id=f'MOCK_{i}',
+                turns=(PublicTurn('seeker',f'MOCK public question {i}'),)))
+            episodes[s.prefix.identity]=(s,r)
+            _,requests=trace(s,r,head)
+            for req in requests:
+>               candidates.append(TerminalCandidate(s.prefix.identity,'train',tuple(req['provenance']['counts']),
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    0,req['request_id'],digest('MOCK prior'),'MOCK evidence',s.executor_identity,r.identity))
+E               KeyError: 'counts'
+
+tests/test_rl1_local_backend.py:160: KeyError
+______________ test_probe_rejects_source_change_before_any_loader ______________
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-42/test_probe_rejects_source_chan0')
+
+    def test_probe_rejects_source_change_before_any_loader(tmp_path):
+        from metacom_pm.rl1.local_integration import run_probe
+>       p,cases,episodes,b,events=probe_fixture(tmp_path)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_rl1_local_backend.py:186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-42/test_probe_rejects_source_chan0')
+
+    def probe_fixture(tmp_path):
+        from dataclasses import asdict
+        from metacom_pm.rl1.local_integration import trace,select_cases
+        from metacom_pm.rl1.learning_preparation import TerminalCandidate
+        from metacom_pm.rl1.schema import HEADS,PublicTurn
+        b,_,_,_,events,spec,r=setup(tmp_path)
+        episodes={};candidates=[]
+        for i,head in enumerate(HEADS):
+            s=replace(spec,prefix=replace(spec.prefix,session_id=f'MOCK_{i}',
+                turns=(PublicTurn('seeker',f'MOCK public question {i}'),)))
+            episodes[s.prefix.identity]=(s,r)
+            _,requests=trace(s,r,head)
+            for req in requests:
+>               candidates.append(TerminalCandidate(s.prefix.identity,'train',tuple(req['provenance']['counts']),
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    0,req['request_id'],digest('MOCK prior'),'MOCK evidence',s.executor_identity,r.identity))
+E               KeyError: 'counts'
+
+tests/test_rl1_local_backend.py:160: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_rl1_local_backend.py::test_complete_fixed_probe_is_source_bound_and_idempotent
+FAILED tests/test_rl1_local_backend.py::test_probe_rejects_source_change_before_any_loader

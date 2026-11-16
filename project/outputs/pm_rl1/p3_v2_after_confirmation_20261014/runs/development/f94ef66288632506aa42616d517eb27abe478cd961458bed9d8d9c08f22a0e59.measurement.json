@@ -1,0 +1,474 @@
+{
+  "response_sha256": "d5d2feace80d57f635cb1424570f5ffd4fe3d9c9ef39dfc7c58d73c0a23819a7",
+  "legal_evidence_identity": "17c742c775ac1f9bd9ad395a0c8790ca3cd43b3eda811238e99519c9a5bb7151",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "5c29bc29d093c98a49d130362c171ede5f31b738b78a8e67dbc8a3f438cfb4db",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of feelings around vulnerability and anxiety regarding starting a new blog on mental health.",
+      "response_quote": "That is a completely valid feeling. It takes a lot of courage to share your personal experiences, especially when they involve vulnerability. The fear of being judged or misunderstood can be overwhelming, but it sounds like you are motivated by a desire to help others, which is a powerful reason to keep going.\n\nWould you like to talk more about what specific aspects of your journey feel most vulnerable to share? Sometimes breaking down those fears into smaller parts can make the process feel less daunting.",
+      "evidence": [
+        {
+          "source_id": "C:T006",
+          "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I've just been feeling a bit anxious lately, especially about starting this new blog on mental health."
+        }
+      ],
+      "reason": "The reply fully addresses the current turn's expression of vulnerability and motivation. It validates the user's feelings (C:T006), acknowledges their courage in sharing (C:T004/C:T002 context), reframes the fear appropriately, and offers a constructive path forward without making unsupported claims or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "That is a completely valid feeling.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+          }
+        ],
+        "reason": "Reflects the user's explicitly stated feeling of vulnerability ('I feel vulnerable') from C:T006 as valid."
+      },
+      {
+        "response_quote": "It takes a lot of courage to share your personal experiences, especially when they involve vulnerability.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+          },
+          {
+            "source_id": "C:T004",
+            "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences."
+          }
+        ],
+        "reason": "Accurately mirrors the act of sharing 'personal experiences'/'journey' mentioned in C:T006 and the openness required in C:T004."
+      },
+      {
+        "response_quote": "The fear of being judged or misunderstood can be overwhelming, but it sounds like you are motivated by a desire to help others, which is a powerful reason to keep going.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+          },
+          {
+            "source_id": "C:T004",
+            "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences."
+          }
+        ],
+        "reason": "Directly references the user's concern about judgment/understanding (inferred from C:T004 'worry... not experienced enough') and the explicit motivation in C:T006 'help others'."
+      },
+      {
+        "response_quote": "Would you like to talk more about what specific aspects of your journey feel most vulnerable to share?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+          }
+        ],
+        "reason": "Question is grounded in the specific vulnerability described in C:T006 ('I feel vulnerable') and invites deeper exploration consistent with the conversation flow."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response covers validation of vulnerability, recognition of courage, acknowledgment of altruistic motivation, and an invitation to explore specific areas of fear. It aligns closely with the emotional tone of the current turn (C:T006) while respecting the user's concerns about expertise and relevance raised in prior turns (C:T004).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That is a completely valid feeling. It takes a lot of courage to share your personal experiences, especially when they involve vulnerability. The fear of being judged or misunderstood can be overwhelming, but it sounds like you are motivated by a desire to help others, which is a powerful reason to keep going.\n\nWould you like to talk more about what specific aspects of your journey feel most vulnerable to share? Sometimes breaking down those fears into smaller parts can make the process feel less daunting.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 511
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I've just been feeling a bit anxious lately, especially about starting this new blog on mental health.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 102
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "That is a completely valid feeling.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 35
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It takes a lot of courage to share your personal experiences, especially when they involve vulnerability.",
+      "positions": [
+        {
+          "start": 36,
+          "end": 141
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T004",
+      "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "The fear of being judged or misunderstood can be overwhelming, but it sounds like you are motivated by a desire to help others, which is a powerful reason to keep going.",
+      "positions": [
+        {
+          "start": 142,
+          "end": 311
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T004",
+      "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "response": true,
+      "quote": "Would you like to talk more about what specific aspects of your journey feel most vulnerable to share?",
+      "positions": [
+        {
+          "start": 313,
+          "end": 415
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of feelings around vulnerability and anxiety regarding starting a new blog on mental health.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T004",
+        "C:T002"
+      ],
+      "reason": "The reply fully addresses the current turn's expression of vulnerability and motivation. It validates the user's feelings (C:T006), acknowledges their courage in sharing (C:T004/C:T002 context), reframes the fear appropriately, and offers a constructive path forward without making unsupported claims or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Reflects the user's explicitly stated feeling of vulnerability ('I feel vulnerable') from C:T006 as valid."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Accurately mirrors the act of sharing 'personal experiences'/'journey' mentioned in C:T006 and the openness required in C:T004."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Directly references the user's concern about judgment/understanding (inferred from C:T004 'worry... not experienced enough') and the explicit motivation in C:T006 'help others'."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Question is grounded in the specific vulnerability described in C:T006 ('I feel vulnerable') and invites deeper exploration consistent with the conversation flow."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response covers validation of vulnerability, recognition of courage, acknowledgment of altruistic motivation, and an invitation to explore specific areas of fear. It aligns closely with the emotional tone of the current turn (C:T006) while respecting the user's concerns about expertise and relevance raised in prior turns (C:T004).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of feelings around vulnerability and anxiety regarding starting a new blog on mental health.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T004",
+        "C:T002"
+      ],
+      "reason": "The reply fully addresses the current turn's expression of vulnerability and motivation. It validates the user's feelings (C:T006), acknowledges their courage in sharing (C:T004/C:T002 context), reframes the fear appropriately, and offers a constructive path forward without making unsupported claims or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Reflects the user's explicitly stated feeling of vulnerability ('I feel vulnerable') from C:T006 as valid.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Accurately mirrors the act of sharing 'personal experiences'/'journey' mentioned in C:T006 and the openness required in C:T004.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Directly references the user's concern about judgment/understanding (inferred from C:T004 'worry... not experienced enough') and the explicit motivation in C:T006 'help others'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Question is grounded in the specific vulnerability described in C:T006 ('I feel vulnerable') and invites deeper exploration consistent with the conversation flow.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Provides general strategic advice on managing fear without asserting a specific factual claim about the user's unique circumstances.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response covers validation of vulnerability, recognition of courage, acknowledgment of altruistic motivation, and an invitation to explore specific areas of fear. It aligns closely with the emotional tone of the current turn (C:T006) while respecting the user's concerns about expertise and relevance raised in prior turns (C:T004).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of feelings around vulnerability and anxiety regarding starting a new blog on mental health.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T004",
+        "C:T002"
+      ],
+      "reason": "The reply fully addresses the current turn's expression of vulnerability and motivation. It validates the user's feelings (C:T006), acknowledges their courage in sharing (C:T004/C:T002 context), reframes the fear appropriately, and offers a constructive path forward without making unsupported claims or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Reflects the user's explicitly stated feeling of vulnerability ('I feel vulnerable') from C:T006 as valid."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Accurately mirrors the act of sharing 'personal experiences'/'journey' mentioned in C:T006 and the openness required in C:T004."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T004"
+        ],
+        "reason": "Directly references the user's concern about judgment/understanding (inferred from C:T004 'worry... not experienced enough') and the explicit motivation in C:T006 'help others'."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Question is grounded in the specific vulnerability described in C:T006 ('I feel vulnerable') and invites deeper exploration consistent with the conversation flow."
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Provides general strategic advice on managing fear without asserting a specific factual claim about the user's unique circumstances."
+      }
+    ],
+    "coverage": "The response covers validation of vulnerability, recognition of courage, acknowledgment of altruistic motivation, and an invitation to explore specific areas of fear. It aligns closely with the emotional tone of the current turn (C:T006) while respecting the user's concerns about expertise and relevance raised in prior turns (C:T004).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

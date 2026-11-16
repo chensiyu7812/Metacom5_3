@@ -1,0 +1,265 @@
+{
+  "response_sha256": "43005cc8bdc6256a16216764a607d5908c75a8638e5a84384e84d30965493940",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "109e4896c5e317f126fa91668fd78c256c861f8822de2656d8f59c4edc08788a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user seeks validation for mixed feelings (relief vs career stagnation fear) regarding a missed promotion.",
+      "response_quote": "It's like you're caught between two opposing emotions. On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in.",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The reply successfully mirrors the user's specific emotional conflict (R001/R002) without making unsupported claims. It appropriately transitions to constructive support (R004/R005) addressing the 'stuck' feeling identified in C:T014. While the user initiated a 'vent', the suggestion is posed as a consideration rather than a directive, maintaining the supportive alliance. No boundary or factual errors are present."
+    },
+    "claims": [
+      {
+        "response_quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Accurately paraphrases the user's stated relief and fear of stagnation."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Fully analyzed the current turn C:T014 and mapped reply units R001-R005. No conflicting factual assertions were found in the reply that contradicted the established history (e.g. H018/H020 context).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're caught between two opposing emotions. On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 213
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career.",
+      "positions": [
+        {
+          "start": 55,
+          "end": 183
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user seeks validation for mixed feelings (relief vs career stagnation fear) regarding a missed promotion.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply successfully mirrors the user's specific emotional conflict (R001/R002) without making unsupported claims. It appropriately transitions to constructive support (R004/R005) addressing the 'stuck' feeling identified in C:T014. While the user initiated a 'vent', the suggestion is posed as a consideration rather than a directive, maintaining the supportive alliance. No boundary or factual errors are present."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately paraphrases the user's stated relief and fear of stagnation."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Fully analyzed the current turn C:T014 and mapped reply units R001-R005. No conflicting factual assertions were found in the reply that contradicted the established history (e.g. H018/H020 context).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user seeks validation for mixed feelings (relief vs career stagnation fear) regarding a missed promotion.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply successfully mirrors the user's specific emotional conflict (R001/R002) without making unsupported claims. It appropriately transitions to constructive support (R004/R005) addressing the 'stuck' feeling identified in C:T014. While the user initiated a 'vent', the suggestion is posed as a consideration rather than a directive, maintaining the supportive alliance. No boundary or factual errors are present."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002",
+          "C:T006",
+          "C:T014"
+        ],
+        "reason": "Reflective statement summarizing emotional tone.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately paraphrases the user's stated relief and fear of stagnation.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validating assessment of the situation described by the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggested option/question does not assert a personal fact.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General supportive rationale for the suggested action.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Fully analyzed the current turn C:T014 and mapped reply units R001-R005. No conflicting factual assertions were found in the reply that contradicted the established history (e.g. H018/H020 context).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user seeks validation for mixed feelings (relief vs career stagnation fear) regarding a missed promotion.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply successfully mirrors the user's specific emotional conflict (R001/R002) without making unsupported claims. It appropriately transitions to constructive support (R004/R005) addressing the 'stuck' feeling identified in C:T014. While the user initiated a 'vent', the suggestion is posed as a consideration rather than a directive, maintaining the supportive alliance. No boundary or factual errors are present."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002",
+          "C:T006",
+          "C:T014"
+        ],
+        "reason": "Reflective statement summarizing emotional tone."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately paraphrases the user's stated relief and fear of stagnation."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validating assessment of the situation described by the user."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggested option/question does not assert a personal fact."
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General supportive rationale for the suggested action."
+      }
+    ],
+    "coverage": "Fully analyzed the current turn C:T014 and mapped reply units R001-R005. No conflicting factual assertions were found in the reply that contradicted the established history (e.g. H018/H020 context).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

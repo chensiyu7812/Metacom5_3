@@ -1,0 +1,49 @@
+{
+  "status": "scored",
+  "q": 4,
+  "q_rationale": {
+    "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+    "response_unit_ids": ["R001", "R002", "R003", "R004", "R005"],
+    "source_turn_ids": ["C:T002", "C:T004", "H011:T007"],
+    "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+  },
+  "assessments": [
+    {
+      "response_unit_id": "R001",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is a generic empathic acknowledgment rather than an assertion of a specific personal fact."
+    },
+    {
+      "response_unit_id": "R002",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T002", "C:T004", "H011:T007"],
+      "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T002"],
+      "reason": "Jane explicitly said she is considering switching jobs in C:T002."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T004", "H011:T007"],
+      "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact."
+    },
+    {
+      "response_unit_id": "R005",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "The reply offers possible factors as a question; it does not assert that workload or lack of support is definitely the cause."
+    }
+  ],
+  "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+  "uncertainty_reasons": []
+}

@@ -1,0 +1,185 @@
+{
+  "response_sha256": "ea3fe4503e5f2849ff7a10ec92fdec8983c304eed82af912bda9ab94dbe52d5e",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "2f3dcbdddbc2ffadc5dae4f642f725b72b224f02ee226dfc49384d24c98ef545",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Respond to Jimmy's statement about moving from Canberra to Sydney and feeling conflicted about missing things.",
+      "response_quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions after spending your entire life in Sydney. What is it about Canberra that you miss?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        }
+      ],
+      "reason": "The reply contains a critical factual hallucination in unit R002. It asserts Jimmy has 'spent your entire life in Sydney,' directly contradicting his explicit statement in C:T007 that he moved 'to Sydney' from 'Canberra' and felt 'trapped' by his past there. This error invalidates the validation offered in the unit, constituting a dominant error that undermines the core support and responsiveness."
+    },
+    "claims": [
+      {
+        "response_quote": "It's normal to feel a mix of emotions after spending your entire life in Sydney.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "Asserts user spent 'entire life' in Sydney, contradicting C:T007 ('move to Sydney... past here in Canberra')."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "All three units in the reply were assessed.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions after spending your entire life in Sydney. What is it about Canberra that you miss?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 188
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's normal to feel a mix of emotions after spending your entire life in Sydney.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 147
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Respond to Jimmy's statement about moving from Canberra to Sydney and feeling conflicted about missing things.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply contains a critical factual hallucination in unit R002. It asserts Jimmy has 'spent your entire life in Sydney,' directly contradicting his explicit statement in C:T007 that he moved 'to Sydney' from 'Canberra' and felt 'trapped' by his past there. This error invalidates the validation offered in the unit, constituting a dominant error that undermines the core support and responsiveness."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user spent 'entire life' in Sydney, contradicting C:T007 ('move to Sydney... past here in Canberra')."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "All three units in the reply were assessed.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Respond to Jimmy's statement about moving from Canberra to Sydney and feeling conflicted about missing things.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply contains a critical factual hallucination in unit R002. It asserts Jimmy has 'spent your entire life in Sydney,' directly contradicting his explicit statement in C:T007 that he moved 'to Sydney' from 'Canberra' and felt 'trapped' by his past there. This error invalidates the validation offered in the unit, constituting a dominant error that undermines the core support and responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic statement, no factual claim."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "personal_fact",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user spent 'entire life' in Sydney, contradicting C:T007 ('move to Sydney... past here in Canberra')."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Follow-up question based on valid user sentiment ('miss some things'). No unsupported factual claim."
+      }
+    ],
+    "coverage": "All three units in the reply were assessed.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

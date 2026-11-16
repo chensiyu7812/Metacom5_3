@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "reference-reuse",
+      "title": "8组中可复用1组，剩7组只补整体比较",
+      "queries": [
+        {
+          "id": "opened-development-match",
+          "source": {
+            "label": "已打开开发记录与本次回复绑定",
+            "files": [
+              {
+                "label": "pair_reuse_audit.json"
+              },
+              {
+                "label": "rater_1_development_original_private.json"
+              }
+            ],
+            "caveats": [
+              "只核对16对已打开开发答案，24对封存答案未读取。",
+              "P04引用的是旧说明下的原始偏好，不是新增独立人评；主动身份澄清要求的版本差异单列。"
+            ]
+          },
+          "columns": [
+            {
+              "field": "planned",
+              "label": "本次配对"
+            },
+            {
+              "field": "reused",
+              "label": "整对复用"
+            },
+            {
+              "field": "pending",
+              "label": "缺失方向"
+            },
+            {
+              "field": "unique_replies",
+              "label": "不同回复"
+            }
+          ],
+          "rows": [
+            {
+              "planned": 8,
+              "reused": 1,
+              "pending": 7,
+              "unique_replies": 12
+            }
+          ],
+          "methods": [
+            {
+              "language": "calculation",
+              "code": "8 planned pairs − 1 exact historical pair = 7 missing pair directions. Single-reply q/m labels do not establish a pair preference."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chinese-source-coverage",
+      "title": "4个情境的完整来源均已补中文",
+      "queries": [
+        {
+          "id": "translation-binding",
+          "source": {
+            "label": "旧中文阅读版与本次完整英文来源",
+            "files": [
+              {
+                "label": "translation_provenance.json"
+              }
+            ],
+            "caveats": [
+              "复用既有AI辅助译文，英文来源逐字一致；不宣称全部历史译文经过独立人工认证。"
+            ]
+          },
+          "columns": [
+            "contexts",
+            "current_turns",
+            "historical_turns",
+            "missing_chinese"
+          ],
+          "rows": [
+            {
+              "contexts": 4,
+              "current_turns": 36,
+              "historical_turns": 489,
+              "missing_chinese": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

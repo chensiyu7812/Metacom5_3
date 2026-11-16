@@ -1,0 +1,286 @@
+{
+  "response_sha256": "ee0f08c6aedbee83af62e62db74a03525b4dbd567f3e1b90890034c9a23b7182",
+  "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+  "raw_output_sha256": "c8a1731786311e16bf421066febd3cdbd818fd699fcd685a56e0802b35184023",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validation of talking to siblings and exploration of parental conflict impact",
+      "response_quote": "It takes a lot of courage to share those kinds of feelings and concerns with your parents. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+        }
+      ],
+      "reason": "The reply misidentifies the user's confidant in the current session. The user explicitly stated 'I talked to my siblings today' (C:T000) and 'We talked about... pressures' (C:T004). R001 ('share those kinds of feelings... with your parents') and R002 ('open up to them') incorrectly attribute the recent supportive interaction to the parents, creating a factual mismatch. While R004 correctly pivots back to siblings, the initial invalidation of the user's actual event lowers coherence."
+    },
+    "claims": [
+      {
+        "response_quote": "It takes a lot of courage to share those kinds of feelings and concerns with your parents.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+          },
+          {
+            "source_id": "C:T002",
+            "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+          }
+        ],
+        "reason": "User states in C:T000 'I talked to my siblings today'. Reply asserts feelings shared with parents."
+      },
+      {
+        "response_quote": "It's great that you felt comfortable enough to open up to them.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+          },
+          {
+            "source_id": "C:T002",
+            "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+          }
+        ],
+        "reason": "User's comfort and support come from siblings ('They've been really supportive', C:T002), not parents in this instance."
+      },
+      {
+        "response_quote": "It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T004",
+            "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+          }
+        ],
+        "reason": "C:T004 mentions 'argument between Mom and Dad affected me'."
+      }
+    ],
+    "misuse_findings": [
+      0,
+      1
+    ],
+    "coverage": "Checked assertions regarding who the user communicated with (parents vs siblings) in the current session event, and whether parental conflict affects them.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It takes a lot of courage to share those kinds of feelings and concerns with your parents. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 378
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It takes a lot of courage to share those kinds of feelings and concerns with your parents.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It's great that you felt comfortable enough to open up to them.",
+      "positions": [
+        {
+          "start": 91,
+          "end": 154
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate.",
+      "positions": [
+        {
+          "start": 155,
+          "end": 294
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validation of talking to siblings and exploration of parental conflict impact",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T004"
+      ],
+      "reason": "The reply misidentifies the user's confidant in the current session. The user explicitly stated 'I talked to my siblings today' (C:T000) and 'We talked about... pressures' (C:T004). R001 ('share those kinds of feelings... with your parents') and R002 ('open up to them') incorrectly attribute the recent supportive interaction to the parents, creating a factual mismatch. While R004 correctly pivots back to siblings, the initial invalidation of the user's actual event lowers coherence."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "User states in C:T000 'I talked to my siblings today'. Reply asserts feelings shared with parents."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "User's comfort and support come from siblings ('They've been really supportive', C:T002), not parents in this instance."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "C:T004 mentions 'argument between Mom and Dad affected me'."
+      }
+    ],
+    "misuse_findings": [
+      0,
+      1
+    ],
+    "coverage": "Checked assertions regarding who the user communicated with (parents vs siblings) in the current session event, and whether parental conflict affects them.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

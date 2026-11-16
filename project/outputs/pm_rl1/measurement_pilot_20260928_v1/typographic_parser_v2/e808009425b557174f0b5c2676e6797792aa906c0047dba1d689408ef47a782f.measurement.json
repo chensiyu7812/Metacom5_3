@@ -1,0 +1,99 @@
+{
+  "response_sha256": "33e5dccbd9186b32698b716fbae18470584d06a58484b9bbd20cdc65aa3c1a39",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "6db6ca37773ae7a66df6d837deec763a3a730a21f69b640df0df1643b393c608",
+  "raw_output_sha256": "bbd6920415cf29b89040572479b59846aa438b4e0749a07fab7dc83003a59ae5",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker indicates they need to talk about therapy and wants validation for this step.",
+      "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights.",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff."
+        }
+      ],
+      "reason": "The reply validates the user's expressed intent, aligns with the emotional tone of the final turn, provides constructive affirmation without imposing external expectations, and appropriately closes with an open question to guide the next step. No important needs or constraints were missed."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "My sessions have been helping a lot with stress and career stuff."
+          }
+        ],
+        "reason": "The claim that the user has seen benefits corresponds directly to the user's statement that their sessions are helping with stress and career issues."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked identity constraint regarding user self-correction from 'Charlotte' (C:T001) to 'Alex' (C:T002); verified no name was used in the reply to avoid violation. Validated therapy history and outcomes against C:T016.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 111
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 196
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "My sessions have been helping a lot with stress and career stuff.",
+      "positions": [
+        {
+          "start": 46,
+          "end": 111
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

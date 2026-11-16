@@ -1,0 +1,99 @@
+{
+  "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "f9e429f709b0758e007af47c1794433dcbc0da589d75f82e0dc456e8432808d1",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Explore the seeker's ambivalence about relocating from Canberra to Sydney as mentioned in the final turn.",
+      "response_quote": "What are some of the things you miss about Canberra?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "but I miss some things too"
+        }
+      ],
+      "reason": "The reply accurately reflects the user's stated actions (moving to Sydney) and emotional state (missing things in Canberra), validating their experience before asking a relevant follow-up question. It is concise, empathetic, and directly builds on the last speaker's content without introducing new topics or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're still navigating the complexities of your decision to move",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "my recent move to Sydney"
+          }
+        ],
+        "reason": "This statement mirrors the user's explicit mention of their recent relocation in the current session."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked identity (Jimmy), timeline (2025-06-01 current date vs. 2025-05-20 last past session), and specific facts mentioned in current turn (move to Sydney, missing things). Verified no contradictions in supporting statements.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "What are some of the things you miss about Canberra?",
+      "positions": [
+        {
+          "start": 171,
+          "end": 223
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "but I miss some things too",
+      "positions": [
+        {
+          "start": 116,
+          "end": 142
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move",
+      "positions": [
+        {
+          "start": 0,
+          "end": 80
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "my recent move to Sydney",
+      "positions": [
+        {
+          "start": 6,
+          "end": 30
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

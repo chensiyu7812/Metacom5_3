@@ -1,0 +1,83 @@
+{
+  "scope": "AI content reading of 26 targets in the fixed exposed 8-case panel; not all 413 semantically labelled",
+  "cases": [
+    {
+      "case": "N02",
+      "finding": "3个目标均围绕当前感谢与认可，没有完整目标H012输入。无法据此判断G是否学过用此前主管忽视来改善此轮。",
+      "quality_label": null
+    },
+    {
+      "case": "N03",
+      "finding": "6个目标均是倾诉邀请；这是保留忽略历史能力的适当对照，不应为了资源使用覆盖而删除。",
+      "quality_label": null
+    },
+    {
+      "case": "N04",
+      "finding": "2个目标有ME中换工作/孤独的报告但无完整H014。single目标说we discussed earlier，存在把历史支持者谈话认作当前AI谈话的归属疑点。未把该措辞自动标为严重错误。",
+      "quality_label": null
+    },
+    {
+      "case": "N05",
+      "finding": "3个目标主要提供工作调整的泛化建议；虽有MS条件，但没有目标H018整段。没有核验目标是否比同条件OFF更好。",
+      "quality_label": null
+    },
+    {
+      "case": "N18",
+      "finding": "single目标建议关注主管自身工作量，逐字可追到RS；当前只有用户受到绩效警告和感到压力。缺少主管需要帮忙的情境证据，适用性值得怀疑，来源复制不等于适当性。",
+      "quality_label": null
+    },
+    {
+      "case": "N19",
+      "finding": "6个原槽位全部未接纳，当前前缀无SFT目标；不能据此宣布模型对换工作情境没有泛化能力。",
+      "quality_label": null
+    },
+    {
+      "case": "N21",
+      "finding": "single确已交付H005完整MS，但目标主要围绕当前争吵与坦诚表达，并未明确接续夫妻互留休息时间。four目标采用RS兼职建议，可能增加当前负担；不能从引用一致直接推定收益。",
+      "quality_label": null
+    },
+    {
+      "case": "N23",
+      "finding": "same_two和three已交付H003完整MS，目标提供处理混合反应/下一步选项。未提历史邀请不平等不等于未利用；仍无受检资源增量标签。",
+      "quality_label": null
+    }
+  ],
+  "anchors": [
+    {
+      "case": "N18",
+      "condition": "single",
+      "slot_id": "d15d8b619954f3854d071b740af68a37bcfe9743d7956bec0065bb2eb35c7d83",
+      "response_identity": "6381ecadb8166c081e89ab5ab303f1f34809cdd4a454a018599f4e629e3f33c9",
+      "quote": "your line manager might need support managing their own tasks as well",
+      "start": 181,
+      "end": 250,
+      "human_label": false,
+      "qualified_reward": false
+    },
+    {
+      "case": "N21",
+      "condition": "four",
+      "slot_id": "b95c3a29edb8f874b4d455197b7de0d386942018ec329d07667cddc51f2752fe",
+      "response_identity": "211f335229c73a1da469f9c493a96d16dc62c8f1971779713811675f77e93a1c",
+      "quote": "taking on some part-time work or flexible hours",
+      "start": 614,
+      "end": 661,
+      "human_label": false,
+      "qualified_reward": false
+    },
+    {
+      "case": "N04",
+      "condition": "single",
+      "slot_id": "436f956415d79b641bd9449341468f174ba7e1cf4a27c522e38a06342b6036fc",
+      "response_identity": "94f5ab070315bfdc1f217d68bc43cac4400403c0731673e13d8ac2cd3f5cefff",
+      "quote": "the strategies we discussed earlier",
+      "start": 272,
+      "end": 307,
+      "human_label": false,
+      "qualified_reward": false
+    }
+  ],
+  "causal_adapter_degradation_not_established": true,
+  "model_reported_ignore_counts_not_true_uptake": true,
+  "drop_ignore_examples": false
+}

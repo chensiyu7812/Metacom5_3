@@ -1,0 +1,42 @@
+{
+  "status": "OFFLINE_CHECKS_PASSED_NOT_REAL_CALIBRATION",
+  "pytest": {
+    "tests": 75,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_workflow_cases": 23,
+  "command": "PYTHONPATH=src PYTHONNOUSERSITE=1 CUDA_VISIBLE_DEVICES='' /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q tests/test_rl1_calibration_workflow.py tests/test_rl1_human_calibration.py tests/test_rl1_calibration_decision.py tests/test_rl1_completion_judge.py tests/test_rl1_environment.py --junitxml=outputs/pm_rl1/development_closeout_20261014_v1/offline_tests.xml --tb=short",
+  "py_compile": "7 new Python modules/scripts passed",
+  "preserved_existing_files": 276,
+  "changed_existing_files": [],
+  "original_zip_sha256": "630d09d7d275febb802e922fab182da9244af36d8388aef26ff6721ba684e7ee",
+  "real_model_calls": 0,
+  "real_sealed_label_decryptions": 0,
+  "real_training_updates": 0,
+  "semantic_revision_applied": false,
+  "real_measurement_freeze_created": false,
+  "old_tracked_files_changed": [],
+  "new_code_and_doc_sha256": {
+    "project/docs/PM_RL1_DEVELOPMENT_CLOSEOUT_20261014_ZH.md": "98276c615cb39a470d16a6f61da51812504d91058585ec63169b770735ec83b2",
+    "project/scripts/rl1/106_close_p3_development.py": "16320b681b67e258a9477532db32ef6a1c69f6124ae10243b7f0082b52e734e7",
+    "project/scripts/rl1/107_p3_acceptance_workflow.py": "8d2133d438e799cf0d8e7b027bcf2f024df85e528f3bee301fb97c5356dbbdd7",
+    "project/scripts/rl1/108_run_p3_acceptance_batch.py": "aca9b3a3fb6d64c4e879fa300773bf0fd52ce2fc9f7676c70080f22dd316567a",
+    "project/src/metacom_pm/rl1/calibration_intake.py": "be88c278b1eca1eef512b57f416ac5f8c2d1118ea477748e2aeaddaf347e61cb",
+    "project/src/metacom_pm/rl1/calibration_workflow.py": "d18512a330e155b03ae498d64ed67d46878bbf9d74d53382287ea3278f4d2f80",
+    "project/src/metacom_pm/rl1/judge_completion_candidate.py": "56889a2c4c1f8f5646df9f92eff7b83ef9f09eddfb80e63d5c30c7788c3246e0",
+    "project/src/metacom_pm/rl1/natural_runner.py": "9e199d9899d30267a1efd6bc5648a25afa96e0b9748dcfca22fb86ce22db0637",
+    "project/tests/test_rl1_calibration_workflow.py": "f5dda2e96773a02244e8149624cd92177f02143a0293b4eca0671b2ba4bb0232"
+  },
+  "baseline_HEAD": "0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28",
+  "end_HEAD": "0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28",
+  "git_status": "?? project/docs/PM_RL1_DEVELOPMENT_CLOSEOUT_20261014_ZH.md\n?? project/scripts/rl1/106_close_p3_development.py\n?? project/scripts/rl1/107_p3_acceptance_workflow.py\n?? project/scripts/rl1/108_run_p3_acceptance_batch.py\n?? project/src/metacom_pm/rl1/calibration_intake.py\n?? project/src/metacom_pm/rl1/calibration_workflow.py\n?? project/src/metacom_pm/rl1/judge_completion_candidate.py\n?? project/src/metacom_pm/rl1/natural_runner.py\n?? project/tests/test_rl1_calibration_workflow.py\n",
+  "limitations": [
+    "GPU backend not executed",
+    "candidate semantics not evaluated",
+    "sealed labels remain unopened",
+    "no formal reward qualification",
+    "semantic recheck/reserve dispatch remains explicit pending work when triggered"
+  ]
+}

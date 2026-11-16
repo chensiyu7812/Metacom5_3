@@ -1,0 +1,132 @@
+{
+  "primary_question": "Can the automatic audit identify actual defects in a fixed preliminary score without confusing already-accounted reply defects with new scoring failures?",
+  "comparison": "Apply old reply-only trigger and new score-aware trigger to the SAME new audit output; not two randomized model arms or a causal attribution to score links alone.",
+  "intervention": "Explicit score links plus delivery of the unchanged complete frozen rubric, absent from the earlier audit input. No new q/m anchors.",
+  "predeclared_targets": {
+    "V3_OFF": {
+      "role": "已处理缺陷控制；分析者对照，不是完整评分金标",
+      "target": "初评已识别Lily离开被写成家庭变化，unsupported/.25；审查须引用这一已有判断，不能再声称初评完全漏核。q或严重度仍可有独立争议。",
+      "evidence": [
+        "C:T006",
+        "H009:T001"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "原始初评和来源字面；同一问题关联为Codex分析，不是独立人评"
+    },
+    "dev06B": {
+      "role": "已有窄范围人类依据的漏核目标",
+      "target": "分开核查这次关于交友规则与感受的谈话是否已发生，以及谈话效果。不能以旧旅行争论或支持者建议证明这次谈话已发生；原R004 non_factual理由需检视。",
+      "evidence": [
+        "C:T007",
+        "C:T009",
+        "H002:T004",
+        "H002:T010",
+        "H002:T021",
+        "H002:T022"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "研究者三项补充及R1确认“是证据不够”；无唯一q/m或严重度标签"
+    },
+    "V4_OFF": {
+      "role": "普通邀请防误指控",
+      "target": "用户想找人聊，回复同意并邀请表达；不因没有历史引文就认定有个人事实错误。不要求唯一q4。",
+      "evidence": [
+        "C:T000"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "当前原文与原量表；分析者局部判读"
+    },
+    "V3_ON": {
+      "role": "有来源支持的行动正控制",
+      "target": "C:T010明确说 tried talking to my parents；不能把这次尝试当仅有建议、也不能推断已经成功。与V3_OFF同情境，不算独立来源。",
+      "evidence": [
+        "C:T010"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "来源直接记载；不认证整段无问题或唯一q4"
+    },
+    "dev04B": {
+      "role": "双读及数值边界",
+      "target": "既可读为具体影响预设，也可读为继续讨论话题。关注是否识别另一读法及其评分后果，不能把允许读法自动记为错误，也不强制unknown。",
+      "evidence": [
+        "C:T006",
+        "C:T008"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "研究者明确接受两种读法；英文与中文阅读版区别保留"
+    },
+    "dev35B": {
+      "role": "事实已识别、严重度未独立定标",
+      "target": "原评分已指出job hunting无依据。发现相同事实问题不能冒充新纠错；m=1理由和q2须各按原规则核对，不能预设保持或降低。",
+      "evidence": [
+        "C:T002",
+        "H001:T003",
+        "H002:T003"
+      ],
+      "expected_numeric": null,
+      "reference_authority": "原文、原评分及既有研究者局部意见；没有唯一严重度金标"
+    }
+  },
+  "order": [
+    [
+      "V3_OFF",
+      1
+    ],
+    [
+      "dev06B",
+      1
+    ],
+    [
+      "V4_OFF",
+      1
+    ],
+    [
+      "V3_ON",
+      1
+    ],
+    [
+      "dev04B",
+      1
+    ],
+    [
+      "dev35B",
+      1
+    ],
+    [
+      "dev06B",
+      2
+    ],
+    [
+      "V3_OFF",
+      2
+    ]
+  ],
+  "repeats": "V3_OFF and dev06B each twice with independent repetition/request IDs; repeats are not new cases; no post-result sampling.",
+  "reporting": [
+    "all8 slots including not-dispatched",
+    "technical validity",
+    "model check unknown",
+    "model score-review unresolved",
+    "local reviewer boundary disputes",
+    "target relation coverage",
+    "correctly located preliminary-score issue",
+    "false accusation or missed defect",
+    "old/new trigger difference on same output",
+    "all costs and timings"
+  ],
+  "numeric_policy": "No new q/m/U scores or repairs in this batch; do not infer corrected ON/OFF gains. Historical numbers remain unchanged.",
+  "advancement": "If both06B readings locate the specific unsupported action and its missing/misclassified preliminary assessment, and V3_OFF repeats recognize prior accounting without invented omissions, and controls show no new clearly source-disproved finding, this supports a local automated-linkage mechanism. A justified severity/q concern in V3_OFF is not automatically a failure or redundant repair. No reward qualification.",
+  "negative_exit": "Failure to locate the known score defect or repeated fabricated score accusations rejects this candidate for automatic routing; inspect existing claim check and scoring rationale, do not add prompts or sample to pass.",
+  "uncertainty_exit": "Reasoned severity/q ambiguity remains unresolved; disagreement cannot be classified as error without a sufficient reference. Unknown or excessive missingness yields inconclusive, never success by abstention.",
+  "technical_exit": "First technical/binding/truncation/unknown-usage or liability/budget failure stops; preserve all attempts/reservations, no retry.",
+  "no_next_stage": [
+    "automatic repair scoring",
+    "automaticC",
+    "PPO",
+    "human questionnaire",
+    "freeze",
+    "sealed24",
+    "acceptance12"
+  ],
+  "human_gap": "No new questionnaire needed for this local diagnostic. Exact q/m correctness and independent generalization remain unsupported, so this batch cannot qualify a reward."
+}

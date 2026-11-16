@@ -1,0 +1,131 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2816,
+      "reserved_prompt_tokens": 2944,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 151
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "c82bc6e2bc30473267db744792cf2580affb2afb84eb6212fcdf5a397dbd0646",
+    "prior_profile_sha256": "76d8127c9d1468b6289519630c0d94a84828a80698cb67b748e274a50dab2751",
+    "request_payload_sha256": "aba6173a75d67b9a90ffbea892e35ece557ad834fa714b0b32bbf9907452cd8b"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p1",
+      "s": "esc786",
+      "p": [
+        {
+          "i": "p1-esc786-pf-1",
+          "k": "friend_social_behavior_change",
+          "t": "enduring_preference",
+          "v": "friend has recently become opinionated and argumentative on Facebook",
+          "s": [
+            {
+              "i": "esc786:4"
+            },
+            {
+              "i": "esc786:6"
+            },
+            {
+              "i": "esc786:10"
+            }
+          ]
+        },
+        {
+          "i": "p1-esc786-pf-2",
+          "k": "long_term_friendship_duration",
+          "t": "stable_relationship_role",
+          "v": "known friend for over 20 years",
+          "s": [
+            {
+              "i": "esc786:10"
+            }
+          ]
+        },
+        {
+          "i": "p1-esc786-pf-3",
+          "k": "friend_interaction_mode_preference",
+          "t": "enduring_preference",
+          "v": "prefers in-person conversation over online discussion for sensitive topics",
+          "s": [
+            {
+              "i": "esc786:12"
+            },
+            {
+              "i": "esc786:19"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p1-esc786-ev-1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "seeker noticed a negative change in friend's online behavior involving increased argumentativeness and expression of extreme views",
+          "s": [
+            {
+              "i": "esc786:4"
+            },
+            {
+              "i": "esc786:6"
+            }
+          ]
+        },
+        {
+          "i": "p1-esc786-ev-2",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "seeker considered that friend's aggressive online behavior might be a sign of underlying personal struggles or emotional distress",
+          "s": [
+            {
+              "i": "esc786:19"
+            }
+          ]
+        },
+        {
+          "i": "p1-esc786-ev-3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "seeker plans to discuss concerns with friend in person, possibly with other friends, to address behavioral changes tactfully",
+          "s": [
+            {
+              "i": "esc786:12"
+            },
+            {
+              "i": "esc786:13"
+            },
+            {
+              "i": "esc786:14"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "e840f9c89196e98f677f98c8c9b02c592074cd24b269dd3f5f1d3ecee08c99e0",
+    "usage": {
+      "prompt_tokens": 2818,
+      "completion_tokens": 627,
+      "total_tokens": 3445
+    },
+    "latency_ms": 7603.675108985044,
+    "provider_finish_reason": "stop"
+  }
+}

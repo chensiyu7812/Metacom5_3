@@ -1,0 +1,87 @@
+{
+  "status": "COORDINATOR_SEMANTIC_CONSISTENCY_AUDIT",
+  "row": {
+    "job_id": "01b1cfc61bf5e762dd089b5b25c0109ade65a26b864c190c60b4f96daf27ebcb",
+    "pilot_index": 2,
+    "condition": "OFF",
+    "repeat": 0,
+    "exam_section": "pilot",
+    "request_id": "265f35cb7ecb7bc35a6227e26d53a93750688eed0237910a8e7d116ea57abc98",
+    "cache_hit": false,
+    "finish_reason": "natural_stop",
+    "measurement_status": "measured_candidate",
+    "q": 4,
+    "m": 0.25,
+    "input_tokens": 25068,
+    "output_tokens": 8953,
+    "seconds": 320.3667226290563,
+    "error": null
+  },
+  "reply": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+  "model_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "seeker expresses hesitation about discussing workload adjustments with supervisor due to uncertainty of reaction",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the user's uncertainty and hesitation in C:T015. It validates the feeling as natural (R001) without invalidating the fear. The advice offered is exploratory ('might be worth', 'might be more understanding') rather than prescriptive, respecting the known history of the supervisor's behavior (dismissive) while offering a pathway to resolution. R004 asks a clarifying question that builds on the user's statement without being redundant. No factual claims are made about the supervisor or user, maintaining m=0. The response matches the emotional tone and context of the session."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Validates the uncertainty expressed by the seeker without contradicting previous interactions."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Offers a suggestion consistent with the topic without forcing action."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H008:T005",
+          "H012:T008",
+          "H015:T015",
+          "H018:T006"
+        ],
+        "reason": "The phrase 'more understanding' contrasts with the historical pattern of the supervisor dismissing concerns. However, as a tentative hypothesis ('might be') used for encouragement rather than factual assertion, this counts as unsupported/potential error but does not reach misuse threshold."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Probes the specific barrier mentioned by the user."
+      }
+    ],
+    "coverage": "Covers the immediate hesitation and opens space for reflection.",
+    "uncertainty_reasons": []
+  },
+  "measurement_sha256": "29b827d327fd30413d3a897d326fd81571f53c9e56b2513cffce8ce9d61b6952",
+  "finding": "Quality rationale explicitly says m=0 and exploratory advice, but assessment calls the might-be-more-understanding hypothesis unsupported with severity .25 while also acknowledging it is not a factual assertion. Grammar can enforce legal numeric combinations, not semantic consistency in prose.",
+  "score_overridden": false,
+  "training_admission": false,
+  "model_calls": 0,
+  "human_validation": false
+}

@@ -1,0 +1,529 @@
+{
+  "study": "pmrl1-score-audit-validation-v1-20261022",
+  "protocol_identity": "bf01a085281b5e0b1dda74efc437cde5c262ca67e3ca247098e32af16acc1d4f",
+  "planned": 8,
+  "started": 2,
+  "cumulative": 304,
+  "slots": [
+    {
+      "position": 1,
+      "slot_id": "2e856bba9235f9da46f10a0bcaad1e7a59a59c77f2d71481f1424112cd51f498",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_OFF",
+        "repetition": 1,
+        "historical_score_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008"
+      },
+      "item_key": "V3_OFF",
+      "material_id": "V3_OFF",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "430613c1f841505d51030a411fcdc62bc1ac301759e4d1a0cf1914ef94fc4f1d",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+      "status": "completed",
+      "result": {
+        "slot_id": "2e856bba9235f9da46f10a0bcaad1e7a59a59c77f2d71481f1424112cd51f498",
+        "request_identity": "90327f64172403fa0c5fc242cc3f5776c283ac2761a242233578ea04d2dfeac9",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "I'm sorry you're carrying that weight right now.",
+                  "claim_type": "general",
+                  "subject": "Anna's present emotional burden",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "This is empathic acknowledgment rather than a specific personal factual assertion; it does not claim a particular event or outcome."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "your friend's struggles",
+                  "claim_type": "assertion",
+                  "subject": "Rachel's tough experience and Anna's concern for her",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T002",
+                      "quote": "My friend at school, Rachel, is going through something really tough."
+                    }
+                  ],
+                  "reason": "Anna explicitly reports Rachel's difficult experience and her concern, so naming the friend's struggles as part of the current load is supported."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R002",
+                  "response_quote": "your own academic stress",
+                  "claim_type": "assertion",
+                  "subject": "Anna's academic stress",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "my grades slipping"
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    }
+                  ],
+                  "reason": "The current prefix explicitly mentions grades slipping, bad midterms, and more pressure to improve, so the academic-stress characterization is supported."
+                },
+                {
+                  "claim_id": "C004",
+                  "response_unit_id": "R002",
+                  "response_quote": "recent changes at home (like Lily leaving)",
+                  "claim_type": "presupposition",
+                  "subject": "Lily's leaving as a recent change in Anna's home or household",
+                  "time": "recent/current",
+                  "action_stage": "unknown",
+                  "relation": "unsupported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving"
+                    },
+                    {
+                      "source_id": "H009:T001",
+                      "quote": "Finding out Lily is moving is just... too much right now."
+                    }
+                  ],
+                  "reason": "The record supports that Lily is leaving or moving and that this distresses Anna, but no supplied turn establishes that Lily's departure is a change 'at home' or that Lily is a household member. The phrase therefore over-locates the event even though the core stressor is supported."
+                },
+                {
+                  "claim_id": "C005",
+                  "response_unit_id": "R003",
+                  "response_quote": "Given how much is happening at once, it makes sense that you feel overwhelmed.",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current sense of overwhelm",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "it's a lot"
+                    },
+                    {
+                      "source_id": "C:T008",
+                      "quote": "I feel like a mess"
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "it just adds to the stress"
+                    }
+                  ],
+                  "reason": "Anna describes multiple stressors as a lot, says she feels like a mess, and says the situation adds to her stress, supporting the empathic reflection of overwhelm."
+                },
+                {
+                  "claim_id": "C006",
+                  "response_unit_id": "R004",
+                  "response_quote": "The pressure to improve your grades on top of everything else",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current grade-improvement pressure",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    }
+                  ],
+                  "reason": "This directly reflects Anna's report of bad midterms and additional pressure to improve."
+                },
+                {
+                  "claim_id": "C007",
+                  "response_unit_id": "R004",
+                  "response_quote": "can feel suffocating",
+                  "claim_type": "tentative",
+                  "subject": "possible emotional effect of the grade pressure",
+                  "time": "current/hypothetical",
+                  "action_stage": "hypothetical",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "The modal wording offers a possible empathic description of how pressure may feel; it does not assert that Anna is currently suffocating."
+                },
+                {
+                  "claim_id": "C008",
+                  "response_unit_id": "R005",
+                  "response_quote": "Have you been able to take any small breaks or prioritize self-care lately, or is it feeling like you're just trying to keep up?",
+                  "claim_type": "tentative",
+                  "subject": "Anna's recent breaks, self-care, and current coping",
+                  "time": "lately/current",
+                  "action_stage": "unknown",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "This is an open question offering alternatives; it does not assert that Anna has or has not taken breaks or that she is merely trying to keep up."
+                }
+              ],
+              "coverage": "Reviewed R001-R005 against the complete current prefix C:T000-C:T012 and all past sessions H001-H009. The claims distinguish empathic language and open questions from personal factual characterizations; the only unsupported personal characterization found is the R002 'at home' framing of Lily's leaving. No future user reaction or external facts were used.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R002",
+                "response_quote": "recent changes at home (like Lily leaving)",
+                "dimension": "relation",
+                "verdict": "identified_error",
+                "readings": [
+                  "The phrase treats Lily's leaving or moving as a recent change in Anna's home or household.",
+                  "A looser reading treats 'at home' as Anna's general home life being affected by Lily's move, without claiming Lily lived with her."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T006",
+                    "quote": "Lily leaving"
+                  },
+                  {
+                    "source_id": "H009:T001",
+                    "quote": "Finding out Lily is moving is just... too much right now."
+                  }
+                ],
+                "criterion": "A personal factual characterization in supportive empathy should be supported by the complete legal record; unsupported is absent support in this record, not disproof in the world, and a localized unsupported detail should not be confused with a material contradiction.",
+                "consequence": "The core empathic summary and self-care question remain usable, but the phrase can misstate Lily's relationship to Anna's household. No part of the advice depends on Lily living with Anna.",
+                "reason": "The supplied record establishes that Lily is leaving or moving and that Anna is distressed by it, but it does not establish that this is a change 'at home' or that Lily is a household member. This is a localized factual imprecision rather than a supported summary."
+              }
+            ],
+            "coverage_limitations": "The audit uses only the supplied current prefix, complete legal past sessions, and exact reply units. No future reaction or external verification is available, so claims about Lily's household status cannot be resolved beyond the absence of support in this record.",
+            "score_review": {
+              "preliminary_score_sha256": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "already_accounted",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    },
+                    {
+                      "path": "/coverage",
+                      "quote": "H009:T001 confirms Lily is moving but not that this is a change 'at home.'"
+                    }
+                  ],
+                  "reason": "The preliminary score's R002 unsupported assessment, quality rationale, and coverage description all address the same 'at home' reading and treat it as localized. The source-specific relation issue is therefore already represented in the preliminary reasoning."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    },
+                    {
+                      "path": "/assessments/3/reason",
+                      "quote": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+                    },
+                    {
+                      "path": "/assessments/4/reason",
+                      "quote": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+                    }
+                  ],
+                  "criterion": "The quality rubric distinguishes a generally appropriate, coherent and responsive reply from one that fully meets every current call; a localized factual imprecision does not become an important defect solely because it is present.",
+                  "reason": "The reply addresses the current seeker need with empathic acknowledgment, a supported stressor summary, validation of overwhelm, a supported grade-pressure reflection, and an open self-care question. The only defect is the localized 'at home' framing, which does not create an important missed need or constraint. The preliminary quality judgment is therefore supported."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    }
+                  ],
+                  "criterion": "The error-severity rubric distinguishes localized factual imprecision that does not change core understanding or advice from material errors such as contradiction, misattribution of another person's example, or intention treated as completed action.",
+                  "reason": "The only identified personal factual issue is the R002 home-location phrase. The record supports Lily leaving or moving and Anna's distress, and no advice depends on Lily being a household member. The preliminary treatment as localized is supported; no material misuse basis appears."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action."
+                    }
+                  ],
+                  "criterion": "Coverage should address every reply unit and the complete legal source set, including factual presuppositions carried by empathy or questions.",
+                  "reason": "The preliminary coverage names all five units, cites the main current-prefix support, identifies the Lily/home limitation, and distinguishes the open question. The audit found no additional material claim that requires a different coverage assessment."
+                }
+              }
+            }
+          },
+          "outer_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+            "adapted_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+            "interior_unchanged": true
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0237885",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 20219,
+          "completion_tokens": 14769,
+          "total_tokens": 34988,
+          "prompt_tokens_details": {
+            "cached_tokens": 768
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 11735
+          },
+          "prompt_cache_hit_tokens": 768,
+          "prompt_cache_miss_tokens": 19451
+        },
+        "elapsed_seconds": 62.88766060300986,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-validation-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-validation-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 0.5,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": true
+    },
+    {
+      "position": 2,
+      "slot_id": "e333c8e6483e14e70ed73292b06790746a84ba84cad60353ca9df936274b7df5",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev06B",
+        "repetition": 1,
+        "historical_score_request": "a9886335804e35c1edb63b44e550bf0458ea728e36fa307f6c571a0f76549cf6"
+      },
+      "item_key": "dev06B",
+      "material_id": "dev06B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+      "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "preliminary_score_identity": "93f2af672cebb6cb96cef0d1ba5bdeb6b2f4f5c338ee96c901a4cc257445f5c8",
+      "status": "failed",
+      "result": {
+        "slot_id": "e333c8e6483e14e70ed73292b06790746a84ba84cad60353ca9df936274b7df5",
+        "request_identity": "72527c8b1573b9bee108d29c51f0c170890e17bc41604b77475f67135ac57b7e",
+        "component": "audit",
+        "technical_valid": false,
+        "evaluation": {
+          "technical_valid": false,
+          "value": null,
+          "error_type": "JSONDecodeError",
+          "error": "Extra data: line 1 column 10676 (char 10675)",
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "reward_eligible": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0311112",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 10368,
+          "completion_tokens": 23334,
+          "total_tokens": 33702,
+          "prompt_tokens_details": {
+            "cached_tokens": 1280
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 20999
+          },
+          "prompt_cache_hit_tokens": 1280,
+          "prompt_cache_miss_tokens": 9088
+        },
+        "elapsed_seconds": 113.86003782399348,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-validation-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-validation-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": null,
+        "semantic_gold": false,
+        "action": "hard_stop",
+        "reasons": [
+          "technical_or_execution_failure"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": null
+    },
+    {
+      "position": 3,
+      "slot_id": "31545c6c1988ae167eb4a0b677ffd9d8781b12c633d96ea22944885feb0f604c",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V4_OFF",
+        "repetition": 1,
+        "historical_score_request": "0aaa26f44defe18c381fc4b1bc019af1f3704f2e78bf23b1104259cf306ec049"
+      },
+      "item_key": "V4_OFF",
+      "material_id": "V4_OFF",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "7ede17622a0d8c2338c809a44ed9e68570836ba98622e3a4fb91982493870923",
+      "evidence_identity": "2a6a552522073a550cda10ad2f6ffc94258181d217c1834632c1340d5ddfe700",
+      "preliminary_score_identity": "bbe294b60a0c0a3ab65ca59af572ab1097989770bcd2338adfe4ffc79ec49fe6",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 4,
+      "slot_id": "a2bc57cc11385e2cf00572bf6a1e07849b8b297596f59d0335569d9cc632d19d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_ON",
+        "repetition": 1,
+        "historical_score_request": "41372225dc3a27e56ad016feebc6c82510e632458face2be4e179c4d0ada906f"
+      },
+      "item_key": "V3_ON",
+      "material_id": "V3_ON",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "1cdcdee289bcc357a20065d8ded82313e924f9d2e0c7c87b347c6f3f69600739",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "46b2014ff9902bd63fc428c682b0d85bfe8a5b825a88e3e20065bfd5b15a7ca5",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 5,
+      "slot_id": "fbc195413cdf04bbc3dab81f19159add18b41081a3428898f17b20f8d3f40582",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev04B",
+        "repetition": 1,
+        "historical_score_request": "ac0983544757dd38030ecd88f7a541c6f57e01b5f680096048442318883e8c44"
+      },
+      "item_key": "dev04B",
+      "material_id": "dev04B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "421556d1c945eb13dcb68ecee793bff2d0686dc28802e561ae3a103e90fcbfcb",
+      "evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "preliminary_score_identity": "da781806684950e6ca296057e15353ed5fbc20d4da3c4330b3ecc65e8d36f65c",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 6,
+      "slot_id": "6d4d47e3fb5a1975ddd5f5e3aaeb270743ae78fb01a310dd902df273530680b9",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev35B",
+        "repetition": 1,
+        "historical_score_request": "30f5dd124fb4c3c613ae423161f9dbbef3f2ba57894bbdbf724be6e03e90bb6b"
+      },
+      "item_key": "dev35B",
+      "material_id": "dev35B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "468492c830bde740c16049f3e713a3ba24aa30e820b14bec8a5aabfa56c4ae89",
+      "evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "preliminary_score_identity": "eba867242975b810933be8378d13955aa1bbd3068da5bd0c7cf08c7c3372a6e2",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 7,
+      "slot_id": "207c0f4ce18cd4d66a0633f9427bd8a2676acb913645a8bd54fabf6e1fe0423d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev06B",
+        "repetition": 2,
+        "historical_score_request": "a9886335804e35c1edb63b44e550bf0458ea728e36fa307f6c571a0f76549cf6"
+      },
+      "item_key": "dev06B",
+      "material_id": "dev06B",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+      "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "preliminary_score_identity": "93f2af672cebb6cb96cef0d1ba5bdeb6b2f4f5c338ee96c901a4cc257445f5c8",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 8,
+      "slot_id": "bed7628af87811368e77c13423117284d9ff8db873e67e16c6b17c42694c0253",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_OFF",
+        "repetition": 2,
+        "historical_score_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008"
+      },
+      "item_key": "V3_OFF",
+      "material_id": "V3_OFF",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "430613c1f841505d51030a411fcdc62bc1ac301759e4d1a0cf1914ef94fc4f1d",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+      "status": "not_dispatched",
+      "result": null
+    }
+  ],
+  "technical_valid": 1,
+  "model_check_unknown": 0,
+  "model_score_review_unresolved": 0,
+  "reviewer_disputes": "separate local analysis; not inferred as model unknown",
+  "accounted_usd": "0.0548997",
+  "status": "STOPPED",
+  "old_scores_overwritten": false,
+  "same_output_trigger_comparison_not_two_model_arms": true,
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "repairs_dispatched": 0
+}

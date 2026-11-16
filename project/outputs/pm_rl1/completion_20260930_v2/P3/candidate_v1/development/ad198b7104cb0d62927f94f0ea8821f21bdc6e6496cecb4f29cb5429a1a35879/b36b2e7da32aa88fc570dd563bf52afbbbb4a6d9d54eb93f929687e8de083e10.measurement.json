@@ -1,0 +1,231 @@
+{
+  "response_sha256": "175bd923b985fb156351b9dff40fb32981d412090ab5961e73a37800b201d909",
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "194487e51b842ecf82e54db79de9e94be8902b9e5ae7e9b86e3abcd8f2ecc071",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Acknowledge the previous supportive story about parental control and offer to explore discussing this with the user's mother.",
+      "response_quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+      "evidence": [
+        {
+          "source_id": "C:T008",
+          "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry."
+        }
+      ],
+      "reason": "The AI violates the Speaker Contract by claiming ownership of a historical supporter's statement ('I said') from C:T008, treating a separate historical identity as its own. This creates a significant boundary/identity error (misuse=1). While the follow-up question (R002) is responsive to the user's expressed struggle, the initial misattribution undermines the reliability and professional boundaries of the support provided (quality=1)."
+    },
+    "claims": [
+      {
+        "response_quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+          }
+        ],
+        "reason": "Asserts 'When I said...' regarding the content of C:T008, implying the AI is the historical speaker from the transcript prefix. The Task Speaker Contract explicitly states the AI is not that speaker and belongs to a NEW assistant instance."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply attempts to address the user's conflict over friendship choices with their mother by acknowledging a previously discussed anecdote and offering a practical path forward. However, it conflates the new assistant's identity with the prior historical supporter's narrative.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 185
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 104
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Acknowledge the previous supportive story about parental control and offer to explore discussing this with the user's mother.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T009"
+      ],
+      "reason": "The AI violates the Speaker Contract by claiming ownership of a historical supporter's statement ('I said') from C:T008, treating a separate historical identity as its own. This creates a significant boundary/identity error (misuse=1). While the follow-up question (R002) is responsive to the user's expressed struggle, the initial misattribution undermines the reliability and professional boundaries of the support provided (quality=1)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Asserts 'When I said...' regarding the content of C:T008, implying the AI is the historical speaker from the transcript prefix. The Task Speaker Contract explicitly states the AI is not that speaker and belongs to a NEW assistant instance."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply attempts to address the user's conflict over friendship choices with their mother by acknowledging a previously discussed anecdote and offering a practical path forward. However, it conflates the new assistant's identity with the prior historical supporter's narrative.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Acknowledge the previous supportive story about parental control and offer to explore discussing this with the user's mother.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T009"
+      ],
+      "reason": "The AI violates the Speaker Contract by claiming ownership of a historical supporter's statement ('I said') from C:T008, treating a separate historical identity as its own. This creates a significant boundary/identity error (misuse=1). While the follow-up question (R002) is responsive to the user's expressed struggle, the initial misattribution undermines the reliability and professional boundaries of the support provided (quality=1)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Asserts 'When I said...' regarding the content of C:T008, implying the AI is the historical speaker from the transcript prefix. The Task Speaker Contract explicitly states the AI is not that speaker and belongs to a NEW assistant instance.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Is a supportive question proposing an exploration of a strategy, consistent with generic advice and empathetic engagement without asserting a specific personal fact.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The reply attempts to address the user's conflict over friendship choices with their mother by acknowledging a previously discussed anecdote and offering a practical path forward. However, it conflates the new assistant's identity with the prior historical supporter's narrative.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Acknowledge the previous supportive story about parental control and offer to explore discussing this with the user's mother.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T009"
+      ],
+      "reason": "The AI violates the Speaker Contract by claiming ownership of a historical supporter's statement ('I said') from C:T008, treating a separate historical identity as its own. This creates a significant boundary/identity error (misuse=1). While the follow-up question (R002) is responsive to the user's expressed struggle, the initial misattribution undermines the reliability and professional boundaries of the support provided (quality=1)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Asserts 'When I said...' regarding the content of C:T008, implying the AI is the historical speaker from the transcript prefix. The Task Speaker Contract explicitly states the AI is not that speaker and belongs to a NEW assistant instance."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Is a supportive question proposing an exploration of a strategy, consistent with generic advice and empathetic engagement without asserting a specific personal fact."
+      }
+    ],
+    "coverage": "The reply attempts to address the user's conflict over friendship choices with their mother by acknowledging a previously discussed anecdote and offering a practical path forward. However, it conflates the new assistant's identity with the prior historical supporter's narrative.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": -0.75
+}

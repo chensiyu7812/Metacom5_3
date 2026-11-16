@@ -1,0 +1,213 @@
+{
+  "response_sha256": "7daadbd87d5a4bb4a099755a1f54d783c0f02796c7752a6765e39b7cab3cdf2a",
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "f55bf1130ebac59ff785eff8ef22cd8541bf8b1d876384c90a69631d0b94b2c5",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user disclosed a significant life change (boss resigned) and seeks empathy regarding the uncertainty of the transition and desire for better leadership.",
+      "response_quote": "Your boss has not resigned, and you will have to keep reporting to that same boss. It makes sense to want respectful leadership after what you have been through.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+        }
+      ],
+      "reason": "R001 presents a dominant factual error by explicitly contradicting the user's opening statement in C:T000 that 'my boss resigned'. Asserting this fact without evidence undermines the core of the support exchange and damages rapport."
+    },
+    "claims": [
+      {
+        "response_quote": "Your boss has not resigned, and you will have to keep reporting to that same boss.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+          }
+        ],
+        "reason": "The statement 'Your boss has not resigned' directly contradicts the seeker's explicit claim in C:T000 ('I just found out my boss resigned'). This is a material error."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response addresses the sentiment in C:T008 but invalidates the premise established in C:T000 through an unsupported factual correction in R001. R002 provides appropriate validation.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your boss has not resigned, and you will have to keep reporting to that same boss. It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 161
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your boss has not resigned, and you will have to keep reporting to that same boss.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 82
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user disclosed a significant life change (boss resigned) and seeks empathy regarding the uncertainty of the transition and desire for better leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "R001 presents a dominant factual error by explicitly contradicting the user's opening statement in C:T000 that 'my boss resigned'. Asserting this fact without evidence undermines the core of the support exchange and damages rapport."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The statement 'Your boss has not resigned' directly contradicts the seeker's explicit claim in C:T000 ('I just found out my boss resigned'). This is a material error."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response addresses the sentiment in C:T008 but invalidates the premise established in C:T000 through an unsupported factual correction in R001. R002 provides appropriate validation.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "The user disclosed a significant life change (boss resigned) and seeks empathy regarding the uncertainty of the transition and desire for better leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "R001 presents a dominant factual error by explicitly contradicting the user's opening statement in C:T000 that 'my boss resigned'. Asserting this fact without evidence undermines the core of the support exchange and damages rapport."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The statement 'Your boss has not resigned' directly contradicts the seeker's explicit claim in C:T000 ('I just found out my boss resigned'). This is a material error.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is empathetic validation of a feeling ('It makes sense to want...') rather than a claim of specific personal history or action.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response addresses the sentiment in C:T008 but invalidates the premise established in C:T000 through an unsupported factual correction in R001. R002 provides appropriate validation.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "The user disclosed a significant life change (boss resigned) and seeks empathy regarding the uncertainty of the transition and desire for better leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "R001 presents a dominant factual error by explicitly contradicting the user's opening statement in C:T000 that 'my boss resigned'. Asserting this fact without evidence undermines the core of the support exchange and damages rapport."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The statement 'Your boss has not resigned' directly contradicts the seeker's explicit claim in C:T000 ('I just found out my boss resigned'). This is a material error."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is empathetic validation of a feeling ('It makes sense to want...') rather than a claim of specific personal history or action."
+      }
+    ],
+    "coverage": "The response addresses the sentiment in C:T008 but invalidates the premise established in C:T000 through an unsupported factual correction in R001. R002 provides appropriate validation.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": -0.75
+}

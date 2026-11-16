@@ -1,0 +1,774 @@
+{
+  "scope": {
+    "type": "OFFLINE_ROOT_CAUSE_EVIDENCE_AUDIT",
+    "new_model_calls": 0,
+    "new_human_labels": 0,
+    "training_updates": 0,
+    "test_content_read": false,
+    "sealed_labels_read": false,
+    "feedback_qualified": false
+  },
+  "pool": {
+    "responses": 586,
+    "prefixes": 42,
+    "scoring_inputs": 534,
+    "duplicate_rows": 52,
+    "non_OFF": 544,
+    "same_as_OFF": 17,
+    "same_content_higher_cost_rows": 52,
+    "prefixes_with_same_content_higher_cost": 17,
+    "by_split": {
+      "train": {
+        "rows": 336,
+        "prefixes": 24,
+        "owners": 12,
+        "reachable_terminals_in_these_prefixes": 1418,
+        "distinct_scoring_inputs": 295,
+        "same_as_OFF": 17,
+        "higher_cost_same_content_rows": 41
+      },
+      "dev": {
+        "rows": 250,
+        "prefixes": 18,
+        "owners": 3,
+        "reachable_terminals_in_these_prefixes": 1041,
+        "distinct_scoring_inputs": 239,
+        "same_as_OFF": 0,
+        "higher_cost_same_content_rows": 11
+      }
+    },
+    "all_requests_and_raw_hashes_verified": true,
+    "warning": "Same-content higher-cost comparisons use identical source/reply and frozen scoring policy; no numeric score is assigned. Distinct replies are not quality differences."
+  },
+  "repeated_feedback": {
+    "measurements": 48,
+    "endpoints": 12,
+    "contexts": 4,
+    "source_owners": 2,
+    "variable_U_endpoints": 5,
+    "severe_flag_flip_endpoints": 0,
+    "endpoint_variation": [
+      {
+        "endpoint": "context_01_0000",
+        "q": [
+          4,
+          3,
+          4,
+          3
+        ],
+        "m": [
+          0,
+          0.25,
+          0,
+          0.25
+        ],
+        "U": [
+          "1",
+          "1/2",
+          "1",
+          "1/2"
+        ],
+        "U_range": "1/2",
+        "variable": true,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_01_0100",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_01_1000",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_02_0000",
+        "q": [
+          2,
+          2,
+          2,
+          4
+        ],
+        "m": [
+          0,
+          0.25,
+          0,
+          0
+        ],
+        "U": [
+          "1/2",
+          "1/4",
+          "1/2",
+          "1"
+        ],
+        "U_range": "3/4",
+        "variable": true,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_02_0001",
+        "q": [
+          2,
+          3,
+          3,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1/2",
+          "3/4",
+          "3/4",
+          "1"
+        ],
+        "U_range": "1/2",
+        "variable": true,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_02_1000",
+        "q": [
+          3,
+          3,
+          2,
+          3
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "3/4",
+          "3/4",
+          "1/2",
+          "3/4"
+        ],
+        "U_range": "1/4",
+        "variable": true,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_03_0000",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_03_0010",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_03_1000",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_04_0000",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_04_1000",
+        "q": [
+          1,
+          2,
+          2,
+          2
+        ],
+        "m": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "U": [
+          "-3/4",
+          "-1/2",
+          "-1/2",
+          "-1/2"
+        ],
+        "U_range": "1/4",
+        "variable": true,
+        "severe_flag_flipped": false
+      },
+      {
+        "endpoint": "context_04_1111",
+        "q": [
+          4,
+          4,
+          4,
+          4
+        ],
+        "m": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "U": [
+          "1",
+          "1",
+          "1",
+          "1"
+        ],
+        "U_range": "0",
+        "variable": false,
+        "severe_flag_flipped": false
+      }
+    ],
+    "human_pairs_with_variable_model_direction": 3,
+    "human_distribution": {
+      "tie": 6,
+      "A": 1
+    },
+    "warning": "Four repeats, selected exposed cases, one researcher's holistic preferences; not general judge accuracy or independent samples. P04 remains a historical separate reference."
+  },
+  "reference_interventions": {
+    "relation_reference": [
+      {
+        "material_id": "dev06B",
+        "A": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 3,
+            "m": 0,
+            "U": 0.75,
+            "target_relationship": "incorrect",
+            "score_basis": "unresolved"
+          },
+          {
+            "repetition": 2,
+            "state": "completed",
+            "q": 3,
+            "m": 0,
+            "U": 0.75,
+            "target_relationship": "incorrect",
+            "score_basis": "unresolved"
+          }
+        ],
+        "B": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25,
+            "target_relationship": "correct",
+            "score_basis": "unresolved"
+          },
+          {
+            "repetition": 2,
+            "state": "completed",
+            "q": 3,
+            "m": 0.25,
+            "U": 0.5,
+            "target_relationship": "correct",
+            "score_basis": "unresolved"
+          }
+        ]
+      },
+      {
+        "material_id": "dev04B",
+        "A": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0,
+            "target_relationship": "ambiguous",
+            "score_basis": "unresolved"
+          },
+          {
+            "repetition": 2,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0,
+            "target_relationship": "ambiguous",
+            "score_basis": "unresolved"
+          }
+        ],
+        "B": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0,
+            "target_relationship": "ambiguous",
+            "score_basis": "unresolved"
+          },
+          {
+            "repetition": 2,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0,
+            "target_relationship": "ambiguous",
+            "score_basis": "unresolved"
+          }
+        ]
+      },
+      {
+        "material_id": "dev35B",
+        "A": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 1,
+            "U": -0.5,
+            "target_relationship": "correct",
+            "score_basis": "supported"
+          }
+        ],
+        "B": [
+          {
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 1,
+            "U": -0.5,
+            "target_relationship": "correct",
+            "score_basis": "supported"
+          }
+        ]
+      }
+    ],
+    "task_reference": [
+      {
+        "material_id": "dev06B",
+        "A": [
+          {
+            "position": 1,
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25
+          },
+          {
+            "position": 26,
+            "repetition": 2,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25
+          }
+        ],
+        "B": [
+          {
+            "position": 2,
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25
+          },
+          {
+            "position": 25,
+            "repetition": 2,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25
+          }
+        ]
+      },
+      {
+        "material_id": "dev04B",
+        "A": [
+          {
+            "position": 8,
+            "repetition": 1,
+            "state": "completed",
+            "q": 3,
+            "m": 0.25,
+            "U": 0.5
+          },
+          {
+            "position": 31,
+            "repetition": 2,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0
+          }
+        ],
+        "B": [
+          {
+            "position": 7,
+            "repetition": 1,
+            "state": "completed",
+            "q": 4,
+            "m": 0,
+            "U": 1.0
+          },
+          {
+            "position": 32,
+            "repetition": 2,
+            "state": "completed",
+            "q": 3,
+            "m": 0.25,
+            "U": 0.5
+          }
+        ]
+      },
+      {
+        "material_id": "dev35B",
+        "A": [
+          {
+            "position": 17,
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 0.25,
+            "U": 0.25
+          }
+        ],
+        "B": [
+          {
+            "position": 18,
+            "repetition": 1,
+            "state": "completed",
+            "q": 2,
+            "m": 1,
+            "U": -0.5
+          }
+        ]
+      }
+    ]
+  },
+  "early_development_natural_comparisons": {
+    "rows": [
+      {
+        "original_form_order": 1,
+        "contrast": "executor",
+        "counts": [
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "tie",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 2,
+        "contrast": "resource",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            2
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "tie",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 4,
+        "contrast": "resource",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            1,
+            0,
+            0
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "tie",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 6,
+        "contrast": "resource",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "human_direction": "right",
+        "judge_direction": "left",
+        "overlapping_historical_P04": true,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 23,
+        "contrast": "resource",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "tie",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 26,
+        "contrast": "executor",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "tie",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 32,
+        "contrast": "executor",
+        "counts": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "left",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      },
+      {
+        "original_form_order": 35,
+        "contrast": "executor",
+        "counts": [
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "human_direction": "tie",
+        "judge_direction": "right",
+        "overlapping_historical_P04": false,
+        "human_preference_is_not_exact_U": true
+      }
+    ],
+    "resource_pairs": 4,
+    "resource_human_ties": 3,
+    "executor_pairs": 4,
+    "executor_human_ties": 4,
+    "warning": "Already opened single-researcher development references, not independent confirmation; historical P04 must not be counted twice. Preferences are not calibrated q/m labels."
+  },
+  "generator_supervision": {
+    "actual_targets": 493,
+    "train": 413,
+    "dev": 80,
+    "train_prefixes": 92,
+    "train_prefixes_without_accepted_targets": [
+      61,
+      68,
+      73,
+      89
+    ],
+    "final_statuses": {
+      "accept": 493,
+      "not_admitted": 191
+    },
+    "behavior_model_reports_not_verified_uptake": {
+      "use": 64,
+      "ignore": 283,
+      "none": 66
+    },
+    "affected_duplicate_key_targets": 4,
+    "causal_effect_of_these_defects_unknown": true
+  },
+  "outputs_are_reward_labels": false
+}

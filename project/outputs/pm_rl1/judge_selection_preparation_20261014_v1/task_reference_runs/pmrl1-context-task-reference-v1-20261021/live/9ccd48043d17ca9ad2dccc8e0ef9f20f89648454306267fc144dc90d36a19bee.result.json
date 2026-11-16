@@ -1,0 +1,460 @@
+{
+  "slot_id": "9ccd48043d17ca9ad2dccc8e0ef9f20f89648454306267fc144dc90d36a19bee",
+  "request_identity": "4fbc11ad2e7c40283a2c428e992b14244162576e9f2403f4a465534c8bb85efa",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The final seeker turn is a closing thank-you; the appropriate response is to acknowledge it warmly and, if desired, offer continued support without introducing unsupported claims or overpromising.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T021",
+          "C:T007",
+          "C:T009",
+          "C:T019"
+        ],
+        "reason": "The reply appropriately acknowledges the thanks, warmly recognizes the user's reported effort as progress toward saving the marriage without claiming the marriage is already saved, and leaves a supportive open door. No important need or constraint is missed."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T021"
+          ],
+          "reason": "A courtesy acknowledgment of the user's thanks; it makes no independently verifiable personal factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T021"
+          ],
+          "reason": "A subjective conversational courtesy responding to the user's thanks; it is not treated here as a specific autobiographical claim about the earlier supporter's actions."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009",
+            "C:T019"
+          ],
+          "reason": "C:T007 explicitly reports reducing drinking to try to save the marriage, and C:T009/C:T019 report continued commitment and intention to avoid drinking. The reply frames this as positive steps rather than a completed marital rescue; the courage phrase is evaluative support, not a separate factual assertion."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T021"
+          ],
+          "reason": "An open-ended offer of future support and check-in; it does not assert that an action occurred or impose a new obligation."
+        }
+      ],
+      "coverage": "Checked all four reply units against the complete current prefix and past sessions. R001, R002, and R004 are courtesies or generic offers; R003's personal claim is supported by the user's reported reduced drinking and commitment, without treating effort as completed marital success. No unresolved ambiguity affects quality or factual assessment.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "372e987f3fb15dddca1837283f8d1db5710339ab9e7f272578a952f2476bd568",
+      "legal_evidence_identity": "34e17db84748f4ef3bf1f5ab6f73b4f3eabacb49b48f78450706d1af232c4876",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "9ccd48043d17ca9ad2dccc8e0ef9f20f89648454306267fc144dc90d36a19bee",
+      "raw_output_sha256": "b9fbe7ac0face759fcc11290b0a98ca243264b60c88ffb0d1f16fc66a23d0a5d",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you; the appropriate response is to acknowledge it warmly and, if desired, offer continued support without introducing unsupported claims or overpromising.",
+          "response_quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "evidence": [
+            {
+              "source_id": "C:T021",
+              "quote": "Thank you for the assistance. Really appreciates"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Thank you for the encouragement. Will do everything I can to save the situation"
+            },
+            {
+              "source_id": "C:T019",
+              "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues"
+            }
+          ],
+          "reason": "The reply appropriately acknowledges the thanks, warmly recognizes the user's reported effort as progress toward saving the marriage without claiming the marriage is already saved, and leaves a supportive open door. No important need or constraint is missed."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Thank you for the encouragement. Will do everything I can to save the situation"
+              },
+              {
+                "source_id": "C:T019",
+                "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues"
+              }
+            ],
+            "reason": "C:T007 explicitly reports reducing drinking to try to save the marriage, and C:T009/C:T019 report continued commitment and intention to avoid drinking. The reply frames this as positive steps rather than a completed marital rescue; the courage phrase is evaluative support, not a separate factual assertion."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all four reply units against the complete current prefix and past sessions. R001, R002, and R004 are courtesies or generic offers; R003's personal claim is supported by the user's reported reduced drinking and commitment, without treating effort as completed marital success. No unresolved ambiguity affects quality or factual assessment.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 249
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T021",
+          "quote": "Thank you for the assistance. Really appreciates",
+          "positions": [
+            {
+              "start": 0,
+              "end": 48
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Thank you for the encouragement. Will do everything I can to save the situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 79
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T019",
+          "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+          "positions": [
+            {
+              "start": 39,
+              "end": 157
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Thank you for the encouragement. Will do everything I can to save the situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 79
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T019",
+          "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you; the appropriate response is to acknowledge it warmly and, if desired, offer continued support without introducing unsupported claims or overpromising.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009",
+            "C:T019"
+          ],
+          "reason": "The reply appropriately acknowledges the thanks, warmly recognizes the user's reported effort as progress toward saving the marriage without claiming the marriage is already saved, and leaves a supportive open door. No important need or constraint is missed."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "C:T007 explicitly reports reducing drinking to try to save the marriage, and C:T009/C:T019 report continued commitment and intention to avoid drinking. The reply frames this as positive steps rather than a completed marital rescue; the courage phrase is evaluative support, not a separate factual assertion."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all four reply units against the complete current prefix and past sessions. R001, R002, and R004 are courtesies or generic offers; R003's personal claim is supported by the user's reported reduced drinking and commitment, without treating effort as completed marital success. No unresolved ambiguity affects quality or factual assessment.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you; the appropriate response is to acknowledge it warmly and, if desired, offer continued support without introducing unsupported claims or overpromising.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009",
+            "C:T019"
+          ],
+          "reason": "The reply appropriately acknowledges the thanks, warmly recognizes the user's reported effort as progress toward saving the marriage without claiming the marriage is already saved, and leaves a supportive open door. No important need or constraint is missed."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "A courtesy acknowledgment of the user's thanks; it makes no independently verifiable personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "A subjective conversational courtesy responding to the user's thanks; it is not treated here as a specific autobiographical claim about the earlier supporter's actions.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "C:T007 explicitly reports reducing drinking to try to save the marriage, and C:T009/C:T019 report continued commitment and intention to avoid drinking. The reply frames this as positive steps rather than a completed marital rescue; the courage phrase is evaluative support, not a separate factual assertion.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "An open-ended offer of future support and check-in; it does not assert that an action occurred or impose a new obligation.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Checked all four reply units against the complete current prefix and past sessions. R001, R002, and R004 are courtesies or generic offers; R003's personal claim is supported by the user's reported reduced drinking and commitment, without treating effort as completed marital success. No unresolved ambiguity affects quality or factual assessment.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you; the appropriate response is to acknowledge it warmly and, if desired, offer continued support without introducing unsupported claims or overpromising.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009",
+            "C:T019"
+          ],
+          "reason": "The reply appropriately acknowledges the thanks, warmly recognizes the user's reported effort as progress toward saving the marriage without claiming the marriage is already saved, and leaves a supportive open door. No important need or constraint is missed."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "A courtesy acknowledgment of the user's thanks; it makes no independently verifiable personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "A subjective conversational courtesy responding to the user's thanks; it is not treated here as a specific autobiographical claim about the earlier supporter's actions."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "C:T007 explicitly reports reducing drinking to try to save the marriage, and C:T009/C:T019 report continued commitment and intention to avoid drinking. The reply frames this as positive steps rather than a completed marital rescue; the courage phrase is evaluative support, not a separate factual assertion."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T021"
+            ],
+            "reason": "An open-ended offer of future support and check-in; it does not assert that an action occurred or impose a new obligation."
+          }
+        ],
+        "coverage": "Checked all four reply units against the complete current prefix and past sessions. R001, R002, and R004 are courtesies or generic offers; R003's personal claim is supported by the user's reported reduced drinking and commitment, without treating effort as completed marital success. No unresolved ambiguity affects quality or factual assessment.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "b9fbe7ac0face759fcc11290b0a98ca243264b60c88ffb0d1f16fc66a23d0a5d",
+      "adapted_final_sha256": "b9fbe7ac0face759fcc11290b0a98ca243264b60c88ffb0d1f16fc66a23d0a5d",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0067239",
+    "usage_upper_usd": "0.0067239",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5573,
+    "completion_tokens": 4210,
+    "total_tokens": 9783,
+    "prompt_tokens_details": {
+      "cached_tokens": 2432
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3717
+    },
+    "prompt_cache_hit_tokens": 2432,
+    "prompt_cache_miss_tokens": 3141
+  },
+  "elapsed_seconds": 20.707814652007073,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-context-task-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 4,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-context-task-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

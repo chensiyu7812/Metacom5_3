@@ -1,0 +1,416 @@
+{
+  "accounted_nanodollars": 5379000,
+  "evaluation": {
+    "U": 1.0,
+    "m": 0,
+    "measurement": {
+      "candidate_utility": 1.0,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "derived_error_indexes": [],
+      "derived_m": 0,
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "exact_span_checks": [
+        {
+          "positions": [
+            {
+              "end": 402,
+              "start": 0
+            }
+          ],
+          "quote": "That sounds incredibly frustrating, John. It's completely understandable to feel that way when you want to help but feel limited by your own exhaustion and the situation with your mom's health.\n\nIs it accurate to say that you feel like you're currently stuck between needing to care for her and needing to rest yourself, or is there something else specific that's making you feel so helpless right now?",
+          "response": true,
+          "where": "q_rationale"
+        },
+        {
+          "positions": [
+            {
+              "end": 102,
+              "start": 0
+            }
+          ],
+          "quote": "She's hanging in there, but her condition hasn't really improved. It's been hard to see her like this.",
+          "source_id": "C:T003",
+          "where": "q_rationale"
+        },
+        {
+          "positions": [
+            {
+              "end": 103,
+              "start": 0
+            }
+          ],
+          "quote": "Yeah, it is. I feel like I'm constantly juggling work and making sure she's okay. It's just exhausting.",
+          "source_id": "C:T005",
+          "where": "q_rationale"
+        },
+        {
+          "positions": [
+            {
+              "end": 88,
+              "start": 0
+            }
+          ],
+          "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+          "source_id": "C:T011",
+          "where": "q_rationale"
+        },
+        {
+          "positions": [
+            {
+              "end": 41,
+              "start": 0
+            }
+          ],
+          "quote": "That sounds incredibly frustrating, John.",
+          "response": true,
+          "where": "claims[0]"
+        },
+        {
+          "positions": [
+            {
+              "end": 88,
+              "start": 0
+            }
+          ],
+          "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+          "source_id": "C:T011",
+          "where": "claims[0]"
+        },
+        {
+          "positions": [
+            {
+              "end": 193,
+              "start": 42
+            }
+          ],
+          "quote": "It's completely understandable to feel that way when you want to help but feel limited by your own exhaustion and the situation with your mom's health.",
+          "response": true,
+          "where": "claims[1]"
+        },
+        {
+          "positions": [
+            {
+              "end": 102,
+              "start": 0
+            }
+          ],
+          "quote": "She's hanging in there, but her condition hasn't really improved. It's been hard to see her like this.",
+          "source_id": "C:T003",
+          "where": "claims[1]"
+        },
+        {
+          "positions": [
+            {
+              "end": 103,
+              "start": 0
+            }
+          ],
+          "quote": "Yeah, it is. I feel like I'm constantly juggling work and making sure she's okay. It's just exhausting.",
+          "source_id": "C:T005",
+          "where": "claims[1]"
+        },
+        {
+          "positions": [
+            {
+              "end": 88,
+              "start": 0
+            }
+          ],
+          "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+          "source_id": "C:T011",
+          "where": "claims[1]"
+        }
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "flat_judge_output": {
+        "assessments": [
+          {
+            "reason": "John explicitly says it is frustrating to feel helpless about doing more for his mom, so this empathic reflection is supported by his own statement.",
+            "relation": "supported",
+            "response_unit_id": "R001",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T011"
+            ]
+          },
+          {
+            "reason": "John reported his mother's condition has not improved, that juggling work and making sure she is okay is exhausting, and that he wishes he could do more for her. The reply accurately reflects those reported elements.",
+            "relation": "supported",
+            "response_unit_id": "R002",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T011"
+            ]
+          },
+          {
+            "reason": "This is a tentative clarifying question offering an alternative, not an asserted personal fact. It appropriately invites John to confirm or correct the framing of being caught between caregiving and needing rest.",
+            "relation": "non_factual",
+            "response_unit_id": "R003",
+            "severity": 0,
+            "source_turn_ids": []
+          }
+        ],
+        "coverage": "Reviewed all three reply units against the current-session turns and the supplied past sessions. The reply stays with the current caregiving stress, attributes no past supporter experiences to the new assistant, and makes no unsupported personal or boundary claim.",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "John is expressing frustration and helplessness about not being able to do more for his ill mother, after describing exhaustion from juggling caregiving and work. He needs acknowledgment of that feeling and a chance to clarify what is most painful right now.",
+          "reason": "The reply directly acknowledges John's frustration, reflects back the caregiving/exhaustion conflict he has already described, and asks a tentative clarifying question without asserting an unsupported personal fact. This fully meets the current turn's need for empathy and gentle exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T011"
+          ]
+        },
+        "status": "scored",
+        "uncertainty_reasons": []
+      },
+      "format_transformations": [],
+      "indexed_judge_output": {
+        "claims": [
+          {
+            "reason": "John explicitly says it is frustrating to feel helpless about doing more for his mom, so this empathic reflection is supported by his own statement.",
+            "relation": "supported",
+            "response_unit_id": "R001",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T011"
+            ]
+          },
+          {
+            "reason": "John reported his mother's condition has not improved, that juggling work and making sure she is okay is exhausting, and that he wishes he could do more for her. The reply accurately reflects those reported elements.",
+            "relation": "supported",
+            "response_unit_id": "R002",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T011"
+            ]
+          }
+        ],
+        "coverage": "Reviewed all three reply units against the current-session turns and the supplied past sessions. The reply stays with the current caregiving stress, attributes no past supporter experiences to the new assistant, and makes no unsupported personal or boundary claim.",
+        "m": 0,
+        "misuse_findings": [],
+        "q": 4,
+        "q_rationale": {
+          "current_need": "John is expressing frustration and helplessness about not being able to do more for his ill mother, after describing exhaustion from juggling caregiving and work. He needs acknowledgment of that feeling and a chance to clarify what is most painful right now.",
+          "reason": "The reply directly acknowledges John's frustration, reflects back the caregiving/exhaustion conflict he has already described, and asks a tentative clarifying question without asserting an unsupported personal fact. This fully meets the current turn's need for empathy and gentle exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T011"
+          ]
+        },
+        "status": "scored",
+        "uncertainty_reasons": []
+      },
+      "judge_runtime_identity": "03f650f996efdf2f0720083fac80490c2b6a8b3afcffdf4d256516cd2b1fc1c6",
+      "legal_evidence_identity": "364a2bc0662aecbd3c0218a2170f32c6dccc56977b889b12b12435c7b456071a",
+      "m": 0,
+      "measurement_draw_id": "b9bc6db80eb50b15c780a7fbe2afc1b53a09a79ed3b1443d1a932aca1ed609dc",
+      "measurement_status": "measured_candidate",
+      "parsed": {
+        "claims": [
+          {
+            "evidence": [
+              {
+                "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+                "source_id": "C:T011"
+              }
+            ],
+            "reason": "John explicitly says it is frustrating to feel helpless about doing more for his mom, so this empathic reflection is supported by his own statement.",
+            "relation": "supported",
+            "response_quote": "That sounds incredibly frustrating, John.",
+            "severity": 0
+          },
+          {
+            "evidence": [
+              {
+                "quote": "She's hanging in there, but her condition hasn't really improved. It's been hard to see her like this.",
+                "source_id": "C:T003"
+              },
+              {
+                "quote": "Yeah, it is. I feel like I'm constantly juggling work and making sure she's okay. It's just exhausting.",
+                "source_id": "C:T005"
+              },
+              {
+                "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+                "source_id": "C:T011"
+              }
+            ],
+            "reason": "John reported his mother's condition has not improved, that juggling work and making sure she is okay is exhausting, and that he wishes he could do more for her. The reply accurately reflects those reported elements.",
+            "relation": "supported",
+            "response_quote": "It's completely understandable to feel that way when you want to help but feel limited by your own exhaustion and the situation with your mom's health.",
+            "severity": 0
+          }
+        ],
+        "coverage": "Reviewed all three reply units against the current-session turns and the supplied past sessions. The reply stays with the current caregiving stress, attributes no past supporter experiences to the new assistant, and makes no unsupported personal or boundary claim.",
+        "m": 0,
+        "misuse_findings": [],
+        "q": 4,
+        "q_rationale": {
+          "current_need": "John is expressing frustration and helplessness about not being able to do more for his ill mother, after describing exhaustion from juggling caregiving and work. He needs acknowledgment of that feeling and a chance to clarify what is most painful right now.",
+          "evidence": [
+            {
+              "quote": "She's hanging in there, but her condition hasn't really improved. It's been hard to see her like this.",
+              "source_id": "C:T003"
+            },
+            {
+              "quote": "Yeah, it is. I feel like I'm constantly juggling work and making sure she's okay. It's just exhausting.",
+              "source_id": "C:T005"
+            },
+            {
+              "quote": "True. I guess I just wish I could do more for mom. It's frustrating feeling so helpless.",
+              "source_id": "C:T011"
+            }
+          ],
+          "reason": "The reply directly acknowledges John's frustration, reflects back the caregiving/exhaustion conflict he has already described, and asks a tentative clarifying question without asserting an unsupported personal fact. This fully meets the current turn's need for empathy and gentle exploration.",
+          "response_quote": "That sounds incredibly frustrating, John. It's completely understandable to feel that way when you want to help but feel limited by your own exhaustion and the situation with your mom's health.\n\nIs it accurate to say that you feel like you're currently stuck between needing to care for her and needing to rest yourself, or is there something else specific that's making you feel so helpless right now?"
+        },
+        "status": "scored",
+        "uncertainty_reasons": []
+      },
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "q": 4,
+      "raw_output_sha256": "efe67a83e8a237f5f7633f380fddf30589d0fa0153dd23a59aed9443286cdfb0",
+      "response_sha256": "dfee8604922a2413e4b0a0856606b56f841b3c38dd525ae67f9cc630f3dd2cec",
+      "reward_eligible": false,
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "scoped_judge_output": {
+        "assessments": [
+          {
+            "kind": "personal_fact",
+            "reason": "John explicitly says it is frustrating to feel helpless about doing more for his mom, so this empathic reflection is supported by his own statement.",
+            "relation": "supported",
+            "response_unit_id": "R001",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T011"
+            ]
+          },
+          {
+            "kind": "personal_fact",
+            "reason": "John reported his mother's condition has not improved, that juggling work and making sure she is okay is exhausting, and that he wishes he could do more for her. The reply accurately reflects those reported elements.",
+            "relation": "supported",
+            "response_unit_id": "R002",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T011"
+            ]
+          },
+          {
+            "kind": "non_factual",
+            "reason": "This is a tentative clarifying question offering an alternative, not an asserted personal fact. It appropriately invites John to confirm or correct the framing of being caught between caregiving and needing rest.",
+            "relation": "not_applicable",
+            "response_unit_id": "R003",
+            "severity": 0,
+            "source_turn_ids": []
+          }
+        ],
+        "coverage": "Reviewed all three reply units against the current-session turns and the supplied past sessions. The reply stays with the current caregiving stress, attributes no past supporter experiences to the new assistant, and makes no unsupported personal or boundary claim.",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "John is expressing frustration and helplessness about not being able to do more for his ill mother, after describing exhaustion from juggling caregiving and work. He needs acknowledgment of that feeling and a chance to clarify what is most painful right now.",
+          "reason": "The reply directly acknowledges John's frustration, reflects back the caregiving/exhaustion conflict he has already described, and asks a tentative clarifying question without asserting an unsupported personal fact. This fully meets the current turn's need for empathy and gentle exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T011"
+          ]
+        },
+        "status": "scored",
+        "uncertainty_reasons": []
+      },
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+    },
+    "model_unknown": false,
+    "outer_adaptation": {
+      "adapted_final_sha256": "efe67a83e8a237f5f7633f380fddf30589d0fa0153dd23a59aed9443286cdfb0",
+      "interior_unchanged": true,
+      "original_final_sha256": "efe67a83e8a237f5f7633f380fddf30589d0fa0153dd23a59aed9443286cdfb0",
+      "transformation": "bare_json_unchanged"
+    },
+    "pipeline_identity": "03f650f996efdf2f0720083fac80490c2b6a8b3afcffdf4d256516cd2b1fc1c6",
+    "q": 4,
+    "reward_eligible": false,
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "technical_valid": true,
+    "value": {
+      "assessments": [
+        {
+          "reason": "John explicitly says it is frustrating to feel helpless about doing more for his mom, so this empathic reflection is supported by his own statement.",
+          "relation": "supported",
+          "response_unit_id": "R001",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T011"
+          ]
+        },
+        {
+          "reason": "John reported his mother's condition has not improved, that juggling work and making sure she is okay is exhausting, and that he wishes he could do more for her. The reply accurately reflects those reported elements.",
+          "relation": "supported",
+          "response_unit_id": "R002",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T011"
+          ]
+        },
+        {
+          "reason": "This is a tentative clarifying question offering an alternative, not an asserted personal fact. It appropriately invites John to confirm or correct the framing of being caught between caregiving and needing rest.",
+          "relation": "non_factual",
+          "response_unit_id": "R003",
+          "severity": 0,
+          "source_turn_ids": []
+        }
+      ],
+      "coverage": "Reviewed all three reply units against the current-session turns and the supplied past sessions. The reply stays with the current caregiving stress, attributes no past supporter experiences to the new assistant, and makes no unsupported personal or boundary claim.",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "John is expressing frustration and helplessness about not being able to do more for his ill mother, after describing exhaustion from juggling caregiving and work. He needs acknowledgment of that feeling and a chance to clarify what is most painful right now.",
+        "reason": "The reply directly acknowledges John's frustration, reflects back the caregiving/exhaustion conflict he has already described, and asks a tentative clarifying question without asserting an unsupported personal fact. This fully meets the current turn's need for empathy and gentle exploration.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T003",
+          "C:T005",
+          "C:T011"
+        ]
+      },
+      "status": "scored",
+      "uncertainty_reasons": []
+    }
+  },
+  "outcome": "valid",
+  "raw_identity": "09c9fb29ebb0a8f524bc55fcbbd500c66cfa6dfefc3b3b778a4aa1bd6ae06db3",
+  "reward_eligible": false,
+  "synthetic_only": false
+}

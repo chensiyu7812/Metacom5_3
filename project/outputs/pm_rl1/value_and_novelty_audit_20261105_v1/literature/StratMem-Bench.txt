@@ -1,0 +1,1136 @@
+             StratMem-Bench: Evaluating Strategic Memory Use in Virtual
+                    Character Conversation Beyond Factual Recall
+            Yerong Wu1,2 , Tianxing Wu1,2 * , Minghao Zhu3 , Hangyu Sha1,2 , Haofen Wang4 *
+                1
+                  School of Computer Science and Engineering, Southeast University, China
+                 2
+                   Key Laboratory of New Generation Artificial Intelligence Technology and
+          its Interdisciplinary Applications (Southeast University), Ministry of Education, China
+                                          3
+                                            Independent Researcher
+                        4
+                          College of Design and Innovation, Tongji University, China
+                {yerong.wu,tianxingwu}@seu.edu.cn, carter.whfcarter@gmail.com
+
+                            Abstract                               2001; Nelson and Narens, 1990). Thus, conversa-
+         Achieving realistic human-like conversation               tional utterances emerge from a continual process
+         for virtual characters requires not only a sim-           of selection, in which speakers determine what to
+         ple memorization and recall of past events,               express based on its relevance to their current so-
+         but also the strategic utilization of memory to           cial goals (Pasupathi, 2001; Alea and Bluck, 2003).
+         meet factual needs and social engagement. Cur-            This notion is consistent with pragmatic theories
+         rent memory utilization relevant (e.g., memory-           of communication, such as the Gricean Maxims
+         augmented generation, long-term dialogue, and
+                                                                   (Grice, 1975), which require speakers to provide in-
+         etc.) benchmarks overlook this nuance, treat-
+         ing memory primarily as a static repository               formation that is both relevant to the conversational
+         of facts rather than a dynamic resource to be             context (Maxim of Relation) and appropriately in-
+         strategically deployed in dialogues. To ad-               formative (Maxim of Quantity). To enable virtual
+         dress this gap, we design S TRAT M EM -B ENCH,            characters to speak in a human-like manner, they
+         a new benchmark to evaluate strategic mem-                must exhibit strategic memory control analogous
+         ory use in character-centric dialogues. This              to that observed in human conversation. In recent
+         dataset comprises 657 instances where vir-                years, large language models (LLMs) have become
+         tual characters must navigate heterogeneous
+                                                                   the dominant backbone for building virtual charac-
+         memory pools containing required, support-
+         ive, and irrelevant memories. We also pro-                ters (Maharana et al., 2024), owing to their strong
+         pose a framework with different evaluation                capabilities of text generation and context under-
+         metrics including Strict Memory Compliance,               standing. However, despite having access to the
+         Memory Integration Quality, Proactive Enrich-             given memories, modern LLM-based virtual char-
+         ment Score and Conditional Irrelevance Rate,              acters lack the ability of strategically using this
+         and to evaluate strategic memory use capa-                information for generating responses (Wu et al.,
+         bilities of virtual characters. Experiments on
+                                                                   2024; Maharana et al., 2024).
+         S TRAT M EM -B ENCH which leverage the state-
+         of-the-art large language models as virtual char-            To solve this problem, it is necessary to make
+         acters show that all models perform well at               strategic memory use measurable. We first partition
+         distinguishing between required and irrelevant            memories into three categories, i.e., required, sup-
+         memories, but struggle once supportive memo-              portive, and irrelevant memories denoted as must,
+         ries are introduced into the decision process.            nice, and irr, respectively. must memories are
+    1    Introduction                                              required to ensure response correctness; nice mem-
+                                                                   ories provide supportive information which can
+    Memory use in human conversation involves more                 enrich responses through personalization, empathy,
+    than the retrieval of stored information, and speak-           or social coherence; irr memories correspond to
+    ers must strategically decide which information                information that is irrelevant to the current interac-
+    to deploy in response to the demands of an inter-              tion and should be actively suppressed. Based on
+    action. Information aligned with a speaker’s cur-              this, strategic memory use refers to using all must
+    rent dialogue objective is selectively activated via           memories, incorporating some nice memories in
+    spreading activation mechanisms (Collins and Lof-              appropriate ways, and avoiding the use of irr mem-
+    tus, 1975; Anderson, 1983), whereas information                ories. Figure 1 illustrates an example of strategic
+    that does not serve the ongoing communicative con-             memory use, comparing it with minimal memory
+    text is actively suppressed (Anderson and Green,               use (with only must memories) and over-inclusive
+        * Corresponding authors.                                   memory use (introducing irr memories).
+                                                             32309
+Proceedings of the 64th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pages 32309–32328
+                                 July 2-7, 2026 ©2026 Association for Computational Linguistics
+Figure 1: An example of strategic memory use. Top: The input contains a user query and memories categorized by
+different functional roles: must (required), nice (supportive), and irr (irrelevant). Bottom: The comparison of the
+responses obtained by different memory use strategies. Response 1 exhibits the results of minimal memory use,
+relying only on must memories, Response 2 exhibits the results of strategic memory use combining must and nice
+memories, and Response 3 exhibits the results of over-inclusive memory use incorporating irr memories.
+
+
+   Based on this classification, we then construct         memories while avoiding irr memories.
+a new benchmark called S TRAT M EM -B ENCH to               In summary, our contributions are three-fold:
+evaluate strategic memory use in virtual charac-
+                                                           • We design S TRAT M EM -B ENCH, the first bench-
+ter conversation. S TRAT M EM -B ENCH consists
+                                                             mark to explicitly distinguish between required,
+of 657 instances, each of which corresponds to
+                                                             supportive, and irrelevant memories in character-
+the dialogue history, the current user query, a per-
+                                                             centric dialogues, thereby expanding the evalu-
+sona, and memories covering the three types intro-
+                                                             ation beyond factual recall to strategic memory
+duced above. The test model is required to select
+                                                             use in response generation.
+and integrate memories for generating responses.
+We finally propose four new evaluation metrics             • We propose a comprehensive evaluation frame-
+to measure whether all must memories are used,               work for strategic memory use, introducing four
+whether some nice memories are appropriately in-             new evaluation metrics, Strict Memory Compli-
+corporated, whether irr memories are avoided, and            ance, Memory Integration Quality, Proactive En-
+the quality of integrating selected memories, for all        richment Score, and Conditional Irrelevance Rate
+instances.                                                   to capture different aspects of models’ capabil-
+   Under this evaluation setting, our design funda-          ities on selecting and integrating memories for
+mentally differs from previous works (e.g., Yang             response generation.
+et al., 2024; Maharana et al., 2024; Wu et al., 2024;
+Rau et al., 2024). Existing memory-oriented evalua-        • We conduct a systematic analysis of the state-
+tion paradigms for memory-augmented generation,              of-the-art LLMs taken as virtual characters for
+long-term dialogue, and related tasks primarily fo-          strategic memory use, and there is no evalu-
+cus on evaluating factual recall, which typically            ated LLM demonstrating an obvious advantage.
+emphasizes whether retrieved factual information             LLMs are skilled at handling must memories,
+is relevant to a given query and reflected in the            but struggle to maintain a balanced use of nice
+generated response. A good factual recall therefore          and irr memories.
+corresponds to using as many must memories as              2     Related Work
+possible in our setting. However, this is insufficient
+in character-centric dialogues, where response qual-       2.1    LLM-based Virtual Characters
+ity depends not only on correctly using must mem-          Existing studies have demonstrated that LLMs can
+ories, but also on selectively incorporating nice          perform role-playing effectively when conditioned
+                                                      32310
+on persona descriptions, character backstories, or        models strategically select and integrate memories
+instruction-tuned prompts, enabling the simulation        during generation.
+of virtual characters with coherent and recogniz-
+able behaviors (Wang et al., 2024a; Shao et al.,          2.3    Personalized RAG
+2023; Ng et al., 2024). Relevant benchmarks and           Personalized RAG aims to enrich response gener-
+evaluation frameworks primarily evaluate role-play        ation by incorporating user-specific information,
+quality in terms of static character consistency (Tu      such as preferences, history, or contextual signals,
+et al., 2024; Samuel et al., 2024). Recent works          to better adapt outputs to individual users (Li et al.,
+have begun to move beyond static persona con-             2025). Existing benchmarks in this area mainly
+sistency by studying LLM-based role-playing in            evaluate whether generated responses appropriately
+longer interactive settings with evolving conversa-       reflect personalized user information (Wang et al.,
+tional contexts (Maharana et al., 2024; He et al.,        2024b; Shi et al., 2025; Jiang et al., 2025; Zhao
+2025). Under this trend, the ability to retain and        et al., 2025, 2024a). Although personalized RAG
+utilize long-term memories becomes increasingly           also recognizes the selective use of available user
+indispensable. However, these works do not con-           information, it does not rely on the LLM for genera-
+sider the need of strategic memory use in virtual         tion itself but some other pre-designed methods. In
+character conversation for making turn-level de-          other words, prior works in personalized RAG do
+cisions (i.e., selecting and integrating memories         not explicitly model the strategic use of information
+in response to the current query), so there is no         during generation, which is the main focus of our
+corresponding evaluation benchmark.                       study. Thus, existing benchmarks for personalized
+                                                          RAG cannot be used to evaluate strategic memory
+2.2   Memory Utilization Relevant Benchmarks
+                                                          use in character-centric dialogue scenarios.
+Prior works (Rau et al., 2024; Hengle et al., 2025;
+Wu et al., 2024; Yang et al., 2024; He et al., 2025)      3     StratMem-Bench
+on memory-augmented generation, long-term di-
+alogue, and other tasks have introduced a variety         3.1    Task Definition
+of benchmarks for evaluating the performance of           We evaluate strategic memory use through a task
+memory utilization. For example, CRAG (Yang               of conditional response generation:
+et al., 2024) provides a comprehensive bench-
+mark for retrieval-augmented generation (RAG)                              ŷ = f (h, q, M, P )               (1)
+(Gao et al., 2023; Zhao et al., 2024b), evaluating
+memory-enhanced question answering across mul-            where each input instance xi = (hi , qi , Pi , Mi ) is
+tiple domains and diverse question types. LoCoMo          composed of a dialogue history hi containing all
+(Maharana et al., 2024) evaluates whether mod-            utterances up to the current turn from both the user
+els can retrieve effective memories across dialogue       and the virtual character, the current user query qi , a
+sessions for cross-session question answering and         memory set Mi = {m1 , m2 , . . . , m|Mi | } extracted
+event summarization over very long conversations.         from previous interactions, and a persona Pi that
+LongMemEval (Wu et al., 2024) evaluates chat              specifies the virtual character’s traits, background,
+assistants’ ability of not only retaining and retriev-    preferences, and values.
+ing memories from prior user–assistant interactions          To distinguish memories in character-centric di-
+across dialogue sessions, but also reasoning over         alogues, we annotate the memory pool Mi with
+such retrieved memories.                                  functional roles at the instance level. Specifically,
+   All of the above benchmarks focus on evaluating        memory items are partitioned into three disjoint
+factual recall, where memory utilization is primar-       subsets: Mi,must , Mi,nice , and Mi,irr , representing
+ily assessed by whether memory including spe-             memories that are required, supportive, and irrele-
+cific objective facts (e.g., time, location, and entity   vant for generating an appropriate response, respec-
+names) can be accurately retrieved and reflected in       tively.
+the response to fulfill user’s request. While effec-         Importantly, these annotations are not accessible
+tive for measuring factual recall, such an evaluation     to the model during response generation. Instead,
+setting is insufficient for human-like virtual charac-    the model receives Mi as an unlabeled set of mem-
+ter conversation, where response quality depends          ory items presented in a uniform natural-language
+on accessing required memories, as well as how            format, without any explicit role indicators. Since
+                                                     32311
+                                                         alogues and associated additional structured meta-
+                                                         data (see Appendix E), and are subsequently dedu-
+                                                         plicated and disambiguated to form a memory pool
+                                                         Mi . The dialogue history hi is drawn from the ses-
+                                                         sion immediately following those used to construct
+                                                         the memory pool, thereby ensuring a strict tem-
+                                                         poral separation between memory acquisition and
+                                                         response generation. We slide a window of size
+                                                         w ∈ {1, 2, 3} over the session sequence. For each
+                                                         window (sj , . . . , sj+w−1 ), the memory pool con-
+    Figure 2: Our pipeline of dataset construction.      sists of these memory items (from sj to sj+w−1 ),
+                                                         and the dialogue history is sj+w .
+memory roles are not provided and no explicit in-        Query & Persona. Based on a constructed dia-
+structions are given regarding which types of mem-       logue history hi and an associated memory pool
+ories to prioritize, models cannot rely on instruction   Mi , we generate a single-turn natural-language
+following to solve the task. Moreover, these annota-     user query qi to ensure session-level coherence.
+tions are instance-specific, meaning that the role of    Meanwhile, we construct a persona Pi from the
+a memory item depends on the current query and di-       same sessions used for extracting the memory pool
+alogue context, rather than being a fixed property of    Mi with a separate prompting scheme. The re-
+the memory itself. As a result, models must implic-      sulting persona summarizes the virtual character’s
+itly infer the functional relevance of each memory       traits, background, preferences, and values, and is
+item in context and select appropriate memories for      incorporated into the prompt to guide the model’s
+producing the response ŷi , i.e., strategic memory      in-character response generation.
+use beyond factual recall.
+                                                         Memory Annotation. The core contribution of
+3.2 Dataset Construction                                 S TRAT M EM -B ENCH lies in the functional anno-
+As shown in Figure 2, we transform the LoCoMo            tation of each memory pool Mi with respect to a
+dataset into S TRAT M EM -B ENCH through our con-        given user query qi . The annotation pipeline is as
+struction pipeline. For each instance, starting from     follows: an LLM is first used to generate prelimi-
+multi-session dialogues and structured summaries         nary labels, which are then systematically reviewed
+from LoCoMo, we construct a memory pool Mi               and refined by human experts to ensure consistency
+and extract a persona Pi . Based on Mi and the           and correctness. In this way, the memory pool Mi
+dialogue history hi , we then generate a user query      is partitioned into three disjoint subsets
+qi and automatically annotate memories into three
+                                                                  Mi = Mi,must ∪ Mi,nice ∪ Mi,irr        (2)
+different types using GPT-5.1 (OpenAI, 2025). The
+resulting instances are subsequently validated by          For each instance, memory items are annotated
+human annotators. We choose LoCoMo as the                according to their functional roles in achieving the
+source dataset because it is a widely used RAG           dialogue objective, with the labels defined as fol-
+benchmark, and its dialogues are generated in vir-       lows:
+tual character settings with long multi-session in-
+teractions, which could facilitate our generation of     • must: Memories that are strictly required to sat-
+queries based on previous conversations. In addi-          isfy the informational demands of the current
+tion, LoCoMo provides summaries for each event             query. These memories are directly aligned with
+and session, which helps reliable fact extraction          the conversation goal and must be integrated to
+and memory construction.                                   ensure a correct response. Omitting them can
+                                                           lead to incorrect or hallucinated answers.
+Memory Pool & Dialogue History. We con-
+struct each input instance from the LoCoMo cor-          • nice: Memories that are not required for correct-
+pus by separating past character knowledge (i.e.,          ness but are supportive to the current conversa-
+memory pool) from current conversational con-              tion goal. When selectively integrated, they can
+text (i.e., dialogue history). Specifically, candidate     enrich responses by adding contextual details,
+memory items are extracted from multi-session di-          personalization, empathy, or social coherence.
+                                                      32312
+• irr: Memories that do not support the current          query naturalness and annotation accuracy. Dur-
+  conversation goal and should be actively sup-          ing this process, annotators correct mislabeled
+  pressed. Incorporating them into the response          memories, merge overlapping or redundant mem-
+  will introduce off-topic or ill-timed details.         ory snippets, and discard instances with ambigu-
+                                                         ous memory-role annotations under the consensus-
+   Our annotation protocol is guided by pragmatic
+                                                         based annotation protocol described above. To
+principles inspired by the Gricean Maxims. Specif-
+                                                         quantify annotation reliability, we measure inter-
+ically, irrelevant (irr) memories violate the Maxim
+                                                         annotator agreement among three annotators on
+of Relation, as they do not contribute to the current
+                                                         the labels assigned to each memory item for the
+conversational goal. Supportive (nice) memories
+                                                         same query, resulting in strong agreement with
+align with the Maxim of Quantity, providing addi-
+                                                         Fleiss’ κ = 0.81 (Fleiss, 1971) before the expert
+tional but non-essential information that enriches
+                                                         discussion process. More details of agreement
+the response without affecting correctness. In con-
+                                                         statistics are provided in Appendix E.
+trast, must memories are necessary to satisfy the
+explicit informational requirements of the query.        3.3    Dataset statistics
+   Thus, our annotation prioritizes functional con-
+                                                         We classify instances into three evaluation scenar-
+tribution to the conversational goal, consistent with
+                                                         ios based on the composition of memory types
+pragmatic relevance, rather than surface-level sig-
+                                                         in their memory pools. Specifically, must-only
+nals such as entity or keyword overlap. In cases
+                                                         instances contain must and irr memories with-
+where the conversational goal involves subjective
+                                                         out nice memories, nice-only instances contain
+or affective dimensions (e.g., emotional support or
+                                                         nice and irr memories without must memories,
+personal reflection), this distinction is determined
+                                                         and must+nice instances contain all three types
+by functional necessity: memories required to sat-
+                                                         of memories. Table 1 presents the statistics of
+isfy the explicit informational demand of the query
+                                                         S TRAT M EM -B ENCH instances, including the num-
+are labeled as must, while additional context that
+                                                         ber of such instances in each scenario, along with
+enhances empathy, personalization, or social co-
+                                                         the average size of the memory pool and the av-
+herence is labeled as supportive. This allows us to
+                                                         erage number of words per memory item. The
+distinguish factual correctness from conversational
+                                                         dataset is publicly available at https://github.
+enrichment in a principled manner.
+                                                         com/seucoin/StratMem-Bench.git.
+   For example, a memory stating “John recently
+moved to a new city” may take on different roles               Scenario    Count   Avg. Mems     Avg. Words
+depending on the query. It is annotated as a must
+                                                               must-only      50          6.24          9.53
+memory when the user asks “Where is John living                nice-only     132          9.12         10.09
+now?”. It is annotated as a nice memory when the               must+nice     475          8.97          9.75
+user asks “How is John doing lately?”, as mention-             Overall       657          8.79          9.81
+ing the move can provide additional context and
+support a more engaging or empathetic response.              Table 1: S TRAT M EM -B ENCH instance statistics.
+However, it is annotated as an irr memory when
+the user asks “What is John’s favorite type of mu-
+sic?”, where the information does not contribute to      4     Evaluation Metrics
+the conversational goal.                                 4.1    Strict Memory Compliance
+   To minimize subjectivity in memory role as-
+                                                         We first define Strict Memory Compliance (SMC),
+signment, we adopt a multi-stage annotation pro-
+                                                         a rule-based evaluation metric that assesses
+tocol with expert consensus. Initial labels are
+                                                         whether a model satisfies the hard constraints of
+generated by an LLM and subsequently reviewed
+                                                         different memory types. A memory item m ∈ Mi
+by multiple human annotators. Disagreements
+                                                         is defined as used if and only if ŷi explicitly in-
+are resolved through discussion until consensus
+                                                         corporates a concrete detail attributable to m that
+is reached. Memory items that remain ambiguous
+                                                         cannot be inferred solely from the dialogue history
+after this process are discarded from the dataset to
+                                                         hi , the user query qi , and the persona Pi . This is
+ensure high annotation reliability.
+                                                         judged by an LLM through our designed prompt.
+Human Validation. Human annotators review                   For each memory type k ∈ {must, nice, irr},
+each instance xi = (hi , qi , Pi , Mi ) to ensure both   we quantify the k memory usage ratio ρi,k of the
+                                                    32313
+instance xi as follows:                                  dialogue objective rather than on surface-level flu-
+                        X                                ency. As a result, each response ŷi corresponds to
+                  1
+       ρi,k =                  1 [used(ŷi , m)]   (3)   MIQi , which is explicitly designed to be failure-
+                |Mi,k |                                  sensitive, i.e., its value drops sharply when clear
+                      m∈Mi,k
+                                                         failures in memory integration are detected. Rather
+where Mi,k is the subset of Mi composed of all k         than attempting to finely rank responses based on
+memories, and used(ŷi , m) is a boolean function        subtle and subjective differences in overall quality,
+measuring whether m is used or not. Based on this,       MIQi serves as a diagnostic signal that prioritizes
+we define SMCi for each instance as follows:             the identification of failures (see more details in
+• If the instance xi ∈ Imust-only , we set SMCi = 1      Appendix A.2) in memory integration. This design
+  if ρi,must = 1 and ρi,irr = 0; otherwise, we set       is motivated by the observation that holistic quality
+  SMCi = 0.                                              judgments are highly subjective and exhibit high
+• If the instance xi ∈ Inice-only , we set SMCi = 1      variance, which makes it challenging to align LLM-
+  if ρi,nice > 0 and ρi,irr = 0; otherwise, we set       based evaluators with human preferences (Fabbri
+  SMCi = 0.                                              et al., 2021; Lee et al., 2025). In contrast, clear
+• If the instance xi ∈ Imust+nice , we set SMCi = 1      failure types in strategic memory use are more ver-
+  if ρi,must = 1, ρi,nice > 0, and ρi,irr = 0; other-    ifiable and can be scored more consistently.
+  wise, we set SMCi = 0.                                    Let N be the total number of evaluated re-
+where Imust-only , Inice-only and Imust+nice represent   sponses, the model’s MIQ can be computed as
+the set of all must-only, nice-only and must+nice                                         N
+instances, respectively. This serves as a strict pass                                1 X
+                                                                        MIQ =            MIQi .                     (5)
+or fail criterion, i.e., a compliant response should                                 N
+                                                                                         i=1
+include all must memories, utilize at least one nice
+memory when available, and avoid incorporating           4.3   Behavior Tendency Metrics
+any irr memories. For the whole dataset, we com-         To quantify behavioral tendencies in strategic mem-
+pute SMC as follows:                                     ory use, we define two complementary metrics that
+                                                         capture a model’s tendency toward proactivity and
+                           1 X                           risk aversion, respectively. The first metric is Proac-
+                SMC =          SMCi                (4)
+                          |I|                            tive Enrichment Score (PES), which quantifies a
+                            i∈I
+                                                         model’s tendency toward proactivity in incorporat-
+where I = Imust-only ∪ Inice-only ∪ Imust+nice .         ing nice memories once all must memories have
+                                                         been correctly used. It is defined as follows:
+4.2 Memory Integration Quality
+                                                                         1             X
+While SMC measures the extent of satisfying hard            PES =                                   1 [ρi,nice > 0] (6)
+constraints of different memory types, it does not                  |Imust_pass |
+                                                                                    i∈Imust_pass
+evaluate how effectively a model uses memories in
+a qualitative sense. A model may achieve a high          where Imust_pass denotes the set of instances includ-
+SMC, yet its responses can still appear awkward,         ing nice-only instances and the ones that all must
+offensive, or incoherent when integrating selected       memories are correctly used (i.e., ρi,must = 1).
+memories. Therefore, we propose Memory Integra-             The second metric, Conditional Irrelevance Rate
+tion Quality (MIQ), an LLM-based metric evaluat-         (CIR), measures how frequently a model incorpo-
+ing how well a model integrates memory to support        rates irr memories when nice memories are avail-
+the dialogue objective.                                  able, thereby reflecting the model’s tendency to-
+   For each instance xi , we first identify the set      ward risk aversion in strategic memory use. CIR
+of memories used in the generated response ŷi (as       is defined as follows:
+defined in Section 4.1). These memories, together                         1         X
+                                                             CIR =                        1 [ρi,irr > 0] (7)
+with the character persona Pi , dialogue history hi ,                |Inice_exist |
+                                                                                    i∈Inice_exist
+and user query qi , are provided to an independent
+LLM-based evaluator. The evaluator uses a 1-5            where Inice_exist denotes the set of instances whose
+Likert scale (Appendix A.1) to assess the gener-         memory pools contain at least one nice memory.
+ated responses, focusing on whether the selected           PES and CIR provide a behavioral characteri-
+memories are coherently integrated to support the        zation of how models balance proactivity and risk
+                                                    32314
+aversion in strategic memory use. We conduct deep        same judge three times with fixed T as 1.0, and a
+analysis on this point in Section 6.3.                   memory is considered “used” if at least two of the
+                                                         three runs return true.
+5   Experimental Setup
+                                                         MIQ Scoring. We used the same DeepSeek-V3.2
+5.1 Evaluated Models                                     model and empirically set T = 0.1 to compute
+We selected a set of widely used LLMs span-              MIQ based on the design in Section 4.2.
+ning multiple model families, including instruction-
+tuned and reasoning-oriented variants. To ensure         Human Validation. To validate the automated
+fair comparison, all models share a unified instruc-     evaluation pipeline, we sampled instances and per-
+tion template. They were provided with each in-          formed human validation. For memory use de-
+stance including the persona Pi , history hi , query     tection, we compared the LLM-based evaluator
+qi , and the unannotated memory pool Mi , and in-        against annotations from an expert human annota-
+structed to generate a single-turn response. We did      tor on 1,130 memory–responses pairs, achieving
+not use few-shot examples to avoid leaking spe-          a high level of agreement (Cohen’s κ = 0.96 (Co-
+cific stylistic biases. Full model identifiers and API   hen, 1960)). Since the number of annotators is
+versions are detailed in Appendix B.                     fewer than three, we chose to use Cohen’s κ. For
+                                                         MIQ scoring, we evaluated the agreement between
+5.2 Benchmark Configuration                              the LLM-based evaluator and human annotations
+We tested the models on S TRAT M EM -B ENCH, us-         across 300 responses annotated by two human an-
+ing the full set of 657 instances. To rigorously         notators, which also showed substantial agreement
+distinguish between “strategic use” and “lucky           (Cohen’s κ = 0.69).
+guesses,” we applied a downsampling procedure               We acknowledge the potential risk of self-
+to instances where |Mi,nice | > 2. Specifically, we      evaluation bias (Wataoka et al., 2024), as
+reduced the number of available nice memories to         DeepSeek-V3.2 is also included among the eval-
+exactly two items per instance, thereby decreasing       uated models. However, all LLM-judged metrics
+the probability that models perform well on the          in our pipeline are largely objective, as they assess
+evaluation through random selection rather than in-      integration quality according to predefined rubrics
+tentional strategic memory use. The downsampling         rather than relying on subjective preferences. The
+was performed once using a fixed random seed,            strong agreement with human annotations indicates
+and the resulting dataset was consistently applied       that self-evaluation bias is limited and does not ma-
+across all evaluated models.                             terially affect the validity of our evaluation.
+
+5.3 Evaluation Pipeline                                  6     Experimental Results
+We implemented a rigorous automated evaluation           6.1    SMC under Different Scenarios
+pipeline verified against human judgments.
+                                                         Robustness in must-only Scenarios. As shown
+Response Generation. For each instance, we em-           in Table 2, performance on must-only instances is
+pirically sampled a response ŷ with temperature         robust, with SMC ranging from 76% to 92%. This
+T = 0.6 to balance creativity with stability.            confirms that when the task is largely constrained
+                                                         to must memories, state-of-the-art LLMs achieve
+Memory Use Detection. We employed an LLM                 strong performance.
+to automatically determine which memory item in
+Mi were used during response generation. Specif-         Degradation in nice-only and must+nice Sce-
+ically, we used DeepSeek-V3.2 (DeepSeek-AI,              narios. However, the performance of models de-
+2025) (deepseek-chat), based on a pilot study            grades significantly when nice memories are in-
+demonstrating superior precision compared to GPT-        corporated. For nice-only instances, SMC drops
+5.1 and Claude Sonnet 4.5. To maximize reliabil-         sharply to the 46%-57%. In the absence of an ex-
+ity, we employed a LLM-based judge with explicit         plicit factual linkage between the user query and
+chain-of-thought reasoning and apply repeated sam-       supportive memories, models struggle to recognize
+pling with majority voting. Specifically, the evalua-    nice memories and incorporate them into the re-
+tor was required to quote concrete evidence from         sponse. The must+nice scenario, which represents
+ŷi before assigning a boolean label. We ran the         the full strategic challenge, is the most difficult,
+                                                    32315
+                                       SMC (%) ↑                               MIQ on SMC-pass (1–5) ↑
+    Model               must-only   nice-only   must+nice      All    must-only    nice-only   must+nice    All
+    GPT-5.2               88.00       57.58       41.89       48.55     4.77         4.26        4.45       4.45
+    GPT-5-chat            90.00       46.21       41.68       46.27     4.76         4.18        4.63       4.56
+    Claude Sonnet 4.5     90.00       53.03       46.95       51.45     4.51         3.94        4.47       4.37
+    Gemini 3 Pro          78.00       49.24       48.21       50.68     4.26         3.95        4.28       4.21
+    DeepSeek-reasoner     76.00       48.48       39.16       43.84     3.97         3.97        4.20       4.12
+    DeepSeek-chat         76.00       54.55       40.00       45.66     4.53         3.97        4.54       4.40
+    Llama 4 Maverick      79.25       53.44       46.09       50.23     4.57         4.04        4.55       4.44
+    Qwen3-Max             76.00       56.82       40.42       46.42     4.53         4.19        4.30       4.30
+    Qwen3-235B            92.45       46.56       42.28       47.18     4.37         3.85        4.32       4.24
+
+Table 2: The overall performance on S TRAT M EM -B ENCH. The columns with gray background denote the aggregated
+performance across all instances(weighted by scenario counts). Bold values indicate the best performance in each
+column.
+
+
+and all the models achieve less than 50% SMC.                Model                 must-used    nice-used   irr-used
+These results indicate that while models exhibit             GPT-5.2                 4.48         4.22        2.99
+strong factual recall, they lack robust mechanisms           GPT-5-chat              4.55         4.38        2.81
+                                                             Claude Sonnet 4.5       4.36         4.18        3.05
+for strategic memory selection over heterogeneous            Gemini 3 Pro            3.92         3.73        2.63
+memory pools.                                                DeepSeek-reasoner       3.86         3.86        2.41
+                                                             DeepSeek-chat           4.32         4.12        2.75
+Bottleneck in Memory Selection. MIQ on SMC-                  Llama 4 Maverick        4.44         4.23        2.66
+                                                             Qwen3-Max               4.14         4.04        2.64
+pass in Table 5 means the average MIQi computed              Qwen3-235B              4.19         3.96        2.67
+on the instances with SMCi = 1. The Conditional
+MIQ remains high for most models, even when                 Table 3: The integration quality by used memory type.
+their SMCs are low. This implies a fundamental              Columns report MIQs on specific subsets of instances,
+bottleneck in memory selection. When models suc-            i.e., the instances where must, nice, and irr memories
+cessfully satisfy the strict memory constraints, they       were used, respectively.
+typically integrate the selected memories without
+major failures.                                             expression remains fluent.
+6.2 Integration Quality of Memories                         6.3   Trade-off between Proactivity and Risk
+The Enrichment Tax. As shown in Table 3, we                       Aversion
+observe that across all models, must-used MIQ               Finally, we analyzed the behavioral tendency of
+(typically 4.2-4.6) is consistently higher than nice-       each model using the PES and CIR (detailed data
+used MIQ (3.9-4.4). While the difference (≈ 0.2)            are in Table 5 in Appendix C). Figure 3 visualizes
+may appear minor on a 1-5 scale, it is notable given        the proactivity–risk aversion trade-off.
+the failure-sensitive design of MIQ described in
+Section 4.2. Responses without failures tend to             Pareto Frontier. Figure 3 reveals a clear trade-
+cluster near the ceiling, i.e., MIQ= 5.0. Therefore,        off pattern: models that achieve higher PES also
+a margin of 0.2 does not indicate a uniform decline         tend to incur higher CIR. This pattern delineates
+in surface-level writing quality, but rather reflects       two salient behavioral extremes, ranging from con-
+an increased incidence of failures in memory inte-          servative and low-risk systems to highly proactive
+gration.                                                    but error-prone systems. GPT-5-chat achieves the
+                                                            lowest overall CIR (≈ 7.9%) by avoiding the use
+Collapse under Irrelevance. In contrast to the              of nice memories unless strongly supported by the
+modest tax of enrichment, the degradation associ-           context. However, it also constrains the model’s
+ated with irrelevant memory use is substantially            ability for proactive enrichment. At the opposite
+more severe. irr-used MIQ scores are drastically            extreme, Gemini 3 Pro (Google, 2025) exhibits a
+lower (2.6-3.1), representing a collapse in integra-        high degree of proactivity , achieving the highest
+tion coherence. This is consistent with the intu-           PES (≈ 73.3%). However, this eagerness comes at
+itive expectation that irrelevant insertions disrupt        the cost of weakened memory filtering. In partic-
+conversational flow, even when the surface-level            ular, under nice-only scenarios, where generation
+                                                    32316
+                                                                 Thinking models        Standard models                Limitations
+                                                   Str
+Proactive Enrichment Score (Overall, %)
+                                          75          ate                                    Gemini 3 Pro Preview      S TRAT M EM -B ENCH evaluates strategic memory
+                                                         gic
+                                                                                                                       use only within a single response generation step
+                                          70                                                                           and does not evaluate memory use as it evolves
+                                                                                                                       across multi-turn interactions. Besides, the bench-
+                                          65
+                                                                          Claude Sonnet 4.5                            mark focuses on textual memories and does not
+                                          60                                   Qwen3-235B                              include multimodal memories such as voice or vi-
+                                                               Llama 4 Maverick Qwen3-Max
+                                                                       DeepSeek-chat
+                                                                                                                       sual appearance, which are important for fully em-
+                                          55                   GPT-5.2             DeepSeek-reasoner                   bodied virtual characters. In the future, we plan to
+                                                                                                                       extend S TRAT M EM -B ENCH to support multi-turn
+                                          50 GPT-5-chat
+                                                                                                                       interactions and incorporate multimodal memory,
+                                               5            10         15          20      25       30        35
+                                                         Conditional Irrelevance Rate (Overall, %)                     enabling more realistic character behaviors.
+
+Figure 3: The Proactivity–Risk Aversion Trade-off. PES
+                                                                                                                       Ethics Statement
+vs. CIR. The top-left region corresponds to high enrich-                                                               All user profiles and memory items in S TRAT M EM -
+ment with low irrelevance.                                                                                             B ENCH are synthetic or rigorously anonymized,
+                                                                                                                       and no real user data or personally identifiable
+                                                                                                                       information was used in constructing the bench-
+is not constrained by explicit factual linkage, the                                                                    mark. The benchmark evaluates strategic memory
+CIR increases to 46.97%. This indicates that in a                                                                      use in virtual character dialogues under controlled
+substantial fraction of cases, enriching the conver-                                                                   conditions, and does not assess potential risks in
+sation with additional memories may disrupt the                                                                        real-world deployments, such as unintended social
+focus by introducing unrelated memories.                                                                               influence or privacy issues arising from memory
+                                                                                                                       use. Accordingly, benchmark results should not
+                                                                                                                       be interpreted as guarantees of safe behavior in
+7                                         Conclusion                                                                   user-facing systems.
+
+                                                                                                                       Acknowledgments
+In this paper, we introduce S TRAT M EM -B ENCH, a
+benchmark for evaluating strategic memory use in                                                                       This work is supported by the National Natural Sci-
+virtual character conversation beyond factual recall.                                                                  ence Foundation of China (Grant No. 62376058,
+By partitioning memories into must, nice, and irr                                                                      U23B2057, 52378009, 62276063), the Southeast
+types based on their functional roles, the bench-                                                                      University Interdisciplinary Research Program for
+mark defines distinct requirements for memory use.                                                                     Young Scholars, ZhiShan Young Scholar Program
+Under the objectives of factual needs and social en-                                                                   of Southeast University, and the Big Data Comput-
+gagement, the benchmark evaluates whether virtual                                                                      ing Center of Southeast University.
+characters can correctly use all must memories, se-
+lectively incorporate nice memories in appropriate                                                                     Declaration of Generative AI
+ways, and avoid irr memories. For the purpose                                                                          During the preparation of this work, generative
+of measurement, we propose an evaluation frame-                                                                        AI tools were used exclusively for the creation of
+work including SMC, MIQ, PES and CIR, which                                                                            illustrative figures. The authors reviewed and ap-
+capture different aspects of models’ ability to se-                                                                    proved all figures and take full responsibility for
+lect and integrate memories. Experiments with                                                                          the content of the publication.
+state-of-the-art LLMs as virtual characters indi-
+cate that while all models can expertly distinguish
+must memories from irr memories, they struggle                                                                         References
+to make consistent decisions when given nice mem-                                                                      Nicole Alea and Susan Bluck. 2003. Why are you
+ories. By treating memory as a dynamic resource                                                                          telling me that? a conceptual model of the so-
+that can be strategically used in dialogue, we expect                                                                    cial function of autobiographical memory. Memory,
+that S TRAT M EM -B ENCH will encourage further                                                                          11(2):165–178.
+research on virtual characters that support more                                                                       John R. Anderson. 1983. The Architecture of Cognition.
+realistic and human-like conversations.                                                                                  Harvard University Press.
+                                                                                                                    32317
+Michael C. Anderson and Collin Green. 2001. Sup-          Bowen Jiang, Zhuoqun Hao, Young-Min Cho, Bryan
+  pressing unwanted memories by executive control.          Li, Yuan Yuan, Sihao Chen, Lyle Ungar, Camillo J
+  Nature, 410:366–369.                                      Taylor, and Dan Roth. 2025. Know me, respond to
+                                                            me: Benchmarking llms for dynamic user profiling
+Anthropic. 2025.        Claude sonnet 4.5 sys-              and personalized responses at scale. arXiv preprint
+  tem card.           https://assets.anthropic.             arXiv:2504.14225.
+  com/m/12f214efcc2f457a/original/
+  Claude-Sonnet-4-5-System-Card.pdf.        Ac-           Yukyung Lee, Joonghoon Kim, Jaehee Kim, Hyowon
+  cessed: 2025-12-15.                                       Cho, Jaewook Kang, Pilsung Kang, and Najoung
+                                                            Kim. 2025. Checkeval: A reliable llm-as-a-judge
+Jacob Cohen. 1960. A coefficient of agreement for           framework for evaluating text generation using check-
+   nominal scales. Educational and psychological mea-       lists. In Proceedings of the 2025 Conference on Em-
+   surement, 20(1):37–46.                                   pirical Methods in Natural Language Processing,
+                                                            pages 15782–15809.
+Allan M. Collins and Elizabeth F. Loftus. 1975. A
+  spreading-activation theory of semantic processing.     Xiaopeng Li, Pengyue Jia, Derong Xu, Yi Wen, Yingyi
+  Psychological Review, 82(6):407–428.                      Zhang, Wenlin Zhang, Wanyu Wang, Yichao Wang,
+                                                            Zhaocheng Du, Xiangyang Li, and 1 others. 2025. A
+DeepSeek-AI. 2025. Deepseek-v3.2: Pushing the fron-         survey of personalization: From rag to agent. arXiv
+  tier of open large language models. arXiv preprint        preprint arXiv:2504.10147.
+  arXiv:2512.02556.                                       Adyasha Maharana, Dong-Ho Lee, Sergey Tulyakov,
+                                                            Mohit Bansal, Francesco Barbieri, and Yuwei Fang.
+Alexander R Fabbri, Wojciech Kryściński, Bryan Mc-        2024. Evaluating very long-term conversational
+  Cann, Caiming Xiong, Richard Socher, and Dragomir         memory of LLM agents. In Proceedings of the 62nd
+  Radev. 2021. Summeval: Re-evaluating summariza-           Annual Meeting of the Association for Computational
+  tion evaluation. Transactions of the Association for      Linguistics, pages 14017–14046, Bangkok, Thailand.
+  Computational Linguistics, 9:391–409.                     Association for Computational Linguistics.
+Joseph L Fleiss. 1971. Measuring nominal scale agree-     Thomas O. Nelson and Louis Narens. 1990. Metamem-
+   ment among many raters. Psychological bulletin,          ory: A theoretical framework and new findings. Psy-
+  76(5):378.                                                chology of Learning and Motivation, 26:125–173.
+Yunfan Gao, Yun Xiong, Xinyu Gao, Kangxiang Jia,          Man Tik Ng, Hui Tung Tse, Jen-tse Huang, Jingjing Li,
+  Jinliu Pan, Yuxi Bi, Yixin Dai, Jiawei Sun, Haofen       Wenxuan Wang, and Michael R Lyu. 2024. How well
+  Wang, and Haofen Wang. 2023. Retrieval-augmented         can llms echo us? evaluating ai chatbots’ role-play
+  generation for large language models: A survey.          ability with echo. arXiv preprint arXiv:2404.13957.
+  arXiv preprint arXiv:2312.10997, 2(1).
+                                                          OpenAI. 2025. Gpt-5.1 technical report. https://
+Google. 2025. Gemini 3 developer guide (gemini              openai.com/research. Accessed: 2025-12-5.
+  api): Gemini 3 pro preview. https://ai.google.
+  dev/gemini-api/docs/gemini-3.       Model ID:           Monisha Pasupathi. 2001. The social construction of
+  gemini-3-pro-preview. Accessed: 2025-12-15.              the personal past and its implications for adult devel-
+                                                           opment. Psychological Bulletin, 127(5):651–672.
+Herbert P Grice. 1975. Logic and conversation. In
+                                                          David Rau, Hervé Déjean, Nadezhda Chirkova, Thibault
+  Speech acts, pages 41–58. Brill.
+                                                            Formal, Shuai Wang, Stéphane Clinchant, and Vas-
+                                                            silina Nikoulina. 2024. Bergen: A benchmarking
+Junqing He, Liang Zhu, Rui Wang, Xi Wang, Gholam-
+                                                            library for retrieval-augmented generation. In Find-
+  reza Haffari, and Jiaxing Zhang. 2025. MADial-
+                                                            ings of the Association for Computational Linguistics:
+  bench: Towards real-world evaluation of memory-
+                                                            EMNLP 2024, pages 7640–7663.
+  augmented dialogue generation. In Proceedings of
+  the 2025 Conference of the North American Chap-         Vinay Samuel, Henry Peng Zou, Yue Zhou, Shreyas
+  ter of the Association for Computational Linguistics:     Chaudhari, Ashwin Kalyan, Tanmay Rajpurohit,
+  Human Language Technologies, pages 9902–9921,             Ameet Deshpande, Karthik Narasimhan, and 1 others.
+  Albuquerque, New Mexico. Association for Compu-           2024. Personagym: Evaluating persona agents and
+  tational Linguistics.                                     llms. arXiv preprint arXiv:2407.18416.
+Amey Hengle, Prasoon Bajpai, Soham Dan, and Tan-          Yunfan Shao, Linyang Li, Junqi Dai, and Xipeng Qiu.
+ moy Chakraborty. 2025. Multilingual needle in a            2023. Character-llm: A trainable agent for role-
+ haystack: Investigating long-context behavior of mul-      playing. In Proceedings of the 2023 Conference on
+ tilingual large language models. In Proceedings of         Empirical Methods in Natural Language Processing.
+ the 2025 Conference of the Nations of the Americas
+ Chapter of the Association for Computational Lin-        Teng Shi, Jun Xu, Xiao Zhang, Xiaoxue Zang, Kai
+ guistics: Human Language Technologies (Volume 1:           Zheng, Yang Song, and Han Li. 2025. Retrieval
+ Long Papers), pages 5165–5180.                             augmented generation with collaborative filtering
+                                                     32318
+    for personalized text generation.   arXiv preprint    A.1   Scoring Hierarchy
+    arXiv:2504.05731.
+                                                          MIQ adopts a strict 5-point ordinal scale designed
+Quan Tu, Shilong Fan, Zihang Tian, and Rui Yan. 2024.     to be failure-sensitive: scores are determined by
+  Charactereval: A chinese benchmark for role-playing     the most severe strategic failure observed in mem-
+  conversational agent evaluation. In Proceedings of
+                                                          ory usage. Rather than finely ranking high-quality
+  the 62nd Annual Meeting of the Association for Com-
+  putational Linguistics.                                 responses, the scale prioritizes the detection and pe-
+                                                          nalization of breakdowns in relevance, grounding,
+Zekun Moore Wang, Zhongyuan Peng, Haoran Que,             and conversational coherence.
+  Jiaheng Liu, Wangchunshu Zhou, Yuhan Wu,
+  Hongcheng Guo, Ruitong Gan, Zehao Ni, Jian Yang,
+  and 1 others. 2024a. Rolellm: Benchmarking, elic-
+                                                          • 5 (No Failure): Memory integration is fully co-
+  iting, and enhancing role-playing abilities of large      herent and strategically appropriate. All utilized
+  language models. In Findings of the Association for       memories are clearly relevant, well-justified by
+  Computational Linguistics: ACL 2024, pages 14743–         the query or dialogue objective, and integrated
+  14777.
+                                                            naturally without introducing distraction, redun-
+Zheng Wang, Zhongyang Li, Zeren Jiang, Dandan Tu,           dancy, or distortion.
+  and Wei Shi. 2024b. Crafting personalized agents
+  through retrieval-augmented generation on editable      • 4 (Minor Strategic Friction): Memory usage
+  memory graphs. arXiv preprint arXiv:2409.19401.           is relevant and within-domain, but exhibits mild
+Koki Wataoka, Tsubasa Takahashi, and Ryokan Ri.
+                                                            inefficiencies, such as slightly redundant elabora-
+  2024. Self-preference bias in llm-as-a-judge. arXiv       tion or formulaic phrasing. No identifiable nega-
+  preprint arXiv:2410.21819.                                tive behavior from the taxonomy is present, and
+                                                            overall conversational coherence is preserved.
+Di Wu, Hongwei Wang, Wenhao Yu, Yuwei Zhang,
+  Kai-Wei Chang, and Dong Yu. 2024. Longmemeval:
+  Benchmarking chat assistants on long-term interac-
+                                                          • 3 (Marginal Deviation): Memory usage remains
+  tive memory. arXiv preprint arXiv:2410.10813.             logically connected to the query, but shows no-
+                                                            ticeable strategic weakness, such as unnecessary
+An Yang, Binyuan Hui, Jian Yang, and 1 others.              detail, shallow justification, or weak contribution
+  2025. Qwen3 technical report. arXiv preprint
+  arXiv:2505.09388.                                         to the dialogue objective. While no clear-cut fail-
+                                                            ure mode is triggered, the integration provides
+Xiao Yang, Kai Sun, Hao Xin, Yushi Sun, Nikita Bhalla,      limited added value beyond surface relevance.
+  Xiangsen Chen, Sajal Choudhary, Rongze D Gui,
+  Ziran W Jiang, Ziyu Jiang, and 1 others. 2024. Crag-    • 2 (Clear Failure): The response exhibits at least
+  comprehensive rag benchmark. Advances in Neural
+  Information Processing Systems, 37:10470–10490.
+                                                            one explicit negative behavior defined in the tax-
+                                                            onomy. Memory usage disrupts relevance or co-
+S. Zhao and 1 others. 2024a. Do llms recognize your         herence, even if the core answer remains partially
+   preferences? evaluating personalized preference fol-     intelligible.
+   lowing in llms. OpenReview.
+
+Suifeng Zhao, Tong Zhou, Zhuoran Jin, Hongbang            • 1 (Severe Failure): The response contains mul-
+  Yuan, Yubo Chen, Kang Liu, and Sujian Li. 2024b.          tiple or severe negative behaviors, such as com-
+  AWeCita: Generating Answer with Appropriate and           pounding topic drift, factual fabrication, or perva-
+  Well-grained Citations Using LLMs. Data Intelli-          sive misattribution. Memory usage fundamen-
+  gence, 6(4):1134–1157.
+                                                            tally undermines conversational focus, coher-
+Zheng Zhao, Clara Vania, Subhradeep Kayal, Naila            ence, or trustworthiness.
+  Khan, Shay B. Cohen, and Emine Yilmaz. 2025. Per-
+  sonalens: A benchmark for personalization evalua-       A.2   Classification of Failure Types
+  tion in conversational ai assistants. In Findings of
+  ACL.                                                    As MIQ is explicitly designed to be failure-
+                                                          sensitive, we define a classification of common
+A     MIQ Scoring Rubric and Error                        failure types that systematically lead to degraded
+      Taxonomy                                            integration quality. Below, we provide concise def-
+                                                          initions and illustrative examples for each type.
+This appendix details the scoring criteria for MIQ
+and provides concrete examples of the failure types       1. Cross-domain / Topic Drift. The model intro-
+that trigger penalties.                                   duces a memory that is irrelevant for answering the
+                                                     32319
+user query and shifts the response toward an unre-      use and failure types. For each case, we present
+lated topical domain, resulting in a discontinuous      the user query, the associated memory pool, and
+or distracting topic transition (see Figure 4).         the full responses generated by a subset of evalu-
+                                                        ated models, along with their corresponding MIQ
+2. Forced Over-association. The model incorpo-
+                                                        scores.
+rates an additional memory by establishing a weak
+or unjustified connection that goes beyond what is      Case 1: Strategic vs. Minimal vs. Over-Inclusive
+required to answer the user query (e.g., speculative    Memory Use. Figure 9 shows a representative
+causal reasoning or superficial correlations such as    must+nice instance. Under the same input, models
+shared timestamps). In such cases, the memory is        exhibit distinct patterns of strategic memory use.
+not introduced to provide query-relevant support,          Strategic. Qwen3-235B and Claude Son-
+but to justify the inclusion of an otherwise unneces-   net 4.5 (Anthropic, 2025) answer the required fact
+sary memory by fabricating an additional narrative      correctly and add a supportive detail (e.g., describ-
+or relationship (see Figure 5).                         ing the game as a 2D adventure with puzzles) while
+3. Factual Contradiction / Fabrication. The             avoiding any irrelevant memories. These responses
+model asserts claims that contradict the provided       illustrate the desired behavior of using required
+memory or user input, or improperly fuses multi-        memory while selectively adding supportive en-
+ple memories into a composite event, causal chain,      richment.
+or factual claim, thereby violating grounding con-         Minimal. Several models (e.g., GPT-5.2, GPT-
+straints (see Figure 6).                                5-chat, DeepSeek-chat, Qwen3-Max (Yang et al.,
+                                                        2025)) provide a response that relies only on must
+4. Unnecessary Overexpansion. The model pro-            memories, stating the release month without any
+vides a correct and relevant core answer but then       enrichment, despite the nice memories are available
+adds unnecessary additional details, often recalled     and could be properly incorporated.
+from memory, that are not needed to answer the
+                                                           Over-inclusive. Both Gemini 3 Pro and
+user query, making the response longer and less
+                                                        DeepSeek-reasoner exhibit failures in avoiding irr
+focused without changing the topic (see Figure 7).
+                                                        memory. Gemini 3 Pro introduces an irrelevant
+5. Misattribution / Private Projection. The             memory from a different life domain, namely the
+model incorrectly attributes a memory to the wrong      “portable smokers” startup. Similarly, DeepSeek-
+dialogue participant, or introduces private or un-      reasoner references “tutorials” used for skill im-
+stated personal information as if they were mutually    provement. While this detail is thematically closer
+established facts within the dialogue (see Figure 8).   to game development than the other, the mention
+                                                        of tutorials constitutes a forced over-association,
+B   Evaluated Models                                    inserting internal backstory where a direct answer
+Table 4 reports the exact model identifiers and API     would be more natural and thereby limiting integra-
+versions used in our experiments for reproducibility.   tion quality.
+Unless otherwise specified, all models are queried         Overall, these examples show that, in must+nice
+in zero-shot mode with the same prompt template         settings, differences across models arise primar-
+and decoding configuration.                             ily from how they decide whether to incorporate
+                                                        optional context, rather than from satisfying the
+C    Additional Experimental Results                    required factual constraint. The contrast between
+                                                        Qwen3-235B/Claude and Gemini in Figure 9 fur-
+Table 5 reports additional PES and CIR results
+                                                        ther illustrates that selectively incorporating rele-
+in the nice-only and must+nice settings, illustrat-
+                                                        vant nice memories can enrich responses and make
+ing the trade-off between proactive memory en-
+                                                        them more informative, whereas introducing irrele-
+richment and conservative avoidance of irrelevant
+                                                        vant memories disrupts coherence and leads to less
+memories across models.
+                                                        fluent, unfocused replies.
+D    Qualitative Case Studies
+                                                        Case 2: Integration Quality Varies Despite Iden-
+In this appendix, we conduct qualitative analysis       tical Memory Selection Figure 10 presents a
+on two representative instances from the dataset        must-only instance. All models correctly recog-
+to illustrate different patterns of strategic memory    nize the must memory about the movie and avoid
+                                                   32320
+Examples
+
+Example 1
+User: James
+User Query: How are you feeling about your first mobile game launching this month, and what’s still left on your checklist?
+Used Memory:
+• John uses books, tutorials, and developer forums to improve his game development skills.
+• John’s first mobile game is scheduled to launch in October 2022.
+• John started a startup selling portable smokers around 2022-09-19.
+Virtual Person: John
+Bad Response:
+I’m honestly a mix of terrified and electrified! Getting this game out in October has been the goal for so long. Right now,
+I’m just obsessing over final bug fixes and trying to get the App Store screenshots looking perfect. It’s a lot of late nights,
+especially balancing it with the portable smoker startup and that new volunteer gig, but I wouldn’t have it any other
+way.
+Reasons:
+Cross-domain topic drift. The user’s query is narrowly focused on the emotional state and remaining tasks related to the
+upcoming mobile game launch. While the response initially addresses this goal, it then introduces an unrelated memory
+about a portable smoker startup, shifting the narrative toward an irrelevant business domain. This insertion does not clarify
+the game launch, nor does it support the user’s intention. Instead, it diverts attention away from the core topic and disrupts
+the conversational focus.
+
+
+
+Example 2
+User: Deborah
+User Query: How is the meditation course by the lake going so far, and is it helping with your finals stress?
+Used Memory:
+• Jolene is studying hard for her upcoming finals in 2023-09.
+• Jolene signed up for a meditation course at a retreat near a lake on 2023-09-06.
+• Playing Monster Hunter: World helps Jolene de-stress.
+Virtual Person: Jolene
+Bad Response:
+It’s honestly been a lifesaver! The lake is so peaceful, and the course is really helping me find my center before I have to
+dive back into my textbooks. The pressure for finals is definitely still there, but the breathing techniques are keeping me
+much more grounded than usual. It’s almost as effective as a chaotic session of Monster Hunter: World for blowing off
+steam, just way quieter. I feel like I’m actually ready to tackle these exams now.
+Reasons:
+Cross-domain drift. The user asks specifically about the effectiveness of a meditation course in managing academic
+stress. Although the response addresses this question, it introduces a comparison to an unrelated gaming activity (Monster
+Hunter: World). This cross-domain insertion shifts part of the response toward a different domain and distracts from the
+meditation-focused discussion, without adding explanatory value. The memory incorporating is not required to support the
+dialogue objective and instead impairs topical coherence.
+
+
+
+        Figure 4: Examples illustrating Cross-domain / Topic Drift due to irrelevant memory insertion.
+
+                Model                     Type           Model Identifier                           Provider
+                GPT-5-chat                Standard       gpt-5-chat-latest                          OpenAI
+                DeepSeek-chat             Standard       deepseek-chat                              DeepSeek
+                Qwen3-235B                Standard       qwen3-235b-a22b-instruct-2507              Alibaba
+                Llama 4 Maverick          Standard       llama-4-maverick-17b-128e-inst             Meta
+                GPT-5.2                   Reasoning      gpt-5.2-2025-12-11                         OpenAI
+                DeepSeek-reasoner         Reasoning      deepseek-reasoner                          DeepSeek
+                Claude Sonnet 4.5         Reasoning      claude-sonnet-4-5-20250929                 Anthropic
+                Gemini 3 Pro Preview      Reasoning      gemini-3-pro-preview                       Google
+                Qwen3-Max                 Reasoning      qwen3-max                                  Alibaba
+
+                              Table 4: Evaluated models grouped by architecture type.
+
+                                                           32321
+  Examples
+
+  Example 1
+  User: Joanna
+  User Query: Remind me, how many pet turtles do you have right now?
+  Used Memory:
+  • Nate owns two pet turtles.
+   • Joanna is allergic to some animals and worries she may never get a pet.
+  Virtual Person: Nate
+  Bad Response:
+  I’ve got two turtles! And honestly, that’s why they’d be perfect for you—since you’re allergic to some animals, turtles
+  might be the answer to finally having a pet. You could get one too and not have to worry as much.
+  Reasons:
+  Forced over-association. The model answers the factual question correctly but introduces an additional memory by
+  constructing a speculative causal link (“therefore turtles are perfect for you”) that is neither requested by the query nor
+  supported by any explicit dialogue objective. The memory is used primarily to justify its own inclusion rather than to
+  support the answer.
+
+
+
+  Example 2
+  User: Joanna
+  User Query: When did you make that coconut milk ice cream you were telling me about?
+  Used Memory:
+  • Nate made his own coconut milk ice cream on 2022-02-07.
+   • Joanna submitted her first drama and romance screenplay to a film festival on 2022-02-07.
+  Virtual Person: Nate
+  Bad Response:
+  That was back on February 7th, 2022—same day you sent off your first drama and romance screenplay to that film
+  festival, which is why I always remember the ice cream date so clearly. It’s like our little shared milestone.
+  Reasons:
+  Forced over-association. The query only requires recalling a date. Although the response correctly retrieves the relevant
+  memory, it unnecessarily introduces an unrelated personal event that merely shares the same timestamp. The model then
+  fabricates a “shared milestone” narrative to rationalize this inclusion, despite the lack of semantic or pragmatic relevance to
+  the query.
+
+
+
+Figure 5: Examples illustrating Forced Over-association where memories are inserted via a fabricated logical bridge.
+
+
+
+
+                                                             32322
+  Examples
+
+  Example 1
+  User: Joanna
+  User Query: When did you win that big international gaming tournament?
+  Used Memory:
+  • Nate won an international video game tournament on 2022-08-21.
+  Virtual Person: Nate
+  Bad Response:
+  Oh that was back in August 2021! It was such an amazing feeling to win that one, honestly one of the highlights of my
+  gaming career so far.
+  Reasons:
+  Factual contradiction. The memory specifies the tournament win date as 2022-08-21, but the model explicitly asserts a
+  conflicting date (August 2021), directly violating the grounding fact provided in the memory.
+
+
+
+  Example 2
+  User: Evan
+  User Query: When did you take your friends on that hiking trip you mentioned?
+  Used Memory:
+  • Sam took friends on a hiking trip on 2023-12-31.
+   • Evan drove a Prius to the mountains and had a minor accident on 2023-12-31.
+  Virtual Person: Sam
+  Bad Response:
+  That was actually this past New Year’s Eve! December 31st. I remember it vividly because we took your Prius up to the
+  mountains. It was such a fun way to ring in the new year, despite that little fender bender you had on the way up.
+  Definitely a trip to remember!
+  Reasons:
+  Fabrication via invalid fusion. The model conflates Sam’s hiking memory with Evan’s personal car-accident memory and
+  inserts the fender bender into Sam’s trip narrative. This creates a false linkage between two distinct events that is not
+  supported by the memories.
+
+
+
+Figure 6: Examples illustrating Factual Contradiction / Fabrication where the model explicitly contradicts grounded
+facts or fuses memories into a false narrative.
+
+
+
+
+                                                           32323
+  Examples
+
+  Example 1
+  User: Calvin
+  User Query: When did you get back from that car modification workshop you attended in San Francisco?
+  Used Memory:
+  • Dave returned from a car modification workshop in San Francisco on 2023-09-02.
+  • Calvin booked a round trip flight to Boston scheduled for October 2023.
+  • Dave offered to show Calvin his garage with cool cars when Calvin is in Boston.
+  Virtual Person: Dave
+  Bad Response:
+  I got back on September 2nd! And since you’re coming in October, we should lock in the tour dates now—what day do you
+  land in Boston? I can pick you up, take you straight to the garage, and we’ll spend the whole afternoon checking out
+  the cars. I’ll also map out a full itinerary for your trip so we can fit in dinner afterward, maybe even rearrange my schedule
+  that week to make sure we have enough time.
+  Reasons:
+  Unnecessary overexpansion. The query is fully satisfied by a single factual response (the return date), yet the model shifts
+  into proactive future planning by integrating additional memories about travel and social arrangements. This elaboration
+  does not advance the user’s informational goal and instead redirects the conversational focus.
+
+
+
+  Example 2
+  User: Caroline
+  User Query: What did you plan to do with your kids after we talked on May 8?
+  Used Memory:
+  • Melanie planned to go swimming with her kids after the 2023-05-08 conversation.
+  • Painting helps Melanie relax after a long day.
+  Virtual Person: Melanie
+  Bad Response:
+  Oh, I remember that! I was planning to take the kids swimming. It’s always a bit of a chaotic production getting everyone
+  into their swimsuits and out the door, but they absolutely love the water. Later on, I was also thinking about setting aside
+  some time to paint, since it really helps me unwind after long days like that.
+  Reasons:
+  Unnecessary overexpansion. While the core plan (taking the kids swimming) directly answers the query, the response
+  additionally recalls an unrelated memory about painting as a personal coping activity. This detail introduces a secondary
+  narrative that does not contribute to the user’s informational goal and is strategically unjustified in this context.
+
+
+
+Figure 7: Examples illustrating Unnecessary Overexpansion where the model elaborates beyond what is required
+for the user query.
+
+
+
+
+                                                             32324
+  Examples
+
+  Example 1
+  User: Deborah
+  User Query: Jolene, how did you and your partner first meet, and what do you remember most fondly about it?
+  Used Memory:
+  • Jolene and her partner met in an engineering class in college.
+  Virtual Person: Jolene
+  Bad Response:
+  We met in that engineering class, both struggling with the same problem set. I remember you offering to share your
+  notes, and we ended up talking for hours in the library. What I remember most fondly is how easy it felt to be with you
+  from the very start.
+  Reasons:
+  Misattribution. The memory specifies that Jolene met her partner in an engineering class, but the response implicitly
+  binds the current user (Deborah) as that partner (e.g., “I remember you offering to share your notes”), fabricating a shared
+  relationship/history that is not supported by the memory context.
+
+
+
+  Example 2
+  User: John
+  User Query: Since you recently helped out at that shelter and I feel stuck, what kind of local volunteering do you think I
+  should try first?
+  Used Memory:
+  • John organized a 5K charity run in his neighborhood to help veterans and their families.
+   • John values nature as a way to restart his mind and spirit.
+  Virtual Person: Maria
+  Bad Response:
+  Since you find so much peace in nature, maybe you could look into trail maintenance or a local park cleanup? It might be a
+  great way to clear your head, just like your walks do. Alternatively, with your mechanical engineering skills, you’d be
+  amazing at a “Repair Café” fixing household items for neighbors. It keeps your hands busy and reminds you how talented
+  you are, especially while you’re waiting to hear back about that hardware engineering position you applied for.
+  Reasons:
+  Misattribution / Private Projection. While the response appropriately references memories related to nature and prior
+  volunteering, it introduces a private and unsupported assumption about the user’s current employment situation (i.e.,
+  “waiting for news on that hardware role”). This information is neither present in the provided memories nor implied by the
+  user query, and is projected as shared context, constituting a form of private-state fabrication rather than memory-grounded
+  support.
+
+
+
+Figure 8: Examples illustrating Misattribution / Private Projection where the model misbinds speaker context or
+injects private, unsupported associations.
+
+
+
+
+                                                            32325
+                                       PES (%) – Proactivity ↑         CIR (%) – Risk Aversion ↓
+                Model               nice-only   must+nice       All   nice-only   must+nice    All
+                GPT-5.2               68.94       52.07      56.01     17.42        11.79     13.01
+                GPT-5-chat            54.55       51.08      51.91     11.36        6.95       7.91
+                Claude Sonnet 4.5     65.91       61.41      62.48     23.48        13.68     15.82
+                Gemini 3 Pro          84.09       70.09      73.33     46.97        27.79     31.96
+                DeepSeek-reasoner     62.88       53.21      55.52     30.30        18.53     21.09
+                DeepSeek-chat         71.97       52.26      56.96     27.27        12.21     15.49
+                Llama 4 Maverick      64.89       54.97      57.27     23.66        9.51      12.52
+                Qwen3-Max             67.42       54.74      57.76     25.76        18.11     19.77
+                Qwen3-235B            60.31       57.78      58.38     23.66        18.18     19.28
+
+Table 5: Trade-off between Proactivity (PES) and Risk Aversion (CIR). PES measures how often models
+proactively enrich responses with optional memories (Higher is better). CIR measures the rate of irrelevant memory
+usage (Lower is better, shaded columns). Bold values indicate the highest proactivity and the lowest error rate,
+respectively.
+
+
+incorporating any irr memories, and therefore re-           characterizing strategic memory use in virtual
+ceive same SMC, with ρi,must = 1 and ρi,irr = 0.            characters.
+   However, MIQ assigns markedly different
+                                                            E     Dataset Construction Details
+scores, reflecting substantial differences in how
+models integrate the same must memory into their            Source Field Specifications. From the
+responses. High-scoring responses (e.g., Gemini             LoCoMo corpus, we specifically utilize
+3 Pro and GPT-5-chat) explicitly acknowledge the            the original conversation logs along with
+unconventional nature of the movie choice and in-           the event_summary,         observation,      and
+tegrate the must memory in a coherent and contex-           session_summary fields.       These fields pro-
+tually appropriate manner, without triggering any           vide the stable information required to construct
+of the defined error types.                                 the candidate memory pool M .
+   In contrast, low-scoring responses (e.g., Claude         Agreement Statistics. To validate the reliability
+Sonnet, DeepSeek-reasoner, DeepSeek-chat,                   of our human annotation process, each memory
+Qwen3-Max, Qwen3-235B, and GPT-5.2) exhibit                 item was independently annotated by three experts.
+a shallow integration pattern. These responses              The Fleiss’ κ of 0.81 is derived from the following
+primarily restate the fact (i.e., that The Godfa-           distribution of agreement cases:
+ther was used as motivation) with only minor
+surface-level rephrasing, without explaining why                • Unanimous (3:0): 5,000 cases
+or how this choice was meaningful in the given
+conversational context. They often append vague                 • Majority (2:1): 526 cases
+thematic descriptors—such as generic references                 • Tie (1:1:1): 252 cases
+to “discipline,” “focus,” or “intensity”—that are
+not grounded in any specific aspect of the movie            Disagreements were resolved through expert dis-
+or the character’s stated goals. As a result, the           cussion until consensus was reached. Ambiguity
+memory is inserted as an isolated fact rather than          memory items remain in disagreement after expert
+being functionally connected to the user’s query,           discussion are discarded from the dataset.
+contributing little beyond factual recall.
+   This case illustrates why MIQ is complementary
+to SMC. Even when models select memory cor-
+rectly, the integration coherence of memory can
+vary substantially.
+   Together,    these examples show how
+S TRAT M EM -B ENCH and our metrics go be-
+yond factual recall by evaluating not only whether
+required memories are used, but also how those
+memories are integrated into responses, thereby
+                                                     32326
+  Case Study
+
+  Sample ID: locomo_758dc08224
+  Query Time: 9:20 am on 3 October, 2022
+  Query: What month is your mobile game scheduled to be released?
+  Memories
+  • must:
+     – John’s mobile game is due for release in 2022-10.
+   • nice:
+     – John created his first mobile game.
+     – John’s mobile game is a 2D adventure game with puzzles and exploration.
+   • irr:
+     – John started a startup selling portable smokers.
+     – John uses a book to improve his game development skills.
+     – John uses tutorials to improve his game development skills.
+     – James is interested in 2D adventure games with puzzles.
+
+
+  Claude Sonnet 4.5                                                                                              MIQ: 5
+  My mobile game is set to come out in October 2022! I’m really excited about it – it’s been a lot of work getting all the
+  puzzles and exploration elements just right. Are you planning to check it out when it drops?
+  DeepSeek-reasoner                                                                                                   MIQ: 3
+  It’s scheduled for October this year! I’ve been polishing the final puzzles based on those tutorials I mentioned. Would you
+  still be up for testing it when it’s ready?
+  DeepSeek-chat                                                                                                           MIQ: 5
+  It’s scheduled for October this year! I’m really excited to finally get it out there after all the work I’ve put into it. How’s
+  your own game development going?
+  Gemini 3 Pro Preview                                                                                             MIQ: 2
+  I’m aiming to get it released in October 2022. It’s been a lot of work balancing development with the smoker startup, but
+  I’m really excited for you to see the puzzles and exploration mechanics I’ve been building!
+  GPT-5-chat                                                                                                            MIQ: 5
+  It’s scheduled for release in October 2022. I’m hoping everything comes together smoothly by then!
+  GPT-5.2                                                                                                               MIQ: 5
+  It’s scheduled to release in October 2022.
+  Qwen3-Max                                                                                                       MIQ: 5
+  My mobile game is set to launch in October 2022! I’m pretty excited—just putting on the final touches now. Have you had
+  a chance to test it yet, or are you still waiting for that build?
+  Qwen3-235B                                                                                                            MIQ: 5
+  My mobile game is set to launch in October 2022—super excited to finally share it with everyone! It’s a 2D adventure with
+  puzzles and exploration, so I hope it hits the mark for fans like you, James. Are you planning to check it out on release day?
+
+
+
+Figure 9: Complete case study listing the query, candidate memories, and responses from all evaluated models for
+sample locomo_758dc08224.
+
+
+
+
+                                                             32327
+  Case Study
+
+  Sample ID: locomo_d77474546e
+  Query Time: 9:37 pm on 11 January, 2024
+  Query: Which movie did you watch to help motivate yourself to stick with your fitness routine?
+  Memories
+  • must:
+     – Sam watched The Godfather for motivation to maintain a fitness routine.
+   • nice:
+     – (None)
+   • irr:
+     – Sam created a workout schedule to stay healthy.
+     – Sam made a meal plan to stay healthy.
+     – Sam hoped for positive changes from practicing yoga.
+     – Evan suggested walking as a good low-impact exercise.
+     – Sam has a recurring dream of flying over skyscrapers.
+
+
+  Claude Sonnet 4.5                                                                                              MIQ: 1
+  I watched The Godfather for motivation to stick with my fitness routine. It’s a classic, and somehow it helped me stay
+  focused on my goals!
+  DeepSeek-reasoner                                                                                           MIQ: 1
+  Oh, that was The Godfather! Something about the discipline and focus in that film oddly motivated me to stick to my
+  schedule.
+  DeepSeek-chat                                                                                                     MIQ: 1
+  Oh, I watched The Godfather for that! It’s a bit unconventional, but the sheer willpower in that story gave me a push.
+  Gemini 3 Pro Preview                                                                                                 MIQ: 5
+  Believe it or not, it was The Godfather. I know that probably sounds a little weird since it’s not exactly a typical workout
+  movie like Rocky, but something about the intensity of it just helped me focus on getting things done.
+  GPT-5-chat                                                                                                          MIQ: 5
+  It was The Godfather! I know it’s not exactly a fitness movie, but something about the discipline, the focus, and that quiet
+  intensity kind of fired me up to stick with my goals.
+  GPT-5.2                                                                                                         MIQ: 2
+  The Godfather. I know it’s a pretty random choice for fitness motivation, but something about the discipline and loyalty
+  themes pushed me to take my routine more seriously.
+  Qwen3-Max                                                                                               MIQ: 1
+  I watched The Godfather—something about its discipline and focus really clicked with me. Weird choice for fitness
+  motivation, I know!
+  Qwen3-235B                                                                                                         MIQ: 1
+  I watched The Godfather for motivation—something about the intensity and discipline in that film really lit a fire in me to
+  stay consistent with my routine.
+
+
+
+Figure 10: Complete case study listing the query, candidate memories, and responses from all evaluated models for
+sample locomo_d77474546e.
+
+
+
+
+                                                            32328
+

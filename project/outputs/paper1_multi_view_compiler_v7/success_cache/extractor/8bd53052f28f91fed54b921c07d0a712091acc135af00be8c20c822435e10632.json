@@ -1,0 +1,157 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2122,
+      "reserved_prompt_tokens": 2250,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 64
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "a2dc8b8fd3df9fcd874469b04ee7ee619b55b2dfccb47ce3c2fada96bea5c586",
+    "prior_profile_sha256": "e236c3c7ca71530cf7e96e92d6253a088c9f32e8a559067a6c6975485a3479fd",
+    "request_payload_sha256": "acdf62753b07fbd1bc1cdfb5ad7be078813804dbc058b355d89a964fb88c3313"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p16",
+      "s": "p16_conv_1",
+      "p": [
+        {
+          "i": "p16_p1",
+          "t": "durable_health_constraint",
+          "k": "emotional_response_to_loss",
+          "v": "experiencing prolonged sadness following death of a close relative",
+          "s": [
+            {
+              "i": "p16_conv_1:2"
+            }
+          ]
+        },
+        {
+          "i": "p16_p2",
+          "t": "stable_relationship_role",
+          "k": "family_residence",
+          "v": "family resides in another state",
+          "s": [
+            {
+              "i": "p16_conv_1:4"
+            }
+          ]
+        },
+        {
+          "i": "p16_p3",
+          "t": "location",
+          "k": "residence",
+          "v": "lives alone",
+          "s": [
+            {
+              "i": "p16_conv_1:2"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p16_e1",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "attended aunt's memorial service",
+          "s": [
+            {
+              "i": "p16_conv_1:2"
+            }
+          ]
+        },
+        {
+          "i": "p16_e2",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "reconnected with distant relatives during memorial service",
+          "s": [
+            {
+              "i": "p16_conv_1:4"
+            }
+          ]
+        },
+        {
+          "i": "p16_e3",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "felt bittersweet about reconnecting with relatives after years of distance",
+          "s": [
+            {
+              "i": "p16_conv_1:6"
+            }
+          ]
+        },
+        {
+          "i": "p16_e4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "exchanged contact information with relatives to maintain connection",
+          "s": [
+            {
+              "i": "p16_conv_1:10"
+            }
+          ]
+        },
+        {
+          "i": "p16_e5",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "planning a family gathering to strengthen relationships",
+          "s": [
+            {
+              "i": "p16_conv_1:16"
+            }
+          ]
+        },
+        {
+          "i": "p16_e6",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "feeling guilty for not staying in touch with relatives",
+          "s": [
+            {
+              "i": "p16_conv_1:8"
+            }
+          ]
+        },
+        {
+          "i": "p16_e7",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "feeling reassured after taking steps to reconnect",
+          "s": [
+            {
+              "i": "p16_conv_1:12"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "cc508b53d426cd1638648822bed828c84b1edc619c28428aeb227e98568891eb",
+    "usage": {
+      "prompt_tokens": 2124,
+      "completion_tokens": 767,
+      "total_tokens": 2891
+    },
+    "latency_ms": 8729.604788008146,
+    "provider_finish_reason": "stop"
+  }
+}

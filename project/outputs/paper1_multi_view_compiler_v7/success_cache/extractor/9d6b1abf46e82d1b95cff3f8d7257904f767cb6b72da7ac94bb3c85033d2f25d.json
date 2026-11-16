@@ -1,0 +1,135 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2442,
+      "reserved_prompt_tokens": 2570,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 131
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "fb5bdfffd20c062f8b60b9d9823492573fe617ac36c43d729079bc670e16beaa",
+    "prior_profile_sha256": "43d4b27f8a71ed7bb2a781d24204a58fc1a1532a6e30dd999a30ea162f9fad1e",
+    "request_payload_sha256": "63256c8963282e652f0b18205db10fdb08488211af9613bdb5ff9a71c2bae004"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p3",
+      "s": "p3_conv_22",
+      "p": [
+        {
+          "i": "p3p1",
+          "t": "stable_relationship_role",
+          "k": "partner_with_sally",
+          "v": "Sally is a romantic partner; relationship ended",
+          "s": [
+            {
+              "i": "p3_conv_22:3"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p3e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "breakup with Sally occurred",
+          "s": [
+            {
+              "i": "p3_conv_22:3"
+            }
+          ]
+        },
+        {
+          "i": "p3e2",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "emotional distress began after breakup with Sally",
+          "s": [
+            {
+              "i": "p3_conv_22:3"
+            }
+          ]
+        },
+        {
+          "i": "p3e3",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "started missing classes due to emotional distress",
+          "s": [
+            {
+              "i": "p3_conv_22:5"
+            }
+          ]
+        },
+        {
+          "i": "p3e4",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "professor noticed distress and offered support",
+          "s": [
+            {
+              "i": "p3_conv_22:7"
+            }
+          ]
+        },
+        {
+          "i": "p3e5",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feeling isolated after hearing negative comments from friends",
+          "s": [
+            {
+              "i": "p3_conv_22:9"
+            }
+          ]
+        },
+        {
+          "i": "p3e6",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "family conflict over lifestyle differences led to reduced honesty",
+          "s": [
+            {
+              "i": "p3_conv_22:11"
+            }
+          ]
+        },
+        {
+          "i": "p3e7",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considering small steps to reconnect socially and catch up on classes",
+          "s": [
+            {
+              "i": "p3_conv_22:19"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "07ea5bfabf7efda32fcdf47da1f639034f8b2abdd826e90aa9ffff1f7c0e5732",
+    "usage": {
+      "prompt_tokens": 2444,
+      "completion_tokens": 614,
+      "total_tokens": 3058
+    },
+    "latency_ms": 7205.128369008889,
+    "provider_finish_reason": "stop"
+  }
+}

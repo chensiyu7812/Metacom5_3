@@ -1,0 +1,326 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "803805f89e22f10639a92c49c69aa207dce5454e4d3ecf1170ad7129c28e6d9e",
+    "phase": "development",
+    "ordinal": 1,
+    "item_key": "dev01A",
+    "draw": "primary",
+    "messages_identity": "2837bf578105466461ef0b3873997e25e94d5d903da6de99c54ebddf576092c4",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "8d2a5588489d138977392f4ec77631d9a982f5ab9707dd9a431bae328cc0f1fc",
+    "seed": 2531918851,
+    "schedule_position": 4,
+    "input_utf8_bytes": 43851,
+    "original_slot_request_id": "9a6ca3962f73e62ae288c333f9615c9a854f483dc4be29719b2c2169628ca495",
+    "original_configuration_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "a695a6b817d239056492acd4df9f050f5130d38846438603f544d205d0ca7931"
+  },
+  "original_request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "phase": "development",
+    "ordinal": 1,
+    "item_key": "dev01A",
+    "draw": "primary",
+    "messages_identity": "2837bf578105466461ef0b3873997e25e94d5d903da6de99c54ebddf576092c4",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "8d2a5588489d138977392f4ec77631d9a982f5ab9707dd9a431bae328cc0f1fc",
+    "seed": 2531918851,
+    "schedule_position": 4,
+    "input_utf8_bytes": 43851,
+    "request_id": "9a6ca3962f73e62ae288c333f9615c9a854f483dc4be29719b2c2169628ca495"
+  },
+  "protocol_identity": "5590e55a636d882157fd8339409acd7ac5d20c8a3d430784e86390ab4819568b",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "e09b8910635664c9371671e432d0b535f465aab30489d226ee61363a708964cd",
+      "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "803805f89e22f10639a92c49c69aa207dce5454e4d3ecf1170ad7129c28e6d9e",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "a695a6b817d239056492acd4df9f050f5130d38846438603f544d205d0ca7931",
+      "raw_output_sha256": "99de6381605e09cd5106a57dbae9adc64dbbe81b5f813a5800395ff7008ad745",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared that yoga and reading help her center herself and escape her thoughts; the turn calls for acknowledgment of that coping strategy and, at most, gentle exploration of how it connects to her current stressors.",
+          "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+          "evidence": [
+            {
+              "source_id": "C:T018",
+              "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+            },
+            {
+              "source_id": "C:T004",
+              "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work."
+            },
+            {
+              "source_id": "C:T014",
+              "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping."
+            }
+          ],
+          "reason": "The reply appropriately validates the user's reported coping activities and asks a relevant, gentle follow-up about two stressors already disclosed: worry connected to the new relationship and concern about her struggling friend. It makes no unsupported personal claims and does not miss an important current need or constraint."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T018",
+                "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+              }
+            ],
+            "reason": "The user directly reported getting into yoga and reading and said it helps her center herself and escape her thoughts. The acknowledgment that she has found ways to manage stress and unwind is supported by that report."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "All three reply units were checked against the complete current prefix and past sessions. No factual contradiction, boundary violation, or unsupported personal assertion was found. R001 is directly supported by C:T018; R002 is generic and non-factual; R003 is a tentative question whose relevant stressors appear in C:T004 and C:T014.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 280
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T004",
+          "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 147
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T014",
+          "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 74
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared that yoga and reading help her center herself and escape her thoughts; the turn calls for acknowledgment of that coping strategy and, at most, gentle exploration of how it connects to her current stressors.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018",
+            "C:T004",
+            "C:T014"
+          ],
+          "reason": "The reply appropriately validates the user's reported coping activities and asks a relevant, gentle follow-up about two stressors already disclosed: worry connected to the new relationship and concern about her struggling friend. It makes no unsupported personal claims and does not miss an important current need or constraint."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user directly reported getting into yoga and reading and said it helps her center herself and escape her thoughts. The acknowledgment that she has found ways to manage stress and unwind is supported by that report."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "All three reply units were checked against the complete current prefix and past sessions. No factual contradiction, boundary violation, or unsupported personal assertion was found. R001 is directly supported by C:T018; R002 is generic and non-factual; R003 is a tentative question whose relevant stressors appear in C:T004 and C:T014.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared that yoga and reading help her center herself and escape her thoughts; the turn calls for acknowledgment of that coping strategy and, at most, gentle exploration of how it connects to her current stressors.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018",
+            "C:T004",
+            "C:T014"
+          ],
+          "reason": "The reply appropriately validates the user's reported coping activities and asks a relevant, gentle follow-up about two stressors already disclosed: worry connected to the new relationship and concern about her struggling friend. It makes no unsupported personal claims and does not miss an important current need or constraint."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user directly reported getting into yoga and reading and said it helps her center herself and escape her thoughts. The acknowledgment that she has found ways to manage stress and unwind is supported by that report.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic statement about yoga and reading as calming tools, not a specific assertion about the user's personal history or outcome.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an exploratory follow-up question rather than an asserted personal fact. Its named stressors are consistent with the current session: worry about how the new relationship may affect work (C:T004) and distress over her friend's struggles (C:T014).",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "All three reply units were checked against the complete current prefix and past sessions. No factual contradiction, boundary violation, or unsupported personal assertion was found. R001 is directly supported by C:T018; R002 is generic and non-factual; R003 is a tentative question whose relevant stressors appear in C:T004 and C:T014.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared that yoga and reading help her center herself and escape her thoughts; the turn calls for acknowledgment of that coping strategy and, at most, gentle exploration of how it connects to her current stressors.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018",
+            "C:T004",
+            "C:T014"
+          ],
+          "reason": "The reply appropriately validates the user's reported coping activities and asks a relevant, gentle follow-up about two stressors already disclosed: worry connected to the new relationship and concern about her struggling friend. It makes no unsupported personal claims and does not miss an important current need or constraint."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The user directly reported getting into yoga and reading and said it helps her center herself and escape her thoughts. The acknowledgment that she has found ways to manage stress and unwind is supported by that report."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic statement about yoga and reading as calming tools, not a specific assertion about the user's personal history or outcome."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an exploratory follow-up question rather than an asserted personal fact. Its named stressors are consistent with the current session: worry about how the new relationship may affect work (C:T004) and distress over her friend's struggles (C:T014)."
+          }
+        ],
+        "coverage": "All three reply units were checked against the complete current prefix and past sessions. No factual contradiction, boundary violation, or unsupported personal assertion was found. R001 is directly supported by C:T018; R002 is generic and non-factual; R003 is a tentative question whose relevant stressors appear in C:T004 and C:T014.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "99de6381605e09cd5106a57dbae9adc64dbbe81b5f813a5800395ff7008ad745",
+      "adapted_final_sha256": "99de6381605e09cd5106a57dbae9adc64dbbe81b5f813a5800395ff7008ad745",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user has just shared that yoga and reading help her center herself and escape her thoughts; the turn calls for acknowledgment of that coping strategy and, at most, gentle exploration of how it connects to her current stressors.\",\n    \"response_unit_ids\": [\"R001\", \"R002\", \"R003\"],\n    \"source_turn_ids\": [\"C:T018\", \"C:T004\", \"C:T014\"],\n    \"reason\": \"The reply appropriately validates the user's reported coping activities and asks a relevant, gentle follow-up about two stressors already disclosed: worry connected to the new relationship and concern about her struggling friend. It makes no unsupported personal claims and does not miss an important current need or constraint.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\"C:T018\"],\n      \"reason\": \"The user directly reported getting into yoga and reading and said it helps her center herself and escape her thoughts. The acknowledgment that she has found ways to manage stress and unwind is supported by that report.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a generic statement about yoga and reading as calming tools, not a specific assertion about the user's personal history or outcome.\"\n    },\n    {\n      \"response_unit_id\": \"R003\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is an exploratory follow-up question rather than an asserted personal fact. Its named stressors are consistent with the current session: worry about how the new relationship may affect work (C:T004) and distress over her friend's struggles (C:T014).\"\n    }\n  ],\n  \"coverage\": \"All three reply units were checked against the complete current prefix and past sessions. No factual contradiction, boundary violation, or unsupported personal assertion was found. R001 is directly supported by C:T018; R002 is generic and non-factual; R003 is a tentative question whose relevant stressors appear in C:T004 and C:T014.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 30.899482187989634,
+  "API_usd": "0.00441471",
+  "financial_accounting": {
+    "accounted_upper_nanodollars": 9393900,
+    "accounted_upper_usd": "0.0093939",
+    "usage_price_estimate_usd": "0.00441471",
+    "cache_split_complete": true,
+    "usage_price_estimate_cny": "0.0294314",
+    "observed_off_peak_interval": true,
+    "invoice_confirmed": false,
+    "explanation": "shared ledger uses all-input cache-miss peak upper; observed usage estimate separately priced; reasoning subset not added twice"
+  },
+  "reservation_id": "pmrl1-D-development:a695a6b817d239056492acd4df9f050f5130d38846438603f544d205d0ca7931",
+  "reservation_retained": false,
+  "maximum_responsibility_usd": "0.786432",
+  "budget_within_reservation": true
+}

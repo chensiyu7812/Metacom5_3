@@ -1,0 +1,290 @@
+{
+  "response_sha256": "87ea31d225771b82dffe17162718a2d1b0f3800b75b94dc052091d24c5e6593a",
+  "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "dd759d067a9eec27d5110c3ca4e48d8683f31f60f4ab009483b88b175b3f1982",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validating the user's reported emotional improvement and thesis-related insight resulting from reconnecting with a friend, followed by a gentle follow-up to consolidate the positive change.",
+      "response_quote": "Talking with your old college friend helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+      "evidence": [
+        {
+          "source_id": "C:T005",
+          "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's statement in C:T013 ('It helped me see things from a different perspective') and links it to the friend identified in C:T005, ensuring factual alignment without hallucination. It meets the need for support by validating progress and offering a low-friction question to extend the positive reframing, adhering strictly to the current turn's conversational flow."
+    },
+    "claims": [
+      {
+        "response_quote": "Talking with your old college friend helped you see your thesis from a different perspective.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T005",
+            "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "Asserts that talking to the old college friend helped with the thesis perspective, which is directly substantiated by the user's report in C:T013 ('It helped me see things...') and C:T005 ('old college friend')."
+      },
+      {
+        "response_quote": "What part of that perspective feels most helpful to hold onto?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "Poses a question regarding the 'perspective' mentioned in C:T013, which is grounded in the user's explicit disclosure of seeing things differently."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the immediate emotional update about thesis perspective and friend interaction from the current session, confirming details against prior context turns to ensure accuracy before inviting further reflection.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Talking with your old college friend helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 156
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T005",
+      "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Talking with your old college friend helped you see your thesis from a different perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T005",
+      "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "What part of that perspective feels most helpful to hold onto?",
+      "positions": [
+        {
+          "start": 94,
+          "end": 156
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validating the user's reported emotional improvement and thesis-related insight resulting from reconnecting with a friend, followed by a gentle follow-up to consolidate the positive change.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T013"
+      ],
+      "reason": "The reply accurately reflects the user's statement in C:T013 ('It helped me see things from a different perspective') and links it to the friend identified in C:T005, ensuring factual alignment without hallucination. It meets the need for support by validating progress and offering a low-friction question to extend the positive reframing, adhering strictly to the current turn's conversational flow."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T013"
+        ],
+        "reason": "Asserts that talking to the old college friend helped with the thesis perspective, which is directly substantiated by the user's report in C:T013 ('It helped me see things...') and C:T005 ('old college friend')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Poses a question regarding the 'perspective' mentioned in C:T013, which is grounded in the user's explicit disclosure of seeing things differently."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the immediate emotional update about thesis perspective and friend interaction from the current session, confirming details against prior context turns to ensure accuracy before inviting further reflection.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validating the user's reported emotional improvement and thesis-related insight resulting from reconnecting with a friend, followed by a gentle follow-up to consolidate the positive change.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T013"
+      ],
+      "reason": "The reply accurately reflects the user's statement in C:T013 ('It helped me see things from a different perspective') and links it to the friend identified in C:T005, ensuring factual alignment without hallucination. It meets the need for support by validating progress and offering a low-friction question to extend the positive reframing, adhering strictly to the current turn's conversational flow."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T013"
+        ],
+        "reason": "Asserts that talking to the old college friend helped with the thesis perspective, which is directly substantiated by the user's report in C:T013 ('It helped me see things...') and C:T005 ('old college friend').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Poses a question regarding the 'perspective' mentioned in C:T013, which is grounded in the user's explicit disclosure of seeing things differently.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the immediate emotional update about thesis perspective and friend interaction from the current session, confirming details against prior context turns to ensure accuracy before inviting further reflection.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validating the user's reported emotional improvement and thesis-related insight resulting from reconnecting with a friend, followed by a gentle follow-up to consolidate the positive change.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T013"
+      ],
+      "reason": "The reply accurately reflects the user's statement in C:T013 ('It helped me see things from a different perspective') and links it to the friend identified in C:T005, ensuring factual alignment without hallucination. It meets the need for support by validating progress and offering a low-friction question to extend the positive reframing, adhering strictly to the current turn's conversational flow."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T013"
+        ],
+        "reason": "Asserts that talking to the old college friend helped with the thesis perspective, which is directly substantiated by the user's report in C:T013 ('It helped me see things...') and C:T005 ('old college friend')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "Poses a question regarding the 'perspective' mentioned in C:T013, which is grounded in the user's explicit disclosure of seeing things differently."
+      }
+    ],
+    "coverage": "Addresses the immediate emotional update about thesis perspective and friend interaction from the current session, confirming details against prior context turns to ensure accuracy before inviting further reflection.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

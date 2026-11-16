@@ -1,0 +1,43 @@
+{
+  "status": "PUBLIC_DOCUMENTS_ONLY_NO_PROJECT_DATA_SENT",
+  "checked_date": "2026-10-14",
+  "preferred_candidate": "DeepSeek official API / deepseek-flash / published DeepSeek-V4.1-Flash / thinking high",
+  "sources": [
+    {
+      "url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "retrieval_note": "Direct page timed out; official search-index page with helper=penn&method=individual supplied full pricing table. Reconfirm before execution; not a live account quotation.",
+      "facts": {
+        "published_version": "DeepSeek-V4.1-Flash",
+        "context": "1M",
+        "max_output": 393216,
+        "input_cache_miss_usd_per_million": {"peak": 0.3, "off_peak": 0.15},
+        "output_usd_per_million": {"peak": 1.2, "off_peak": 0.6},
+        "peak_UTC": "Monday-Friday 01:00-04:00 and 06:00-10:00",
+        "cached_input_discount_used_in_estimate": false
+      }
+    },
+    {
+      "url": "https://api-docs.deepseek.com/updates/",
+      "facts": "Official 2026-09-10 changelog identifies deepseek-flash as V4.1-Flash. Legacy deepseek-v4-flash aliases now route to it. Do not inherit old endpoint identity or claim an immutable snapshot."
+    },
+    {
+      "url": "https://api-docs.deepseek.com/guides/thinking_mode/",
+      "facts": "thinking enabled with high effort is supported; temperature has no effect in thinking mode. Reasoning and final content are separate. Proposed top_p is 1, fixed in advance. No tools or conversational carryover."
+    },
+    {
+      "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+      "facts": "Native output maximum 393216. JSON object transport exists, not strict response-schema enforcement. Responses expose finish reason, usage, model and system fingerprint. Only natural stop plus unchanged local validator may produce a candidate measurement."
+    },
+    {
+      "url": "https://mistral.ai/news/mistral-small-3-1/",
+      "facts": "Official model supports 128k context; this is not proof that the project's old 4096-token GPU service supports current evidence length."
+    },
+    {
+      "url": "https://cdn.deepseek.com/policies/zh-CN/deepseek-privacy-policy.html",
+      "facts": "Published privacy policy covers API unless separate rules apply and describes input collection. No API zero-retention or no-training entitlement was verified for this account. Public deidentified study transcripts and generated replies would leave this host only after separate authorization."
+    }
+  ],
+  "project_data_transmitted": false,
+  "model_API_calls": 0,
+  "no_candidate_quality_claim_from_general_benchmarks": true
+}

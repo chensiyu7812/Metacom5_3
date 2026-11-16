@@ -1,0 +1,161 @@
+{
+  "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "4d9ee9d9267380b60633291e8aee734015532d007a1c0639c5c40a9522ee5771",
+  "raw_output_sha256": "002b63e4583aa48c22cfb40f01573a62b21a7d7301031d890a5c622c7fadc745",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) just expressed that his recent move to Sydney was partly due to feeling trapped by his past in Canberra, but noted 'I miss some things too.' (C:T007)",
+      "response_quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        },
+        {
+          "source_id": "H026:T003",
+          "quote": "Yeah, I guess the anxiety is really getting to me. I had a panic attack at work the other day."
+        },
+        {
+          "source_id": "H027:T014",
+          "quote": "It's been a challenge. The new job has been overwhelming, and I haven't really found my footing yet."
+        }
+      ],
+      "reason": "The reply directly responds to the seeker's statement in C:T007 about missing things and the complexity of the move. It validates the emotion (R001, R002) and invites further sharing regarding what he misses (R003), which aligns perfectly with C:T007's lead-in. It respects the known timeline where the move occurred between H025 (March 2025) and C:T007 (June 2025 current date)."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're still navigating the complexities of your decision to move.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "R001 reflects the seeker's own admission in C:T007 about the move involving 'fresh start' vs 'miss some things', implying ongoing navigation/complexity."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the alignment of the reply with the final seeker turn (C:T007) and verified factual consistency with historical evidence regarding the move to Sydney (H023-H028). Checked for identity (Jimmy) and temporal accuracy (Current date 2025-06-01 vs history up to 2025-05-20).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 223
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H026:T003",
+      "quote": "Yeah, I guess the anxiety is really getting to me. I had a panic attack at work the other day.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H027:T014",
+      "quote": "It's been a challenge. The new job has been overwhelming, and I haven't really found my footing yet.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 100
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) just expressed that his recent move to Sydney was partly due to feeling trapped by his past in Canberra, but noted 'I miss some things too.' (C:T007)",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "H026:T003",
+        "H027:T014"
+      ],
+      "reason": "The reply directly responds to the seeker's statement in C:T007 about missing things and the complexity of the move. It validates the emotion (R001, R002) and invites further sharing regarding what he misses (R003), which aligns perfectly with C:T007's lead-in. It respects the known timeline where the move occurred between H025 (March 2025) and C:T007 (June 2025 current date)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "R001 reflects the seeker's own admission in C:T007 about the move involving 'fresh start' vs 'miss some things', implying ongoing navigation/complexity."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the alignment of the reply with the final seeker turn (C:T007) and verified factual consistency with historical evidence regarding the move to Sydney (H023-H028). Checked for identity (Jimmy) and temporal accuracy (Current date 2025-06-01 vs history up to 2025-05-20).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

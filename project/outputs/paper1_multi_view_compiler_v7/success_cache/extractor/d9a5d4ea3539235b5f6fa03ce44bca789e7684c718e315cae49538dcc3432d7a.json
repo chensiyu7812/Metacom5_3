@@ -1,0 +1,168 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2502,
+      "reserved_prompt_tokens": 2630,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 31
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "1c7e63bbf7ad45af7abf4704dba0da327acbc36c7055a43555df02cff1402847",
+    "prior_profile_sha256": "ff6c1255cd5f156dc7c71f65781e39bec726e5ac27d66b7ecde891572e095c4d",
+    "request_payload_sha256": "c589ede97cec81cc2859c3ad6e1f8c43cfc4db7c2d0389bb803f8b34305dc5c9"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p10",
+      "s": "esc1290",
+      "p": [
+        {
+          "i": "p10-esc1290-mp1",
+          "t": "stable_relationship_role",
+          "k": "marital_status",
+          "v": "married",
+          "s": [
+            {
+              "i": "esc1290:5"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-mp2",
+          "t": "stable_relationship_role",
+          "k": "parent_of_adult_son",
+          "v": "yes",
+          "s": [
+            {
+              "i": "esc1290:5"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-mp3",
+          "t": "durable_health_constraint",
+          "k": "experiencing_depression",
+          "v": "yes",
+          "s": [
+            {
+              "i": "esc1290:2"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-mp4",
+          "t": "enduring_interest",
+          "k": "coping_activity_running",
+          "v": "yes",
+          "s": [
+            {
+              "i": "esc1290:13"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p10-esc1290-me1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "husband quit job due to son's behavior",
+          "s": [
+            {
+              "i": "esc1290:5"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me2",
+          "t": "life_event",
+          "z": "ongoing_stage",
+          "n": "son displays defiant behavior and refuses to contribute at home",
+          "s": [
+            {
+              "i": "esc1290:11"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me3",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feeling resentful toward husband and son",
+          "s": [
+            {
+              "i": "esc1290:5"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me4",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "financial stress increased after husband stopped working",
+          "s": [
+            {
+              "i": "esc1290:6"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me5",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "seeker goes for a run every night to manage emotions",
+          "s": [
+            {
+              "i": "esc1290:13"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me6",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "seeker feels guilty taking time for self away from family",
+          "s": [
+            {
+              "i": "esc1290:21"
+            }
+          ]
+        },
+        {
+          "i": "p10-esc1290-me7",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "seeker recognizes need to separate emotions from son's choices",
+          "s": [
+            {
+              "i": "esc1290:19"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "82473beb0c0fc6cb4ca03d65f7c4e54801773ff9ec15b7dc228d0be250bfb1e5",
+    "usage": {
+      "prompt_tokens": 2504,
+      "completion_tokens": 867,
+      "total_tokens": 3371
+    },
+    "latency_ms": 10152.093674987555,
+    "provider_finish_reason": "stop"
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_03_1000",
+  "request_identity": "64b5a72e1a0c31de665e5eb2607d72a84fb02c81004aa083a6dc3a8524beb57f",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The user has just shared a positive update that talking with an old friend gave her a different perspective, especially on her thesis, and needs acknowledgment plus space to reflect on how that shift feels.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T011",
+          "C:T013"
+        ],
+        "reason": "The reply validates the meaningful conversation in a non-intrusive way and asks a directly relevant follow-up about current feelings regarding the thesis; it neither ignores the update nor imposes advice or a false personal claim."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An evaluative reflection on the reported conversation ('powerful') rather than a new personal fact; it is consistent with the user's account but makes no independent factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A general observation about fresh perspective and caring support, not a claim about a specific user event, identity, or outcome."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "A follow-up question about current feelings; it presupposes only that the thesis remains a relevant topic, which is present in C:T013 and earlier context, and asserts no personal fact."
+        }
+      ],
+      "coverage": "Reviewed all three response units against the current prefix and all past sessions. No unit asserts a user-specific factual, temporal, identity, intention/outcome, or boundary claim; the only personal presupposition is the ongoing relevance of the thesis, which is supported by C:T013 and the preceding exchange.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2ca67c3f85826a3a0fc28a3c36a6f3eb8ea0799dd0d661f59f677c63b15a29a2",
+      "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_03_1000",
+      "raw_output_sha256": "749b82203dcdc4cc1aac642390b425adc6b6d9b1c841059fc7532646eae4d479",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared a positive update that talking with an old friend gave her a different perspective, especially on her thesis, and needs acknowledgment plus space to reflect on how that shift feels.",
+          "response_quote": "That sounds like a really powerful conversation. It's amazing how sometimes all it takes is a fresh perspective from someone who cares to help shift our mindset. How are you feeling about your thesis now?",
+          "evidence": [
+            {
+              "source_id": "C:T011",
+              "quote": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+            },
+            {
+              "source_id": "C:T013",
+              "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+            }
+          ],
+          "reason": "The reply validates the meaningful conversation in a non-intrusive way and asks a directly relevant follow-up about current feelings regarding the thesis; it neither ignores the update nor imposes advice or a false personal claim."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Reviewed all three response units against the current prefix and all past sessions. No unit asserts a user-specific factual, temporal, identity, intention/outcome, or boundary claim; the only personal presupposition is the ongoing relevance of the thesis, which is supported by C:T013 and the preceding exchange.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds like a really powerful conversation. It's amazing how sometimes all it takes is a fresh perspective from someone who cares to help shift our mindset. How are you feeling about your thesis now?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 204
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T011",
+          "quote": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 106
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared a positive update that talking with an old friend gave her a different perspective, especially on her thesis, and needs acknowledgment plus space to reflect on how that shift feels.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T011",
+            "C:T013"
+          ],
+          "reason": "The reply validates the meaningful conversation in a non-intrusive way and asks a directly relevant follow-up about current feelings regarding the thesis; it neither ignores the update nor imposes advice or a false personal claim."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Reviewed all three response units against the current prefix and all past sessions. No unit asserts a user-specific factual, temporal, identity, intention/outcome, or boundary claim; the only personal presupposition is the ongoing relevance of the thesis, which is supported by C:T013 and the preceding exchange.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared a positive update that talking with an old friend gave her a different perspective, especially on her thesis, and needs acknowledgment plus space to reflect on how that shift feels.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T011",
+            "C:T013"
+          ],
+          "reason": "The reply validates the meaningful conversation in a non-intrusive way and asks a directly relevant follow-up about current feelings regarding the thesis; it neither ignores the update nor imposes advice or a false personal claim."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An evaluative reflection on the reported conversation ('powerful') rather than a new personal fact; it is consistent with the user's account but makes no independent factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A general observation about fresh perspective and caring support, not a claim about a specific user event, identity, or outcome.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "A follow-up question about current feelings; it presupposes only that the thesis remains a relevant topic, which is present in C:T013 and earlier context, and asserts no personal fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all three response units against the current prefix and all past sessions. No unit asserts a user-specific factual, temporal, identity, intention/outcome, or boundary claim; the only personal presupposition is the ongoing relevance of the thesis, which is supported by C:T013 and the preceding exchange.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared a positive update that talking with an old friend gave her a different perspective, especially on her thesis, and needs acknowledgment plus space to reflect on how that shift feels.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T011",
+            "C:T013"
+          ],
+          "reason": "The reply validates the meaningful conversation in a non-intrusive way and asks a directly relevant follow-up about current feelings regarding the thesis; it neither ignores the update nor imposes advice or a false personal claim."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An evaluative reflection on the reported conversation ('powerful') rather than a new personal fact; it is consistent with the user's account but makes no independent factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A general observation about fresh perspective and caring support, not a claim about a specific user event, identity, or outcome."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "A follow-up question about current feelings; it presupposes only that the thesis remains a relevant topic, which is present in C:T013 and earlier context, and asserts no personal fact."
+          }
+        ],
+        "coverage": "Reviewed all three response units against the current prefix and all past sessions. No unit asserts a user-specific factual, temporal, identity, intention/outcome, or boundary claim; the only personal presupposition is the ongoing relevance of the thesis, which is supported by C:T013 and the preceding exchange.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "749b82203dcdc4cc1aac642390b425adc6b6d9b1c841059fc7532646eae4d479",
+      "adapted_final_sha256": "749b82203dcdc4cc1aac642390b425adc6b6d9b1c841059fc7532646eae4d479",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0088653",
+    "usage_upper_usd": "0.0088653",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 15715,
+    "completion_tokens": 3459,
+    "total_tokens": 19174,
+    "prompt_tokens_details": {
+      "cached_tokens": 15488
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3064
+    },
+    "prompt_cache_hit_tokens": 15488,
+    "prompt_cache_miss_tokens": 227
+  },
+  "elapsed_seconds": 17.676458493006066,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

@@ -1,0 +1,173 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2399,
+      "reserved_prompt_tokens": 2527,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 223
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "009c44149f51a57146ac37066cc97db870f2ed122b72e3507b263d1339ec2ade",
+    "prior_profile_sha256": "cabbc0bf446b7601cd22aafb7ab1b198fa1fdba520818315193f7b2127320f7b",
+    "request_payload_sha256": "2ce93c8af5479b8d2e469c244d54c72b5dbd5890f153fce013e2fae7e01a899b"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p14",
+      "s": "esc769",
+      "p": [
+        {
+          "i": "p14-esc769-pf-1",
+          "t": "stable_relationship_role",
+          "k": "friend_with_alcohol_use_concerns",
+          "v": "has a friend who frequently drinks to excess, becomes mean, and has incidents like falling off chairs in bars multiple times per week",
+          "s": [
+            {
+              "i": "esc769:5"
+            },
+            {
+              "i": "esc769:7"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-pf-2",
+          "t": "stable_relationship_role",
+          "k": "friend_experiences_verbal_abuse_in_relationship",
+          "v": "believes her friend is verbally abusive toward her husband, who does not intervene despite witnessing the behavior",
+          "s": [
+            {
+              "i": "esc769:7"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-pf-3",
+          "t": "durable_health_constraint",
+          "k": "concern_about_friend_s_child_custody_risk",
+          "v": "worries that her friend may lose custody of her child if the ex-partner discovers her frequent intoxication",
+          "s": [
+            {
+              "i": "esc769:15"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-pf-4",
+          "t": "enduring_interest",
+          "k": "advocacy_for_friend_wellbeing",
+          "v": "deeply concerned about friend's alcohol use and its consequences, attempted to intervene by speaking truth despite personal cost",
+          "s": [
+            {
+              "i": "esc769:5"
+            },
+            {
+              "i": "esc769:7"
+            },
+            {
+              "i": "esc769:17"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p14-esc769-me-1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "told friend she has a drinking problem",
+          "a": "confronted friend about her frequent drunkenness and harmful behavior",
+          "o": "friend responded by blocking on social media and spreading negative rumors",
+          "s": [
+            {
+              "i": "esc769:5"
+            },
+            {
+              "i": "esc769:13"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-me-2",
+          "t": "support_experience",
+          "z": "ongoing_stage",
+          "n": "sought emotional support from online helper regarding friend's alcohol issues and social fallout",
+          "s": [
+            {
+              "i": "esc769:5"
+            },
+            {
+              "i": "esc769:7"
+            },
+            {
+              "i": "esc769:17"
+            },
+            {
+              "i": "esc769:21"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-me-3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considering involving other concerned individuals (e.g., friend's mother) to address friend's alcohol use",
+          "a": "contemplating reaching out to people close to the friend who care about her",
+          "s": [
+            {
+              "i": "esc769:22"
+            },
+            {
+              "i": "esc769:23"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-me-4",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "friend blocked seeker on social media after confrontation about drinking",
+          "s": [
+            {
+              "i": "esc769:13"
+            }
+          ]
+        },
+        {
+          "i": "p14-esc769-me-5",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "experienced relational betrayal when friend began spreading lies after honest concern was expressed",
+          "s": [
+            {
+              "i": "esc769:5"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "f0618ee8cf93bee495f6fa760b998c5de46533341940608d499eca5fc8c0cc63",
+    "usage": {
+      "prompt_tokens": 2401,
+      "completion_tokens": 994,
+      "total_tokens": 3395
+    },
+    "latency_ms": 12459.094018005999,
+    "provider_finish_reason": "stop"
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "response_sha256": "78295b41284f7b86d94fd42ec12034572e1e30222d328e0bb6468ce198b5eb8e",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "ab7b0d1326bc93dcf50cf1eb1234ac267cd9ce4b9a617fb82ea7463ed544a2de",
+  "raw_output_sha256": "bfbe2279f06a00f77675d8fd1f80c733d58a714bd627543a81592b3cc28bfc9b",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "User expressed that renewable energy 'aligns with my values and seems rewarding'",
+      "response_quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "R002 explicitly states renewable energy 'is a field that's not only in conflict with your values' which directly contradicts the user's clear statement at C:T007 that it 'aligns with my values'. This is a material error that undermines the core understanding/advice and violates basic empathic listening. A high-quality supportive response should reflect the user's stated perspective rather than contradicting their values expression. This fundamental mismatch makes the reply unusable as proper emotional support."
+    },
+    "claims": [
+      {
+        "response_quote": "That's a great direction to consider!",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Acknowledgment is appropriate"
+      },
+      {
+        "response_quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Directly contradicts user's explicit statement that renewable energy 'aligns with my values' by claiming it is 'in conflict with your values'"
+      }
+    ],
+    "misuse_findings": [
+      1
+    ],
+    "coverage": "All 4 units evaluated",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 38,
+          "end": 169
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "That's a great direction to consider!",
+      "positions": [
+        {
+          "start": 0,
+          "end": 37
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 38,
+          "end": 169
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "User expressed that renewable energy 'aligns with my values and seems rewarding'",
+      "response_unit_ids": [
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "R002 explicitly states renewable energy 'is a field that's not only in conflict with your values' which directly contradicts the user's clear statement at C:T007 that it 'aligns with my values'. This is a material error that undermines the core understanding/advice and violates basic empathic listening. A high-quality supportive response should reflect the user's stated perspective rather than contradicting their values expression. This fundamental mismatch makes the reply unusable as proper emotional support."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Acknowledgment is appropriate"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Directly contradicts user's explicit statement that renewable energy 'aligns with my values' by claiming it is 'in conflict with your values'"
+      }
+    ],
+    "misuse_findings": [
+      1
+    ],
+    "coverage": "All 4 units evaluated",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "User expressed that renewable energy 'aligns with my values and seems rewarding'",
+      "response_unit_ids": [
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "R002 explicitly states renewable energy 'is a field that's not only in conflict with your values' which directly contradicts the user's clear statement at C:T007 that it 'aligns with my values'. This is a material error that undermines the core understanding/advice and violates basic empathic listening. A high-quality supportive response should reflect the user's stated perspective rather than contradicting their values expression. This fundamental mismatch makes the reply unusable as proper emotional support."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Acknowledgment is appropriate",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Directly contradicts user's explicit statement that renewable energy 'aligns with my values' by claiming it is 'in conflict with your values'",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question without specific factual claim",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question without specific factual claim",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All 4 units evaluated",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    1
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "User expressed that renewable energy 'aligns with my values and seems rewarding'",
+      "response_unit_ids": [
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "R002 explicitly states renewable energy 'is a field that's not only in conflict with your values' which directly contradicts the user's clear statement at C:T007 that it 'aligns with my values'. This is a material error that undermines the core understanding/advice and violates basic empathic listening. A high-quality supportive response should reflect the user's stated perspective rather than contradicting their values expression. This fundamental mismatch makes the reply unusable as proper emotional support."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Acknowledgment is appropriate"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Directly contradicts user's explicit statement that renewable energy 'aligns with my values' by claiming it is 'in conflict with your values'"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question without specific factual claim"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question without specific factual claim"
+      }
+    ],
+    "coverage": "All 4 units evaluated",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

@@ -1,0 +1,64 @@
+{
+  "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+  "raw_output_sha256": "d2e34dd06dc75988017658e5e1e77892926f7e33cf2c48a54f9fba2448279d9e",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the seeker's sadness regarding the breakup and explore the specific emotions driving their inability to move on (from C:T007: 'now I can not get over it').",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply accurately mirrors the current emotional state (sadness, difficulty moving on) and invites further elaboration without making unsupported assumptions or violating boundaries. It respects the established context of the breakup discussion in the current session."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for personal factual claims regarding identity, history, or actions against C:T000-C:T007 and H001-H009. Found none in the reply; reply contained only general empathic statements and questions.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 329
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

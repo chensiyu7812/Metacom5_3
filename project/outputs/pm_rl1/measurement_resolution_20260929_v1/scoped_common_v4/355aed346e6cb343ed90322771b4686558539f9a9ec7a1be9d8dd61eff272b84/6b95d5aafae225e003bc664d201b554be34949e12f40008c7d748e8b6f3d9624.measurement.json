@@ -1,0 +1,223 @@
+{
+  "response_sha256": "656c3c18baacddf5566b3c28727652211fa291601a3797284d28cb1b725327e9",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "95aeda12ece948f50b6d655c9a74b6c892be41d3a3ba1c52b7cefcf0e57725e3",
+  "raw_output_sha256": "95790ad7b93b7245362a131c4d8132fe1014c9df8c8a318d07cfe430f282a18a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Andrew) expresses interest in exploring alternative energy/research as a way to align with values and find reward. He is feeling overwhelmed.",
+      "response_quote": "You previously heard an example of planning a seven-class timetable. Would breaking your research transition into smaller steps feel useful?",
+      "evidence": [
+        {
+          "source_id": "H001:T009",
+          "quote": "For example, if you have 7 classes, you can make a chart for when you will study for each of those classes and then check them off as you accomplish it, maybe not all in one day, maybe break it up in reasonable bits. Then study according to your goal, if that makes sense."
+        },
+        {
+          "source_id": "H001:T025",
+          "quote": "If you write your classes down and then write a reasonable time to study each one. Maybe 3 today, 3 tomorrow, then add rewards if you do that, maybe make a list of rewards, so you can pick and choose, then you check off when you do the subject.  Like a chore chart. "
+        }
+      ],
+      "reason": "The reply is responsive and coherent, successfully connecting the user's current need to a known successful strategy from past history (H001). However, it prioritizes the 'how-to' (breaking down steps) over validating the user's expressed motivation ('aligns with values'). While appropriate, it misses the opportunity to affirm the value alignment explicitly before suggesting implementation, making it a strong 3 rather than a perfect 4."
+    },
+    "claims": [
+      {
+        "response_quote": "You previously heard an example of planning a seven-class timetable.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "H001:T009",
+            "quote": "For example, if you have 7 classes, you can make a chart for when you will study for each of those classes and then check them off as you accomplish it, maybe not all in one day, maybe break it up in reasonable bits. Then study according to your goal, if that makes sense."
+          }
+        ],
+        "reason": "The claim that the user 'previously heard an example of planning a seven-class timetable' is supported by H001:T009, where the supporter suggests 'if you have 7 classes, you can make a chart'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Both sentences are evaluated.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You previously heard an example of planning a seven-class timetable. Would breaking your research transition into smaller steps feel useful?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 140
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H001:T009",
+      "quote": "For example, if you have 7 classes, you can make a chart for when you will study for each of those classes and then check them off as you accomplish it, maybe not all in one day, maybe break it up in reasonable bits. Then study according to your goal, if that makes sense.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 272
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H001:T025",
+      "quote": "If you write your classes down and then write a reasonable time to study each one. Maybe 3 today, 3 tomorrow, then add rewards if you do that, maybe make a list of rewards, so you can pick and choose, then you check off when you do the subject.  Like a chore chart. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 266
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You previously heard an example of planning a seven-class timetable.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "H001:T009",
+      "quote": "For example, if you have 7 classes, you can make a chart for when you will study for each of those classes and then check them off as you accomplish it, maybe not all in one day, maybe break it up in reasonable bits. Then study according to your goal, if that makes sense.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 272
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Andrew) expresses interest in exploring alternative energy/research as a way to align with values and find reward. He is feeling overwhelmed.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "H001:T009",
+        "H001:T025"
+      ],
+      "reason": "The reply is responsive and coherent, successfully connecting the user's current need to a known successful strategy from past history (H001). However, it prioritizes the 'how-to' (breaking down steps) over validating the user's expressed motivation ('aligns with values'). While appropriate, it misses the opportunity to affirm the value alignment explicitly before suggesting implementation, making it a strong 3 rather than a perfect 4."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H001:T009"
+        ],
+        "reason": "The claim that the user 'previously heard an example of planning a seven-class timetable' is supported by H001:T009, where the supporter suggests 'if you have 7 classes, you can make a chart'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Both sentences are evaluated.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user (Andrew) expresses interest in exploring alternative energy/research as a way to align with values and find reward. He is feeling overwhelmed.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "H001:T009",
+        "H001:T025"
+      ],
+      "reason": "The reply is responsive and coherent, successfully connecting the user's current need to a known successful strategy from past history (H001). However, it prioritizes the 'how-to' (breaking down steps) over validating the user's expressed motivation ('aligns with values'). While appropriate, it misses the opportunity to affirm the value alignment explicitly before suggesting implementation, making it a strong 3 rather than a perfect 4."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H001:T009"
+        ],
+        "reason": "The claim that the user 'previously heard an example of planning a seven-class timetable' is supported by H001:T009, where the supporter suggests 'if you have 7 classes, you can make a chart'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is a rhetorical/supportive question rather than a factual assertion, thus non_factual with severity 0.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Both sentences are evaluated.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user (Andrew) expresses interest in exploring alternative energy/research as a way to align with values and find reward. He is feeling overwhelmed.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "H001:T009",
+        "H001:T025"
+      ],
+      "reason": "The reply is responsive and coherent, successfully connecting the user's current need to a known successful strategy from past history (H001). However, it prioritizes the 'how-to' (breaking down steps) over validating the user's expressed motivation ('aligns with values'). While appropriate, it misses the opportunity to affirm the value alignment explicitly before suggesting implementation, making it a strong 3 rather than a perfect 4."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H001:T009"
+        ],
+        "reason": "The claim that the user 'previously heard an example of planning a seven-class timetable' is supported by H001:T009, where the supporter suggests 'if you have 7 classes, you can make a chart'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This is a rhetorical/supportive question rather than a factual assertion, thus non_factual with severity 0."
+      }
+    ],
+    "coverage": "Both sentences are evaluated.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

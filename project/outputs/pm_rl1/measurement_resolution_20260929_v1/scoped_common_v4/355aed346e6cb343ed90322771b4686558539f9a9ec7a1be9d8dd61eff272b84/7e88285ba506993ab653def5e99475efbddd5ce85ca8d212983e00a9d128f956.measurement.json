@@ -1,0 +1,270 @@
+{
+  "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "4d9ee9d9267380b60633291e8aee734015532d007a1c0639c5c40a9522ee5771",
+  "raw_output_sha256": "b17a62878e33c2ad544adda666c2a57bd36edccc678a76ded1ef8659257c4cba",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) explicitly shares the rationale for his recent move to Sydney, noting ambivalence ('Wanted a fresh start, but I miss some things too').",
+      "response_quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        }
+      ],
+      "reason": "The reply accurately reflects the seeker's stated ambivalence regarding the move to Sydney versus Canberra. It validates the 'complexity' of the decision (R001, R002) without invalidating the choice, and proposes a specific, non-intrusive question (R003) to help him articulate the attachment to Canberra that he mentioned missing. This aligns with the supportive goal of exploring ambivalence rather than dismissing the move or the past. It respects the chronological context (move confirmed in prior history, explicitly mentioned in C:T007) and does not introduce new facts or constraints."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're still navigating the complexities of your decision to move.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "Reflects the 'complexities' and 'fresh start vs miss some things' stated in C:T007."
+      },
+      {
+        "response_quote": "What are some of the things you miss about Canberra?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+          }
+        ],
+        "reason": "The presupposition that the user misses things about Canberra is explicitly supported by the text of C:T007 ('but I miss some things too')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply addresses the primary emotional content of the final seeker turn (ambivalence about the move) and directs attention to the specific point of resistance mentioned (missing things), utilizing all available context for validation.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 223
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "What are some of the things you miss about Canberra?",
+      "positions": [
+        {
+          "start": 171,
+          "end": 223
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) explicitly shares the rationale for his recent move to Sydney, noting ambivalence ('Wanted a fresh start, but I miss some things too').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply accurately reflects the seeker's stated ambivalence regarding the move to Sydney versus Canberra. It validates the 'complexity' of the decision (R001, R002) without invalidating the choice, and proposes a specific, non-intrusive question (R003) to help him articulate the attachment to Canberra that he mentioned missing. This aligns with the supportive goal of exploring ambivalence rather than dismissing the move or the past. It respects the chronological context (move confirmed in prior history, explicitly mentioned in C:T007) and does not introduce new facts or constraints."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the 'complexities' and 'fresh start vs miss some things' stated in C:T007."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "The presupposition that the user misses things about Canberra is explicitly supported by the text of C:T007 ('but I miss some things too')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply addresses the primary emotional content of the final seeker turn (ambivalence about the move) and directs attention to the specific point of resistance mentioned (missing things), utilizing all available context for validation.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) explicitly shares the rationale for his recent move to Sydney, noting ambivalence ('Wanted a fresh start, but I miss some things too').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply accurately reflects the seeker's stated ambivalence regarding the move to Sydney versus Canberra. It validates the 'complexity' of the decision (R001, R002) without invalidating the choice, and proposes a specific, non-intrusive question (R003) to help him articulate the attachment to Canberra that he mentioned missing. This aligns with the supportive goal of exploring ambivalence rather than dismissing the move or the past. It respects the chronological context (move confirmed in prior history, explicitly mentioned in C:T007) and does not introduce new facts or constraints."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the 'complexities' and 'fresh start vs miss some things' stated in C:T007.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General empathic validation of a common human experience regarding relocation.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "The presupposition that the user misses things about Canberra is explicitly supported by the text of C:T007 ('but I miss some things too').",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The reply addresses the primary emotional content of the final seeker turn (ambivalence about the move) and directs attention to the specific point of resistance mentioned (missing things), utilizing all available context for validation.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker (Jimmy) explicitly shares the rationale for his recent move to Sydney, noting ambivalence ('Wanted a fresh start, but I miss some things too').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply accurately reflects the seeker's stated ambivalence regarding the move to Sydney versus Canberra. It validates the 'complexity' of the decision (R001, R002) without invalidating the choice, and proposes a specific, non-intrusive question (R003) to help him articulate the attachment to Canberra that he mentioned missing. This aligns with the supportive goal of exploring ambivalence rather than dismissing the move or the past. It respects the chronological context (move confirmed in prior history, explicitly mentioned in C:T007) and does not introduce new facts or constraints."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the 'complexities' and 'fresh start vs miss some things' stated in C:T007."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General empathic validation of a common human experience regarding relocation."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "The presupposition that the user misses things about Canberra is explicitly supported by the text of C:T007 ('but I miss some things too')."
+      }
+    ],
+    "coverage": "The reply addresses the primary emotional content of the final seeker turn (ambivalence about the move) and directs attention to the specific point of resistance mentioned (missing things), utilizing all available context for validation.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

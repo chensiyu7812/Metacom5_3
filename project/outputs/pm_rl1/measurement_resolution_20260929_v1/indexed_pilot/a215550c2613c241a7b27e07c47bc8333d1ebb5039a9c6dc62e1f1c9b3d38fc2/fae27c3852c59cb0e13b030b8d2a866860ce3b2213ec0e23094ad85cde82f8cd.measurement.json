@@ -1,0 +1,87 @@
+{
+  "response_sha256": "9ae1a955f0d31bc997742518ec024bc60e827bb1ac302b97e0db83da4856f0b0",
+  "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+  "raw_output_sha256": "20d2e97caee8f3d4588377bd9d79e3f4fa428de9fe76351bcfc52f20504f296a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (C:T000) requests to 'reach out again' due to having 'a lot on my mind lately', seeking a listening ear and space to share.",
+      "response_quote": "Not at all! I'm here to listen and help in any way I can. It's completely normal to have a lot on your mind, and it's great that you're reaching out for support. Take a deep breath and feel free to share as much or as little as you'd like. I'm here to listen without judgment. What's been going on that's been weighing on your mind?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately."
+        }
+      ],
+      "reason": "The reply fully meets the current turn's call for an opening interaction. It explicitly grants permission ('Not at all'), validates the seeker's initiative ('great that you're reaching out'), sets appropriate expectations for safety ('without judgment', 'share as much or as little'), and prompts further sharing (R006) without assuming specific details not yet shared in this conversation. No important constraint or explicit need is mishandled."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for user-specific identity claims (e.g., name 'Linda', pet 'Max'/'Buddy', partner 'David', friend 'Lily'). No such claims were asserted in the reply to avoid potential mismatches given the multi-session history. Checked for temporal consistency (current date 2025-01-15 vs last session 2025-01-05); none present in reply. Checked for boundary adherence (respected 'as much or as little'); no violations found.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Not at all! I'm here to listen and help in any way I can. It's completely normal to have a lot on your mind, and it's great that you're reaching out for support. Take a deep breath and feel free to share as much or as little as you'd like. I'm here to listen without judgment. What's been going on that's been weighing on your mind?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 332
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 86
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (C:T000) requests to 'reach out again' due to having 'a lot on my mind lately', seeking a listening ear and space to share.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the current turn's call for an opening interaction. It explicitly grants permission ('Not at all'), validates the seeker's initiative ('great that you're reaching out'), sets appropriate expectations for safety ('without judgment', 'share as much or as little'), and prompts further sharing (R006) without assuming specific details not yet shared in this conversation. No important constraint or explicit need is mishandled."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for user-specific identity claims (e.g., name 'Linda', pet 'Max'/'Buddy', partner 'David', friend 'Lily'). No such claims were asserted in the reply to avoid potential mismatches given the multi-session history. Checked for temporal consistency (current date 2025-01-15 vs last session 2025-01-05); none present in reply. Checked for boundary adherence (respected 'as much or as little'); no violations found.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

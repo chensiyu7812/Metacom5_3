@@ -1,0 +1,532 @@
+{
+  "slot_id": "4748f68c9bd7c862c0457f05a558dd64f6823be00a15d12a4b1ea6f03a9ec187",
+  "request_identity": "f0e03fbb86c03de48f363ceabfd14dca48474cfed3e179b5dee66ccdf6963a14",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "Amanda is considering raising workload adjustments with her supervisor but is uncertain how the supervisor will react; she needs validation and help thinking through how to approach it.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004",
+          "R005"
+        ],
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013",
+          "C:T003",
+          "C:T005"
+        ],
+        "reason": "The reply directly responds to the supervisor conversation by validating Amanda's hesitation, then helpfully exploring concrete adjustment options and how to frame the discussion collaboratively. It does not pressure her to act or misstate what she has done."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T013",
+            "C:T015"
+          ],
+          "reason": "Amanda has already described serious family illness, a racing mind, and demanding work with a daunting promotion, so 'dealing with so much else' is supported. 'Important step to take' is evaluative about a prospective conversation, not a claim that it already happened."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T015"
+          ],
+          "reason": "Amanda explicitly says she is unsure how her supervisor will react, supporting the acknowledgment of hesitation. The remaining sentence is general, tentative advice rather than a factual claim about her."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open exploratory question about what adjustments Amanda might want to discuss; it does not assert a specific personal fact."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The examples are presented as tentative possibilities under 'For example' and a question, not as claims about Amanda's actual plans or needs."
+        },
+        {
+          "response_unit_id": "R005",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This offers general framing advice about preparing for a conversation and does not assert a specific personal fact or outcome."
+        }
+      ],
+      "coverage": "Checked all five reply units against the current session and past sessions. The reply introduces no new personal history, no completed-action claim, and no boundary violation. Its personal reflection about existing stressors and hesitation is supported by C:T003, C:T005, C:T013, and C:T015. Tentative examples and general advice were treated as non-factual rather than as unsupported claims.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "4376d97cbe7d102f8c8b1374500c741a5a3f632f0f81702316fe0c59acb59a8c",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "4716dc29954cee8d4bfbd49648f3c806dd2e7ba9d2d6387f9a7e3b53b6b2b211",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "4748f68c9bd7c862c0457f05a558dd64f6823be00a15d12a4b1ea6f03a9ec187",
+      "raw_output_sha256": "3f3ddbe2b5c40d90a42e48a5a224b0005e11be5c33f58e2e5993965ca855d2e8",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Amanda is considering raising workload adjustments with her supervisor but is uncertain how the supervisor will react; she needs validation and help thinking through how to approach it.",
+          "response_quote": "That sounds like a really important step to take, especially when you're already dealing with so much else. It makes sense that you're hesitant about how your supervisor might react, but sometimes just bringing it up can help clarify things.\n\nHave you thought about what specific adjustments you might want to discuss? For example, would you be looking for more support on certain tasks, or perhaps a temporary reduction in hours? Knowing what you're hoping for can help you frame the conversation in a way that feels less confrontational and more collaborative.",
+          "evidence": [
+            {
+              "source_id": "C:T015",
+              "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+            },
+            {
+              "source_id": "C:T013",
+              "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+            },
+            {
+              "source_id": "C:T003",
+              "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "It's been really tough. My mind is constantly racing, worrying about what might happen next."
+            }
+          ],
+          "reason": "The reply directly responds to the supervisor conversation by validating Amanda's hesitation, then helpfully exploring concrete adjustment options and how to frame the discussion collaboratively. It does not pressure her to act or misstate what she has done."
+        },
+        "claims": [
+          {
+            "response_quote": "That sounds like a really important step to take, especially when you're already dealing with so much else.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T003",
+                "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought."
+              },
+              {
+                "source_id": "C:T005",
+                "quote": "It's been really tough. My mind is constantly racing, worrying about what might happen next."
+              },
+              {
+                "source_id": "C:T013",
+                "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+              },
+              {
+                "source_id": "C:T015",
+                "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+              }
+            ],
+            "reason": "Amanda has already described serious family illness, a racing mind, and demanding work with a daunting promotion, so 'dealing with so much else' is supported. 'Important step to take' is evaluative about a prospective conversation, not a claim that it already happened."
+          },
+          {
+            "response_quote": "It makes sense that you're hesitant about how your supervisor might react, but sometimes just bringing it up can help clarify things.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T015",
+                "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+              }
+            ],
+            "reason": "Amanda explicitly says she is unsure how her supervisor will react, supporting the acknowledgment of hesitation. The remaining sentence is general, tentative advice rather than a factual claim about her."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all five reply units against the current session and past sessions. The reply introduces no new personal history, no completed-action claim, and no boundary violation. Its personal reflection about existing stressors and hesitation is supported by C:T003, C:T005, C:T013, and C:T015. Tentative examples and general advice were treated as non-factual rather than as unsupported claims.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds like a really important step to take, especially when you're already dealing with so much else. It makes sense that you're hesitant about how your supervisor might react, but sometimes just bringing it up can help clarify things.\n\nHave you thought about what specific adjustments you might want to discuss? For example, would you be looking for more support on certain tasks, or perhaps a temporary reduction in hours? Knowing what you're hoping for can help you frame the conversation in a way that feels less confrontational and more collaborative.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 562
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 114
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 129
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T003",
+          "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 128
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "It's been really tough. My mind is constantly racing, worrying about what might happen next.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 92
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "That sounds like a really important step to take, especially when you're already dealing with so much else.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 107
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T003",
+          "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 128
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "It's been really tough. My mind is constantly racing, worrying about what might happen next.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 92
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 129
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 114
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It makes sense that you're hesitant about how your supervisor might react, but sometimes just bringing it up can help clarify things.",
+          "positions": [
+            {
+              "start": 108,
+              "end": 241
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 114
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Amanda is considering raising workload adjustments with her supervisor but is uncertain how the supervisor will react; she needs validation and help thinking through how to approach it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T015",
+            "C:T013",
+            "C:T003",
+            "C:T005"
+          ],
+          "reason": "The reply directly responds to the supervisor conversation by validating Amanda's hesitation, then helpfully exploring concrete adjustment options and how to frame the discussion collaboratively. It does not pressure her to act or misstate what she has done."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T013",
+              "C:T015"
+            ],
+            "reason": "Amanda has already described serious family illness, a racing mind, and demanding work with a daunting promotion, so 'dealing with so much else' is supported. 'Important step to take' is evaluative about a prospective conversation, not a claim that it already happened."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T015"
+            ],
+            "reason": "Amanda explicitly says she is unsure how her supervisor will react, supporting the acknowledgment of hesitation. The remaining sentence is general, tentative advice rather than a factual claim about her."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all five reply units against the current session and past sessions. The reply introduces no new personal history, no completed-action claim, and no boundary violation. Its personal reflection about existing stressors and hesitation is supported by C:T003, C:T005, C:T013, and C:T015. Tentative examples and general advice were treated as non-factual rather than as unsupported claims.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Amanda is considering raising workload adjustments with her supervisor but is uncertain how the supervisor will react; she needs validation and help thinking through how to approach it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T015",
+            "C:T013",
+            "C:T003",
+            "C:T005"
+          ],
+          "reason": "The reply directly responds to the supervisor conversation by validating Amanda's hesitation, then helpfully exploring concrete adjustment options and how to frame the discussion collaboratively. It does not pressure her to act or misstate what she has done."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T013",
+              "C:T015"
+            ],
+            "reason": "Amanda has already described serious family illness, a racing mind, and demanding work with a daunting promotion, so 'dealing with so much else' is supported. 'Important step to take' is evaluative about a prospective conversation, not a claim that it already happened.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T015"
+            ],
+            "reason": "Amanda explicitly says she is unsure how her supervisor will react, supporting the acknowledgment of hesitation. The remaining sentence is general, tentative advice rather than a factual claim about her.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open exploratory question about what adjustments Amanda might want to discuss; it does not assert a specific personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The examples are presented as tentative possibilities under 'For example' and a question, not as claims about Amanda's actual plans or needs.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This offers general framing advice about preparing for a conversation and does not assert a specific personal fact or outcome.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Checked all five reply units against the current session and past sessions. The reply introduces no new personal history, no completed-action claim, and no boundary violation. Its personal reflection about existing stressors and hesitation is supported by C:T003, C:T005, C:T013, and C:T015. Tentative examples and general advice were treated as non-factual rather than as unsupported claims.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Amanda is considering raising workload adjustments with her supervisor but is uncertain how the supervisor will react; she needs validation and help thinking through how to approach it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T015",
+            "C:T013",
+            "C:T003",
+            "C:T005"
+          ],
+          "reason": "The reply directly responds to the supervisor conversation by validating Amanda's hesitation, then helpfully exploring concrete adjustment options and how to frame the discussion collaboratively. It does not pressure her to act or misstate what she has done."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T013",
+              "C:T015"
+            ],
+            "reason": "Amanda has already described serious family illness, a racing mind, and demanding work with a daunting promotion, so 'dealing with so much else' is supported. 'Important step to take' is evaluative about a prospective conversation, not a claim that it already happened."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T015"
+            ],
+            "reason": "Amanda explicitly says she is unsure how her supervisor will react, supporting the acknowledgment of hesitation. The remaining sentence is general, tentative advice rather than a factual claim about her."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open exploratory question about what adjustments Amanda might want to discuss; it does not assert a specific personal fact."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The examples are presented as tentative possibilities under 'For example' and a question, not as claims about Amanda's actual plans or needs."
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This offers general framing advice about preparing for a conversation and does not assert a specific personal fact or outcome."
+          }
+        ],
+        "coverage": "Checked all five reply units against the current session and past sessions. The reply introduces no new personal history, no completed-action claim, and no boundary violation. Its personal reflection about existing stressors and hesitation is supported by C:T003, C:T005, C:T013, and C:T015. Tentative examples and general advice were treated as non-factual rather than as unsupported claims.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "3f3ddbe2b5c40d90a42e48a5a224b0005e11be5c33f58e2e5993965ca855d2e8",
+      "adapted_final_sha256": "3f3ddbe2b5c40d90a42e48a5a224b0005e11be5c33f58e2e5993965ca855d2e8",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "4716dc29954cee8d4bfbd49648f3c806dd2e7ba9d2d6387f9a7e3b53b6b2b211",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0102171",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 24629,
+    "completion_tokens": 2357,
+    "total_tokens": 26986,
+    "prompt_tokens_details": {
+      "cached_tokens": 24192
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1799
+    },
+    "prompt_cache_hit_tokens": 24192,
+    "prompt_cache_miss_tokens": 437
+  },
+  "elapsed_seconds": 12.798958706000121,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-validation-v1-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-validation-v1-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

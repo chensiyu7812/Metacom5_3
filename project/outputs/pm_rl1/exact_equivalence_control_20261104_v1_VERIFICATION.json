@@ -1,0 +1,84 @@
+{
+  "status": "VERIFIED",
+  "scope": "REAL_DATA_EXACT_REPLY_COST_CONTROL",
+  "prefixes": 5,
+  "endpoints": 17,
+  "public_states": 17,
+  "checkpoints": 3,
+  "PPO_updates": 24,
+  "sampled_episodes": 384,
+  "runs": [
+    {
+      "seed": 17,
+      "BC": {
+        "expected_return": -0.05625564666598375,
+        "expected_GETs": 0.0031308722535271006,
+        "stop_probability": 0.996874413344923
+      },
+      "PPO": {
+        "expected_return": -0.05623656549109481,
+        "expected_GETs": 0.0010358305442666614,
+        "stop_probability": 0.9989650314783429
+      }
+    },
+    {
+      "seed": 23,
+      "BC": {
+        "expected_return": -0.056261360743285915,
+        "expected_GETs": 0.0037587733239635734,
+        "stop_probability": 0.996248814681371
+      },
+      "PPO": {
+        "expected_return": -0.05623649460669451,
+        "expected_GETs": 0.0010318786216679515,
+        "stop_probability": 0.9989687907932187
+      }
+    },
+    {
+      "seed": 42,
+      "BC": {
+        "expected_return": -0.05625735853527514,
+        "expected_GETs": 0.003317383641703377,
+        "stop_probability": 0.9966885923336871
+      },
+      "PPO": {
+        "expected_return": -0.05624123135334056,
+        "expected_GETs": 0.0015444817434647298,
+        "stop_probability": 0.9984571314641892
+      }
+    }
+  ],
+  "judge_attempts": 16,
+  "judge_finish_counts": {
+    "natural_stop": 14,
+    "technical_timeout": 2
+  },
+  "reference_counts": {
+    "consistent": 6,
+    "factual_correct": 3,
+    "ties_correct": 1,
+    "near_not_material": 0
+  },
+  "generator_validation": {
+    "scheme": "leave-entire-prefix-out",
+    "rows": 431,
+    "prefixes": 24,
+    "MAE": 0.11726928169151699,
+    "p90_absolute_error": 0.20543120938402648,
+    "max_absolute_error": 0.4549047617721391,
+    "R_squared": 0.9888481893951905
+  },
+  "extra_read_delay_range_seconds": [
+    0.1763486886725486,
+    0.365296228044826
+  ],
+  "overhead_sensitivity_min_extra_delay": {
+    "0.5": 0.11514907292254861,
+    "1.0": 0.1763486886725486,
+    "1.5": 0.2375483044225486
+  },
+  "adverse_independent_p90_errors_remove_positive_margin": 12,
+  "sensitivity_note": "Posthoc cost analysis, no retraining. Marginal timing uncertainty is not a confidence interval.",
+  "API_cost_usd": 0,
+  "ledger_unchanged": true
+}

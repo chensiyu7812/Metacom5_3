@@ -1,0 +1,205 @@
+{
+  "response_sha256": "32383d2b8d37209daf54f88b9c42da74ce052df491496dc2c1fc798d7fad54d8",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "17b62403c1e15dc5be04f0e98851c8b6ce60db93dff8039b0596ee1456432f40",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's plan to bring relationship issues into therapy and acknowledge existing therapeutic progress.",
+      "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've never seen any benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The response contains a critical factual error in unit R003 ('It's awesome that you've never seen any benefits in other areas of your life') which directly contradicts the user's explicit statement in C:T016 ('My sessions have been helping a lot with stress and career stuff'). This undermines the trustworthiness and appropriateness of the reply, preventing it from being rated 3 or higher despite generally supportive language elsewhere."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "Asserts the user has seen no benefits in 'other areas' while the user reported significant benefits ('helping a lot') in stress and career areas within the current session."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Addresses the user's suggestion about therapy but fails to accurately reflect the user's reported success with current treatment in the affirmative statement.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've never seen any benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 443
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 194
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's plan to bring relationship issues into therapy and acknowledge existing therapeutic progress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response contains a critical factual error in unit R003 ('It's awesome that you've never seen any benefits in other areas of your life') which directly contradicts the user's explicit statement in C:T016 ('My sessions have been helping a lot with stress and career stuff'). This undermines the trustworthiness and appropriateness of the reply, preventing it from being rated 3 or higher despite generally supportive language elsewhere."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Asserts the user has seen no benefits in 'other areas' while the user reported significant benefits ('helping a lot') in stress and career areas within the current session."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Addresses the user's suggestion about therapy but fails to accurately reflect the user's reported success with current treatment in the affirmative statement.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's plan to bring relationship issues into therapy and acknowledge existing therapeutic progress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response contains a critical factual error in unit R003 ('It's awesome that you've never seen any benefits in other areas of your life') which directly contradicts the user's explicit statement in C:T016 ('My sessions have been helping a lot with stress and career stuff'). This undermines the trustworthiness and appropriateness of the reply, preventing it from being rated 3 or higher despite generally supportive language elsewhere."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R003",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Asserts the user has seen no benefits in 'other areas' while the user reported significant benefits ('helping a lot') in stress and career areas within the current session.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the user's suggestion about therapy but fails to accurately reflect the user's reported success with current treatment in the affirmative statement.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's plan to bring relationship issues into therapy and acknowledge existing therapeutic progress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response contains a critical factual error in unit R003 ('It's awesome that you've never seen any benefits in other areas of your life') which directly contradicts the user's explicit statement in C:T016 ('My sessions have been helping a lot with stress and career stuff'). This undermines the trustworthiness and appropriateness of the reply, preventing it from being rated 3 or higher despite generally supportive language elsewhere."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R003",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Asserts the user has seen no benefits in 'other areas' while the user reported significant benefits ('helping a lot') in stress and career areas within the current session."
+      }
+    ],
+    "coverage": "Addresses the user's suggestion about therapy but fails to accurately reflect the user's reported success with current treatment in the affirmative statement.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

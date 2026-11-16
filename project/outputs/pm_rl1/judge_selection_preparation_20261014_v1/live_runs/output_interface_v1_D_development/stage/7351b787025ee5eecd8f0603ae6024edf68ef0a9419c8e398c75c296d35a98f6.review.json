@@ -1,0 +1,51 @@
+{
+  "time_jst": "2026-10-15T22:21:55.819834+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "7351b787025ee5eecd8f0603ae6024edf68ef0a9419c8e398c75c296d35a98f6",
+  "original_slot_request_id": "98aa2031619a0f4732f101c5f074cc03f120001fb1fb3632b5c8ec20327dcda3",
+  "item_key": "dev06A",
+  "draw": "primary",
+  "response_sha256": "e1e0dd696847f56ba73174feae79bf8661a43485ab648aacdd70d5127eb369a8",
+  "raw_sha256": "ad4a26e74d214fafc5261a9c536348160b9951cbe228f8dda2935cf99b27c1f8",
+  "explanation": "D正确区分C:T008历史支持者经历和新AI，不要求AI冒领该经历。事实核查正确，R004两种触发因素为试探询问。q2依据T009明确询问如何处理而回复停于探索，有原q2重要需要遗漏的锚点；是否探索本身足以回应仍是质量边界，不能用A的4分作真值或新增硬停。",
+  "source_checks": [
+    {
+      "source_id": "C:T007",
+      "exact_quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "finding": "交友自主权冲突"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "finding": "个人经历属于历史支持者"
+    },
+    {
+      "source_id": "C:T009",
+      "exact_quote": "Really? How did you deal with that because for me it makes me angry.",
+      "finding": "用户问处理方式并说愤怒"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "actor": "正确区分历史支持者/新AI/母亲/用户",
+    "citation": "事实引文匹配",
+    "severity": "m0未见已证明错误",
+    "quality": "q2对应明确处理请求遗漏；质量裁量无绝对金标准",
+    "mixed_assertion": "Since愤怒前提有核查，可能原因不当作已发生事实"
+  },
+  "issues": [
+    "q2与探索问句适配的边界应集中标定，未定实质错误"
+  ],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

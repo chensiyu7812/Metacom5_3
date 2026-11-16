@@ -1,0 +1,81 @@
+{
+  "api_cost_usd": 0,
+  "authorization": {
+    "actual_user_message": "好的 继续推进",
+    "date": "2026-11-05 Asia/Tokyo",
+    "inherited_plan": "补齐N23实际读取路径，先复用旧结果及判断，再决定延迟与受限学习。",
+    "scope": "3条新的本地候选G回复，保持旧G与人评；无付费、训练、自动重试。"
+  },
+  "automatic_retries": 0,
+  "code": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/167_probe_alternate_executor.py": "da49d24f2c53256d867fa18b715012fba45ca76cf3996b73e5b1bad443b9b74d",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/171_probe_slight_positive_path.py": "f8ed7b07e3a2f8b94f8e4b295983795e63886f8ad22099a83fedc3b3e2ff7945",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py": "57ba5a7fea68616fc25f4123c91ba163b2fc17442a3bd941e4fc662710962993",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/generation.py": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py": "671d93606bfb2291876552c95d950e873518ce95c6305e996e576aa049bc5c85"
+  },
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "identity": "da73d0a36626ba6e7a908f0d13d904284904161f5bf00811701d09b1d962511b",
+  "max_calls": 3,
+  "max_loads": 1,
+  "new_rewards": false,
+  "new_training": false,
+  "promote": false,
+  "requests_identity": "c04379b4c7e7831fd6d5e376f8de6d48218b259c385242ad7685464f2de4ab0d",
+  "runtime": {
+    "adapter": null,
+    "attention": "sdpa",
+    "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5",
+    "cuda_device_order": "PCI_BUS_ID",
+    "cuda_visible_devices": "1",
+    "do_sample": false,
+    "dtype": "bfloat16",
+    "enable_thinking": false,
+    "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e",
+    "model_class": "AutoModelForMultimodalLM",
+    "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+    "model_files": {
+      "chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4",
+      "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+      "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+      "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d",
+      "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9",
+      "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+      "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+    },
+    "native_suppress_tokens": [
+      258883,
+      258882
+    ],
+    "packages": {
+      "safetensors": "0.8.0",
+      "tokenizers": "0.23.2",
+      "torch": "2.7.1+cu128",
+      "transformers": "5.17.0"
+    },
+    "pad_token_id": 0,
+    "policy": {
+      "context_limit": 262144,
+      "cycle_repetitions": 4,
+      "cycle_width": 32,
+      "eos_token_ids": [
+        1,
+        106,
+        50
+      ],
+      "timeout_seconds": 300.0
+    },
+    "seed": 0
+  },
+  "scope": "N23_EXISTING_SLIGHT_PREFERENCE_ACTUAL_MS_BRANCH_DIAGNOSTIC",
+  "sources": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/CARDS_PRIVATE.json": "26946322b57bd06f71f114d97f34be9efd52063d1f4415ecdc8f97210d0de1f3",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/EVIDENCE_PRIVATE.json": "d1c4e9153fa4f56385483d02d21468c423e5ef4f83c09e51d94dcf04a70b0959",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/INPUTS_PRIVATE.json": "e211025553cbb4f201afc57c7950ef94a856e59cf097396501c13c86f73da0c8",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/OLD_HUMAN_REFERENCE_PRIVATE.json": "1a20c5bba5c269334a95a4e81088eae1da3d824af184925956401c3197c603e9",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/REUSED_PRIVATE.json": "edcce7a4cc457cfe7a26126ee51c9380f234e5df31f525920afc58087625c227",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/STUDY.json": "ac44072c9e9fa6868a448770f6be96d77a4eead2081415a8107741f5cd33dbb0",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/USER_AUTHORIZATION.json": "58de1327d2c2ed7607076cce4b7fca76c2cf2f1bdf45756c69889d3c622fd8a2"
+  },
+  "stage_seconds": 1200
+}

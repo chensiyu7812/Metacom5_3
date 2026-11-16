@@ -1,0 +1,187 @@
+{
+  "role": "prospective_inventory_not_authorized_execution_or_selected_sample",
+  "formal_outcomes": 0,
+  "sources": {
+    "data/paper1_public_memory/es_memeval_public_active_multi_view_bge_top8_v1.jsonl": "19cabd4a9a820a020dacf5e747c1a053296e1f45d92b3955e79d05da521f886f",
+    "data/paper1_public_memory/es_memeval_public_outer_fold_assignments_k5_seed0_v1.jsonl": "8a1116aa56b934f7331eb2b4c0b8663551bab78298b00620eed7d6c861b391cb",
+    "data/paper1_authority/paper1_esc_split_large52_frozen_v1.jsonl": "fbc689d59f8bf25a36ce3e2cd76dfbb7506a2a7b8d7adebc927f004bf7479941"
+  },
+  "ESC": {
+    "splits": {
+      "confirmatory": 121,
+      "calibration": 52
+    },
+    "initial_k": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "full_52_card_grid_trajectories": 260
+  },
+  "memory": {
+    "targets_by_task": {
+      "dialogue_generation": 34,
+      "qa": 1427,
+      "summary": 125
+    },
+    "group_components": 477,
+    "static_head_k_rows": 18624,
+    "shared_off_rows": 1552,
+    "full_static_nominal_generation_rows": 20176,
+    "unique_target_head_prefix_rows_plus_shared_off": 20176,
+    "full_k_coverage": {
+      "qa": {
+        "MP": {
+          "1": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "2": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "3": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "4": {
+            "targets": 1427,
+            "full_k": 1427
+          }
+        },
+        "ME": {
+          "1": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "2": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "3": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "4": {
+            "targets": 1427,
+            "full_k": 1427
+          }
+        },
+        "MS": {
+          "1": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "2": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "3": {
+            "targets": 1427,
+            "full_k": 1427
+          },
+          "4": {
+            "targets": 1427,
+            "full_k": 1427
+          }
+        }
+      },
+      "summary": {
+        "MP": {
+          "1": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "2": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "3": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "4": {
+            "targets": 125,
+            "full_k": 125
+          }
+        },
+        "ME": {
+          "1": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "2": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "3": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "4": {
+            "targets": 125,
+            "full_k": 125
+          }
+        },
+        "MS": {
+          "1": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "2": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "3": {
+            "targets": 125,
+            "full_k": 125
+          },
+          "4": {
+            "targets": 125,
+            "full_k": 125
+          }
+        }
+      }
+    },
+    "per_heldout_fold_calibration_eligible_targets": {
+      "0": {
+        "qa": 1141,
+        "summary": 100,
+        "dialogue_generation": 28
+      },
+      "1": {
+        "dialogue_generation": 27,
+        "qa": 1142,
+        "summary": 100
+      },
+      "2": {
+        "dialogue_generation": 27,
+        "qa": 1142,
+        "summary": 100
+      },
+      "3": {
+        "dialogue_generation": 28,
+        "qa": 1141,
+        "summary": 100
+      },
+      "4": {
+        "dialogue_generation": 26,
+        "qa": 1142,
+        "summary": 100
+      }
+    },
+    "DG": "34 trajectories require live per-round seeker queries; static proxy rankings are not executable treatments."
+  },
+  "selection_rule": "Official task primary mean; one-SE admissible set; smallest mean Generator input tokens, then k, then canonical order.",
+  "extension_rule": "Only if k=4 has best mean and k=3 lies outside its one-SE set, expand once to 6/8.",
+  "next_execution_requirements": [
+    "Select a budget-feasible calibration subset within existing partitions",
+    "Render exact messages and resource envelopes using a common natural-end Generator version",
+    "Count official scorer and simulator tokens and price the concrete schedule",
+    "Refresh total-context and end-to-end latency measurements"
+  ],
+  "final_k_selected": false,
+  "paid_calls": 0
+}

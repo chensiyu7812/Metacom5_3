@@ -1,0 +1,42 @@
+{
+  "scope": "REAL_DATA_EXACT_REPLY_COST_CONTROL",
+  "feedback_protocol": "8600d44b02192506aba943ae304ce3a43e25f05dce6c7eba3cec4c743f95afa8",
+  "endpoints_identity": "b0177e2f88626fd3a626bceca453918588a1156ccd3ad5ae61e4297951b27da4",
+  "cost_model_identity": "f91aff500fec7b0dd119abf6a1c856c36f413202d6bc84f832c5ea6ff1a42375",
+  "weights": [
+    0.0,
+    0.05,
+    0.2
+  ],
+  "training_weight": 0.05,
+  "seeds": [
+    17,
+    23,
+    42
+  ],
+  "episodes_per_seed": 128,
+  "batch_size": 16,
+  "supervised": {
+    "epochs": 50,
+    "batch_size": 64,
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "value_head_only_steps": 500
+  },
+  "training_data": "5 original train prefixes; fixed candidate tree; no dev/test",
+  "feedback_utility": "exact canonical input equality implies delta utility zero; absolute quality unknown",
+  "cost_uncertainty": "short paths extrapolate per-component overhead; +/-50% overhead and held-prefix p90 G error sensitivity",
+  "completion_rule": "release complete prefix subproblems only; at least two; eligibility depends on missingness, never score direction; retain all unresolved rows",
+  "formal_natural_qualification": false,
+  "permission": "Current researcher request: 好的，试试看，看看能不能解决现在的问题。",
+  "selection_after_outcome_inspection": true,
+  "comparison_goal": "BC/PPO learn to avoid certified useless reads; no heterogeneous positive cases",
+  "baseline_methods": [
+    "fixed OFF",
+    "uniform random over allowed actions",
+    "BC",
+    "PPO"
+  ],
+  "control_script_sha256": "5f52e918ccb2de71d4bcbcf05d933b0db6b83302e25150dea928cb72c050ac4e",
+  "identity": "53c188cd99d94e1859bf603aa22f40cd03a1eec6c9efeee9cd9292a0f1fb3e37"
+}

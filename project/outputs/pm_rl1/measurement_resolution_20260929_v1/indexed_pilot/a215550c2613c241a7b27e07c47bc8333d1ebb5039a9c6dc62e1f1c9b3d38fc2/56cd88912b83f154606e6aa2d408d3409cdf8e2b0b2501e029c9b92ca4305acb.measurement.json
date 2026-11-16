@@ -1,0 +1,131 @@
+{
+  "response_sha256": "33e5dccbd9186b32698b716fbae18470584d06a58484b9bbd20cdc65aa3c1a39",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "6db6ca37773ae7a66df6d837deec763a3a730a21f69b640df0df1643b393c608",
+  "raw_output_sha256": "5ba414b7c68996c1f276fbb852b0b65a41a787380cc07887d5be9a2171d6bd8d",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user has decided to discuss the situation with therapy and explicitly states their sessions have helped with stress and career issues. The reply validates this choice, affirms the relevance of therapy for emotional processing, and gently prompts for further specifics about therapeutic goals.",
+      "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's own assessment in C:T016 ('My sessions have been helping a lot') and responds directly to the specific proposal to talk about therapy. It maintains supportive boundaries and does not introduce new facts or advice beyond validating the user's agency. It fully addresses the user's statement without significant mismatch."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "User explicitly states in C:T016 that their sessions have been helping with stress and career stuff, supporting the claim that they have seen benefits in other areas of life."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked personal factual claims regarding therapy benefits and identity/naming conventions against current session evidence and past history. Confirmed consistency with C:T016 regarding therapy benefits.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 445
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 196
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user has decided to discuss the situation with therapy and explicitly states their sessions have helped with stress and career issues. The reply validates this choice, affirms the relevance of therapy for emotional processing, and gently prompts for further specifics about therapeutic goals.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply accurately reflects the user's own assessment in C:T016 ('My sessions have been helping a lot') and responds directly to the specific proposal to talk about therapy. It maintains supportive boundaries and does not introduce new facts or advice beyond validating the user's agency. It fully addresses the user's statement without significant mismatch."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "User explicitly states in C:T016 that their sessions have been helping with stress and career stuff, supporting the claim that they have seen benefits in other areas of life."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked personal factual claims regarding therapy benefits and identity/naming conventions against current session evidence and past history. Confirmed consistency with C:T016 regarding therapy benefits.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

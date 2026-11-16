@@ -1,0 +1,124 @@
+{
+  "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "112dd84e2488a523104309a8ea825b27ff1fa69329819489a80e308228b91a88",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses intent to discuss workload adjustments but doubts supervisor reaction.",
+      "response_quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply directly validates the seeker's uncertainty (R001) consistent with the explicit concern in T015. It then offers targeted questions (R002) to gather necessary details for potential future advice, respecting the 'no advice' constraint until sufficient context is provided. No important constraints or needs were missed. The brevity and relevance fit the current turn requirements perfectly."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Both units are addressed within the scope of the reply.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses intent to discuss workload adjustments but doubts supervisor reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly validates the seeker's uncertainty (R001) consistent with the explicit concern in T015. It then offers targeted questions (R002) to gather necessary details for potential future advice, respecting the 'no advice' constraint until sufficient context is provided. No important constraints or needs were missed. The brevity and relevance fit the current turn requirements perfectly."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Both units are addressed within the scope of the reply.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker expresses intent to discuss workload adjustments but doubts supervisor reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly validates the seeker's uncertainty (R001) consistent with the explicit concern in T015. It then offers targeted questions (R002) to gather necessary details for potential future advice, respecting the 'no advice' constraint until sufficient context is provided. No important constraints or needs were missed. The brevity and relevance fit the current turn requirements perfectly."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic statement confirming feelings. No personal assertion made."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Clarifying question based on information explicitly stated by the user in T015 ('thinking of discussing', 'workload adjustments'). Presupposes intent already reported, does not assert unknown facts."
+      }
+    ],
+    "coverage": "Both units are addressed within the scope of the reply.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

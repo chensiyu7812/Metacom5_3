@@ -1,0 +1,272 @@
+{
+  "response_sha256": "ea3fe4503e5f2849ff7a10ec92fdec8983c304eed82af912bda9ab94dbe52d5e",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "a5630fa07957e81846e3ddd8206dc8d58180e2f75ddc11d3cb8e66417986239b",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user expresses gratitude and resolves to move forward in the final turn (H028:T020), indicating a need for validation and closure.",
+      "response_quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions after spending your entire life in Sydney. What is it about Canberra that you miss?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        },
+        {
+          "source_id": "H023:T004",
+          "quote": "I need a fresh start. Things here in Canberra have been weighing me down—work stress, my struggles with alcohol, and this feeling of being stuck."
+        },
+        {
+          "source_id": "H023:T010",
+          "quote": "Yeah, I'm trying to be practical about it. And I'm moving in with a colleague I know from Sydney—Emily. We hit it off recently."
+        },
+        {
+          "source_id": "H026:T000",
+          "quote": "Hey Jimmy, how are things going in Sydney so far?"
+        },
+        {
+          "source_id": "H027:T014",
+          "quote": "It's been a challenge. The new job has been overwhelming, and I haven't really found my footing yet."
+        },
+        {
+          "source_id": "H028:T021",
+          "quote": "Anytime, mate. You've got this. Just take it day by day."
+        }
+      ],
+      "reason": "The reply provides empathetic validation (R001/R003) but includes a significant factual error in R002 ('spending your entire life in Sydney') which contradicts the established history of the user moving from Canberra to Sydney (H023:H026). This error demonstrates a failure to recall or maintain consistency with the user's personal context, reducing the overall appropriateness."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're still navigating the complexities of change.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "H028:T009",
+            "quote": "Endings can definitely feel bittersweet. Have you been able to talk to anyone else about this?"
+          }
+        ],
+        "reason": "The summary of 'navigating complexities of change' aligns with the user's expressed struggles with job, emotions, and move discussed throughout H028."
+      },
+      {
+        "response_quote": "It's normal to feel a mix of emotions after spending your entire life in Sydney.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "H023:T004",
+            "quote": "I need a fresh start. Things here in Canberra have been weighing me down—work stress, my struggles with alcohol, and this feeling of being stuck."
+          },
+          {
+            "source_id": "H026:T000",
+            "quote": "Hey Jimmy, how are things going in Sydney so far?"
+          }
+        ],
+        "reason": "The claim that the user spent their 'entire life in Sydney' is contradicted by H023:T004 ('Things here in Canberra have been weighing me down') and H026:T000 ('How are things going in Sydney so far?'), establishing a recent relocation from Canberra."
+      }
+    ],
+    "misuse_findings": [
+      1
+    ],
+    "coverage": "Evaluated personal history regarding location (Sydney vs Canberra). Assessed factual claims made by the supporter against legal evidence from current and past sessions.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions after spending your entire life in Sydney. What is it about Canberra that you miss?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 188
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H023:T004",
+      "quote": "I need a fresh start. Things here in Canberra have been weighing me down—work stress, my struggles with alcohol, and this feeling of being stuck.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 145
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H023:T010",
+      "quote": "Yeah, I'm trying to be practical about it. And I'm moving in with a colleague I know from Sydney—Emily. We hit it off recently.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 127
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H026:T000",
+      "quote": "Hey Jimmy, how are things going in Sydney so far?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H027:T014",
+      "quote": "It's been a challenge. The new job has been overwhelming, and I haven't really found my footing yet.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 100
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H028:T021",
+      "quote": "Anytime, mate. You've got this. Just take it day by day.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 56
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "H028:T009",
+      "quote": "Endings can definitely feel bittersweet. Have you been able to talk to anyone else about this?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It's normal to feel a mix of emotions after spending your entire life in Sydney.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 147
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H023:T004",
+      "quote": "I need a fresh start. Things here in Canberra have been weighing me down—work stress, my struggles with alcohol, and this feeling of being stuck.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 145
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H026:T000",
+      "quote": "Hey Jimmy, how are things going in Sydney so far?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user expresses gratitude and resolves to move forward in the final turn (H028:T020), indicating a need for validation and closure.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "H023:T004",
+        "H023:T010",
+        "H026:T000",
+        "H027:T014",
+        "H028:T021"
+      ],
+      "reason": "The reply provides empathetic validation (R001/R003) but includes a significant factual error in R002 ('spending your entire life in Sydney') which contradicts the established history of the user moving from Canberra to Sydney (H023:H026). This error demonstrates a failure to recall or maintain consistency with the user's personal context, reducing the overall appropriateness."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H028:T009"
+        ],
+        "reason": "The summary of 'navigating complexities of change' aligns with the user's expressed struggles with job, emotions, and move discussed throughout H028."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "H023:T004",
+          "H026:T000"
+        ],
+        "reason": "The claim that the user spent their 'entire life in Sydney' is contradicted by H023:T004 ('Things here in Canberra have been weighing me down') and H026:T000 ('How are things going in Sydney so far?'), establishing a recent relocation from Canberra."
+      }
+    ],
+    "misuse_findings": [
+      1
+    ],
+    "coverage": "Evaluated personal history regarding location (Sydney vs Canberra). Assessed factual claims made by the supporter against legal evidence from current and past sessions.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

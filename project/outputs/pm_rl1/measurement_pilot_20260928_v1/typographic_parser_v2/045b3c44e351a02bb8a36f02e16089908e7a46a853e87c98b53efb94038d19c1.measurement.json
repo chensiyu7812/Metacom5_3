@@ -1,0 +1,148 @@
+{
+  "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "5e39f787875d616e43cb98bac2ff28f1aec6d33d72b2caf183386a60599464b6",
+  "raw_output_sha256": "c4d8f2a730b76a887acb9b8f881331ac7a184284c0e01a66ca9a20693c700105",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the seeker's sadness and confusion regarding a recent breakup caused by mutual fighting, following the expression 'I am so sad' and 'can not get over it'.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply accurately reflects the expressed breakup and inability to process it ('can not get over it'). It validates the emotion without making unsupported assumptions about the cause beyond the user's description (fighting/disagreement). It follows the supportive pattern established in prior turns (listening) and asks relevant clarifying questions to aid processing, meeting the user's need for understanding and space to express sadness."
+    },
+    "claims": [
+      {
+        "response_quote": "It can be really tough to move on from a breakup",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I just broke up with my girlfriend and sad about it"
+          }
+        ],
+        "reason": "User explicitly states they 'broke up'. Replying that moving on is tough is consistent with the disclosed event."
+      },
+      {
+        "response_quote": "feel stuck in those emotions",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "now I can not get over it"
+          }
+        ],
+        "reason": "User states they 'can not get over it', indicating feeling stuck emotionally."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked current session (C:T000-C:T007) for consistency with the reply's assertions regarding the breakup status and emotional state. Verified no identity mismatches (name 'Nick' omitted appropriately). Verified no factual claims contradicting history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 329
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup",
+      "positions": [
+        {
+          "start": 0,
+          "end": 48
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T001",
+      "quote": "I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 15,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "feel stuck in those emotions",
+      "positions": [
+        {
+          "start": 121,
+          "end": 149
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "now I can not get over it",
+      "positions": [
+        {
+          "start": 63,
+          "end": 88
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

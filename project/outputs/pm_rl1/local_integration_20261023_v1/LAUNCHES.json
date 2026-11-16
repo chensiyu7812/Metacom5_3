@@ -1,0 +1,35 @@
+{
+  "protocol": "dd23f5ae2dbfbf970a38876796602d0fe9212c8722382dc868e6c356b3ec9b16",
+  "entry": "project/scripts/rl1/130_local_backend_integration.py execute",
+  "python": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+  "environment": {
+    "PYTHONNOUSERSITE": "1",
+    "PYTHONPATH": "/opt/tokkio-data0/tokkio_envs/pmrl1_sft_vendor_20260929:src",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
+    "CUDA_VISIBLE_DEVICES": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "launches": [
+    {
+      "log": "EXECUTION.log",
+      "exit_code": 1,
+      "model_entry": false
+    },
+    {
+      "log": "EXECUTION_AFTER_ADMISSION_RECHECK.log",
+      "exit_code": 1,
+      "model_entry": false
+    },
+    {
+      "log": "EXECUTION_WITH_READONLY_MONITOR.log",
+      "exit_code": 1,
+      "model_entry": true,
+      "readonly_monitor_max_seconds": 600,
+      "monitor_terminated_on_exit": true
+    }
+  ],
+  "no_model_retry": true
+}

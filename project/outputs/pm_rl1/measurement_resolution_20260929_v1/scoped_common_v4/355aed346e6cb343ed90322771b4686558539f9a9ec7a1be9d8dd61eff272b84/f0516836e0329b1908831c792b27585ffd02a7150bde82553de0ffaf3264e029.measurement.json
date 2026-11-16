@@ -1,0 +1,330 @@
+{
+  "response_sha256": "f023be19c72e86749ba79d5e99c2c25f19b62c58953dd028abef7188b03adc96",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "3925fea11dc0b46c223f5b6040f7a017c5eb9c44e7efe46db5c9cf5b69ab3490",
+  "raw_output_sha256": "58bbffcc102b3245201f528e89416777472e6a89aa662c9e437a2f7ca073e31c",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker needs validation and guidance on discussing a pending workload adjustment negotiation.",
+      "response_quote": "Your supervisor has already adjusted your workload, and you've said this has reduced your stress. With everything else you're carrying, that uncertainty sounds difficult. Would it help to think through what you want to ask for?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+        },
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "Response contains a severe factual hallucination in R001 stating the supervisor has 'already adjusted' the workload. This directly contradicts C:T015 ('thinking of discussing') and C:T013 (anxiety over new promotion responsibility). This error invalidates the advice flow, effectively misrepresenting the user's reality to justify the suggested next steps. This falls under a dominant error/misuse (m=1)."
+    },
+    "claims": [
+      {
+        "response_quote": "Your supervisor has already adjusted your workload, and you've said this has reduced your stress.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+          }
+        ],
+        "reason": "Asserts adjustment is done; user explicitly plans to discuss adjustments."
+      },
+      {
+        "response_quote": "With everything else you're carrying, that uncertainty sounds difficult.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+          }
+        ],
+        "reason": "Accurately reflects the burden described in context."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Full coverage of reply units.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your supervisor has already adjusted your workload, and you've said this has reduced your stress. With everything else you're carrying, that uncertainty sounds difficult. Would it help to think through what you want to ask for?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 129
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your supervisor has already adjusted your workload, and you've said this has reduced your stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 97
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 129
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "With everything else you're carrying, that uncertainty sounds difficult.",
+      "positions": [
+        {
+          "start": 98,
+          "end": 170
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T013",
+      "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 129
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker needs validation and guidance on discussing a pending workload adjustment negotiation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T015"
+      ],
+      "reason": "Response contains a severe factual hallucination in R001 stating the supervisor has 'already adjusted' the workload. This directly contradicts C:T015 ('thinking of discussing') and C:T013 (anxiety over new promotion responsibility). This error invalidates the advice flow, effectively misrepresenting the user's reality to justify the suggested next steps. This falls under a dominant error/misuse (m=1)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Asserts adjustment is done; user explicitly plans to discuss adjustments."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Accurately reflects the burden described in context."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Full coverage of reply units.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Seeker needs validation and guidance on discussing a pending workload adjustment negotiation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T015"
+      ],
+      "reason": "Response contains a severe factual hallucination in R001 stating the supervisor has 'already adjusted' the workload. This directly contradicts C:T015 ('thinking of discussing') and C:T013 (anxiety over new promotion responsibility). This error invalidates the advice flow, effectively misrepresenting the user's reality to justify the suggested next steps. This falls under a dominant error/misuse (m=1)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Asserts adjustment is done; user explicitly plans to discuss adjustments.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Accurately reflects the burden described in context.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic advisory question.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Full coverage of reply units.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Seeker needs validation and guidance on discussing a pending workload adjustment negotiation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T015"
+      ],
+      "reason": "Response contains a severe factual hallucination in R001 stating the supervisor has 'already adjusted' the workload. This directly contradicts C:T015 ('thinking of discussing') and C:T013 (anxiety over new promotion responsibility). This error invalidates the advice flow, effectively misrepresenting the user's reality to justify the suggested next steps. This falls under a dominant error/misuse (m=1)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Asserts adjustment is done; user explicitly plans to discuss adjustments."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015",
+          "C:T013"
+        ],
+        "reason": "Accurately reflects the burden described in context."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic advisory question."
+      }
+    ],
+    "coverage": "Full coverage of reply units.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

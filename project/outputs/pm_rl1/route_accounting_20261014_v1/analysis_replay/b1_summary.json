@@ -1,0 +1,65 @@
+{
+  "head": "RS",
+  "selection_basis": "all 96 train + 18 dev reachable terminal doses; no label or reply quality",
+  "train": {
+    "prefixes": 24,
+    "terminals": 120,
+    "reusable_replies": 72,
+    "missing_replies": 48,
+    "independent_single_reply_judgments": 240
+  },
+  "dev": {
+    "prefixes": 6,
+    "terminals": 30,
+    "reusable_replies": 18,
+    "missing_replies": 12,
+    "independent_single_reply_judgments": 60,
+    "prefix_selection_status": "not frozen; all allowed two-per-owner selections have identical counts"
+  },
+  "test": {
+    "prefixes": 48,
+    "owners": {
+      "p4": 16,
+      "p7": 16,
+      "p14": 16
+    },
+    "actual_legal_terminals": null,
+    "range_if_OFF_fits": [
+      48,
+      240
+    ],
+    "verified_current_executor_replies": 0,
+    "independent_single_reply_judgments_range_if_OFF_fits": [
+      96,
+      480
+    ],
+    "blocking": "Active P1 inventory projection/ranking not built for test. No model calls allowed in this accounting."
+  },
+  "train_dev": {
+    "terminals": 150,
+    "reusable_replies": 90,
+    "missing_replies": 60,
+    "independent_single_reply_judgments": 300
+  },
+  "total_conditional": {
+    "terminals": [
+      198,
+      390
+    ],
+    "missing_replies": [
+      108,
+      300
+    ],
+    "two_rater_judgments": [
+      396,
+      780
+    ]
+  },
+  "judgment_unit": "one rater assigning q and m to one canonical legal terminal reply; no automatic duplicate-text discount",
+  "existing_human_complete_independent_qm_judgments": 0,
+  "dev_candidate18_same_prefix_text_unique": 52,
+  "train24_same_prefix_text_unique": 66,
+  "no_other_executor_or_weak_targets_reused": true,
+  "adjudication_count": null,
+  "human_minutes_observed": null
+}

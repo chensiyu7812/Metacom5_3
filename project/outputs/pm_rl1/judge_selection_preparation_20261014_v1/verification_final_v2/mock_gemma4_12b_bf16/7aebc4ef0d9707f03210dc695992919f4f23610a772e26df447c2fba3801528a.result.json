@@ -1,0 +1,237 @@
+{
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "08819809d8f0a56f0471c262a7b7aa052c33e66010a8eecd80ca5aeb85292aac",
+    "phase": "development",
+    "ordinal": 22,
+    "item_key": "dev26B",
+    "draw": "primary",
+    "messages_identity": "f394532b96e878a56a0fb751051bcee72b2ba262b53f4b65159c1fe4979e7db5",
+    "schema_identity": "fb39ce1c3e2273f64de0377aca79f2e1c60f81e686bfb672f4c15fca9a28a87f",
+    "seed": 62083031,
+    "input_utf8_bytes": 31035,
+    "request_id": "7aebc4ef0d9707f03210dc695992919f4f23610a772e26df447c2fba3801528a"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "1f8eba4f3a3881c07277150730c9829f0390c9e513cd23d5909d38c7f1c1821b",
+    "legal_evidence_identity": "6ea81f1c5657b032d3acaf9233beaba13fb22112658e9ae7a186f2bfd6252da4",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "08819809d8f0a56f0471c262a7b7aa052c33e66010a8eecd80ca5aeb85292aac",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "7aebc4ef0d9707f03210dc695992919f4f23610a772e26df447c2fba3801528a",
+    "raw_output_sha256": "0b88bd21ffc702eb8ace79bafb68f5546e3978f61967bfce3e64118316b8ed34",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "It sounds like your mom's health is a significant concern for you and your family. How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "It sounds like your mom's health is a significant concern for you and your family.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "It sounds like your mom's health is a significant concern for you and your family. How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+        "positions": [
+          {
+            "start": 0,
+            "end": 207
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T009",
+        "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 81
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "It sounds like your mom's health is a significant concern for you and your family.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 82
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+        "positions": [
+          {
+            "start": 83,
+            "end": 207
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.0020600329735316336,
+  "accounted_peak_usd": "0",
+  "reservation_retained": false
+}

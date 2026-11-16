@@ -1,0 +1,12 @@
+# 仅离线核验；不加载模型，也不查GPU或账户
+CUDA_VISIBLE_DEVICES='' \
+PYTHONPATH=/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src:/opt/tokkio-data0/tokkio_envs/pmrl1_sft_vendor_20260929 \
+/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python \
+/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py \
+--rs-package /opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/rs_applicability_20261019_v1 --preflight-only
+
+# 真实运行尚未获准。后续在研究者明确批准本包16次后，另存匹配协议身份的
+# execution_authorization.json，保留现有pending记录；再使用同一入口和原CUDA部署：
+# CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1；加
+# --execution-authorization <新批准记录的路径>，去掉--preflight-only。
+# 不要使用不带--rs-package的旧池入口；不要手动重试已开始请求。

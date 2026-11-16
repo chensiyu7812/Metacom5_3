@@ -1,0 +1,64 @@
+{
+  "response_sha256": "8c47ba18fe764fdafc0a99bc178e2c1f90b56f7e69c45802999b593d6183e908",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "79d8075740f3f5e3ad82821172c8e4f6cd8e23571770dc1e317963296a040cc0",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's conflicting feelings (relief vs stagnation fear) regarding a missed promotion and encourage elaboration on barriers to career progress.",
+      "response_quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The reply fully addresses the user's specific emotional conflict expressed in C:T014 by validating both the relief and the fear. It avoids giving unsolicited advice, maintains appropriate boundaries, and invites further exploration of the user's stated concerns without adding unnecessary complexity. It is coherent, respectful, and directly responsive to the immediate venting need."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked identity consistency (Jane), historical references to promotions (C:T002, C:T004), relationship status with Eliza (C:T013), and career concerns (C:T014). No identity errors, temporal errors, or unsupported assertions found in the reply.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 259
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 18,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

@@ -1,0 +1,116 @@
+{
+  "author": "Codex source/rule review; not new independent human evaluation",
+  "no_scores_changed": true,
+  "no_gold_labels_created": true,
+  "new_valid_target_controls": [
+    {
+      "item": "V4_OFF",
+      "finding": "Ordinary invitation/availability not treated as a biographical claim",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I just need to talk to someone. Is that okay?"
+        }
+      ],
+      "status": "local_target_supported"
+    },
+    {
+      "item": "V3_ON",
+      "finding": "Actual attempt to talk is recognized; no claim that it succeeded",
+      "evidence": [
+        {
+          "source_id": "C:T010",
+          "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+        }
+      ],
+      "status": "local_target_supported"
+    }
+  ],
+  "confirmed_rule_misstatements": [
+    {
+      "item": "V3_ON",
+      "path": "/findings/2/criterion",
+      "actual": "q=4 requires the reply to meet what this turn calls for, while q=3 covers an appropriate reply with an important defect; a style or memory difference alone does not move between them.",
+      "frozen_rule": "3: appropriate, coherent and responsive, with no important defect.",
+      "corrected_elsewhere_path": "/score_review/checks/quality/criterion",
+      "corrected_elsewhere": "q=4 requires the reply to fully meet what this particular turn calls for; q=3 requires an appropriate, coherent, responsive reply with no important defect; a missed explicit need or constraint lands at q=2.",
+      "conclusion": "The criterion contains a direct negation error; the same output elsewhere quotes q3 correctly. This is a confirmed explanation inconsistency, not proof q4 must change or a new user/source factual error."
+    }
+  ],
+  "reviewer_unresolved": [
+    {
+      "item": "V3_ON",
+      "type": "historical_constraint_quality",
+      "source_id": "H009:T009",
+      "quote": "I guess that's a good idea. But I'm just so tired of explaining everything over and over, you know?",
+      "output_reason": "The final seeker turn adds bad midterms and new pressure to improve, and the reply acknowledges the accumulating load accurately and then offers one optional, non-pressuring support route without prescribing action. The only limitation, that the counselor idea was already floated in H009:T008 without addressing Anna's fatigue about re-explaining, is not restated in the current prefix and does not leave an explicit current need or constraint mishandled, so the q=4 justification survives; the limitation is recorded as nonblocking rather than as a scoring error.",
+      "question": "Does a low-pressure re-offer adequately respect this earlier fatigue, or does the reason dismiss a relevant constraint merely because it was not restated?",
+      "conclusion": "Earlier fatigue is recorded but its current quality consequence is not uniquely determined. No exact replacement q or m inferred; no new questionnaire."
+    }
+  ],
+  "field_precision_caveats": [
+    {
+      "item": "V3_ON",
+      "path": "/check/claims/3/action_stage",
+      "value": "not_applicable",
+      "observation": "The corresponding source and prose correctly recognize an attempted parental conversation, but this field does not encode attempted stage explicitly. Target relation recognized does not certify all structured stage fields."
+    }
+  ],
+  "inherited": {
+    "V3_OFF_r1": "Prior accounting recognized; one original-interface observation only",
+    "dev06B_r1": "Original invalid final remains null; no recovery or semantic success"
+  },
+  "failed_new": {
+    "dev04B": "Invalid whole tool arguments; raw text available but no validated audit or formal semantic outcome"
+  },
+  "unobserved": [
+    "dev35B/r1",
+    "dev06B/r2",
+    "V3_OFF/r2"
+  ],
+  "denominators": {
+    "new_valid": 2,
+    "new_started": 3,
+    "new_planned": 6,
+    "all_valid": 3,
+    "all_started": 5,
+    "all_planned": 8,
+    "valid_distinct_replies": 3,
+    "planned_distinct_replies": 6,
+    "valid_contexts": 2,
+    "planned_contexts": 5,
+    "valid_owners": 2,
+    "planned_owners": 4,
+    "complete_valid_repeat_pairs": 0
+  },
+  "model_unknown": {
+    "new": 0,
+    "new_denominator": 2,
+    "all": 0,
+    "all_denominator": 3,
+    "failed_and_unstarted": null
+  },
+  "model_score_review_unresolved": {
+    "new": 0,
+    "new_denominator": 2,
+    "all": 0,
+    "all_denominator": 3
+  },
+  "analyst_categories": {
+    "confirmed_source_disproved_new_accusations": 0,
+    "confirmed_rubric_restatement_error": 1,
+    "reviewer_unresolved_quality_case": 1,
+    "note": "Counts describe these valid outputs only, not an accuracy estimate or independent cases. Multiple caveats concern one V3_ON output."
+  },
+  "routing": {
+    "comparable_valid_outputs": 3,
+    "old_trigger_flags": 1,
+    "new_supplement_flags": 0,
+    "new_retain_candidate": 3,
+    "actual_supplement_calls": 0,
+    "actual_saved_calls": 0,
+    "interpretation": "Proposed routing only; the rule misstatement shows mechanically valid supported checks do not establish trustworthy acceptance."
+  },
+  "conclusion": "INCONCLUSIVE_TECHNICAL_STOP_WITH_LOCAL_CONTROL_EVIDENCE_AND_ONE_CONFIRMED_RUBRIC_RESTATEMENT_ERROR",
+  "next": "Do not enable automatic routing or reward use. Delivery guarantee remains unestablished; key missed-score target and planned repeats are incomplete. No extra sampling or retrospective repair is authorized."
+}

@@ -1,0 +1,194 @@
+{
+  "response_sha256": "fa8853e917c2e22a6c3dd620371db602ef8053130d99b931dad4e5786a157ced",
+  "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "3f71339f6fb116d7c854600723cafab0e39e76eace0c1d02a29e6b64ede79d90",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User indicates 'things have been a bit tough lately' and implicitly needs an opportunity to elaborate on their situation.",
+      "response_quote": "I'm here to listen and help if I can. Can you tell me more about what's been going on and how I can support you?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, are you there?"
+        },
+        {
+          "source_id": "C:T001",
+          "quote": "Hi John, yes, I'm here. How are things going?"
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately."
+        }
+      ],
+      "reason": "The reply offers appropriate presence and explicitly invites the user to share more details about their distress, which is the precise informational need established by the seeker's opening turn. It respects boundaries by not speculating on causes (e.g., not assuming sleep or drinking issues from past sessions)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The response adequately handles the user's report of difficulty by establishing availability and requesting further context before offering specific advice or solutions.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm here to listen and help if I can. Can you tell me more about what's been going on and how I can support you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 112
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, are you there?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "Hi John, yes, I'm here. How are things going?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User indicates 'things have been a bit tough lately' and implicitly needs an opportunity to elaborate on their situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "The reply offers appropriate presence and explicitly invites the user to share more details about their distress, which is the precise informational need established by the seeker's opening turn. It respects boundaries by not speculating on causes (e.g., not assuming sleep or drinking issues from past sessions)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The response adequately handles the user's report of difficulty by establishing availability and requesting further context before offering specific advice or solutions.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User indicates 'things have been a bit tough lately' and implicitly needs an opportunity to elaborate on their situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "The reply offers appropriate presence and explicitly invites the user to share more details about their distress, which is the precise informational need established by the seeker's opening turn. It respects boundaries by not speculating on causes (e.g., not assuming sleep or drinking issues from past sessions)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Standard expression of support and availability; does not assert personal facts or claims about the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended inquiry inviting user disclosure; presupposes willingness to share but does not assert external facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response adequately handles the user's report of difficulty by establishing availability and requesting further context before offering specific advice or solutions.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User indicates 'things have been a bit tough lately' and implicitly needs an opportunity to elaborate on their situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "The reply offers appropriate presence and explicitly invites the user to share more details about their distress, which is the precise informational need established by the seeker's opening turn. It respects boundaries by not speculating on causes (e.g., not assuming sleep or drinking issues from past sessions)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Standard expression of support and availability; does not assert personal facts or claims about the user."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended inquiry inviting user disclosure; presupposes willingness to share but does not assert external facts."
+      }
+    ],
+    "coverage": "The response adequately handles the user's report of difficulty by establishing availability and requesting further context before offering specific advice or solutions.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

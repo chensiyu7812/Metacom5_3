@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/156_measure_memoized_online.py", line 168, in <module>
+    a=parser.parse_args();(prepare if a.mode=='prepare' else run)(a.output)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/156_measure_memoized_online.py", line 81, in run
+    guard=LocalGPUCheck(c['gpu_uuid'],c['runtime'],output/'gpu_checks',latest_snapshot=True);guard.check()
+                                                                                             ^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py", line 114, in check
+    if not result['eligible']:raise RuntimeError('designated GPU unavailable; no waiting, termination or fallback')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: designated GPU unavailable; no waiting, termination or fallback

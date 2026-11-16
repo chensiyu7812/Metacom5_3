@@ -1,0 +1,113 @@
+{
+  "schema": "pmrl1-session-summary-design-20261116-v1",
+  "status": "USER_REQUESTED_CANDIDATE_DESIGN_AND_ASSISTANT_EXAMPLES_NOT_RUNTIME_INTEGRATED",
+  "authority": {
+    "user_request": "关于MS应该再加另一个尝试，就是本次对话完整结束后的summary",
+    "change": "Add session-summary representation in a new RL1 candidate; keep historical raw MS identities and results"
+  },
+  "representations": {
+    "RAW": "one acquired complete strictly-past session, historical version",
+    "SUM": "independently written completed-session summary, separately identified",
+    "HYBRID": "summary then optional source acquisition; interface proposed, not implemented"
+  },
+  "availability": {
+    "same_owner_required": true,
+    "source_session_rank_strictly_before_target_session": true,
+    "same_session_full_summary_forbidden": true,
+    "writer_inputs": [
+      "one complete source transcript",
+      "source metadata"
+    ],
+    "writer_forbidden_inputs": [
+      "future target question",
+      "future replies",
+      "gold answers",
+      "author summary or observation annotations",
+      "effect scores"
+    ],
+    "source_end_order_and_actual_build_time_separate": true,
+    "offline_reconstruction_is_not_historical_actual_availability": true,
+    "GET_calls_writer": false
+  },
+  "write_path": [
+    "freeze completed source and hash",
+    "build session summary and source-span ledger",
+    "check exact bindings and semantic fidelity",
+    "publish separate immutable version when ready",
+    "index legal source and summary; preserve raw lookup"
+  ],
+  "update_path": {
+    "per_session_independent": true,
+    "rebuild_corrections_from_source": true,
+    "new_facts_update_target_time_MP_or_ME_with_original_evidence": true,
+    "summary_is_not_the_only_source_for_MP_ME": true,
+    "single_recursive_global_summary": "not default"
+  },
+  "S1": {
+    "status": "PAYLOAD_AND_GENERATOR_FREEZE_PENDING",
+    "arms": [
+      "OFF",
+      "RAW",
+      "SUM"
+    ],
+    "optional_diagnostic": "SUM_PLUS_SAME_RAW, not adaptive expansion",
+    "primary_contrast": "SUM vs RAW on identical source sessions",
+    "controls": [
+      "same current prefix",
+      "same source session set and order",
+      "same G and base instruction",
+      "same MP/ME/RS state",
+      "same source ranking fixed from public prefix"
+    ],
+    "retrieval_reoptimization": false,
+    "extra_sessions_for_SUM": false,
+    "capacity": "paired common-feasible set; separately report out-of-context coverage, no RAW truncation",
+    "source_pool": "previous fixed 24 legal train/dev sessions; first 3 are design cases, not representative performance sample",
+    "source_targets_and_sample_size": "pending frozen execution manifest; do not multiply whole eight-arm mechanism grid automatically"
+  },
+  "S2": {
+    "status": "PROPOSED_AFTER_S1",
+    "systems": [
+      "RAW retrieval",
+      "SUM retrieval",
+      "SUM with explicit optional RAW retrieval"
+    ],
+    "hybrid_action_candidate": "EXPAND_MS(j), j indexes an already acquired summary in public observation",
+    "private_source_id_as_actor_input": false,
+    "expansion_costs_included": true,
+    "summary_retained_after_expansion": true,
+    "shared_action_domain_for_comparators": true,
+    "arbitrary_topk_or_four_get_cap_reintroduced": false
+  },
+  "metrics": [
+    "source factual fidelity and necessary detail omissions",
+    "correct use and memory misuse",
+    "current support helpfulness",
+    "actual rendered native tokens",
+    "online retrieval/PM/encoding/G and client time",
+    "offline writing/validation/indexing cost",
+    "source expansion rate",
+    "amortized cost over declared or observed future queries"
+  ],
+  "implementation_changes_needed": [
+    "new summary representation and source binding",
+    "existing_item search text handling",
+    "directory raw-only assumption",
+    "match_session raw-only binding adapter",
+    "source-order-fixed comparison renderer",
+    "uniform writer model and prompt freeze",
+    "hybrid action/interface only in S2"
+  ],
+  "completed_now": {
+    "assistant_authored_complete_session_examples": 3,
+    "source_bound_summary_sentences": 17,
+    "exact_source_spans": 59,
+    "runtime_integration": false,
+    "automatic_summarizer_benchmark": false,
+    "new_model_calls": 0,
+    "new_training": false,
+    "new_paid_calls": 0
+  },
+  "examples": "../../../../outputs/pm_rl1/session_summary_design_20261116_v1/examples/",
+  "scope": "Current-turn PM objective unchanged; no multi-turn future reward or joint online training introduced"
+}

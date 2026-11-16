@@ -1,0 +1,229 @@
+{
+  "status": "P3_INITIAL_DEVELOPMENT_RUN_AND_BLIND_HANDOFF_COMPLETE_HUMAN_CALIBRATION_PENDING",
+  "packet_identity": "d772956d6ddbe05b571d84f7e57537f5664da0fb7129af350a76a25e096182e2",
+  "candidate_protocol_identity": "c56b2e305ca5b27e5511dbe953b693f3e2339244982cf8e66fa33a47df2fc1ae",
+  "runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "human_instrument": {
+    "active_pairs": 40,
+    "development_natural": 8,
+    "development_control": 8,
+    "validation_natural": 16,
+    "validation_control": 8,
+    "reserve_natural": 8,
+    "preferred_independent_raters": 2,
+    "accepted_single_rater_with_limited_claim": true,
+    "labels_received": 0,
+    "labels_decrypted": 0,
+    "owner_disjoint_partition": {
+      "development": 3,
+      "validation": 12
+    },
+    "natural_executor_contrasts_development_only": 4,
+    "natural_resource_contrasts": 20
+  },
+  "context": {
+    "status": "FULL_LOCKED_REQUESTS_FIT_WITHOUT_TRUNCATION",
+    "groups": {
+      "validation": 47,
+      "development": 32,
+      "reserve": 16,
+      "repeat": 12,
+      "recheck_probe": 1
+    },
+    "min_input_tokens": 2455,
+    "median_input_tokens": 12180.0,
+    "max_input_tokens": 27279,
+    "model_context": 262144,
+    "task_output_cap": null,
+    "model_calls": 0,
+    "human_labels_read": 0
+  },
+  "development": {
+    "first_attempts": 32,
+    "first_structurally_valid": 32,
+    "scored_candidates": 32,
+    "semantic_recheck_path_probes": 1,
+    "statuses": {
+      "measured_candidate": 33
+    },
+    "physical_J_calls": 33,
+    "physical_G_calls": 0,
+    "API_usd": 0,
+    "independent_repeat_draws_prepared": 12,
+    "independent_repeat_draws_run": 0,
+    "sealed_validation_calls": 0,
+    "reward_qualified": false,
+    "semantic_diagnostics": "Private until human review to avoid exposing machine answers to raters; no automatic human agreement claim."
+  },
+  "tests": {
+    "passed": 1206,
+    "skipped": 1,
+    "failed": 0,
+    "skip_reason": "Old hardcoded tokenizer path; active candidate tokenizer/context checked separately.",
+    "browser_checks": {
+      "status": "PASS",
+      "checks": [
+        "rater_1:blank",
+        "rater_1:options",
+        "rater_1:all_40_exact_sources_and_replies",
+        "rater_1:search",
+        "rater_1:clear_search",
+        "rater_1:mobile",
+        "rater_1:still_no_labels",
+        "rater_2:blank",
+        "rater_2:options",
+        "rater_2:all_40_exact_sources_and_replies",
+        "rater_2:search",
+        "rater_2:clear_search",
+        "rater_2:mobile",
+        "rater_2:still_no_labels",
+        "synthetic_xss_not_executed",
+        "synthetic_local_save_reload",
+        "synthetic_incomplete_export_rejected",
+        "synthetic_export_all_40_encrypted",
+        "webcrypto_to_python_roundtrip_40",
+        "synthetic_download_filename",
+        "no_browser_errors",
+        "no_network"
+      ],
+      "browser": "151.0.7922.34",
+      "real_form_items_read_only": 80,
+      "real_labels_created": 0,
+      "synthetic_items": 40,
+      "errors": [],
+      "network": [],
+      "runner_sha256": "db060ce71b6087ec4b262c0500ac7a1498d2994e3caf4d2b4b58596628a6efb3",
+      "runner_file": "browser_qa_runner_local.py",
+      "playwright_version": "1.55.0",
+      "cryptography_version": "44.0.1",
+      "scope": "Real forms inspected without ratings; export/decryption tested on isolated synthetic fixtures only."
+    },
+    "old_artifacts_unchanged": 2735
+  },
+  "throughput": {
+    "status": "DEVELOPMENT_THROUGHPUT_SENSITIVITY_NOT_FINAL_PPO_BUDGET",
+    "actual_J_calls": 33,
+    "API_usd": 0,
+    "executor_G_calls": 0,
+    "load_seconds": 17.954477639053948,
+    "engine_wall_seconds": 1750.5848847049056,
+    "process_seconds": 1806.6054365830496,
+    "individual_request_seconds": {
+      "min": 74.54694386199117,
+      "median": 196.57925339601934,
+      "mean": 193.16698896689834,
+      "max": 295.0862905710237
+    },
+    "output_tokens_including_thinking": {
+      "min": 2271,
+      "median": 5994,
+      "mean": 5877.424242424242,
+      "max": 9379
+    },
+    "recorded_output_tokens_total": 193955,
+    "warm_batched_engine_seconds_per_finished_job": 53.04802680923956,
+    "by_context": {
+      "under_8192": {
+        "n": 12,
+        "latency_seconds": {
+          "min": 153.49818068894092,
+          "median": 204.58359748643124,
+          "mean": 216.6172116280553,
+          "max": 291.4020728900796
+        }
+      },
+      "8192_to_16383": {
+        "n": 11,
+        "latency_seconds": {
+          "min": 99.93426371994428,
+          "median": 186.32585210702382,
+          "mean": 188.7430644946342,
+          "max": 295.0862905710237
+        }
+      },
+      "at_least_16384": {
+        "n": 10,
+        "latency_seconds": {
+          "min": 74.54694386199117,
+          "median": 158.75440096651437,
+          "mean": 169.89303869300056,
+          "max": 273.74190866795834
+        }
+      }
+    },
+    "future_train_dev_source_coverage": {
+      "status": "SOURCE_LENGTH_COVERAGE_ONLY_NO_SCORING",
+      "prefixes": 114,
+      "splits": {
+        "train": 96,
+        "dev": 18
+      },
+      "test_prefixes": 0,
+      "source_only_tokens": {
+        "min": 666,
+        "median": 13054.5,
+        "max": 37418
+      },
+      "calibration_development_max_source_tokens": 25294,
+      "prefixes_longer_than_measured_calibration_source": 8,
+      "model_calls": 0,
+      "human_labels_read": 0,
+      "limitation": "Complete future scoring requests add instructions, reply units and actual new replies; do full admission checks at submission. Source length does not predict reasoning length."
+    },
+    "forecasts": [
+      {
+        "episodes_per_seed": 128,
+        "remaining_quality_slots_envelope": 3258,
+        "remaining_semantic_and_technical_extra_J_envelope": 248,
+        "warm_batched_J_hours_if_sample_rate_transfers": 51.66288388699831,
+        "individual_request_seconds_linear_hours": 188.1231842549849,
+        "optional_RQX_J_hours_in_batched_envelope": 4.2438421447391645
+      },
+      {
+        "episodes_per_seed": 384,
+        "remaining_quality_slots_envelope": 4794,
+        "remaining_semantic_and_technical_extra_J_envelope": 248,
+        "warm_batched_J_hours_if_sample_rate_transfers": 74.29670865894052,
+        "individual_request_seconds_linear_hours": 270.5410995475282,
+        "optional_RQX_J_hours_in_batched_envelope": 4.2438421447391645
+      }
+    ],
+    "limitations": [
+      "Three development owners and constructed controls are not representative of all future replies.",
+      "Future sources can exceed calibration context lengths; no test replies scored for this forecast.",
+      "Batching/caching changes elapsed time; individual latencies overlap and must not be summed as GPU occupancy.",
+      "Future executor generation, model reloads, encoding, policy compute, training and previous time still need a complete schedule.",
+      "No dollar price for local GPU occupancy was assumed. API cost is zero.",
+      "128/384 not selected yet; qualification and the complete <=96-hour prospective schedule control that choice."
+    ]
+  },
+  "resolved_implementation": [
+    "Explicit new-AI versus historical speaker contract in both judge and human instrument.",
+    "Full source IDs restored mechanically; duplicate fields and nonfinite JSON rejected.",
+    "Conditions locked before reply reading/scoring; equal content shares a scoring job.",
+    "Whole-owner fact families separated between development and sealed validation.",
+    "Offline source-linked forms, encrypted handoff, development-only intake and tested decision arithmetic."
+  ],
+  "unresolved": [
+    "Human validity/preference/risk labels and control confirmation.",
+    "At most one human-development-driven semantic revision and final full-runtime measurement freeze.",
+    "Unopened validation, twelve independent rescoring draws and formal bounded qualification.",
+    "A full source-length-aware <=96-hour P4/P5 schedule, then conditional 128/384 choice.",
+    "Natural PPO learning/baselines and final independent task evaluation."
+  ],
+  "handoff_archive": "outputs/pm_rl1/completion_20260930_v2/P3/calibration/PM_RL1_40对人工校准包_20261001.zip",
+  "source_receipts": {
+    "outputs/pm_rl1/completion_20260930_v2/P3/calibration/selection_lock_private.json": "69a096475c82acc5923b0cf5fd982c752e96b9fd9e3c30cba69f34301aa026ce",
+    "outputs/pm_rl1/completion_20260930_v2/P3/calibration/packet_freeze.json": "bfc46e09c09bb9751a5dd675cc082d62ead9c253de179dcec0d575f37918a81c",
+    "outputs/pm_rl1/completion_20260930_v2/P3/calibration/human_handoff_final/release.json": "8e5acae1fa9cf5d12ff9f7efe0c6c666e6b920631a4056ebd970e810cc32caf0",
+    "outputs/pm_rl1/completion_20260930_v2/P3/calibration/human_handoff_final/distribution_manifest.json": "f6a9391fb7700bf6fecbc6eb9431451981d6062d36231989e0cee299eb6f2d79",
+    "outputs/pm_rl1/completion_20260930_v2/P3/candidate_v1/candidate_freeze.json": "3fb8b4cdc6df898969ee86cd7893dd9f3aee9fa5beb0de52d761c3c49985e70c",
+    "outputs/pm_rl1/completion_20260930_v2/P3/candidate_v1/development/ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879/summary.json": "6d3cbf32ac8ae7f569a9994795c355fc1f1440c31bee357acd5b49f26c285624",
+    "outputs/pm_rl1/completion_20260930_v2/P3/verification/packet_integrity.json": "7c18c57765beddac115808fc42bafc2677f9a1a9020e0ddd3fa7ba04e61e7236",
+    "outputs/pm_rl1/completion_20260930_v2/P3/verification/full_request_context.json": "d60c9e3fe6b9ed149552e3c167a7debddf61780ce614cce866fe609b89282572",
+    "outputs/pm_rl1/completion_20260930_v2/P3/verification/tests_ci_final.xml": "6e2fc95668ffa49853e0c3434a69e51ffa05ec143a61805565f66fdc4aa392bc",
+    "outputs/pm_rl1/completion_20260930_v2/P3/verification/future_train_dev_source_lengths.json": "e29a807ab9f097b24d8a29e754111175a9e80b419c30999def88776d5d7ae518",
+    "src/metacom_pm/rl1/calibration_decision.py": "83efbcbb834dd7d699d0039389a8a8b8b73bb87a36d2ea1be3fd8ec0e5e324f6",
+    "scripts/rl1/103_record_p3_development_result.py": "61c779772559910a044e7896d9ea7654e76dc88416c534c0b0fdf730cf1b5afd"
+  }
+}

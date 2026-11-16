@@ -1,0 +1,87 @@
+{
+  "status": "COORDINATOR_SOURCE_AUDIT_NOT_INDEPENDENT_GOLD",
+  "row": {
+    "job_id": "5b776e7407eff75503c57ab684be72483e35adc41af8f5a2afe4ec9204a93987",
+    "pilot_index": 3,
+    "condition": "supported_or_respectful",
+    "repeat": 0,
+    "exam_section": "coverage",
+    "request_id": "29860db24ece087b7a9a7a50d02f54e40d6654265601226ef84b4f5254b8703d",
+    "cache_hit": false,
+    "finish_reason": "natural_stop",
+    "measurement_status": "measured_candidate",
+    "q": 3,
+    "m": 0.25,
+    "input_tokens": 23959,
+    "output_tokens": 1562,
+    "seconds": 55.20931893691886,
+    "error": null
+  },
+  "reply": "You were offered the overseas promotion earlier, but that offer is no longer available to you now. It makes sense to feel both relief and disappointment. What kind of growth would you like to pursue from here?",
+  "model_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Jane is expressing mixed emotions (relief + fear of stagnation) after learning she didn't receive the overseas promotion. She needs validation of her conflicted feelings and gentle guidance forward.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T014"
+      ],
+      "reason": "The response appropriately validates Jane's conflicting emotions (relief/disappointment) which she explicitly mentioned in C:T014. It transitions to a forward-looking question about career growth without imposing advice or jumping to conclusions. However, R001 ('You were offered the overseas promotion earlier, but that offer is no longer available to you now') contains a potentially problematic factual framing given C:T002 states 'I just found out I missed out on the overseas promotion I was offered a while back' — suggesting she may have misunderstood the timeline or nature of what happened. This creates some minor tension but doesn't substantially undermine support. Overall coherent, empathic, and responsive without major flaws."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Factual claim about being offered the promotion contradicts/unclear relative to C:T002's description of learning 'I missed out on the overseas promotion I was offered' — the exact details of what happened aren't fully confirmed in evidence."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the explicit emotion expressed in C:T014 ('relieved...nagging fear')."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Forward-looking question without asserting personal facts."
+      }
+    ],
+    "coverage": "The response addresses the immediate emotional expression in C:T014 and responds appropriately to Jane's vulnerability about career stagnation concerns. However, the factual assertion in R001 lacks sufficient grounding in the provided evidence, creating uncertainty about accuracy relative to the timeline established in prior turns.",
+    "uncertainty_reasons": []
+  },
+  "measurement_sha256": "fc4fd79c513dbde711e11fbe973dd213ee092809c75658b0ec37530c5c915cf2",
+  "relevant_sources": {
+    "H018:T002": {
+      "id": "H018:T002",
+      "role": "seeker",
+      "text": "I don't know, it's just been a lot lately. I got a promotion offer, but there's a catch."
+    },
+    "H020:T004": {
+      "id": "H020:T004",
+      "role": "seeker",
+      "text": "Well, they filled it with someone else without even informing me."
+    },
+    "C:T002": {
+      "id": "C:T002",
+      "role": "seeker",
+      "text": "I just found out I missed out on the overseas promotion I was offered a while back."
+    }
+  },
+  "finding": "The reply preserves the earlier offer and later loss. These are explicit in H018:T002, H020:T004 and C:T002; model nevertheless calls the prior offer unclear/unsupported and assigns m=.25. This is a failure on the supported side of the temporal-update control.",
+  "scores_overridden": false,
+  "training_admission": false,
+  "model_calls": 0
+}

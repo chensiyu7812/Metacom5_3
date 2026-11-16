@@ -1,0 +1,305 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "5a7b90c114c0ae8ede344263a4def604eab1c4fbd31897f7010e455a705ba771",
+    "phase": "engineering",
+    "ordinal": 4,
+    "item_key": "dev37B",
+    "draw": "primary",
+    "messages_identity": "9f78c1d34125f3df43b6383463494cf2d2f64d413393dc0e5e19ebe4d133d413",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "e04aad52214050aaecdc4199cb99e0dfd4d6f6f516542b22cf3925d3bec6e1b7",
+    "seed": 3186990144,
+    "schedule_position": 16,
+    "input_utf8_bytes": 67088,
+    "original_slot_request_id": "ddc781a409f765b4d60814556d6f70962a33eea835f3ab6520c3523f8003ba1c",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "053fccb13289aff0b3e2866489146e3623656b3d040b64ad62da4573bfb17563"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "engineering",
+    "ordinal": 4,
+    "item_key": "dev37B",
+    "draw": "primary",
+    "messages_identity": "9f78c1d34125f3df43b6383463494cf2d2f64d413393dc0e5e19ebe4d133d413",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "e04aad52214050aaecdc4199cb99e0dfd4d6f6f516542b22cf3925d3bec6e1b7",
+    "seed": 3186990144,
+    "schedule_position": 16,
+    "input_utf8_bytes": 67088,
+    "request_id": "ddc781a409f765b4d60814556d6f70962a33eea835f3ab6520c3523f8003ba1c"
+  },
+  "protocol_identity": "ebc0e0a46e67adcb1364ff7b18eb5d3b8f8affdd8682860c2ce7e2fcded53371",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "22fe0dfc4428796db2afbc13e496ea23bb48eb52f2ec3930badad08d5fb5ff8a",
+      "legal_evidence_identity": "bd4c73276b4513951cd258adb7de9c7c64c8f1906fba3c6ac13d669287ac5aec",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "5a7b90c114c0ae8ede344263a4def604eab1c4fbd31897f7010e455a705ba771",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "053fccb13289aff0b3e2866489146e3623656b3d040b64ad62da4573bfb17563",
+      "raw_output_sha256": "bbc196c37eb6cacd8b79a1def1fe978b1de40df8673cb9b06db068d0af4fc08f",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user expressed appreciation for being listened to and stated they would take time to think about the internship offer before deciding.",
+          "response_quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+            }
+          ],
+          "reason": "The response directly acknowledges the user's gratitude for being heard and validates their stated intention to take time before making a decision regarding the internship."
+        },
+        "claims": [
+          {
+            "response_quote": "I am glad you feel heard.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+              }
+            ],
+            "reason": "The user explicitly thanked the supporter for listening and understanding in C:T016, making the acknowledgment of being heard appropriate."
+          },
+          {
+            "response_quote": "You can take some time before deciding what to do next.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T014",
+                "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes."
+              }
+            ],
+            "reason": "The user stated in C:T014 that they would 'think on it more after this initial disappointment passes' regarding the internship offer."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses both the user's expression of gratitude for the conversation and their stated plan to take time before deciding on the internship offer.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 81
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I am glad you feel heard.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 25
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "You can take some time before deciding what to do next.",
+          "positions": [
+            {
+              "start": 26,
+              "end": 81
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T014",
+          "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user expressed appreciation for being listened to and stated they would take time to think about the internship offer before deciding.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016"
+          ],
+          "reason": "The response directly acknowledges the user's gratitude for being heard and validates their stated intention to take time before making a decision regarding the internship."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "The user explicitly thanked the supporter for listening and understanding in C:T016, making the acknowledgment of being heard appropriate."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T014"
+            ],
+            "reason": "The user stated in C:T014 that they would 'think on it more after this initial disappointment passes' regarding the internship offer."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses both the user's expression of gratitude for the conversation and their stated plan to take time before deciding on the internship offer.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user expressed appreciation for being listened to and stated they would take time to think about the internship offer before deciding.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016"
+          ],
+          "reason": "The response directly acknowledges the user's gratitude for being heard and validates their stated intention to take time before making a decision regarding the internship."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "The user explicitly thanked the supporter for listening and understanding in C:T016, making the acknowledgment of being heard appropriate.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T014"
+            ],
+            "reason": "The user stated in C:T014 that they would 'think on it more after this initial disappointment passes' regarding the internship offer.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "The response addresses both the user's expression of gratitude for the conversation and their stated plan to take time before deciding on the internship offer.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user expressed appreciation for being listened to and stated they would take time to think about the internship offer before deciding.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016"
+          ],
+          "reason": "The response directly acknowledges the user's gratitude for being heard and validates their stated intention to take time before making a decision regarding the internship."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "The user explicitly thanked the supporter for listening and understanding in C:T016, making the acknowledgment of being heard appropriate."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T014"
+            ],
+            "reason": "The user stated in C:T014 that they would 'think on it more after this initial disappointment passes' regarding the internship offer."
+          }
+        ],
+        "coverage": "The response addresses both the user's expression of gratitude for the conversation and their stated plan to take time before deciding on the internship offer.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "12d64bd681db536db70ee11add11eeb37e4d8bb3c02a3a3956b6d5398daa09c7",
+      "adapted_final_sha256": "bbc196c37eb6cacd8b79a1def1fe978b1de40df8673cb9b06db068d0af4fc08f",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user expressed appreciation for being listened to and stated they would take time to think about the internship offer before deciding.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T016\"\n    ],\n    \"reason\": \"The response directly acknowledges the user's gratitude for being heard and validates their stated intention to take time before making a decision regarding the internship.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T016\"\n      ],\n      \"reason\": \"The user explicitly thanked the supporter for listening and understanding in C:T016, making the acknowledgment of being heard appropriate.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T014\"\n      ],\n      \"reason\": \"The user stated in C:T014 that they would 'think on it more after this initial disappointment passes' regarding the internship offer.\"\n    }\n  ],\n  \"coverage\": \"The response addresses both the user's expression of gratitude for the conversation and their stated plan to take time before deciding on the internship offer.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 52.78903015801916,
+  "API_usd": 0
+}

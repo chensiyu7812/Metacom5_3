@@ -1,0 +1,114 @@
+{
+  "response_sha256": "dba8c0e5a6d1a829897f491c7b524ee70664e897f0079e60e17a45714e357781",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+  "raw_output_sha256": "23357d68463b61a3c171a7d1549c4b3b67c6471a269fc0b55106564307f2ad47",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's grief following a breakup involving mutual conflict, and encourage exploration of lingering negative feelings.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply accurately reflects the breakup context and the user's stated difficulty ('can not get over it'). It provides validation and a gentle probe into the specific emotions driving the stagnation. It respects boundaries by avoiding unsolicited advice or diagnosis. No factual claims are contradicted."
+    },
+    "claims": [
+      {
+        "response_quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I just broke up with my girlfriend and sad about it"
+          }
+        ],
+        "reason": "The pronoun 'her' correctly refers to the female partner identified as 'girlfriend' in C:T001. The focus on the relationship matches C:T001 context."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked user identity markers (name absent in current prefix, not asserted), partner identity (girlfriend->her consistency), and current event details (breakup, fighting). No unsupported personal facts or historical contradictions found.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 15,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 228,
+          "end": 323
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T001",
+      "quote": "I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 15,
+          "end": 66
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

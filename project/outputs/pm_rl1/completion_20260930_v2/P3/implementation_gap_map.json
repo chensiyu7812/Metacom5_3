@@ -1,0 +1,53 @@
+{
+  "status": "IMPLEMENTATION_GAP_MAP_ONLY_NOT_A_FROZEN_SCORER",
+  "reward_qualified": false,
+  "model_calls": 0,
+  "human_tasks": 0,
+  "reuse": [
+    "legal_evidence: identical full strictly-past same-owner evidence plus current cut for every compared method",
+    "response_units and source-turn IDs: restore quotations mechanically rather than asking models to copy punctuation",
+    "judge_explicit v5: model-visible schema; v5 is prepared, never live-qualified",
+    "q=0..4, m=0/.25/1, U=q/4-m; keep anchors, no preferred direction or forced score spread"
+  ],
+  "required_delta_before_human_package": [
+    {
+      "gap": "Reply-speaker identity must match the new renderer",
+      "existing": "Old scoring prompt predates DirectReplyRenderer and explicit historical-speaker separation",
+      "implementation": "Bind a method-independent speaker contract to scorer and human materials: historical supporter is not the current AI; conventional courtesy alone is not proof of invented biography; an explicit claim of historical personal speech must be checked against the contract."
+    },
+    {
+      "gap": "Copying quotes adds avoidable technical missingness",
+      "existing": "P2 rejects changed punctuation, invented ellipses and wrong quotation fields; no repair of completed raw records",
+      "implementation": "Reuse indexed source/reply units for P3; bind actual source text and IDs; source entailment still requires semantic assessment."
+    },
+    {
+      "gap": "Nonfactual can hide personal presuppositions",
+      "existing": "Already addressed in judge_scoped text but P2 shows the model can still miss it",
+      "implementation": "Do not add another untested wording-only fix and claim solved. Include predeclared supported reflection, generic empathy/question and embedded unsupported presupposition controls in bounded human calibration."
+    },
+    {
+      "gap": "Resource behavior is not a trustworthy automated use label",
+      "existing": "A Max reference from MS was marked ignore; current-prefix reuse was marked use",
+      "implementation": "Do not reward or select checkpoints by model-reported resource use. Compare paired actual replies at the same prefix under fixed legal conditions."
+    },
+    {
+      "gap": "Independent direction/risk reference is absent",
+      "existing": "P2 audits are AI weak-supervision checks; old human campaigns retain old scope and identity",
+      "implementation": "Prepare the complete planned 40-pair human package after executor/pools freeze; bind development vs sealed validation partitions by prefix and fact family before labels; no labels invented by AI."
+    }
+  ],
+  "not_started": [
+    "No new q/m scorer prompt/schema freeze",
+    "No P3 scorer calls",
+    "No human material delivery or answers",
+    "No semantic revision or validation-label access"
+  ],
+  "source_files": {
+    "project/src/metacom_pm/rl1/judge_explicit.py": "01fe911ac0943726cad0183bce6e31d3259b4527c31505f8f4e06cae2e178cfa",
+    "project/src/metacom_pm/rl1/judge_flat.py": "b210bb30f2c997796faa91360b0eae7157cbdb90404f43ea48d3f5593b05489e",
+    "project/src/metacom_pm/rl1/judge_scoped.py": "a200cd443e6668dbcb6c50c7419df2e999d3a80dc07b2a1c2a89b94ec1110b96",
+    "project/src/metacom_pm/rl1/evidence.py": "ba35086679c42626af65dff93bc82fd404721f4bfdf3644eb958f2e67974e030",
+    "project/docs/pm_rl1_completion_20260930_v2/execution_contract.json": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+    "project/outputs/pm_rl1/completion_20260930_v2/P2/source_review_limitations_private.json": "447d3213b229b44814296a9b422c15b6d2287b8552ab2696935a16c460b63432"
+  }
+}

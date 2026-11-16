@@ -1,0 +1,258 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "7d875966caa5484cc35e5958b8382c7506151a78f60cad1917c53e2a429d2d1e",
+    "phase": "development",
+    "ordinal": 5,
+    "item_key": "dev03B",
+    "draw": "primary",
+    "messages_identity": "5d9e873533b9996629258ac21d74f49caee62d7dba18a47d48685b89f2a3a275",
+    "schema_identity": "87fee154a9090c4ea28ef43708086bb5e985b45594e4c9912d9eeb9894ead975",
+    "paired_slot": "af0168ed3f742cf404d82a787304ce2a90f5a2600465b03e97529a28ccb86be7",
+    "seed": 3353922520,
+    "schedule_position": 17,
+    "input_utf8_bytes": 16168,
+    "original_slot_request_id": "1fc298824d38bcc397b20663455157d47caf62c619ee7af9b18af0d7c537c702",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "57d1187d91f597cb3e4bc23abf635f2bf6326aab3fab01a53a8279f524eccc95"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 5,
+    "item_key": "dev03B",
+    "draw": "primary",
+    "messages_identity": "5d9e873533b9996629258ac21d74f49caee62d7dba18a47d48685b89f2a3a275",
+    "schema_identity": "87fee154a9090c4ea28ef43708086bb5e985b45594e4c9912d9eeb9894ead975",
+    "paired_slot": "af0168ed3f742cf404d82a787304ce2a90f5a2600465b03e97529a28ccb86be7",
+    "seed": 3353922520,
+    "schedule_position": 17,
+    "input_utf8_bytes": 16168,
+    "request_id": "1fc298824d38bcc397b20663455157d47caf62c619ee7af9b18af0d7c537c702"
+  },
+  "protocol_identity": "c3778ba7c7c1cd0c8e517826a7794b4a4a39fd51316bb4c164c60cb8b5bae2c9",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "b9d81463a761d9fcf484bf92731488398dda36dd0edbc061e438ad03b6b51a49",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "7d875966caa5484cc35e5958b8382c7506151a78f60cad1917c53e2a429d2d1e",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "57d1187d91f597cb3e4bc23abf635f2bf6326aab3fab01a53a8279f524eccc95",
+      "raw_output_sha256": "9ca8cdf91e8aa8e69c6a5e448680fc5fda2cb46fe613713e92e56d0634ed3b79",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared that things have been 'a bit tough lately' and needs an empathetic opening to share more details.",
+          "response_quote": "You can take your time. Would you like to tell me more about what has been tough?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The response is perfectly appropriate for this stage of the conversation. It acknowledges the user's vague statement of difficulty with a supportive, low-pressure invitation to elaborate, which is the standard and most helpful way to begin a supportive dialogue."
+        },
+        "claims": [
+          {
+            "response_quote": "Would you like to tell me more about what has been tough?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The question directly references the user's statement that things have been 'tough' in C:T002."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's statement in C:T002 by offering a supportive space to share more information.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "You can take your time. Would you like to tell me more about what has been tough?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 81
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Would you like to tell me more about what has been tough?",
+          "positions": [
+            {
+              "start": 24,
+              "end": 81
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user has just shared that things have been 'a bit tough lately' and needs an empathetic opening to share more details.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The response is perfectly appropriate for this stage of the conversation. It acknowledges the user's vague statement of difficulty with a supportive, low-pressure invitation to elaborate, which is the standard and most helpful way to begin a supportive dialogue."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question directly references the user's statement that things have been 'tough' in C:T002."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's statement in C:T002 by offering a supportive space to share more information.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared that things have been 'a bit tough lately' and needs an empathetic opening to share more details.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The response is perfectly appropriate for this stage of the conversation. It acknowledges the user's vague statement of difficulty with a supportive, low-pressure invitation to elaborate, which is the standard and most helpful way to begin a supportive dialogue."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive conversational phrase and does not assert a personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question directly references the user's statement that things have been 'tough' in C:T002.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "The response addresses the user's statement in C:T002 by offering a supportive space to share more information.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user has just shared that things have been 'a bit tough lately' and needs an empathetic opening to share more details.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The response is perfectly appropriate for this stage of the conversation. It acknowledges the user's vague statement of difficulty with a supportive, low-pressure invitation to elaborate, which is the standard and most helpful way to begin a supportive dialogue."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive conversational phrase and does not assert a personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question directly references the user's statement that things have been 'tough' in C:T002."
+          }
+        ],
+        "coverage": "The response addresses the user's statement in C:T002 by offering a supportive space to share more information.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "aab8b3039eb664948bc8424f01dbcf38d596eb3fb0f90c15f78be9154091a225",
+      "adapted_final_sha256": "9ca8cdf91e8aa8e69c6a5e448680fc5fda2cb46fe613713e92e56d0634ed3b79",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user has just shared that things have been 'a bit tough lately' and needs an empathetic opening to share more details.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T002\"\n    ],\n    \"reason\": \"The response is perfectly appropriate for this stage of the conversation. It acknowledges the user's vague statement of difficulty with a supportive, low-pressure invitation to elaborate, which is the standard and most helpful way to begin a supportive dialogue.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a supportive conversational phrase and does not assert a personal fact.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T002\"\n      ],\n      \"reason\": \"The question directly references the user's statement that things have been 'tough' in C:T002.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's statement in C:T002 by offering a supportive space to share more information.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 24.385972574993502,
+  "API_usd": 0
+}

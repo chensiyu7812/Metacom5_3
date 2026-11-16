@@ -1,0 +1,79 @@
+{
+  "provider": "DeepSeek official API",
+  "model": "deepseek-flash",
+  "published_version": "DeepSeek-V4.1-Flash",
+  "reasoning_effort": "high",
+  "prompt_semantics": "exact already-applied candidate rubric; no third prompt",
+  "estimated_trial_peak_usd": [
+    0.592931,
+    1.402518
+  ],
+  "requested_trial_allocation_usd": 5,
+  "allocation_status": "PROPOSAL_NOT_AUTHORIZATION",
+  "total_followup_hard_cap_usd": 20,
+  "native_max_output_tokens": 393216,
+  "conservative_peak_per_request_reservation_usd": 0.500005,
+  "all_96_at_native_ceiling_peak_usd": 46.74861,
+  "estimated_latency_seconds_per_call": [
+    30,
+    180
+  ],
+  "latency_observed_on_this_provider": false,
+  "tokenizer_caveat": "UTF8 bytes/4 to /3 +256 estimate only; no DeepSeek tokenizer downloaded; reserve bytes+1024 provisionally, verify before dispatch",
+  "proposed_serial_timeout_seconds": 900,
+  "native_limit_or_timeout_is_technical_failure_not_score": true,
+  "existing_P3_starts": 66,
+  "unchanged_actual_request_cap": 140,
+  "remaining_under_cap": 74,
+  "proposed_new_primary_calls": 92,
+  "proposed_recovery_starts": 4,
+  "proposed_cumulative_without_recovery": 158,
+  "proposed_cumulative_with_recovery": 162,
+  "additional_cap_needed_without_recovery": 18,
+  "additional_cap_needed_with_recovery": 22,
+  "reserve8pairs_started": 0,
+  "semantic_revision_count": 1,
+  "local_paid_ledger": {
+    "accounted_usd": "1.50724291",
+    "baseline_usd": "1.50724291",
+    "new_accounted_usd": "0E-8",
+    "unsettled_reservations": 0,
+    "live_provider_balance_checked": false,
+    "external_batch_liabilities_reconciled": false,
+    "paid_dispatch_blocker": "Shared atomic reservation path and all external liabilities must be reconciled before paid run; no new namespace budget."
+  },
+  "downstream_not_authorized": [
+    {
+      "episodes_per_seed": 128,
+      "scheduled_core_J_slots": 2817,
+      "optional_RQX_J_slots": 288,
+      "semantic_check_reserve": 96,
+      "technical_recovery_reserve": 192,
+      "peak_core_usd_scenario": [
+        16.79,
+        40.34
+      ],
+      "off_peak_core_usd_scenario": [
+        8.39,
+        20.17
+      ],
+      "caveat": "No cache discounts; calibration input mix is a proxy for future train/test, not observed; 639 existing G outputs still need new J labels; no episode choice made."
+    },
+    {
+      "episodes_per_seed": 384,
+      "scheduled_core_J_slots": 4353,
+      "optional_RQX_J_slots": 288,
+      "semantic_check_reserve": 96,
+      "technical_recovery_reserve": 192,
+      "peak_core_usd_scenario": [
+        25.94,
+        62.34
+      ],
+      "off_peak_core_usd_scenario": [
+        12.97,
+        31.17
+      ],
+      "caveat": "No cache discounts; calibration input mix is a proxy for future train/test, not observed; 639 existing G outputs still need new J labels; no episode choice made."
+    }
+  ]
+}

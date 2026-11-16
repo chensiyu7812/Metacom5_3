@@ -1,0 +1,49 @@
+{
+  "response_sha256": "7bc11cf2b9f69b8dbbcfa4beda4e21e73956145b27a50e6c47e36acc6fa039a5",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "106b0dfe8709b79b5d196b248186a935d52ae103451edcf22ce1ec8a444c4366",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "scored record contains unresolved uncertainty or inconsistent m",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Validate the mixed feelings of relief versus career stagnation fear after missing an overseas promotion.",
+      "response_unit_ids": [
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The response validates the core conflict (stagnation vs. relief) appropriately and offers constructive advice, earning a high support quality score. However, Q is set to 3 because the support inaccurately reflects the seeker's expressed emotion; the seeker explicitly states she is 'relieved I don't have to move overseas' (C:T014), whereas the reply characterizes her as 'disappointed about not having to move' (R002). This misattribution of sentiment reduces the precision of the empathy required for this turn."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "The claim 'you're disappointed about not having to move' contradicts the explicit statement in C:T014 where the seeker says 'relieved I don't have to move overseas.' This is a material error in reflecting the user's emotional state."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Evaluated personal factual claims regarding the seeker's emotional state in R002 ('disappointed') against C:T014 ('relieved'). Evaluated advice in R004/R005 against professional boundaries (none violated). Checked temporal consistency (promotion timing matches H018/C session flow).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

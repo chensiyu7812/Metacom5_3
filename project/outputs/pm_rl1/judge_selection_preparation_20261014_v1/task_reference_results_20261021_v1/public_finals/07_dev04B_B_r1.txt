@@ -1,0 +1,42 @@
+{
+  "status": "scored",
+  "q": 4,
+  "q_rationale": {
+    "current_need": "The user is distressed about workplace favoritism and has confirmed that the injustice bothers them; they need acknowledgment and help deciding how to handle the situation.",
+    "response_unit_ids": ["R001", "R002", "R003", "R004"],
+    "source_turn_ids": ["C:T001", "C:T006", "C:T008"],
+    "reason": "The reply accurately acknowledges the user's distress and sense of injustice, reflects the reported favoritism without inventing personal history, and offers two relevant directions: addressing the manager or focusing on coping. Its questions are conditional and do not claim that the user has already acted or that specific team outcomes have occurred."
+  },
+  "assessments": [
+    {
+      "response_unit_id": "R001",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T001", "C:T008"],
+      "reason": "The user reports feeling down and says the injustice bothers them; the reply's empathic reflection of frustration and injustice is directly grounded in those statements."
+    },
+    {
+      "response_unit_id": "R002",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T006"],
+      "reason": "The user described peers who hardly work but are favored by the manager; the reply's reflection about favoritism not aligning with work ethic matches that description."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": ["C:T006", "C:T008"],
+      "reason": "This is an optional question proposing that the user consider a conversation with the manager, not an assertion that such a conversation occurred or that team morale/productivity outcomes are established. The reference to the user's intolerance of injustice is supported by C:T008."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": ["C:T001"],
+      "reason": "This is an optional question about whether the user wants coping-focused help, consistent with the initial request for advice; it does not assert a personal fact about the user."
+    }
+  ],
+  "coverage": "Reviewed all four response units against the complete current prefix and past sessions. No reply unit claims the earlier supporter's experience as the AI's own. The possible reading of team morale/productivity as an existing effect was considered, but the wording presents it as a discussion topic and not as a definite personal factual claim.",
+  "uncertainty_reasons": []
+}

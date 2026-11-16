@@ -1,0 +1,193 @@
+{
+  "response_sha256": "c2ce9207299b60f1e090fceb79ee6c0caab03edf5dc2221df34aa8e93d608904",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "e609d485ddf7e03da6cf6865ea03ec5848e035443852a2abb764683b424483f6",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Charlotte) proposes using therapy to address the emotional distress regarding her ex-partner, linking it to her successful history with therapy for work/stress (C:T016). The primary need is validation and reinforcement of this coping strategy.",
+      "response_quote": "That's a great idea. Talking to a therapist can provide a safe and non-judgmental space to explore your feelings and gain a deeper understanding of yourself. It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply directly validates the user's suggestion to consult therapy (R001). R002 offers a supportive rationale for therapy which is appropriate. R003 affirms the user's stated experience ('My sessions have been helping a lot' in C:T016 is explicitly supported by the user's own words in the current turn, making it 'supported' rather than 'unsupported'). The tone is empathetic and encouraging, matching the established supportive role. No constraints or sensitive information are mishandled."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "C:T016 explicitly states 'My sessions have been helping a lot with stress and career stuff', which directly supports the claim in R003 that the user has seen benefits in other areas."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response adequately addresses the entire current turn by validating the plan to seek therapy and reinforcing its efficacy based on the user's own input.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea. Talking to a therapist can provide a safe and non-judgmental space to explore your feelings and gain a deeper understanding of yourself. It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 248
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "positions": [
+        {
+          "start": 158,
+          "end": 248
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Charlotte) proposes using therapy to address the emotional distress regarding her ex-partner, linking it to her successful history with therapy for work/stress (C:T016). The primary need is validation and reinforcement of this coping strategy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply directly validates the user's suggestion to consult therapy (R001). R002 offers a supportive rationale for therapy which is appropriate. R003 affirms the user's stated experience ('My sessions have been helping a lot' in C:T016 is explicitly supported by the user's own words in the current turn, making it 'supported' rather than 'unsupported'). The tone is empathetic and encouraging, matching the established supportive role. No constraints or sensitive information are mishandled."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "C:T016 explicitly states 'My sessions have been helping a lot with stress and career stuff', which directly supports the claim in R003 that the user has seen benefits in other areas."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response adequately addresses the entire current turn by validating the plan to seek therapy and reinforcing its efficacy based on the user's own input.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Charlotte) proposes using therapy to address the emotional distress regarding her ex-partner, linking it to her successful history with therapy for work/stress (C:T016). The primary need is validation and reinforcement of this coping strategy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply directly validates the user's suggestion to consult therapy (R001). R002 offers a supportive rationale for therapy which is appropriate. R003 affirms the user's stated experience ('My sessions have been helping a lot' in C:T016 is explicitly supported by the user's own words in the current turn, making it 'supported' rather than 'unsupported'). The tone is empathetic and encouraging, matching the established supportive role. No constraints or sensitive information are mishandled."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "C:T016 explicitly states 'My sessions have been helping a lot with stress and career stuff', which directly supports the claim in R003 that the user has seen benefits in other areas.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The response adequately addresses the entire current turn by validating the plan to seek therapy and reinforcing its efficacy based on the user's own input.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Charlotte) proposes using therapy to address the emotional distress regarding her ex-partner, linking it to her successful history with therapy for work/stress (C:T016). The primary need is validation and reinforcement of this coping strategy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply directly validates the user's suggestion to consult therapy (R001). R002 offers a supportive rationale for therapy which is appropriate. R003 affirms the user's stated experience ('My sessions have been helping a lot' in C:T016 is explicitly supported by the user's own words in the current turn, making it 'supported' rather than 'unsupported'). The tone is empathetic and encouraging, matching the established supportive role. No constraints or sensitive information are mishandled."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "C:T016 explicitly states 'My sessions have been helping a lot with stress and career stuff', which directly supports the claim in R003 that the user has seen benefits in other areas."
+      }
+    ],
+    "coverage": "The response adequately addresses the entire current turn by validating the plan to seek therapy and reinforcing its efficacy based on the user's own input.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

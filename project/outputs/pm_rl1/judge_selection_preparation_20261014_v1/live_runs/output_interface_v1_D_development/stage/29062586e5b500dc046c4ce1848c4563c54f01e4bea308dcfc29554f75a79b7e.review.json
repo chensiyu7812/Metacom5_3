@@ -1,0 +1,53 @@
+{
+  "time_jst": "2026-10-15T22:27:06.851113+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "29062586e5b500dc046c4ce1848c4563c54f01e4bea308dcfc29554f75a79b7e",
+  "original_slot_request_id": "770f6da29e9c2d28943fd8c91916df4bd350dd412e69fc0e2c486cf5bc47596e",
+  "item_key": "dev10B",
+  "draw": "primary",
+  "response_sha256": "4648984e76ce955333f580e9eb5ff7c527139f2a192623ed12a08ced7ce73e47",
+  "raw_sha256": "3708154dfc8561039f50bc356f121b4d00e51b9df2827201fce70bb261cb13b8",
+  "explanation": "停止后的只读原文核对：完整final在q_rationale重复response_unit_ids/source_turn_ids/reason，两个assessment还重复response_unit_id。原严格接口报duplicate JSON key: response_unit_ids，正式q/m/U均null，不能把文本中q0、severity1修成有效分数或离线恢复。原文在语义上指出辞职否认与T000冲突、对继任担忧造成核心误导，这部分有来源；但技术失败已足够停止，未再请求或补跑。",
+  "source_checks": [
+    {
+      "source_id": "C:T000",
+      "exact_quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "finding": "用户明确老板已辞职，原文判断否认辞职为矛盾有依据"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "finding": "希望尊重员工"
+    },
+    {
+      "source_id": "H005:T004",
+      "exact_quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "finding": "用户本人既往工作骚扰"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "technical": "完整自然结束final，但内部JSON重复键；外层适配不能修复",
+    "actor": "可读原文未见误归属；不构成有效评分",
+    "citation": "原文C:T000支持矛盾识别，不能把合法来源当技术豁免",
+    "severity": "原文提出核心矛盾理由；正式m仍null",
+    "quality": "原文q0不可充作有效q",
+    "qualification": "STOP保留；不恢复、不推荐、不freeze"
+  },
+  "issues": [
+    "技术失败q/m/U缺测；不是模型主动unknown",
+    "仅停止后离线阅读，未运行新解析修复或新模型请求"
+  ],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

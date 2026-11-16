@@ -1,0 +1,116 @@
+{
+  "response_sha256": "fc6fad604d267afac19a73e19ac275d046f6baea88f49fb68918a9473b560a9a",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+  "raw_output_sha256": "4bc6f7bb3d4cd05a90c01b9da7d24363db9c4f5dc7964e3525d94f5e5eb056e2",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker shares they're considering alternative energy/renewables as a research focus change, expressing it aligns with their values and seems rewarding. Previous context shows ongoing overwhelm from lack of progress, advisor criticism, and identity questions about research fit.",
+      "response_quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "The reply responds directly to the renewed energy topic but has two issues: (1) R002 asserts 'is a field that has a lot of potential' as fact rather than exploring what the user knows/expects; (2) More significantly, the reply fails to connect back to earlier stated concerns about lack of progress, advisor feedback, and self-doubt that were explicitly raised in turns C:T003-C:T005. It treats the new topic as standalone validation rather than addressing how this shift might help overcome the broader barriers mentioned. This is a missed important explicit need/constraint about the deeper struggle, not just surface-level validation."
+    },
+    "claims": [
+      {
+        "response_quote": "Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "evidence": [],
+        "reason": "The claim 'Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact' cannot be verified from any source evidence about the user's specific situation. While generally true about the field, asserting it applies confidently to the user's personal context without knowing their access/opportunity constraints represents a minor unsupported factual claim about their specific circumstances."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked claim about renewable energy having potential for innovation/impact against all legal_evidence. No evidence confirms or contradicts this claim about the user's specific context—it's general knowledge applied to a personal situation without verification. Also checked whether reply addressed earlier expressed concerns (lack of progress, advisor feedback, self-doubt); it did not explicitly reference these as part of C:T007.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 322
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 40,
+          "end": 168
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker shares they're considering alternative energy/renewables as a research focus change, expressing it aligns with their values and seems rewarding. Previous context shows ongoing overwhelm from lack of progress, advisor criticism, and identity questions about research fit.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply responds directly to the renewed energy topic but has two issues: (1) R002 asserts 'is a field that has a lot of potential' as fact rather than exploring what the user knows/expects; (2) More significantly, the reply fails to connect back to earlier stated concerns about lack of progress, advisor feedback, and self-doubt that were explicitly raised in turns C:T003-C:T005. It treats the new topic as standalone validation rather than addressing how this shift might help overcome the broader barriers mentioned. This is a missed important explicit need/constraint about the deeper struggle, not just surface-level validation."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "The claim 'Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact' cannot be verified from any source evidence about the user's specific situation. While generally true about the field, asserting it applies confidently to the user's personal context without knowing their access/opportunity constraints represents a minor unsupported factual claim about their specific circumstances."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked claim about renewable energy having potential for innovation/impact against all legal_evidence. No evidence confirms or contradicts this claim about the user's specific context—it's general knowledge applied to a personal situation without verification. Also checked whether reply addressed earlier expressed concerns (lack of progress, advisor feedback, self-doubt); it did not explicitly reference these as part of C:T007.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

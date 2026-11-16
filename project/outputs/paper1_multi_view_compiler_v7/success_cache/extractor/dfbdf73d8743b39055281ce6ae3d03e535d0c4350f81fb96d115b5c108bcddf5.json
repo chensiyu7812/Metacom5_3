@@ -1,0 +1,173 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2767,
+      "reserved_prompt_tokens": 2895,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 599
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "6f19f5d007e9161c249caa0775aaf55e62cd0160667b8070880266e237d43525",
+    "prior_profile_sha256": "aa6f9ee7dabc5f8e10bec921e542166f92b2a27c4b14572a775e40b63239c774",
+    "request_payload_sha256": "9012a6fea621841dcb02bafa751c66a152c62d7384118b712f2d5f99c886bf85"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p8",
+      "s": "p8_conv_12",
+      "p": [
+        {
+          "i": "p8p1",
+          "t": "durable_health_constraint",
+          "k": "emotional_response_to_relapse",
+          "v": "feels frustrated and alone after relapsing again",
+          "s": [
+            {
+              "i": "p8_conv_12:3"
+            }
+          ]
+        },
+        {
+          "i": "p8p2",
+          "t": "durable_health_constraint",
+          "k": "current_social_isolation_and_emotional_impact",
+          "v": "feels increased isolation after argument with a friend, perceiving loss of a key emotional outlet",
+          "s": [
+            {
+              "i": "p8_conv_12:5"
+            }
+          ]
+        },
+        {
+          "i": "p8p3",
+          "t": "stable_relationship_role",
+          "k": "supportive_friendship_with_aa_peer",
+          "v": "has a supportive friendship with Bob from AA meetings, recently hiked together",
+          "s": [
+            {
+              "i": "p8_conv_12:7"
+            }
+          ]
+        },
+        {
+          "i": "p8p4",
+          "t": "durable_boundary",
+          "k": "difficulty_sharing_personal_struggles_with_friends",
+          "v": "avoids burdening friends with personal issues despite needing support",
+          "s": [
+            {
+              "i": "p8_conv_12:7"
+            }
+          ]
+        },
+        {
+          "i": "p8p5",
+          "t": "enduring_preference",
+          "k": "perceived_benefit_of_guided_meditation",
+          "v": "felt more in control and at peace when meditating regularly, considering returning to the practice",
+          "s": [
+            {
+              "i": "p8_conv_12:13"
+            }
+          ]
+        },
+        {
+          "i": "p8p6",
+          "t": "durable_health_constraint",
+          "k": "current_attitude_toward_professional_therapy",
+          "v": "plans to set up a therapy session soon as a step toward regaining direction",
+          "s": [
+            {
+              "i": "p8_conv_12:19"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p8e1",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "had a hike with Bob from AA meetings, used as an opportunity to briefly discuss feelings but withheld deeper struggles",
+          "s": [
+            {
+              "i": "p8_conv_12:7"
+            }
+          ]
+        },
+        {
+          "i": "p8e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considers returning to regular guided meditation to regain emotional control and mental clarity",
+          "s": [
+            {
+              "i": "p8_conv_12:13"
+            }
+          ]
+        },
+        {
+          "i": "p8e3",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "had an argument with a friend that resulted in feeling emotionally isolated and losing a key support outlet",
+          "s": [
+            {
+              "i": "p8_conv_12:5"
+            }
+          ]
+        },
+        {
+          "i": "p8e4",
+          "t": "support_experience",
+          "z": "ongoing_stage",
+          "n": "received encouragement from supporter to reconnect with therapy and support systems after relapse",
+          "s": [
+            {
+              "i": "p8_conv_12:18"
+            }
+          ]
+        },
+        {
+          "i": "p8e5",
+          "t": "action_observed_outcome",
+          "z": "occurred",
+          "n": "talked about recent relapse and emotional burden with supporter",
+          "a": "shared feelings of frustration and loneliness after relapse",
+          "o": "felt lighter and less alone after conversation",
+          "s": [
+            {
+              "i": "p8_conv_12:3"
+            },
+            {
+              "i": "p8_conv_12:21"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "60e93fbc08861ee185c364554aa2b49125a21692d226dda130376e8c508a2927",
+    "usage": {
+      "prompt_tokens": 2769,
+      "completion_tokens": 989,
+      "total_tokens": 3758
+    },
+    "latency_ms": 11839.95395200327,
+    "provider_finish_reason": "stop"
+  }
+}

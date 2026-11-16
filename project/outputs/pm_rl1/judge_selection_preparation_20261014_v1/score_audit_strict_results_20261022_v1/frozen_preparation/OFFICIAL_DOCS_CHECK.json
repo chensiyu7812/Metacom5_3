@@ -1,0 +1,29 @@
+[
+  {
+    "url": "https://api-docs.deepseek.com/guides/json_mode/",
+    "verified_date": "2026-10-22",
+    "facts": [
+      "json_object is the documented JSON output mode; prompt must request JSON.",
+      "The failed historical request already selected json_object and complete output limits."
+    ],
+    "scope": "public docs only; no account requests"
+  },
+  {
+    "url": "https://api-docs.deepseek.com/guides/tool_calls/",
+    "verified_date": "2026-10-22",
+    "facts": [
+      "Strict tool schema is supported in thinking and non-thinking modes on the official Beta endpoint.",
+      "String minLength/maxLength and array minItems/maxItems are unsupported server-side; unchanged local checks retain them."
+    ],
+    "scope": "public docs only"
+  },
+  {
+    "url": "https://api-docs.deepseek.com/api/create-chat-completion/",
+    "verified_date": "2026-10-22",
+    "facts": [
+      "Thinking mode rejects required or named forced tool_choice; use auto without changing high.",
+      "A non-tool response is not a strict-tool audit and fails this candidate; no fallback or additional model turn."
+    ],
+    "scope": "public docs only"
+  }
+]

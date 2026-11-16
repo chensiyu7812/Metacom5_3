@@ -1,0 +1,143 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v6",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 5760,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2627,
+      "reserved_prompt_tokens": 2755,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 267
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "15330e2f83a0856c2b22c0c87dc79ee1549984c9b46e4c78ce74241bc8bc833e",
+    "prior_profile_sha256": "106b2402bcb9fd78b6848e516d726e32ff7da5a94d9d56a519106b85078d24a3",
+    "request_payload_sha256": "854f20ad2a00ba043cc3891107964e2485398db600190288cf6afb73f369eae2"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p1",
+      "s": "p1_conv_4",
+      "p": [
+        {
+          "i": "p1p1",
+          "k": "current_romantic_relationship_status",
+          "t": "stable_relationship_role",
+          "v": "started dating a colleague",
+          "s": [
+            {
+              "i": "p1_conv_4:3"
+            }
+          ]
+        },
+        {
+          "i": "p1p2",
+          "k": "stress_management_strategy",
+          "t": "enduring_preference",
+          "v": "yoga and reading to center self",
+          "s": [
+            {
+              "i": "p1_conv_4:19"
+            }
+          ]
+        },
+        {
+          "i": "p1p3",
+          "k": "therapy_engagement_status",
+          "t": "durable_health_constraint",
+          "v": "currently attending therapy, finds it helpful for boundaries and emotional openness",
+          "s": [
+            {
+              "i": "p1_conv_4:11"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p1e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "confessed feelings to colleague and began romantic relationship",
+          "s": [
+            {
+              "i": "p1_conv_4:3"
+            }
+          ],
+          "a": "confessed feelings to colleague",
+          "o": "mutual decision to start dating"
+        },
+        {
+          "i": "p1e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "using yoga and reading to manage stress after emotionally exhausting days",
+          "s": [
+            {
+              "i": "p1_conv_4:19"
+            }
+          ]
+        },
+        {
+          "i": "p1e3",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "discussed new romantic relationship with supporter, expressed concerns about workplace dynamics and past vulnerability",
+          "s": [
+            {
+              "i": "p1_conv_4:5"
+            },
+            {
+              "i": "p1_conv_4:7"
+            },
+            {
+              "i": "p1_conv_4:9"
+            }
+          ]
+        },
+        {
+          "i": "p1e4",
+          "t": "meaningful_experience",
+          "z": "ongoing_stage",
+          "n": "practicing setting emotional boundaries while supporting a close friend with depression",
+          "s": [
+            {
+              "i": "p1_conv_4:17"
+            }
+          ]
+        },
+        {
+          "i": "p1e5",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "planned to discuss new romantic relationship with therapist in upcoming session",
+          "s": [
+            {
+              "i": "p1_conv_4:13"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "36cddfdc12d5cad83badd2bad03ce57d2d1edd01ce064a233bc1448c251d61c6",
+    "usage": {
+      "prompt_tokens": 2629,
+      "completion_tokens": 689,
+      "total_tokens": 3318
+    },
+    "latency_ms": 8059.886100993026,
+    "provider_finish_reason": "stop"
+  }
+}

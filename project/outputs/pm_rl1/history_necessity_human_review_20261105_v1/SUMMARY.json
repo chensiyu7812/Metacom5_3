@@ -1,0 +1,101 @@
+{
+  "study": "c52a56fd81d55d112ce227063bbdbcff0d0fb3325df03c03c2adde5a298e4e78",
+  "primary_ordinal_analysis": {
+    "cases": 10,
+    "joint_wins": 2,
+    "joint_questions": [
+      "Q01",
+      "Q08"
+    ],
+    "joint_owners": [
+      "p11",
+      "p3"
+    ],
+    "comparisons": {
+      "C/OFF": {
+        "preferred": 4,
+        "equivalent": 5,
+        "worse": 1,
+        "not_directly_judged": 0
+      },
+      "C/D": {
+        "preferred": 3,
+        "equivalent": 5,
+        "worse": 2,
+        "not_directly_judged": 0
+      },
+      "D/OFF": {
+        "preferred": 2,
+        "equivalent": 4,
+        "worse": 2,
+        "not_directly_judged": 2
+      }
+    }
+  },
+  "protocol_gate": {
+    "required_valid_triplets": 10,
+    "required_joint_wins": 4,
+    "required_joint_win_owners": 3,
+    "joint_win": "C preferred over BOTH OFF and D in the same case (slight counts); no source-confirmed factual error providing the apparent advantage.",
+    "loss_check": "Number of joint wins must exceed number of cases C is judged worse than OFF. Report every loss and material source misuse separately.",
+    "pass": "Only proceed to a scoped deployable path/latency and feedback study; not a population claim, qualified scalar reward or automatic PPO start.",
+    "fail": "Stop expanding G tuning/global retrieval/positive-example search for this task under this protocol; report bounded evidence and develop avoidance/latency findings with fixed STOP baseline. No claim contextual RL beats STOP.",
+    "technical_or_rating_insufficiency": "Report inconclusive/coverage limits; no replacement cases or automatic expansion."
+  },
+  "gate_checks": {
+    "coverage": true,
+    "joint_wins": false,
+    "owners": false,
+    "loss_check": true
+  },
+  "continuation_gate_passed": false,
+  "decision": "STOP_POSITIVE_EXPANSION_UNDER_THIS_PROTOCOL",
+  "uncertain_degree_questions": [
+    "Q03",
+    "Q06"
+  ],
+  "sensitivity_excluding_uncertain_degree": {
+    "cases": 8,
+    "joint_wins": 2,
+    "joint_questions": [
+      "Q01",
+      "Q08"
+    ],
+    "joint_owners": [
+      "p11",
+      "p3"
+    ],
+    "comparisons": {
+      "C/OFF": {
+        "preferred": 4,
+        "equivalent": 4,
+        "worse": 0,
+        "not_directly_judged": 0
+      },
+      "C/D": {
+        "preferred": 3,
+        "equivalent": 5,
+        "worse": 0,
+        "not_directly_judged": 0
+      },
+      "D/OFF": {
+        "preferred": 1,
+        "equivalent": 4,
+        "worse": 1,
+        "not_directly_judged": 2
+      }
+    }
+  },
+  "sensitivity_note": "8 cases are coverage-incomplete, not a new study. No imputation, substitution or additional questions.",
+  "source_error_rule": "No source-confirmed error supplying either observed joint advantage in the pre-answer content audit; no positive case excluded.",
+  "human_submission_units": 10,
+  "new_derived_pair_relations": 26,
+  "reused_pair_relations": 2,
+  "new_material_improvement_labels": 0,
+  "qualified_scalar_rewards": 0,
+  "new_questions": 0,
+  "new_model_calls": 0,
+  "API_cost_usd": 0,
+  "training_updates": 0,
+  "existing_cost_negative_control_PPO_updates": 24
+}

@@ -1,0 +1,60 @@
+{
+  "time_jst": "2026-10-15T18:02:45.608878+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "9382b7cf06e31b7e5f31fb75382d44e55113f327994f4077e1ca5bd44e126b96",
+  "original_slot_request_id": "96c72ca6b265b98dfa2833ccf2f8a6336c06ee07f450d0e10f40e9920e93c331",
+  "item_key": "dev16A",
+  "draw": "primary",
+  "response_sha256": "d2acdcd9caf4d94dc1b2f027d3a667196e47422772b3fc81b82759510ead36ca",
+  "raw_sha256": "ff971d3b57713c351923654be30834651d07ce344d1aba1dc1c137fcc4782459",
+  "explanation": "A/dev16A触发保留的来源证明实质主体/身份错误硬停。原回复R001为When I said my mom did not want me to make friends with some people, I was describing my own experience. 当前C:T008的这段经历属于历史supporter；任务ROLE_CONTRACT明确所有supporter（含当前prefix）是与NEW AI不同的人，AI没有个人生平。模型却将R001判supported/severity0，引用C:T008并以历史支持者确曾说过该话作为支持；这恰好证明它没有核查说话者所有权。不是普通礼貌或可选建议，也不是q相邻分差争议：核心第一句明确把别人的母亲/交友经历据为新AI自己的经历，且模型q4理由又把这种归属称为correct。原选择规则明定理由认错人即使方向碰巧正确仍失败，且m锚点覆盖实质身份/虚构个人历史。保留原4/0/U1，不替模型改分；按原硬停停止A，诊断歧义许可不适用。",
+  "source_checks": [
+    {
+      "source_id": "C:T008",
+      "exact_quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "finding": "明确speaker=supporter；母亲/交友经历属于该历史说话者"
+    },
+    {
+      "source_id": "C:T009",
+      "exact_quote": "Really? How did you deal with that because for me it makes me angry.",
+      "finding": "seeker询问该支持者如何处理，不使新AI取得经历所有权"
+    }
+  ],
+  "material_source_proven_error": true,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [
+    {
+      "claim": "R001: When I said my mom did not want me to make friends with some people, I was describing my own experience.",
+      "source": "C:T008 (role=supporter): I had similar situation like yours. My mom did not want me to make friends with some people. ; source role plus authoritative NEW AI speaker contract",
+      "criterion": "judge_completion.py:12-18: The candidate reply is spoken by a NEW AI assistant. Every supporter turn ... belongs to a separate historical speaker ... It has no personal human biography. judge.py:31-34 identity/substantive invented personal history; 选型协议草案_ZH.md:32 理由认错人而方向碰巧正确仍失败.",
+      "model_judgment": "R001 supported, severity=0; reason cites historical supporter statement; q_rationale calls attribution correct",
+      "consequence": "核心首句把历史他人的个人经历据为新AI自己的经历，改变角色可信性；不是普通礼貌、试探假设或相邻q锚点争论。"
+    }
+  ],
+  "dimensions": {
+    "actor": "已证实将历史支持者第一人称经历归给NEW AI",
+    "facts": "任务角色合同禁止新AI拥有该历史人的个人生平；R001明确my own experience",
+    "citations": "T008文字真实且ID合法，但speaker不支持当前AI自我归属",
+    "severity": "错误涉及核心身份与个人经历，满足原material actor/identity门；m0漏判非未知",
+    "q_anchor": "q4理由明确把错误归属称为correct；硬停不依赖4与3的偏好",
+    "mixed_assertions": "R001的说过/我的母亲/我的经历均需主体检查，不能只核验文字曾出现"
+  },
+  "issues": [
+    {
+      "type": "actor_identity_ownership",
+      "status": "source_proven_material_error",
+      "reply_unit": "R001",
+      "detail": "把历史supporter的母亲经历当NEW AI亲历；引用文字存在不能证明主体正确。"
+    }
+  ],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

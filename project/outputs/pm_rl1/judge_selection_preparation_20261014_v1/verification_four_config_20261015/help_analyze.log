@@ -1,0 +1,19 @@
+usage: analyze.py [-h]
+                  [--candidate {gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high}]
+                  [--compare-pool] --run-dir RUN_DIR --out OUT [--allow-mock]
+                  [--review REVIEW]
+
+Offline selection readout. Missing/unknown stays missing; never issues a
+freeze.
+
+options:
+  -h, --help            show this help message and exit
+  --candidate {gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high}
+  --compare-pool        paired A/B, C/D and all-four common sets; run-dir is
+                        pool root
+  --run-dir RUN_DIR
+  --out OUT
+  --allow-mock          explicitly labelled plumbing demonstration; never
+                        evidence
+  --review REVIEW       completed copy of source-bound review CSV; pending
+                        remains unknown

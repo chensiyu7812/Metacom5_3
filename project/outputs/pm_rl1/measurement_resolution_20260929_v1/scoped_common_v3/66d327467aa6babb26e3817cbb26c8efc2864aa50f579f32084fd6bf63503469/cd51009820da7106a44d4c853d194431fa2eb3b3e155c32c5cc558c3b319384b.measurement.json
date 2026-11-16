@@ -1,0 +1,142 @@
+{
+  "response_sha256": "3e6f198330d0801f850567d15ce80fa270b8ca87b94eeb8e4517790b7fffa6f7",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+  "raw_output_sha256": "e2ebd8a2d427c8bbdd6bce5eedee0b93eb6a553f37f2db1607f976062b4693ec",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses immediate emotional need for connection ('needed someone to talk to').",
+      "response_quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "The reply fully meets the user's current need by validating their request for support without pressure. It offers an open invitation to share specific details while acknowledging the right to simply connect. It is coherent, warm, and consistent with the established supportive role."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked all response units against legal evidence.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 234
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses immediate emotional need for connection ('needed someone to talk to').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the user's current need by validating their request for support without pressure. It offers an open invitation to share specific details while acknowledging the right to simply connect. It is coherent, warm, and consistent with the established supportive role."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked all response units against legal evidence.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses immediate emotional need for connection ('needed someone to talk to').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the user's current need by validating their request for support without pressure. It offers an open invitation to share specific details while acknowledging the right to simply connect. It is coherent, warm, and consistent with the established supportive role."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic affirmation without personal fact assertion."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General validation statement, no user-specific facts."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative question inviting reflection, not an assertion of intent or event."
+      },
+      {
+        "response_unit_id": "R004",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Statement of available support, no claim of capability or outcome guarantee."
+      }
+    ],
+    "coverage": "Checked all response units against legal evidence.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

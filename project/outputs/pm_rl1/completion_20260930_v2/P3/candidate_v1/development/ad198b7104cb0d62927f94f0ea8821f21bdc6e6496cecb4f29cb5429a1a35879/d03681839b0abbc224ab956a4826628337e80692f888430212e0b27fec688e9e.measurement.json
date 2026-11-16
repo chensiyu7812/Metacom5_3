@@ -1,0 +1,186 @@
+{
+  "response_sha256": "bb279623f40035f58ba398c81119f529e08b04c65aeea412a186d0cc5d720ad2",
+  "legal_evidence_identity": "17c742c775ac1f9bd9ad395a0c8790ca3cd43b3eda811238e99519c9a5bb7151",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "49853e9accb22d3dd2b85dcb9ffdde714e907762a5a60fd964cbe2d6cf0a93af",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user is expressing vulnerability and anxiety about sharing their personal journey on a blog, fearing judgment or lack of relatability.",
+      "response_quote": "You do not have to share everything at once. Would it help to think about what you feel comfortable making public?",
+      "evidence": [
+        {
+          "source_id": "C:T002",
+          "quote": "I've just been feeling a bit anxious lately, especially about starting this new blog on mental health."
+        },
+        {
+          "source_id": "C:T006",
+          "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+        }
+      ],
+      "reason": "The reply directly addresses the user's concern about vulnerability (C:T006) by validating the option to pace sharing (R001) and prompting a focus on safety boundaries (R002). This response is empathetic, appropriate, and fully meets the user's need for reassurance without introducing unsupported facts."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The response covers the user's anxiety about public sharing and vulnerability. It validates the user's pace and encourages proactive thought about boundaries, aligning with the emotional support goal of the session.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You do not have to share everything at once. Would it help to think about what you feel comfortable making public?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I've just been feeling a bit anxious lately, especially about starting this new blog on mental health.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 102
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user is expressing vulnerability and anxiety about sharing their personal journey on a blog, fearing judgment or lack of relatability.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002",
+        "C:T006"
+      ],
+      "reason": "The reply directly addresses the user's concern about vulnerability (C:T006) by validating the option to pace sharing (R001) and prompting a focus on safety boundaries (R002). This response is empathetic, appropriate, and fully meets the user's need for reassurance without introducing unsupported facts."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The response covers the user's anxiety about public sharing and vulnerability. It validates the user's pace and encourages proactive thought about boundaries, aligning with the emotional support goal of the session.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user is expressing vulnerability and anxiety about sharing their personal journey on a blog, fearing judgment or lack of relatability.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002",
+        "C:T006"
+      ],
+      "reason": "The reply directly addresses the user's concern about vulnerability (C:T006) by validating the option to pace sharing (R001) and prompting a focus on safety boundaries (R002). This response is empathetic, appropriate, and fully meets the user's need for reassurance without introducing unsupported facts."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "This is a supportive statement offering reassurance about the pace of disclosure. It does not assert a specific factual claim about the user's life but reflects valid support for the feelings expressed in C:T006.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002",
+          "C:T006"
+        ],
+        "reason": "This is a tentative question suggesting a strategy for public disclosure. It builds on the context of starting a blog (C:T002) and the feeling of vulnerability (C:T006) without making unsupported factual assertions about the outcome or the blog itself.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response covers the user's anxiety about public sharing and vulnerability. It validates the user's pace and encourages proactive thought about boundaries, aligning with the emotional support goal of the session.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user is expressing vulnerability and anxiety about sharing their personal journey on a blog, fearing judgment or lack of relatability.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002",
+        "C:T006"
+      ],
+      "reason": "The reply directly addresses the user's concern about vulnerability (C:T006) by validating the option to pace sharing (R001) and prompting a focus on safety boundaries (R002). This response is empathetic, appropriate, and fully meets the user's need for reassurance without introducing unsupported facts."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "This is a supportive statement offering reassurance about the pace of disclosure. It does not assert a specific factual claim about the user's life but reflects valid support for the feelings expressed in C:T006."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002",
+          "C:T006"
+        ],
+        "reason": "This is a tentative question suggesting a strategy for public disclosure. It builds on the context of starting a blog (C:T002) and the feeling of vulnerability (C:T006) without making unsupported factual assertions about the outcome or the blog itself."
+      }
+    ],
+    "coverage": "The response covers the user's anxiety about public sharing and vulnerability. It validates the user's pace and encourages proactive thought about boundaries, aligning with the emotional support goal of the session.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

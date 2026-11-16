@@ -1,0 +1,529 @@
+{
+  "slot_id": "4ded0115fa9db6629d32273b67d7cf73cc4e3c72b3b1d80a8854c9060fef5395",
+  "request_identity": "11cfb8510f0bf165c49543998d597487edbf300fc6bdf20222fd95db66959873",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 3,
+      "q_rationale": {
+        "current_need": "The seeker is angry about her mother's disapproval of her friends and has just asked the previous supporter how they dealt with a similar situation; because the new assistant cannot claim that personal experience, the reply needs to acknowledge the anger and help her process it.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T001",
+          "C:T005",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply is empathetic and accurate about the conflict over friends and the user's anger, and it appropriately invites exploration rather than inventing a personal coping story. It does not directly address the 'how did you deal with that' question or offer any coping strategy, so it is responsive but not fully complete for this turn."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A brief expression of sympathy; it makes no specific personal factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T001",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The user reported mixed sadness and anger, said her mom never approves of what she does, identified friend choice as the conflict, and said it makes her angry. The reflection that the situation is frustrating, especially about choosing friends, is supported."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T001",
+            "C:T009"
+          ],
+          "reason": "The user explicitly said she feels angry and later that the situation makes her angry; the invitation to explore that anger is grounded in those statements."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a tentative either/or hypothesis about possible triggers, not an asserted personal fact. The control theme is grounded in the friend-choice conflict, while the disappointment possibility is offered as a question rather than claimed."
+        }
+      ],
+      "coverage": "Reviewed all four reply units against the current prefix and the two past sessions. The current prefix supports the reflection on mom, friends, and anger; the past sessions contain related family-boundary themes but no contradiction. R001 and R004 were treated as non-factual courtesy/tentative exploration, while R002 and R003 were checked as personal reflections against C:T001/C:T005/C:T007/C:T009.",
+      "uncertainty_reasons": []
+    },
+    "q": 3,
+    "m": 0,
+    "U": 0.75,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2e093920d3886d4360f6106c93b13638c985b7aa5481340722c476ddbf93847a",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "4ded0115fa9db6629d32273b67d7cf73cc4e3c72b3b1d80a8854c9060fef5395",
+      "raw_output_sha256": "0e4380e2fe34c4bed152c1965e60081f21bc599ee81a09ccc2bea52a0e08b3a7",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's disapproval of her friends and has just asked the previous supporter how they dealt with a similar situation; because the new assistant cannot claim that personal experience, the reply needs to acknowledge the anger and help her process it.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+          "evidence": [
+            {
+              "source_id": "C:T001",
+              "quote": "I have mixed feelings sad and angry at the same time."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "Yes. My mom never approves of most of the things I do."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply is empathetic and accurate about the conflict over friends and the user's anger, and it appropriately invites exploration rather than inventing a personal coping story. It does not directly address the 'how did you deal with that' question or offer any coping strategy, so it is responsive but not fully complete for this turn."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T001",
+                "quote": "I have mixed feelings sad and angry at the same time."
+              },
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The user reported mixed sadness and anger, said her mom never approves of what she does, identified friend choice as the conflict, and said it makes her angry. The reflection that the situation is frustrating, especially about choosing friends, is supported."
+          },
+          {
+            "response_quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T001",
+                "quote": "I have mixed feelings sad and angry at the same time."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The user explicitly said she feels angry and later that the situation makes her angry; the invitation to explore that anger is grounded in those statements."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all four reply units against the current prefix and the two past sessions. The current prefix supports the reflection on mom, friends, and anger; the past sessions contain related family-boundary themes but no contradiction. R001 and R004 were treated as non-factual courtesy/tentative exploration, while R002 and R003 were checked as personal reflections against C:T001/C:T005/C:T007/C:T009.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 346
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 53
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+          "positions": [
+            {
+              "start": 35,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 53
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+          "positions": [
+            {
+              "start": 165,
+              "end": 273
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 53
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's disapproval of her friends and has just asked the previous supporter how they dealt with a similar situation; because the new assistant cannot claim that personal experience, the reply needs to acknowledge the anger and help her process it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and accurate about the conflict over friends and the user's anger, and it appropriately invites exploration rather than inventing a personal coping story. It does not directly address the 'how did you deal with that' question or offer any coping strategy, so it is responsive but not fully complete for this turn."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user reported mixed sadness and anger, said her mom never approves of what she does, identified friend choice as the conflict, and said it makes her angry. The reflection that the situation is frustrating, especially about choosing friends, is supported."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T009"
+            ],
+            "reason": "The user explicitly said she feels angry and later that the situation makes her angry; the invitation to explore that anger is grounded in those statements."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all four reply units against the current prefix and the two past sessions. The current prefix supports the reflection on mom, friends, and anger; the past sessions contain related family-boundary themes but no contradiction. R001 and R004 were treated as non-factual courtesy/tentative exploration, while R002 and R003 were checked as personal reflections against C:T001/C:T005/C:T007/C:T009.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's disapproval of her friends and has just asked the previous supporter how they dealt with a similar situation; because the new assistant cannot claim that personal experience, the reply needs to acknowledge the anger and help her process it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and accurate about the conflict over friends and the user's anger, and it appropriately invites exploration rather than inventing a personal coping story. It does not directly address the 'how did you deal with that' question or offer any coping strategy, so it is responsive but not fully complete for this turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A brief expression of sympathy; it makes no specific personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user reported mixed sadness and anger, said her mom never approves of what she does, identified friend choice as the conflict, and said it makes her angry. The reflection that the situation is frustrating, especially about choosing friends, is supported.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T009"
+            ],
+            "reason": "The user explicitly said she feels angry and later that the situation makes her angry; the invitation to explore that anger is grounded in those statements.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative either/or hypothesis about possible triggers, not an asserted personal fact. The control theme is grounded in the friend-choice conflict, while the disappointment possibility is offered as a question rather than claimed.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all four reply units against the current prefix and the two past sessions. The current prefix supports the reflection on mom, friends, and anger; the past sessions contain related family-boundary themes but no contradiction. R001 and R004 were treated as non-factual courtesy/tentative exploration, while R002 and R003 were checked as personal reflections against C:T001/C:T005/C:T007/C:T009.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's disapproval of her friends and has just asked the previous supporter how they dealt with a similar situation; because the new assistant cannot claim that personal experience, the reply needs to acknowledge the anger and help her process it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and accurate about the conflict over friends and the user's anger, and it appropriately invites exploration rather than inventing a personal coping story. It does not directly address the 'how did you deal with that' question or offer any coping strategy, so it is responsive but not fully complete for this turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A brief expression of sympathy; it makes no specific personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user reported mixed sadness and anger, said her mom never approves of what she does, identified friend choice as the conflict, and said it makes her angry. The reflection that the situation is frustrating, especially about choosing friends, is supported."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T009"
+            ],
+            "reason": "The user explicitly said she feels angry and later that the situation makes her angry; the invitation to explore that anger is grounded in those statements."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative either/or hypothesis about possible triggers, not an asserted personal fact. The control theme is grounded in the friend-choice conflict, while the disappointment possibility is offered as a question rather than claimed."
+          }
+        ],
+        "coverage": "Reviewed all four reply units against the current prefix and the two past sessions. The current prefix supports the reflection on mom, friends, and anger; the past sessions contain related family-boundary themes but no contradiction. R001 and R004 were treated as non-factual courtesy/tentative exploration, while R002 and R003 were checked as personal reflections against C:T001/C:T005/C:T007/C:T009.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.75
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "0e4380e2fe34c4bed152c1965e60081f21bc599ee81a09ccc2bea52a0e08b3a7",
+      "adapted_final_sha256": "0e4380e2fe34c4bed152c1965e60081f21bc599ee81a09ccc2bea52a0e08b3a7",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0137361",
+    "usage_upper_usd": "0.0137361",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5203,
+    "completion_tokens": 10146,
+    "total_tokens": 15349,
+    "prompt_tokens_details": {
+      "cached_tokens": 4992
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 9600
+    },
+    "prompt_cache_hit_tokens": 4992,
+    "prompt_cache_miss_tokens": 211
+  },
+  "elapsed_seconds": 50.725501275999704,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-relation-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

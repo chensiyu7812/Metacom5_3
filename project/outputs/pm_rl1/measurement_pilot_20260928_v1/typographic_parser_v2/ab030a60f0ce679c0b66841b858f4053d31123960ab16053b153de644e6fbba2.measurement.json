@@ -1,0 +1,64 @@
+{
+  "response_sha256": "14f8e5151d228e9c379790e7bea231d12ae8d8320e80f6474cde5ac12ef06fb7",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+  "raw_output_sha256": "a7741c372a3b2b3bbefde941e14a0be23c5412977f8254029812241a6915f31f",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker (Andrew) shares consideration of renewable energy research in C:T007 after discussing overcoming self-doubt. Reply should validate this new interest while exploring underlying motivations.",
+      "response_quote": "That's a great direction to consider! Renewable energy is a field that's not only aligned with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "Response fully responds to the immediate cue from C:T007, validating the user's expressed direction and appropriately inviting deeper reflection through targeted follow-up. The reply mirrors the user's own words ('aligned with your values') without inventing facts, demonstrates coherence with the current session's emotional trajectory (overcoming self-doubt), and contains no important defects. This is exactly the depth of engagement warranted by this turn—a brief acknowledgment plus an exploratory question that is all this message calls for."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for claims about user identity (name/age/etc.), temporal references, personal history, or explicit-boundary violations across complete evidence spanning C:T000-C:T007 and all prior sessions H001-H010. No personal factual claims found in this reply—only supportive reflection on the user's explicitly stated interests.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great direction to consider! Renewable energy is a field that's not only aligned with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 317
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

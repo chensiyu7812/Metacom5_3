@@ -1,0 +1,244 @@
+{
+  "response_sha256": "b80fe9576ac79402701185057efb353a89d7391e47925f7faac11151f82e64f8",
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "4d353a62804f3ff41808e57545b85e189b2e8f85ad070ca4e96e1af2aad7bdbe",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker asks 'How did you deal with that' (referring to the previous supporter's story in C:T008) due to their anger about the situation.",
+      "response_quote": "The earlier supporter described a conflict with their mother, but that is not my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+      "evidence": [
+        {
+          "source_id": "C:T008",
+          "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        }
+      ],
+      "reason": "The NEW AI correctly distinguishes its identity from the historical supporter (R001) and avoids fabricating personal human experiences. It acknowledges the previous context (friend choice/mom conflict) and proactively offers a supportive path forward focused on the user's needs (R002), balancing boundary maintenance with responsiveness."
+    },
+    "claims": [
+      {
+        "response_quote": "The earlier supporter described a conflict with their mother, but that is not my own experience.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+          }
+        ],
+        "reason": "Claim that earlier supporter described conflict with mother is verified by C:T008 ('My mom did not want me to make friends')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the identity boundary, references the specific conflict regarding friends and motherhood from C:T008, and pivots to actionable support for the user's reported anger.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "The earlier supporter described a conflict with their mother, but that is not my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 177
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "The earlier supporter described a conflict with their mother, but that is not my own experience.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker asks 'How did you deal with that' (referring to the previous supporter's story in C:T008) due to their anger about the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T007"
+      ],
+      "reason": "The NEW AI correctly distinguishes its identity from the historical supporter (R001) and avoids fabricating personal human experiences. It acknowledges the previous context (friend choice/mom conflict) and proactively offers a supportive path forward focused on the user's needs (R002), balancing boundary maintenance with responsiveness."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Claim that earlier supporter described conflict with mother is verified by C:T008 ('My mom did not want me to make friends')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the identity boundary, references the specific conflict regarding friends and motherhood from C:T008, and pivots to actionable support for the user's reported anger.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker asks 'How did you deal with that' (referring to the previous supporter's story in C:T008) due to their anger about the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T007"
+      ],
+      "reason": "The NEW AI correctly distinguishes its identity from the historical supporter (R001) and avoids fabricating personal human experiences. It acknowledges the previous context (friend choice/mom conflict) and proactively offers a supportive path forward focused on the user's needs (R002), balancing boundary maintenance with responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Claim that earlier supporter described conflict with mother is verified by C:T008 ('My mom did not want me to make friends').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Statement clarifying identity as NEW AI without human experience aligns with the task speaker contract (no personal biography).",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "General advice/inclusive proposal to discuss talking to mom matches the context of the conversation.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Addresses the identity boundary, references the specific conflict regarding friends and motherhood from C:T008, and pivots to actionable support for the user's reported anger.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker asks 'How did you deal with that' (referring to the previous supporter's story in C:T008) due to their anger about the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T007"
+      ],
+      "reason": "The NEW AI correctly distinguishes its identity from the historical supporter (R001) and avoids fabricating personal human experiences. It acknowledges the previous context (friend choice/mom conflict) and proactively offers a supportive path forward focused on the user's needs (R002), balancing boundary maintenance with responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Claim that earlier supporter described conflict with mother is verified by C:T008 ('My mom did not want me to make friends')."
+      },
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Statement clarifying identity as NEW AI without human experience aligns with the task speaker contract (no personal biography)."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "General advice/inclusive proposal to discuss talking to mom matches the context of the conversation."
+      }
+    ],
+    "coverage": "Addresses the identity boundary, references the specific conflict regarding friends and motherhood from C:T008, and pivots to actionable support for the user's reported anger.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

@@ -1,0 +1,76 @@
+{
+  "protocol": "paper1-static-amount-official-scoring-v1",
+  "generated_at": "2026-09-19T03:00:09.442941+00:00",
+  "status": "PREFLIGHT_NO_PAID_CALLS",
+  "paid_execution_authorized": false,
+  "authorization_sources": {
+    "scorer_config.new_paid_execution_authorized": false,
+    "authority.new_paid_API_calls_authorized": false,
+    "authority.paid_scoring_stage.proposed_cap_authorized": false,
+    "proposed_stage_hard_cap_including_retries_usd": "SUPERSEDED_SEE_followup_total_budget_20260918"
+  },
+  "already_settled_calls": 0,
+  "pending_calls": 1631,
+  "identical_payload_reuse": {
+    "distinct_official_calls": 1631,
+    "requests_served_by_reuse": 293,
+    "rule": "byte-identical official prompts are scored once and the score is reused; the scorer omits temperature, so this removes within-duplicate variance"
+  },
+  "cost_manifest": {
+    "protocol": "paper1-static-amount-official-scoring-v1",
+    "stage": "static_amount_calibration_official_scoring_v1",
+    "model": "gpt-4o-2024-11-20",
+    "official_calls_to_make": 1631,
+    "calls_by_task": {
+      "qa": 903,
+      "summary": 728
+    },
+    "observed_input_tokens_by_task": {
+      "qa": 350234,
+      "summary": 640378
+    },
+    "observed_total_input_tokens": 990612,
+    "input_token_counts_are_measured_from_real_predictions": true,
+    "sum_of_full_worst_case_reservations_usd": "269.6995700",
+    "largest_single_reservation_usd": "0.1670925",
+    "worst_case_output_allowance_tokens_per_call": 16384,
+    "input_only_cost_at_observed_tokens_usd": "2.47653",
+    "output_cost_is_unknown_until_executed": true,
+    "price_per_million_usd": {
+      "input": "2.5",
+      "output": "10"
+    },
+    "cumulative_accounted_usd": "1.50724291",
+    "cumulative_remaining_usd": "48.49275709",
+    "stage_accounted_usd": "0",
+    "note": "Reservations are sequential worst cases, not a prediction of the settled bill. Execution stops before a reservation that would breach the stage or cumulative cap; no answer is truncated to fit a budget."
+  },
+  "official_identity": {
+    "prompts": "unchanged upstream bytes",
+    "parsers": "unchanged upstream parsers",
+    "source_sha256": {
+      "qa": "0607d0316d508db0002fb63e18ab86f3dbd2119ec6d90978d7170ed3db99b1db",
+      "summary": "93f8267f6aff734fd5f42a7fdd1844b2754e8f314d50d938663f4e1dc0ff6d0f"
+    },
+    "temperature": "OMITTED_AS_UPSTREAM",
+    "max_completion_tokens": "OMITTED_AS_UPSTREAM",
+    "local_judge_substitution": "forbidden"
+  },
+  "followup_budget": {
+    "protocol": "pm-paper1-followup-total-budget-v1",
+    "baseline_accounted_usd": "1.50724291",
+    "ledger_accounted_usd": "1.50724291",
+    "settled_new_spend_usd": "0E-8",
+    "outstanding_batch_liability_usd": "0",
+    "committed_new_spend_usd": "0E-8",
+    "target_usd": "10.00",
+    "hard_cap_usd": "20.00",
+    "remaining_to_target_usd": "10.00000000",
+    "remaining_to_hard_cap_usd": "20.00000000",
+    "target_exceeded": false,
+    "target_is_a_plan_not_a_gate": true
+  },
+  "k_star_frozen": false,
+  "formal_outcomes": 0,
+  "PM_training_runs": 0
+}

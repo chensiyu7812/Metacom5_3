@@ -1,0 +1,29 @@
+{"status": "ACCOUNT_REFRESH_CHECKED", "refresh_identity": "bedc710f31711ad4b2984b67d480a0a77390db0b962fcd05e8462ac5765fe45a", "new_allowance": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/148_refresh_development_account.py", line 89, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/148_refresh_development_account.py", line 83, in main
+    result = stage.advance(transport)
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_feedback.py", line 254, in advance
+    claim = schedule.claim_next(lambda c: self.reserve(c, requests[c['slot_id']]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/recovery_schedule.py", line 170, in claim_next
+    reservation = reserve(dict(claim))
+                  ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_feedback.py", line 254, in <lambda>
+    claim = schedule.claim_next(lambda c: self.reserve(c, requests[c['slot_id']]))
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_dispatch.py", line 154, in reserve
+    self.budget.reserve(claim['attempt_id'], self.policy['reserve_nanodollars'], binding)
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/account_balance_refresh.py", line 93, in reserve
+    return super().reserve(reservation_id, amount, binding)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/retained_liability_continuation.py", line 100, in reserve
+    raise ValueError('verified account balance insufficient')
+ValueError: verified account balance insufficient

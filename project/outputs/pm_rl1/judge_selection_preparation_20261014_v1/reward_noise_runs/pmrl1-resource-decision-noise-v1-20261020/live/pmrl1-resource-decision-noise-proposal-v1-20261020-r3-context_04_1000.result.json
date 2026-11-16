@@ -1,0 +1,529 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_04_1000",
+  "request_identity": "7b14f9299ccc3b7885976709f9cc1fafa1a70d2d69b885f5031fcd044c976e0e",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The user has just disclosed vaguely that 'things have been a bit tough lately' and needs a safe, non-presumptuous acknowledgment plus an invitation to say more on their own terms.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T002",
+          "C:T000",
+          "C:T001"
+        ],
+        "reason": "The reply is structurally well matched: it acknowledges the difficulty the user actually stated and opens space with an appropriately broad question. However, its central reflective sentence inserts a specific problem ('especially when it comes to job hunting') that the user never mentioned and that appears nowhere in the record, so the empathic reflection rests on a fabricated premise that can mislead or confuse the user at the very first disclosure. That is an important mishandling of the content rather than a total failure, so q=2 rather than lower; the missing topic is not made up for by polish or length."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "Directly reflects the user's own words in C:T002 ('things have been a bit tough lately') without adding specifics; the speaker acts only as a listener acknowledging the disclosure."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The general part ('going through a challenging time') is an ordinary empathic reflection of the user's stated difficulty in C:T002, not a specific personal fact."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "unsupported",
+          "severity": 1,
+          "source_turn_ids": [
+            "C:T002",
+            "C:T000",
+            "C:T001"
+          ],
+          "reason": "The clause 'especially when it comes to job hunting' asserts a specific personal circumstance as the content of the user's difficulty. Nothing in the current prefix (C:T000-C:T002) or the complete prior sessions (H001: sleep problems; H002: drinking affecting marriage) mentions jobs, employment or job hunting, so this is an invented personal topic presented as the user's situation rather than a tentative question; it materially mischaracterizes what the user is struggling with."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "An open invitation to say what is difficult right now; it proposes no action and asserts no personal fact beyond following the user's own disclosure."
+        }
+      ],
+      "coverage": "Reviewed all supplied material: the current prefix (C:T000-C:T002) contains only a greeting, the supporter's opening, and the user's vague statement about tough times; past session H001 concerns insomnia and yoga, and H002 concerns reduced drinking to save a marriage. No mention of employment, job loss or job seeking appears anywhere, so the job-hunting element of R002 is unsupported rather than contradicted by the record; the remainder of the reply was checked against the user's actual words and is consistent.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 1,
+    "U": -0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "38f0061279efc1a6bc748660d87cce6ece6c2b7b6acdc6442c4c8004f2f6fff6",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_04_1000",
+      "raw_output_sha256": "0c84a50854cb1f7f2eccda71542aa326c18124bbedcf86e1de8604c17e4f000e",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 1,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The user has just disclosed vaguely that 'things have been a bit tough lately' and needs a safe, non-presumptuous acknowledgment plus an invitation to say more on their own terms.",
+          "response_quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            },
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, are you there?"
+            },
+            {
+              "source_id": "C:T001",
+              "quote": "Hi John, yes, I'm here. How are things going?"
+            }
+          ],
+          "reason": "The reply is structurally well matched: it acknowledges the difficulty the user actually stated and opens space with an appropriately broad question. However, its central reflective sentence inserts a specific problem ('especially when it comes to job hunting') that the user never mentioned and that appears nowhere in the record, so the empathic reflection rests on a fabricated premise that can mislead or confuse the user at the very first disclosure. That is an important mishandling of the content rather than a total failure, so q=2 rather than lower; the missing topic is not made up for by polish or length."
+        },
+        "claims": [
+          {
+            "response_quote": "I'm sorry to hear that things have been tough for you lately.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "Directly reflects the user's own words in C:T002 ('things have been a bit tough lately') without adding specifics; the speaker acts only as a listener acknowledging the disclosure."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The general part ('going through a challenging time') is an ordinary empathic reflection of the user's stated difficulty in C:T002, not a specific personal fact."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "unsupported",
+            "severity": 1,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              },
+              {
+                "source_id": "C:T000",
+                "quote": "Hey, are you there?"
+              },
+              {
+                "source_id": "C:T001",
+                "quote": "Hi John, yes, I'm here. How are things going?"
+              }
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' asserts a specific personal circumstance as the content of the user's difficulty. Nothing in the current prefix (C:T000-C:T002) or the complete prior sessions (H001: sleep problems; H002: drinking affecting marriage) mentions jobs, employment or job hunting, so this is an invented personal topic presented as the user's situation rather than a tentative question; it materially mischaracterizes what the user is struggling with."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Reviewed all supplied material: the current prefix (C:T000-C:T002) contains only a greeting, the supporter's opening, and the user's vague statement about tough times; past session H001 concerns insomnia and yoga, and H002 concerns reduced drinking to save a marriage. No mention of employment, job loss or job seeking appears anywhere, so the job-hunting element of R002 is unsupported rather than contradicted by the record; the remainder of the reply was checked against the user's actual words and is consistent.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 242
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, are you there?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 19
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "Hi John, yes, I'm here. How are things going?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 45
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 61
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T000",
+          "quote": "Hey, are you there?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 19
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T001",
+          "quote": "Hi John, yes, I'm here. How are things going?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 45
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The user has just disclosed vaguely that 'things have been a bit tough lately' and needs a safe, non-presumptuous acknowledgment plus an invitation to say more on their own terms.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T000",
+            "C:T001"
+          ],
+          "reason": "The reply is structurally well matched: it acknowledges the difficulty the user actually stated and opens space with an appropriately broad question. However, its central reflective sentence inserts a specific problem ('especially when it comes to job hunting') that the user never mentioned and that appears nowhere in the record, so the empathic reflection rests on a fabricated premise that can mislead or confuse the user at the very first disclosure. That is an important mishandling of the content rather than a total failure, so q=2 rather than lower; the missing topic is not made up for by polish or length."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Directly reflects the user's own words in C:T002 ('things have been a bit tough lately') without adding specifics; the speaker acts only as a listener acknowledging the disclosure."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general part ('going through a challenging time') is an ordinary empathic reflection of the user's stated difficulty in C:T002, not a specific personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T000",
+              "C:T001"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' asserts a specific personal circumstance as the content of the user's difficulty. Nothing in the current prefix (C:T000-C:T002) or the complete prior sessions (H001: sleep problems; H002: drinking affecting marriage) mentions jobs, employment or job hunting, so this is an invented personal topic presented as the user's situation rather than a tentative question; it materially mischaracterizes what the user is struggling with."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Reviewed all supplied material: the current prefix (C:T000-C:T002) contains only a greeting, the supporter's opening, and the user's vague statement about tough times; past session H001 concerns insomnia and yoga, and H002 concerns reduced drinking to save a marriage. No mention of employment, job loss or job seeking appears anywhere, so the job-hunting element of R002 is unsupported rather than contradicted by the record; the remainder of the reply was checked against the user's actual words and is consistent.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The user has just disclosed vaguely that 'things have been a bit tough lately' and needs a safe, non-presumptuous acknowledgment plus an invitation to say more on their own terms.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T000",
+            "C:T001"
+          ],
+          "reason": "The reply is structurally well matched: it acknowledges the difficulty the user actually stated and opens space with an appropriately broad question. However, its central reflective sentence inserts a specific problem ('especially when it comes to job hunting') that the user never mentioned and that appears nowhere in the record, so the empathic reflection rests on a fabricated premise that can mislead or confuse the user at the very first disclosure. That is an important mishandling of the content rather than a total failure, so q=2 rather than lower; the missing topic is not made up for by polish or length."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Directly reflects the user's own words in C:T002 ('things have been a bit tough lately') without adding specifics; the speaker acts only as a listener acknowledging the disclosure.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general part ('going through a challenging time') is an ordinary empathic reflection of the user's stated difficulty in C:T002, not a specific personal fact.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T000",
+              "C:T001"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' asserts a specific personal circumstance as the content of the user's difficulty. Nothing in the current prefix (C:T000-C:T002) or the complete prior sessions (H001: sleep problems; H002: drinking affecting marriage) mentions jobs, employment or job hunting, so this is an invented personal topic presented as the user's situation rather than a tentative question; it materially mischaracterizes what the user is struggling with.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "An open invitation to say what is difficult right now; it proposes no action and asserts no personal fact beyond following the user's own disclosure.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all supplied material: the current prefix (C:T000-C:T002) contains only a greeting, the supporter's opening, and the user's vague statement about tough times; past session H001 concerns insomnia and yoga, and H002 concerns reduced drinking to save a marriage. No mention of employment, job loss or job seeking appears anywhere, so the job-hunting element of R002 is unsupported rather than contradicted by the record; the remainder of the reply was checked against the user's actual words and is consistent.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 1,
+      "derived_error_indexes": [
+        2
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The user has just disclosed vaguely that 'things have been a bit tough lately' and needs a safe, non-presumptuous acknowledgment plus an invitation to say more on their own terms.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T000",
+            "C:T001"
+          ],
+          "reason": "The reply is structurally well matched: it acknowledges the difficulty the user actually stated and opens space with an appropriately broad question. However, its central reflective sentence inserts a specific problem ('especially when it comes to job hunting') that the user never mentioned and that appears nowhere in the record, so the empathic reflection rests on a fabricated premise that can mislead or confuse the user at the very first disclosure. That is an important mishandling of the content rather than a total failure, so q=2 rather than lower; the missing topic is not made up for by polish or length."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Directly reflects the user's own words in C:T002 ('things have been a bit tough lately') without adding specifics; the speaker acts only as a listener acknowledging the disclosure."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general part ('going through a challenging time') is an ordinary empathic reflection of the user's stated difficulty in C:T002, not a specific personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T000",
+              "C:T001"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' asserts a specific personal circumstance as the content of the user's difficulty. Nothing in the current prefix (C:T000-C:T002) or the complete prior sessions (H001: sleep problems; H002: drinking affecting marriage) mentions jobs, employment or job hunting, so this is an invented personal topic presented as the user's situation rather than a tentative question; it materially mischaracterizes what the user is struggling with."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "An open invitation to say what is difficult right now; it proposes no action and asserts no personal fact beyond following the user's own disclosure."
+          }
+        ],
+        "coverage": "Reviewed all supplied material: the current prefix (C:T000-C:T002) contains only a greeting, the supporter's opening, and the user's vague statement about tough times; past session H001 concerns insomnia and yoga, and H002 concerns reduced drinking to save a marriage. No mention of employment, job loss or job seeking appears anywhere, so the job-hunting element of R002 is unsupported rather than contradicted by the record; the remainder of the reply was checked against the user's actual words and is consistent.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": -0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "0c84a50854cb1f7f2eccda71542aa326c18124bbedcf86e1de8604c17e4f000e",
+      "adapted_final_sha256": "0c84a50854cb1f7f2eccda71542aa326c18124bbedcf86e1de8604c17e4f000e",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0044355",
+    "usage_upper_usd": "0.0044355",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4197,
+    "completion_tokens": 2647,
+    "total_tokens": 6844,
+    "prompt_tokens_details": {
+      "cached_tokens": 3968
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1938
+    },
+    "prompt_cache_hit_tokens": 3968,
+    "prompt_cache_miss_tokens": 229
+  },
+  "elapsed_seconds": 14.31656437399215,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

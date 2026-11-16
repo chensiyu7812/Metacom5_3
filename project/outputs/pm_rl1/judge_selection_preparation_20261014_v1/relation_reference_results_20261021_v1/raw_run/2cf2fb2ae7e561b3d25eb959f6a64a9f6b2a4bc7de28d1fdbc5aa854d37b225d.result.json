@@ -1,0 +1,404 @@
+{
+  "slot_id": "2cf2fb2ae7e561b3d25eb959f6a64a9f6b2a4bc7de28d1fdbc5aa854d37b225d",
+  "request_identity": "f97bcea7de4a3de76a0b2f34e3436e0bd324d4b509643205dfeffc1ace6f4592",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The final seeker turn is a closing expression of thanks after receiving advice; it calls for a brief acknowledgment and, optionally, a supportive closing without introducing new demands.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T021",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply appropriately closes the exchange: it acknowledges the thanks, offers brief encouragement grounded in the seeker's reported efforts, and leaves the door open without adding pressure or missing an explicit need."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "'You're welcome!' is conversational courtesy responding to the seeker's thanks; it asserts no personal fact about the seeker."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "'I'm glad I could help' is a subjective helper response, not a specific personal factual claim about the seeker."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The seeker explicitly reported reducing drinking to save the marriage (C:T007) and commitment to doing what he can to save the situation (C:T009), supporting the description of positive steps; 'takes a lot of courage' is evaluative encouragement rather than an asserted personal fact."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a generic offer of future support and check-in, not an assertion of a personal fact or a demand that the seeker act now."
+        }
+      ],
+      "coverage": "Assessed all four reply units against the current prefix and the complete past session. R003's encouragement is supported by the seeker's own reports in C:T007 and C:T009. R001, R002, and R004 are courtesy/generic support statements. The past session H001 concerns sleep and is not material here. No unsupported personal fact or boundary conflict was found.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "372e987f3fb15dddca1837283f8d1db5710339ab9e7f272578a952f2476bd568",
+      "legal_evidence_identity": "34e17db84748f4ef3bf1f5ab6f73b4f3eabacb49b48f78450706d1af232c4876",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "2cf2fb2ae7e561b3d25eb959f6a64a9f6b2a4bc7de28d1fdbc5aa854d37b225d",
+      "raw_output_sha256": "9e7c17a776010c5bbdc0355ae2a12fb4018ba3c30dcc75641e57b8e75b622ffb",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing expression of thanks after receiving advice; it calls for a brief acknowledgment and, optionally, a supportive closing without introducing new demands.",
+          "response_quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "evidence": [
+            {
+              "source_id": "C:T021",
+              "quote": "Thank you for the assistance. Really appreciates"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Thank you for the encouragement. Will do everything I can to save the situation"
+            }
+          ],
+          "reason": "The reply appropriately closes the exchange: it acknowledges the thanks, offers brief encouragement grounded in the seeker's reported efforts, and leaves the door open without adding pressure or missing an explicit need."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Thank you for the encouragement. Will do everything I can to save the situation"
+              }
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage (C:T007) and commitment to doing what he can to save the situation (C:T009), supporting the description of positive steps; 'takes a lot of courage' is evaluative encouragement rather than an asserted personal fact."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Assessed all four reply units against the current prefix and the complete past session. R003's encouragement is supported by the seeker's own reports in C:T007 and C:T009. R001, R002, and R004 are courtesy/generic support statements. The past session H001 concerns sleep and is not material here. No unsupported personal fact or boundary conflict was found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 249
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T021",
+          "quote": "Thank you for the assistance. Really appreciates",
+          "positions": [
+            {
+              "start": 0,
+              "end": 48
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Thank you for the encouragement. Will do everything I can to save the situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 79
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+          "positions": [
+            {
+              "start": 39,
+              "end": 157
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Thank you for the encouragement. Will do everything I can to save the situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 79
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing expression of thanks after receiving advice; it calls for a brief acknowledgment and, optionally, a supportive closing without introducing new demands.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply appropriately closes the exchange: it acknowledges the thanks, offers brief encouragement grounded in the seeker's reported efforts, and leaves the door open without adding pressure or missing an explicit need."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage (C:T007) and commitment to doing what he can to save the situation (C:T009), supporting the description of positive steps; 'takes a lot of courage' is evaluative encouragement rather than an asserted personal fact."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Assessed all four reply units against the current prefix and the complete past session. R003's encouragement is supported by the seeker's own reports in C:T007 and C:T009. R001, R002, and R004 are courtesy/generic support statements. The past session H001 concerns sleep and is not material here. No unsupported personal fact or boundary conflict was found.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing expression of thanks after receiving advice; it calls for a brief acknowledgment and, optionally, a supportive closing without introducing new demands.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply appropriately closes the exchange: it acknowledges the thanks, offers brief encouragement grounded in the seeker's reported efforts, and leaves the door open without adding pressure or missing an explicit need."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "'You're welcome!' is conversational courtesy responding to the seeker's thanks; it asserts no personal fact about the seeker.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "'I'm glad I could help' is a subjective helper response, not a specific personal factual claim about the seeker.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage (C:T007) and commitment to doing what he can to save the situation (C:T009), supporting the description of positive steps; 'takes a lot of courage' is evaluative encouragement rather than an asserted personal fact.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic offer of future support and check-in, not an assertion of a personal fact or a demand that the seeker act now.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Assessed all four reply units against the current prefix and the complete past session. R003's encouragement is supported by the seeker's own reports in C:T007 and C:T009. R001, R002, and R004 are courtesy/generic support statements. The past session H001 concerns sleep and is not material here. No unsupported personal fact or boundary conflict was found.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing expression of thanks after receiving advice; it calls for a brief acknowledgment and, optionally, a supportive closing without introducing new demands.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply appropriately closes the exchange: it acknowledges the thanks, offers brief encouragement grounded in the seeker's reported efforts, and leaves the door open without adding pressure or missing an explicit need."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "'You're welcome!' is conversational courtesy responding to the seeker's thanks; it asserts no personal fact about the seeker."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "'I'm glad I could help' is a subjective helper response, not a specific personal factual claim about the seeker."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage (C:T007) and commitment to doing what he can to save the situation (C:T009), supporting the description of positive steps; 'takes a lot of courage' is evaluative encouragement rather than an asserted personal fact."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic offer of future support and check-in, not an assertion of a personal fact or a demand that the seeker act now."
+          }
+        ],
+        "coverage": "Assessed all four reply units against the current prefix and the complete past session. R003's encouragement is supported by the seeker's own reports in C:T007 and C:T009. R001, R002, and R004 are courtesy/generic support statements. The past session H001 concerns sleep and is not material here. No unsupported personal fact or boundary conflict was found.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "9e7c17a776010c5bbdc0355ae2a12fb4018ba3c30dcc75641e57b8e75b622ffb",
+      "adapted_final_sha256": "9e7c17a776010c5bbdc0355ae2a12fb4018ba3c30dcc75641e57b8e75b622ffb",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0037203",
+    "usage_upper_usd": "0.0037203",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4061,
+    "completion_tokens": 2085,
+    "total_tokens": 6146,
+    "prompt_tokens_details": {
+      "cached_tokens": 3840
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1599
+    },
+    "prompt_cache_hit_tokens": 3840,
+    "prompt_cache_miss_tokens": 221
+  },
+  "elapsed_seconds": 11.147163677000208,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-relation-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

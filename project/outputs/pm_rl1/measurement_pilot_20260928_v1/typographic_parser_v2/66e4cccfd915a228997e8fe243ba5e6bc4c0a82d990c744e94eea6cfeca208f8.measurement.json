@@ -1,0 +1,49 @@
+{
+  "response_sha256": "9a8b39bb206c9462c495c13804d40534a41e0ca4c8d4915dbc1513953d3c59fc",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "5efc605fbb36d6dc842cdbdad8e81553bc50ce590dc40a6c217bafe5d77673b6",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "quote is absent from bound original text",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "strict_parser_status": "parse_or_evidence_failure",
+  "quote_transformations": [
+    {
+      "part": 0,
+      "field": "evidence[0].quote",
+      "source_id": "C:T012",
+      "provided": "It's hard for me to ask for help or even trust it'll come through.",
+      "matched_original": "It’s hard for me to ask for help or even trust it’ll come through."
+    }
+  ],
+  "normalized_final_json": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker expresses difficulty trusting that help will come through and states they have not sought support recently",
+      "response_quote": "Have you thought about talking to someone you trust...",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "While the reply validates the emotional difficulty ('That can be really tough'), it rephrases the previous offer of help as a suggestion ('Have you thought about') immediately after the seeker explicitly stated the barrier to doing so ('It's hard for me...'). A fully responsive turn (Q4) would likely acknowledge the validity of this hesitation regarding trust more directly or explore the barrier further, rather than circling back to the solution which the user has flagged as difficult."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Identity (Michael) and temporal context (2025-02-02) verified; no personal factual claims made in reply to verify against history.",
+    "uncertainty_reasons": []
+  },
+  "normalization_scope": "only whitespace and straight/curly quote glyphs; no word or source-ID changes",
+  "original_format_transformations": [
+    "remove_closed_thinking_prefix"
+  ]
+}

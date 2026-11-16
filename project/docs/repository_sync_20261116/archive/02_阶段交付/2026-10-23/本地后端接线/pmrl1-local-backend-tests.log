@@ -1,0 +1,70 @@
+F............................                                            [100%]
+=================================== FAILURES ===================================
+__________ test_lazy_load_order_public_observation_and_rng_preserved ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-40/test_lazy_load_order_public_ob0')
+
+    def test_lazy_load_order_public_observation_and_rng_preserved(tmp_path):
+        b,q,w,req,events,spec,r=setup(tmp_path)
+        assert not events and not b.root.exists()
+        encoder=b.feature_encoder();env=BoundResourceEnv(spec,r)
+>       rng=torch.get_rng_state().clone();first=encoder.encode(env.observe())
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_rl1_local_backend.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/metacom_pm/rl1/observation_features.py:117: in encode
+    record=base.encode(observation)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <metacom_pm.rl1.observation_features.ObservedFeatureEncoder object at 0x7fd0443db790>
+observation = Observation(current_prefix=(PublicTurn(role='seeker', content='I need to talk.'),), acquired=(), counts=(0, 0, 0, 0), ...rue, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True))
+
+    def encode(self, observation):
+        if type(observation) is not Observation:
+            raise TypeError('only the public Observation is accepted')
+        o = observation
+        if (len(o.counts)!=4 or any(type(n) is not int or not 0<=n<=4 for n in o.counts)
+                or sum(o.counts)>4 or len(o.acquired)!=sum(o.counts)
+                or len(o.action_mask)!=5 or any(type(x) is not bool for x in o.action_mask)
+                or not any(o.action_mask) or not o.current_prefix or o.current_prefix[-1].role!='seeker'
+                or len(o.metadata)!=4 or any(len(h)!=4 for h in o.metadata)
+                or len(o.remaining_items)!=4 or any(type(n) is not int or n<0 for n in o.remaining_items)
+                or o.remaining_gets!=4-sum(o.counts) or not 0<=o.remaining_tokens<=self.budget):
+            raise ValueError('invalid public acquisition observation')
+        acquired = sorted(o.acquired,key=lambda a:(HEADS.index(a.head),a.rank))
+        if [(a.head,a.rank) for a in acquired] != [(h,r) for h,n in zip(HEADS,o.counts) for r in range(1,n+1)]:
+            raise ValueError('acquired set/count/rank mismatch')
+        texts = ['\n'.join(f'{t.role}: {t.content}' for t in o.current_prefix)] + [
+            json.dumps(dict(head=a.head,rank=a.rank,source_time=a.source_time,content=a.content),
+                       ensure_ascii=False,sort_keys=True) for a in acquired]
+        # Only strings in the currently visible observation may populate/cache
+        # vectors. An existing vector cannot reveal an unacquired item.
+        missing = list(dict.fromkeys(t for t in texts if t not in self._cache))
+        if missing:
+            vectors = self.encode_texts(missing)
+            if len(vectors)!=len(missing): raise ValueError('encoder row count differs')
+            for text, vector in zip(missing,vectors):
+                if len(vector)!=self.dimension or not all(math.isfinite(x) for x in vector):
+                    raise ValueError('invalid frozen text embedding')
+                self._cache[text] = tuple(float(x) for x in vector)
+        values = [x for t in texts for x in self._cache[t]] + [0.]*(4-len(acquired))*self.dimension
+        for index in range(4):
+            a = acquired[index] if index<len(acquired) else None
+            values += [float(a is not None)] + [float(a is not None and a.head==h) for h in HEADS] + [a.rank/4 if a else 0.]
+        values += [n/4 for n in o.counts] + [math.log1p(n) for n in o.remaining_items]
+        values += [o.remaining_tokens/self.budget,o.remaining_gets/4]
+        for head in o.metadata:
+            for rank,m in enumerate(head,1):
+                if m is None:
+                    values += [0.]*7
+                else:
+                    if m.rank!=rank or m.coarse_age not in AGES or m.raw_tokens<0 or not math.isfinite(m.similarity):
+>                       raise ValueError('invalid public metadata')
+E                       ValueError: invalid public metadata
+
+src/metacom_pm/rl1/observation_features.py:81: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_rl1_local_backend.py::test_lazy_load_order_public_observation_and_rng_preserved
+1 failed, 28 passed in 25.51s

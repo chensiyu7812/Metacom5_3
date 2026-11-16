@@ -1,0 +1,272 @@
+{
+  "response_sha256": "48aa89030f6ee07f6a1ef2323383fd5814a3e36e91c87b2e27ea3d9fda8edb50",
+  "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "ded0f20d13be92311f6273659fb3b7e601b129330441d694d5b46e0edea89847",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of coping mechanisms (yoga/reading) and acknowledgement of upcoming therapy discussion discussed in prior turns.",
+      "response_quote": "You are planning to discuss the new relationship with your therapist. It is good that yoga and reading give you some space to unwind.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+        },
+        {
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's stated plan from C:T012 regarding the therapist discussion and supports their reported coping strategy from C:T018 without introducing factual errors or violating boundaries. It is coherent, responsive, and appropriate for the emotional support context."
+    },
+    "claims": [
+      {
+        "response_quote": "You are planning to discuss the new relationship with your therapist.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+          }
+        ],
+        "reason": "Directly mirrors the user's explicit statement in C:T012 ('planning on bringing it up') regarding the intention to discuss the new relationship with the therapist."
+      },
+      {
+        "response_quote": "It is good that yoga and reading give you some space to unwind.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T018",
+            "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+          }
+        ],
+        "reason": "Aligns with the user's description in C:T018 that yoga and reading help them 'center myself and escape my thoughts', validating these activities as beneficial for unwinding."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response addresses both the future intention identified in turn C:T012 and the coping mechanism reported in turn C:T018, providing validation and acknowledgment of the user's proactive steps.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You are planning to discuss the new relationship with your therapist. It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 133
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You are planning to discuss the new relationship with your therapist.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 133
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of coping mechanisms (yoga/reading) and acknowledgement of upcoming therapy discussion discussed in prior turns.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply accurately reflects the user's stated plan from C:T012 regarding the therapist discussion and supports their reported coping strategy from C:T018 without introducing factual errors or violating boundaries. It is coherent, responsive, and appropriate for the emotional support context."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Directly mirrors the user's explicit statement in C:T012 ('planning on bringing it up') regarding the intention to discuss the new relationship with the therapist."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Aligns with the user's description in C:T018 that yoga and reading help them 'center myself and escape my thoughts', validating these activities as beneficial for unwinding."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response addresses both the future intention identified in turn C:T012 and the coping mechanism reported in turn C:T018, providing validation and acknowledgment of the user's proactive steps.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of coping mechanisms (yoga/reading) and acknowledgement of upcoming therapy discussion discussed in prior turns.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply accurately reflects the user's stated plan from C:T012 regarding the therapist discussion and supports their reported coping strategy from C:T018 without introducing factual errors or violating boundaries. It is coherent, responsive, and appropriate for the emotional support context."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Directly mirrors the user's explicit statement in C:T012 ('planning on bringing it up') regarding the intention to discuss the new relationship with the therapist.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Aligns with the user's description in C:T018 that yoga and reading help them 'center myself and escape my thoughts', validating these activities as beneficial for unwinding.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The response addresses both the future intention identified in turn C:T012 and the coping mechanism reported in turn C:T018, providing validation and acknowledgment of the user's proactive steps.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of coping mechanisms (yoga/reading) and acknowledgement of upcoming therapy discussion discussed in prior turns.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply accurately reflects the user's stated plan from C:T012 regarding the therapist discussion and supports their reported coping strategy from C:T018 without introducing factual errors or violating boundaries. It is coherent, responsive, and appropriate for the emotional support context."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Directly mirrors the user's explicit statement in C:T012 ('planning on bringing it up') regarding the intention to discuss the new relationship with the therapist."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Aligns with the user's description in C:T018 that yoga and reading help them 'center myself and escape my thoughts', validating these activities as beneficial for unwinding."
+      }
+    ],
+    "coverage": "The response addresses both the future intention identified in turn C:T012 and the coping mechanism reported in turn C:T018, providing validation and acknowledgment of the user's proactive steps.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

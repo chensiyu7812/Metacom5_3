@@ -1,0 +1,64 @@
+{
+  "response_sha256": "8a2ee18b352f2fa4d1559e480280ea3466e57583d84822deafd2223085e7a918",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "b71949466e8d8d11d89724780d81ca1f5cc96fd4bed773d33f302a20e057ebe3",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the complexity of moving cities and explore what is being left behind as per user's disclosure in C:T007.",
+      "response_quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        }
+      ],
+      "reason": "The reply accurately mirrors the emotional tone and content of the user's last turn (C:T007), acknowledging the mixed feelings about moving. It asks a targeted follow-up question ('What is it about Canberra that you miss?') that invites further elaboration on the user's specific constraint/admission without violating boundaries or introducing unsupported facts."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked current session turn C:T007 for consistency with the reply's validation of moving to Sydney and missing aspects of Canberra. Verified user name 'Jimmy' aligns with C:T000. Checked historical context for location details (Sydney/Canberra) consistent with prior moves discussed in H023-T026.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 193
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

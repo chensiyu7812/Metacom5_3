@@ -1,0 +1,386 @@
+{
+  "response_sha256": "2e093920d3886d4360f6106c93b13638c985b7aa5481340722c476ddbf93847a",
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "44eb6131713c000c321e1c6f988e1c0f072fadb667cac056a13077ffc0d29779",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User asks for specific advice or sharing on how to handle the mother's control over friend choices ('How did you deal with that') and expresses anger linked to the situation.",
+      "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time."
+        },
+        {
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+        },
+        {
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do."
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry."
+        }
+      ],
+      "reason": "The reply effectively validates the user's emotions and summarizes the context accurately (mom/friends conflict), but fails to address the explicit request for coping strategies or resolution experiences ('how did you deal'), redirecting solely to exploring anger triggers instead of acknowledging the informational gap or suggesting steps."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T005",
+            "quote": "Yes. My mom never approves of most of the things I do."
+          },
+          {
+            "source_id": "C:T007",
+            "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+          }
+        ],
+        "reason": "Claims frustration regarding mom approving of things and choosing friends align with C:T005 (never approves) and C:T007 (freedom to choose friends)."
+      },
+      {
+        "response_quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "Really? How did you deal with that because for me it makes me angry."
+          }
+        ],
+        "reason": "References the user's explicitly stated anger ('makes me angry') in C:T009."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Reply covers the emotional impact of the parent-child conflict and user's specific anger, but omits the specific request for resolution strategies.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 346
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I have mixed feelings sad and angry at the same time.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 53
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T005",
+      "quote": "Yes. My mom never approves of most of the things I do.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 54
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+      "positions": [
+        {
+          "start": 35,
+          "end": 163
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T005",
+      "quote": "Yes. My mom never approves of most of the things I do.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 54
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+      "positions": [
+        {
+          "start": 165,
+          "end": 273
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User asks for specific advice or sharing on how to handle the mother's control over friend choices ('How did you deal with that') and expresses anger linked to the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply effectively validates the user's emotions and summarizes the context accurately (mom/friends conflict), but fails to address the explicit request for coping strategies or resolution experiences ('how did you deal'), redirecting solely to exploring anger triggers instead of acknowledging the informational gap or suggesting steps."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T007"
+        ],
+        "reason": "Claims frustration regarding mom approving of things and choosing friends align with C:T005 (never approves) and C:T007 (freedom to choose friends)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "References the user's explicitly stated anger ('makes me angry') in C:T009."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Reply covers the emotional impact of the parent-child conflict and user's specific anger, but omits the specific request for resolution strategies.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "User asks for specific advice or sharing on how to handle the mother's control over friend choices ('How did you deal with that') and expresses anger linked to the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply effectively validates the user's emotions and summarizes the context accurately (mom/friends conflict), but fails to address the explicit request for coping strategies or resolution experiences ('how did you deal'), redirecting solely to exploring anger triggers instead of acknowledging the informational gap or suggesting steps."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic expression of empathy without factual assertion.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T007"
+        ],
+        "reason": "Claims frustration regarding mom approving of things and choosing friends align with C:T005 (never approves) and C:T007 (freedom to choose friends).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "References the user's explicitly stated anger ('makes me angry') in C:T009.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T003",
+          "C:T007"
+        ],
+        "reason": "Proposed options (controlled, disappointing her) reflect themes found in C:T003 (love mom/not argue) and C:T007 (freedom/choice), presented tentatively as questions rather than assertions.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Reply covers the emotional impact of the parent-child conflict and user's specific anger, but omits the specific request for resolution strategies.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "User asks for specific advice or sharing on how to handle the mother's control over friend choices ('How did you deal with that') and expresses anger linked to the situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply effectively validates the user's emotions and summarizes the context accurately (mom/friends conflict), but fails to address the explicit request for coping strategies or resolution experiences ('how did you deal'), redirecting solely to exploring anger triggers instead of acknowledging the informational gap or suggesting steps."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic expression of empathy without factual assertion."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T005",
+          "C:T007"
+        ],
+        "reason": "Claims frustration regarding mom approving of things and choosing friends align with C:T005 (never approves) and C:T007 (freedom to choose friends)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "References the user's explicitly stated anger ('makes me angry') in C:T009."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T003",
+          "C:T007"
+        ],
+        "reason": "Proposed options (controlled, disappointing her) reflect themes found in C:T003 (love mom/not argue) and C:T007 (freedom/choice), presented tentatively as questions rather than assertions."
+      }
+    ],
+    "coverage": "Reply covers the emotional impact of the parent-child conflict and user's specific anger, but omits the specific request for resolution strategies.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.5
+}

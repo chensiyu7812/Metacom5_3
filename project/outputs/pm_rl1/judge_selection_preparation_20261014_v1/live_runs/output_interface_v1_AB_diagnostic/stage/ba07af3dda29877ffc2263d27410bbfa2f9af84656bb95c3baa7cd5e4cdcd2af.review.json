@@ -1,0 +1,51 @@
+{
+  "time_jst": "2026-10-15T17:55:28.511426+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "ba07af3dda29877ffc2263d27410bbfa2f9af84656bb95c3baa7cd5e4cdcd2af",
+  "original_slot_request_id": "9df65a6d9aaed764c8932dcd5dbd67df6b5542a372814edb69e5b7629aecff17",
+  "item_key": "dev10B",
+  "draw": "primary",
+  "response_sha256": "003234eca34b540606b64e34d1e954fbcef428c45689598050875f10a181efe9",
+  "raw_sha256": "83f4d6abf5c09949258e8b77fe29ee1a6bc7698717f1ebef2a577d99f3ae2042",
+  "explanation": "A/dev10B完整final0/1。R001把老板未辞职及仍需向同一老板汇报当现实，直接与C:T000辞职和C:T006接任担忧冲突；模型准确定位此核心状态错误及严重度1，未用旧历史覆盖当前更新。R002保留尊重员工愿望的支持。q0与q1相邻锚点没有绝对人类金标准；核心理解受破坏的理由具体，不因相邻分值偏好判裁判实质错误。与10A形成有明确事实依据的方向差。",
+  "source_checks": [
+    {
+      "source_id": "C:T000",
+      "exact_quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "finding": "当前明确辞职，反证R001"
+    },
+    {
+      "source_id": "C:T006",
+      "exact_quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over.",
+      "finding": "担忧接任者而非继续同一老板"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "finding": "尊重员工愿望支持R002"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "actor": "老板及用户关系明确",
+    "facts": "模型正确识别当前状态直接矛盾",
+    "citations": "T000精确支持反证；T008支持愿望",
+    "severity": "错误改变核心当前处境，m1有原material锚点依据",
+    "q_anchor": "q0理由具体；0/1边界无绝对金标准，不追加硬停",
+    "mixed_assertions": "将主要错误与有支持的愿望分开",
+    "comparison": "10A4/0/U1 vs10B0/1/U-1，有来源支持方向差"
+  },
+  "issues": [],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

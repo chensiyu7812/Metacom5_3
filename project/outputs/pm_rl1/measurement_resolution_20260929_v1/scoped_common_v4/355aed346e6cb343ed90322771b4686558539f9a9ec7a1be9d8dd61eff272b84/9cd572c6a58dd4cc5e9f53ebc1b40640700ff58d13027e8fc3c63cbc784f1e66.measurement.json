@@ -1,0 +1,303 @@
+{
+  "response_sha256": "579a33e6bea33abce32dcdb42d9acd447801dcb03643ff46a3167187e6087033",
+  "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+  "raw_output_sha256": "486757b6d003dc7a821fa5e961b9be8f12f1eed6bb7a61421223a0dbba4c13cd",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Taylor) reports sharing vulnerabilities (study pressure, direction confusion, parent conflict) with siblings. She seeks emotional support/validation.",
+      "response_quote": "It can be really tough to navigate all those challenges at once. It's great that you felt comfortable sharing those things with your siblings. Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+        },
+        {
+          "source_id": "C:T003",
+          "quote": "It sounds like reaching out to your siblings was a brave step. What did you talk about, if you don’t mind sharing?"
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+        }
+      ],
+      "reason": "The reply provides full validation of the user's struggle (R001), positively reinforces the disclosure behavior mentioned in the prior turns (R002), and asks two relevant, open-ended follow-up questions directly tied to the specific disclosures made in C:T004 (R003). It respects the user's pace and does not force advice. This fully meets the expectations for an appropriate supportive response to this turn."
+    },
+    "claims": [
+      {
+        "response_quote": "It's great that you felt comfortable sharing those things with your siblings.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+          },
+          {
+            "source_id": "C:T002",
+            "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+          }
+        ],
+        "reason": "Aligns with user's report of opening up to siblings and finding them supportive."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response covers all three components of R001-R003. R001 validates emotion, R002 affirms support system usage, R003 explores impact.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to navigate all those challenges at once. It's great that you felt comfortable sharing those things with your siblings. Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 276
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "It sounds like reaching out to your siblings was a brave step. What did you talk about, if you don’t mind sharing?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's great that you felt comfortable sharing those things with your siblings.",
+      "positions": [
+        {
+          "start": 65,
+          "end": 142
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Taylor) reports sharing vulnerabilities (study pressure, direction confusion, parent conflict) with siblings. She seeks emotional support/validation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T003",
+        "C:T004"
+      ],
+      "reason": "The reply provides full validation of the user's struggle (R001), positively reinforces the disclosure behavior mentioned in the prior turns (R002), and asks two relevant, open-ended follow-up questions directly tied to the specific disclosures made in C:T004 (R003). It respects the user's pace and does not force advice. This fully meets the expectations for an appropriate supportive response to this turn."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "Aligns with user's report of opening up to siblings and finding them supportive."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response covers all three components of R001-R003. R001 validates emotion, R002 affirms support system usage, R003 explores impact.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Taylor) reports sharing vulnerabilities (study pressure, direction confusion, parent conflict) with siblings. She seeks emotional support/validation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T003",
+        "C:T004"
+      ],
+      "reason": "The reply provides full validation of the user's struggle (R001), positively reinforces the disclosure behavior mentioned in the prior turns (R002), and asks two relevant, open-ended follow-up questions directly tied to the specific disclosures made in C:T004 (R003). It respects the user's pace and does not force advice. This fully meets the expectations for an appropriate supportive response to this turn."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Generic empathic statement reflecting the difficulty described.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "Aligns with user's report of opening up to siblings and finding them supportive.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Tentative inquiry into outcomes of the conversation reported by the user.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response covers all three components of R001-R003. R001 validates emotion, R002 affirms support system usage, R003 explores impact.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Taylor) reports sharing vulnerabilities (study pressure, direction confusion, parent conflict) with siblings. She seeks emotional support/validation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T003",
+        "C:T004"
+      ],
+      "reason": "The reply provides full validation of the user's struggle (R001), positively reinforces the disclosure behavior mentioned in the prior turns (R002), and asks two relevant, open-ended follow-up questions directly tied to the specific disclosures made in C:T004 (R003). It respects the user's pace and does not force advice. This fully meets the expectations for an appropriate supportive response to this turn."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Generic empathic statement reflecting the difficulty described."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002"
+        ],
+        "reason": "Aligns with user's report of opening up to siblings and finding them supportive."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Tentative inquiry into outcomes of the conversation reported by the user."
+      }
+    ],
+    "coverage": "The response covers all three components of R001-R003. R001 validates emotion, R002 affirms support system usage, R003 explores impact.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

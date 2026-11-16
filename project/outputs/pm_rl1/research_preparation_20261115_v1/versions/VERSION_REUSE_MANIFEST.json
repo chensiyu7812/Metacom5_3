@@ -1,0 +1,784 @@
+{
+  "version": "pmrl1-offline-version-reuse-manifest-20261115-v1",
+  "scope": "Preparation A; source identities and conditional reuse rulings, not a completed cache migration",
+  "repository": {
+    "root": "/home/tokkio/Metacom5_3",
+    "resolved_root": "/opt/tokkio-data0/tokkio_projects/Metacom5_3",
+    "head": "982cf0bf9f9479dce276576cbd71612201f02004",
+    "branch": "work/paper1-rq1-integration-20260816"
+  },
+  "execution": {
+    "new_model_loads": 0,
+    "new_G_calls": 0,
+    "new_J_calls": 0,
+    "paid_calls": 0,
+    "training_updates": 0,
+    "production_code_edits": 0,
+    "test_gold_read": false,
+    "deprecated_11_80_source_read": false,
+    "row_level_reuse_match_performed": false,
+    "new_formal_primary_frozen": false
+  },
+  "G_versions": {
+    "P2_Llama": {
+      "runtime": {
+        "identity": "4666e72612aef698567b2e14fd3315463c451cde64f5cad1299199aaf9e0e811",
+        "protocol": "pm-rl1-natural-end-v1",
+        "model_dir": "/opt/tokkio-data0/tokkio_models/huggingface/hub/models--NousResearch--Meta-Llama-3.1-8B-Instruct/snapshots/d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "model_files": {
+          "config.json": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e",
+          "generation_config.json": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd",
+          "model-00001-of-00004.safetensors": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668",
+          "model-00002-of-00004.safetensors": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15",
+          "model-00003-of-00004.safetensors": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa",
+          "model-00004-of-00004.safetensors": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b",
+          "model.safetensors.index.json": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b",
+          "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+          "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+          "tokenizer_config.json": "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6"
+        },
+        "adapter": {
+          "path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/training/058aa28e277649ac26b76895c694c0944674efd3d23fffbbf1fd8084b2f53a32/epoch_3",
+          "files": {
+            "adapter_config.json": "43f3b53075185002ca11bbb7de97af56d83c3db31ff60b4d74e01c3b078e431b",
+            "adapter_model.safetensors": "cbd47d24ecd57f487ad5aa4397144dc07cdaa5f0aad7273dea84de84cb84c7b5"
+          },
+          "name": "epoch_3",
+          "peft_version": "0.17.1"
+        },
+        "packages": {
+          "torch": "2.3.1+cu121",
+          "transformers": "4.57.6",
+          "tokenizers": "0.22.2"
+        },
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "seed": 0,
+        "policy": {
+          "context_limit": 131072,
+          "eos_token_ids": [
+            128001,
+            128008,
+            128009
+          ],
+          "timeout_seconds": 300.0,
+          "cycle_width": 32,
+          "cycle_repetitions": 4
+        },
+        "chat_template_sha256": "e972ba9b49dec86ff9e86f45ce09d347e043bb853bf8d1b6469779aaf95ae41b",
+        "request_protocol": "pm-rl1-source-scoped-generation-v2",
+        "binding_code_sha256": "fa4f42fbf35e291843e79f42bd5701b991a358f087e842ce6c2bddad6c4c5dd2",
+        "code_sha256": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30"
+      },
+      "renderer_identity": "4f1f582a5e955cbbf468328813a20e5830031c9fc5568e2699dcb5409e9a4c4b",
+      "draw_identity": "pm-rl1-completion-v2-terminal-greedy-seed0",
+      "status": "Historical frozen common-pool executor; no proven quality improvement"
+    },
+    "P2_base_control": {
+      "runtime": {
+        "identity": "05445b649849bfff2d21c2039e4e19ae64fe8270d6c224c16054f3c534c84195",
+        "protocol": "pm-rl1-natural-end-v1",
+        "model_dir": "/opt/tokkio-data0/tokkio_models/huggingface/hub/models--NousResearch--Meta-Llama-3.1-8B-Instruct/snapshots/d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "model_files": {
+          "config.json": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e",
+          "generation_config.json": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd",
+          "model-00001-of-00004.safetensors": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668",
+          "model-00002-of-00004.safetensors": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15",
+          "model-00003-of-00004.safetensors": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa",
+          "model-00004-of-00004.safetensors": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b",
+          "model.safetensors.index.json": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b",
+          "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+          "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+          "tokenizer_config.json": "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6"
+        },
+        "adapter": null,
+        "packages": {
+          "torch": "2.3.1+cu121",
+          "transformers": "4.57.6",
+          "tokenizers": "0.22.2"
+        },
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "seed": 0,
+        "policy": {
+          "context_limit": 131072,
+          "eos_token_ids": [
+            128001,
+            128008,
+            128009
+          ],
+          "timeout_seconds": 300.0,
+          "cycle_width": 32,
+          "cycle_repetitions": 4
+        },
+        "chat_template_sha256": "e972ba9b49dec86ff9e86f45ce09d347e043bb853bf8d1b6469779aaf95ae41b",
+        "request_protocol": "pm-rl1-source-scoped-generation-v2",
+        "binding_code_sha256": "fa4f42fbf35e291843e79f42bd5701b991a358f087e842ce6c2bddad6c4c5dd2",
+        "code_sha256": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30"
+      },
+      "status": "Same P2-era rendering, no LoRA"
+    },
+    "Paper1_static_base": {
+      "identity": "b6436e21e92860a7196d94d216a49fe3680499b300c3a4ee80948164366a30ee",
+      "runtime": {
+        "model": "meta/llama-3.1-8b-instruct",
+        "revision": "d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+        "dtype": "bfloat16",
+        "backend": "Transformers SDPA",
+        "concurrency": 1,
+        "temperature": 0,
+        "do_sample": false,
+        "normal_stop": "EOS/EOT",
+        "task_output_token_cap": null,
+        "native_context_tokens": 131072,
+        "technical_timeout_seconds": 300,
+        "exact_cycle_guard": {
+          "block_tokens": 32,
+          "repeats": 4
+        },
+        "incomplete_is_not_semantic_uncertain": true,
+        "seed": 0,
+        "tokenizer_json_sha256": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+        "tokenizer_config_sha256": "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6",
+        "chat_template_sha256": "b48c47f6443892716176eb200bf4ef108f64e06ca26ed0fa8ebc0a4b3992fcb2"
+      },
+      "status": "Historical QA/Summary version; different chat-template identity from P2"
+    },
+    "Gemma_QA_and_typed_candidate": {
+      "runtime": {
+        "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e",
+        "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+        "model_files": {
+          "chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4",
+          "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+          "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+          "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d",
+          "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9",
+          "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+          "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+        },
+        "adapter": null,
+        "packages": {
+          "safetensors": "0.8.0",
+          "tokenizers": "0.23.2",
+          "torch": "2.7.1+cu128",
+          "transformers": "5.17.0"
+        },
+        "dtype": "bfloat16",
+        "attention": "sdpa",
+        "seed": 0,
+        "do_sample": false,
+        "enable_thinking": false,
+        "policy": {
+          "context_limit": 262144,
+          "cycle_repetitions": 4,
+          "cycle_width": 32,
+          "eos_token_ids": [
+            1,
+            106,
+            50
+          ],
+          "timeout_seconds": 300.0
+        },
+        "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5"
+      },
+      "same_runtime_in_two_protocols": true,
+      "QA_protocol_identity": "81df8fa80c7ff2204fb21f3561d66007cbd550bd1cf6d971efaedb3c6f0feefe",
+      "typed_protocol_identity": "af0ea9e108766f1fc564adef74dbc13640f0c1853f56e07e5e5e69ae9c32dfd3",
+      "status": "Development candidate; not promoted to primary frozen G"
+    },
+    "Claude_Gemma_branch": {
+      "model_path_from_source": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+      "source": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/gen_loop.py",
+      "status": "Separate code/prompt/evaluation branch; complete runtime equivalence unverified",
+      "also_contains": "Llama supplementary ceiling pool and ESC-Role interactive runs"
+    }
+  },
+  "resource_action_versions": {
+    "legacy": {
+      "domain": "70 count plans, max 4 GET, candidate 2048-token resource budget, frozen rank-prefix ordering",
+      "status": "Historical version retained; do not use to describe expanded ordered domain"
+    },
+    "current_organized": {
+      "domain": "Ordered STOP/RS/MP/MS/ME programs, no arbitrary top-k or four-read cap; native context capacity",
+      "ranking": "literal-overlap-public-prefix-plus-acquired-v1",
+      "status": "Development, not formal freeze",
+      "code": "project/src/metacom_pm/rl1/resource_organization.py"
+    },
+    "QA_probe": {
+      "retrieval": "BGE ordinary top-1/top-2 under the predeclared probe",
+      "status": "Does not mean organized live retriever is BGE"
+    },
+    "PM_features": {
+      "encoder": "BGE full-text chunk encoding and pooling",
+      "dimension_reported": 5139,
+      "status": "Feature encoding and candidate retrieval are separate identities"
+    }
+  },
+  "measurement": {
+    "natural_support_reward_qualified": false,
+    "human_references": 55,
+    "relative_cost_trial": "Real BC/PPO, 3 seeds and 384 trajectories, on exact same ON/OFF actual replies; demonstrates optimization/cost plumbing, not positive support gains",
+    "official_ESC_eval": "Keep official parser and task scope; altered single-turn prompt or expected digit score is a separate metric",
+    "latency": "Client send before all method-specific online work to actual first/final visible reply; component generation_seconds is not E2E; cached replay is not a new latency observation",
+    "unfrozen": [
+      "primary G promotion and renderer",
+      "resource representation schema and complete-case delivery",
+      "formal retriever/query update",
+      "ordered action-domain implementation and OneShot search budget",
+      "qualified natural-support feedback and tie/uncertain semantics",
+      "seconds coefficient and quality-latency operating point",
+      "deployment measurement/cache protocol",
+      "owner/source-family grouping and independent final evaluation"
+    ]
+  },
+  "required_reuse_join_fields": [
+    "source_snapshot_and_allowed_split",
+    "prefix_and_cutoff",
+    "retriever_version_and_query",
+    "ordered_actions_and_actual_selected_resource_ids",
+    "resource_body_hashes_and_order",
+    "renderer_and_full_messages",
+    "G_weights_adapter_template_decode_runtime",
+    "draw_identity",
+    "actual_reply_bytes_hash",
+    "measurement_input_and_rubric_identity",
+    "measured_client_path_cache_policy_hardware"
+  ],
+  "assets": [
+    {
+      "asset": "P2 common pool",
+      "counts": {
+        "primary": {
+          "slots": 586,
+          "statuses": {
+            "natural_stop": 586
+          },
+          "by_split": {
+            "train": 336,
+            "dev": 250
+          },
+          "output_tokens": 47042,
+          "generation_seconds": 1612.890194130945,
+          "reward_measurements": 0
+        },
+        "secondary": {
+          "slots": 53,
+          "statuses": {
+            "natural_stop": 53
+          },
+          "by_split": {
+            "dev": 53
+          },
+          "output_tokens": 3142,
+          "generation_seconds": 101.07069193699863,
+          "reward_measurements": 0
+        }
+      },
+      "source": "project/outputs/pm_rl1/completion_20260930_v2/P2/executor_freeze.json",
+      "reuse_class": "CONDITIONAL_EXACT_REUSE",
+      "allowed": "Reuse recorded reply only after exact request/runtime/provenance binding; reuse a human label only if its evidence and actual compared replies match.",
+      "new_version_rule": "New representation/retrieval-selected text/renderer/G/draw requires a new request; seed alone cannot recreate old reply.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "1924 Paper1 QA/Summary",
+      "counts": {
+        "responses_reported": 1924,
+        "targets_reported": 148,
+        "QA_reported": 1105,
+        "Summary_reported": 819
+      },
+      "source": "project/outputs/paper1_calibration/static_generation_20260917_v1/manifest.json",
+      "reuse_class": "DIAGNOSTIC_FOR_CURRENT_NATURAL_SUPPORT",
+      "allowed": "May reuse identical old QA/Summary responses within their original task/version; inspect parser/scoring infrastructure without fresh generation.",
+      "new_version_rule": "Cannot transfer old-task score to current natural support or Gemma. Official scoring remains a distinct unfinished stage.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "55 human reference records",
+      "counts": {
+        "active_registry": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/history_necessity_human_review_20261105_v1/ANSWER_REGISTRY_PRIVATE.json",
+        "base_registry": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/incremental_help_human_review_20261105_v1/ANSWER_REGISTRY_PRIVATE.json",
+        "old_records_preserved": 45,
+        "new_answer_events": 10,
+        "registry_records": 55,
+        "registry_task_families": {
+          "pairs": 36,
+          "singles": 8,
+          "supplements": 3,
+          "rankings": 8
+        },
+        "grain": "36 pair records, 8 triplet records, 8 single q/m records, 3 supplements; not 55 independent pair labels.",
+        "scoring_or_training_automatically_reconfigured": false
+      },
+      "source": "project/outputs/pm_rl1/history_necessity_human_review_20261105_v1/REFERENCE_INDEX.json",
+      "reuse_class": "CONDITIONAL_EXACT_REUSE",
+      "allowed": "Original evidence plus exact actual response pair/triple and presentation mapping must match; keep raw ordinal/relative meanings.",
+      "new_version_rule": "New reply needs a new judgment; slight/tie/uncertain cannot be converted into an invented precise q/m or zero reward.",
+      "independent_raters": false,
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "QA86",
+      "counts": {
+        "API_cost_usd": 0,
+        "RL_ready": false,
+        "both_screens_pass_under_format_sensitivity": true,
+        "format_logical_conditions": 4,
+        "format_sensitive_correct": {
+          "C": 12,
+          "D": 1,
+          "OFF": 0,
+          "R1": 9,
+          "R2": 12
+        },
+        "format_unique_outputs": 3,
+        "generation_seconds": 60.91543023264967,
+        "latency_qualified": false,
+        "logical_conditions": 95,
+        "natural_outputs": 86,
+        "new_human_questions": 0,
+        "new_model_loads": 1,
+        "new_training": 0,
+        "original_preload_rejection_retained": true,
+        "primary_correct": {
+          "C": 13,
+          "D": 1,
+          "OFF": 0,
+          "R1": 10,
+          "R2": 12
+        },
+        "primary_facts": 14,
+        "primary_owners": 11,
+        "reward_qualified": false,
+        "secondary_semantic_cases": 5,
+        "status": "COMPLETED_FROZEN_QA_DIAGNOSTIC",
+        "unique_calls": 86
+      },
+      "source": "project/outputs/pm_rl1/qa_resource_gain_20261105_v1/alternate_G/PROTOCOL.json",
+      "reuse_class": "DIAGNOSTIC_FOR_CURRENT_NATURAL_SUPPORT",
+      "allowed": "Preserve exact QA screen evidence and same-request outputs; useful for evidence retrieval/executor sanity checks.",
+      "new_version_rule": "Passing QA screen is not qualified natural-support reward. New structured evidence input needs generation.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "typed42",
+      "counts": {
+        "API_cost_usd": 0,
+        "component_seconds": 116.3115644522477,
+        "contexts": 6,
+        "input_tokens_by_arm": {
+          "B_basic": [
+            283,
+            291,
+            450,
+            273,
+            514,
+            794
+          ],
+          "F_full_sources": [
+            2423,
+            1785,
+            1097,
+            1621,
+            2063,
+            2503
+          ],
+          "M_old_records": [
+            840,
+            859,
+            1021,
+            826,
+            1103,
+            1436
+          ],
+          "R_retrieved_RS": [
+            520,
+            520,
+            700,
+            509,
+            764,
+            1031
+          ],
+          "S_conditional": [
+            591,
+            599,
+            758,
+            581,
+            822,
+            1102
+          ],
+          "VS_source_and_strategy": [
+            1074,
+            972,
+            1078,
+            961,
+            1326,
+            1558
+          ],
+          "V_source_view": [
+            766,
+            664,
+            770,
+            653,
+            1018,
+            1250
+          ]
+        },
+        "logical_conditions": 42,
+        "natural_conditions": 42,
+        "new_human_questions": 0,
+        "quality_measured": false,
+        "rewards": 0,
+        "training": 0,
+        "unique_requests": 42
+      },
+      "source": "project/outputs/pm_rl1/typed_resource_views_20261111_v1/alternate_G/PROTOCOL.json",
+      "reuse_class": "CONDITIONAL_EXACT_REPLY_REUSE_DIAGNOSTIC_ONLY",
+      "allowed": "Preserve existing 42 actual replies for inspection or exact-input human comparison; no helpfulness labels exist.",
+      "new_version_rule": "A revised source view fixing missing antecedents changes input and requires generation.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "Claude branch pools",
+      "pools": [
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/dialogues.jsonl",
+          "sha256": "cc05adafa15895d21b414359e388e8326f016272ba99011edf869706d9cb78e4",
+          "bytes": 714690,
+          "nonempty_lines": 96,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/dialogues_r2.jsonl",
+          "sha256": "a17e174a40f961c34354a357e626acb7e320c6069c97d10cc781be25b0d52b64",
+          "bytes": 394512,
+          "nonempty_lines": 72,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/tree_dialogues.jsonl",
+          "sha256": "42049acfb5293fb8df7b0a81b3c8bbb27b63a6d5fcf0798d4dc0121646e511bd",
+          "bytes": 4082654,
+          "nonempty_lines": 768,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/mc_dialogues.jsonl",
+          "sha256": "f19e576f28e0e1f66aabc1d629f1a92c29069ca4385dfb01a2bebbea179cfaf3",
+          "bytes": 1841568,
+          "nonempty_lines": 384,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/ceiling_replies.jsonl",
+          "sha256": "6d1fffbb6f113225d5ead1f5f767c2a97e252254b5ccb7d8eb4ee91ecf208bef",
+          "bytes": 1654390,
+          "nonempty_lines": 900,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/ceiling_L8_replies.jsonl",
+          "sha256": "a96c8d64927330186627ca61e9d0b980bb31e6fa0c27689380a3ec3aabe273e5",
+          "bytes": 1939607,
+          "nonempty_lines": 1080,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/guide_replies.jsonl",
+          "sha256": "913ee27cef54b4818711564df00c61b4fa2425cb82c9a81cf89c6dda041b4892",
+          "bytes": 717001,
+          "nonempty_lines": 360,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/rs_ladder_replies.jsonl",
+          "sha256": "db3e820296ae5b1275f7478be9fb039fedfbd1e28533b8b4bb335b85d56da9eb",
+          "bytes": 3594623,
+          "nonempty_lines": 1860,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/sage_replay.jsonl",
+          "sha256": "d337da8860aed3710a3fcf8ba8cff36473182906968f4ba2dd5f4dbeb8599726",
+          "bytes": 922248,
+          "nonempty_lines": 104,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        },
+        {
+          "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/sage_replay_faithful.jsonl",
+          "sha256": "ae1655566a9e5caac10000f7cd785a7deb38220273b1db2f8e2f28253f6304c6",
+          "bytes": 816051,
+          "nonempty_lines": 94,
+          "count_unit": "serialized records, not independent contexts or verified valid outputs",
+          "row_identity_match_performed": false
+        }
+      ],
+      "source": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/SUMMARY_20261113_ZH.md",
+      "reuse_class": "DIAGNOSTIC_UNTIL_BRANCH_IDENTITY_AND_EXPOSURE_AUDIT",
+      "allowed": "Preserve original interventions, actual replies and analyses; use failure categories and candidate controls.",
+      "new_version_rule": "Same Gemma directory does not establish identical renderer/runtime/evaluation. Interactive ESC-Role outputs cannot be pooled as single-turn RL episodes.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    },
+    {
+      "asset": "All new method cards / complete RS cases / structured memory views",
+      "reuse_class": "NEW_INPUT_REQUIRES_GENERATION",
+      "allowed": "Reuse source transcripts, verified spans, split map, eligible retrieval indexes and compiler plumbing.",
+      "new_version_rule": "New resource bodies need versioned prompts, actual replies and fresh or exact-matched feedback.",
+      "training_label_ready": false,
+      "row_level_cache_or_label_join_performed": false
+    }
+  ],
+  "source_file_fingerprints": [
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/executor_freeze.json",
+      "sha256": "7f552e714c595428f8268505762cf7cf8313e021fa971ac7ab9ec035ce234457",
+      "bytes": 9230
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/qa_resource_gain_20261105_v1/alternate_G/PROTOCOL.json",
+      "sha256": "e52a1460512592fef69b8e52ee5c5013591afd0e69fbbf16111ae0688f8bf21f",
+      "bytes": 5939
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/typed_resource_views_20261111_v1/alternate_G/PROTOCOL.json",
+      "sha256": "9654cd9fc4bc0fb00e7793dfc7754d9bdee6078f5f213ee85bba223bb138b4c7",
+      "bytes": 33681
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/paper1_calibration/static_generation_20260917_v1/manifest.json",
+      "sha256": "03b05c1a44f66f9f9e537443dc6e37ff17b4d44525dade22c161a006843d906e",
+      "bytes": 2791
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/history_necessity_human_review_20261105_v1/REFERENCE_INDEX.json",
+      "sha256": "8506ebcf55b0cf59d577b925bc9a3025e3cc9f0001f3dcf6ea40d6c29d2fca42",
+      "bytes": 700
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/phase_closeout.json",
+      "sha256": "c9440da2529ed420714ad6e5e308fbf602fff410e24b030d1d06347ba3d621ed",
+      "bytes": 27334
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/replay_disposition.json",
+      "sha256": "5fd19644b795c1d6b53ead29c434f0ef56b581a5724580f0cb0d93bfd5b588ff",
+      "bytes": 5841
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/qa_resource_gain_20261105_v1/EXECUTION_CLOSEOUT_20261111.json",
+      "sha256": "ec0f0aaf31640678a51a1506772f7649e60afe6559e20895ba9a49e59b13deae",
+      "bytes": 782
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/typed_resource_views_20261111_v1/CLOSEOUT_20261111.json",
+      "sha256": "15cabbe8b74bc5e06920849585b88384bc8cdd630eb3ca5651a0d75043189d18",
+      "bytes": 660
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/typed_resource_views_20261111_v1/SUMMARY.json",
+      "sha256": "692b4fe903863681e10763fe51f4800546e160667d357b9d1d3937bd3bacf5a9",
+      "bytes": 972
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/typed_resource_views_20261111_v1/POST_EXECUTION_ANALYSIS_FIX.json",
+      "sha256": "4b5c547bd1753126003724309469aa09573183ae8d3b2fbc8fe5c8c7765e5893",
+      "bytes": 689
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/paper1_calibration/static_generation_20260917_v1/progress.json",
+      "sha256": "a426cb1d91085e7136b22910ff9472bc08dea1bf6e5889cf945d0f36ca29f42f",
+      "bytes": 498
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/paper1_calibration/static_official_scoring_20260917_v1/manifest.json",
+      "sha256": "79215ac0dfe973d293f3ab85e154e44ef1846deb00c47e35b219b7c0a681c1e7",
+      "bytes": 508
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/paper1_calibration/static_official_scores_20260917_v1/preflight.json",
+      "sha256": "df1be7aa5b020fe57351cc97877b6669ab9271a16e824f65f7f8b32227d23d48",
+      "bytes": 3051
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/docs/reviews/20261104/pm_rl1_latency_primary/OBJECTIVE.json",
+      "sha256": "a6f43cb7c04e9139adf0563550592220f331681a57c7b89c5ba477c78c39cd28",
+      "bytes": 3197
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/docs/reviews/20261104/pm_rl1_relative_feedback_trial/RESULTS_ZH.md",
+      "sha256": "1f4029e0a48a1a7ef78a1df2eda79e80c7d0cbf56968234a6486c26c56e7d0a4",
+      "bytes": 8840
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/schema.py",
+      "sha256": "2eb678e7bce7ed517448f9103216b9256c04756df302ba2805b85df5f2c1225e",
+      "bytes": 5016
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/resource_organization.py",
+      "sha256": "cc74d63b6b5cf7c96d1735de5552b6c59748a5a72fa86d64a7ae6af351d3752f",
+      "bytes": 11892
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/representation.py",
+      "sha256": "b040617ac727e24515cdca9ed9373251aae9fab2227f991ab5c29ab91eace86e",
+      "bytes": 7418
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/representation_direct.py",
+      "sha256": "979c2a89befcd81d1efc6fbfcb129744daf66bf224e25142fe51064e3e3d3e4a",
+      "bytes": 1475
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_policy_interface.py",
+      "sha256": "2e00ba6b932a680704a2abe6ce5896717ece443cce0f1271c98e5dbe8df156a2",
+      "bytes": 8977
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_features.py",
+      "sha256": "1a97e6638cfa7eb6afd2dc94040a22608c97b2cc00ac4d7a84190e4110b08a8f",
+      "bytes": 5954
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_feedback.py",
+      "sha256": "561c691e34905c45fdf4932988b69ca745320449be6445d80fa97a5b73dc20fc",
+      "bytes": 14262
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_learning.py",
+      "sha256": "ab1ee500356e50c6366ed8f76cee1f1080f076219c4ce759c4e7d044ba6b6abb",
+      "bytes": 7418
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_supervision.py",
+      "sha256": "30f45653d10b38686315ac5e1be3e9cb9806adabdccc101e43bf26ea5627590d",
+      "bytes": 18831
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_oneshot.py",
+      "sha256": "eac2ec3712ddcd34f81db379ef3bb1da04bd87a2d9aa8ed5456ee0a565773f9c",
+      "bytes": 6851
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/organized_local_backend.py",
+      "sha256": "da2ce3ede4b638fd7ef1c61a4a3f44405e1e62afb3fff24840e933a594988b46",
+      "bytes": 2851
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/human_reference_reuse.py",
+      "sha256": "f9f76354b57d51dabe80facd3e1c0aeee036a70cb934d8b8e05a99f5189adb3b",
+      "bytes": 4125
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/typed_resource_views.py",
+      "sha256": "7f14cad2ab20329b8090816a1aaa4fc04eaabc03d5bd7b47b3b4fb53c822fde2",
+      "bytes": 7637
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/relative_diagnostic.py",
+      "sha256": "f8e8adfacf81eec7d864da93250e5570dee4c8d0c15f273a3536bf1698c81f86",
+      "bytes": 4517
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/client_latency.py",
+      "sha256": "04019e0e5855739e8cac683d163ce430159f27cc076cd6a55e91b6accf57b761",
+      "bytes": 7740
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/latency_serving.py",
+      "sha256": "87fd840bd5b65d1ad3ab023457b9fdb1de3e414248fdc3abdf3e0992633925c7",
+      "bytes": 7528
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/src/metacom_pm/rl1/reusable_latency.py",
+      "sha256": "4002159cc1386c39cad6292705f2474934d73dab4017dfa5f2356abeccb0403a",
+      "bytes": 6750
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/SUMMARY_20261113_ZH.md",
+      "sha256": "d1f755edbe3fca2d730852bda79affc20162d11a79a3c5bcf8923afb0a29d6df",
+      "bytes": 9337
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/gen_loop.py",
+      "sha256": "0b0a8f4ea076259973f4545a5b4a022000961409575ab87920766c9d9a252952",
+      "bytes": 13732
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/rs_ladder.py",
+      "sha256": "dd63e2aa652807437ba9ce3cb5b151d70e7d8fad50050b15799bae54a95bc584",
+      "bytes": 10435
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/ceiling.py",
+      "sha256": "f190d347453d89cd010140e74156fc4d492011e8be944c91daae89d0ca2bdd5b",
+      "bytes": 3847
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/score_rank.py",
+      "sha256": "88099836a36e1412c8d1a49576ee5bc2b3aa80870b9b2754a2d722daef5ef3c3",
+      "bytes": 4866
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/hard/hard.py",
+      "sha256": "bfbf936b395d490d11d8b730ae63fe90b4e05bbd99dc85982c3104abc9e22264",
+      "bytes": 16107
+    }
+  ],
+  "minimal_adapter_plan": [
+    {
+      "component": "Versioned resource-view compiler + manifest (new preparation module)",
+      "reuse": [
+        "typed_resource_views.py",
+        "source-bound OrganizedItem",
+        "OrganizationCatalog validation"
+      ],
+      "change": "Compile MP/ME evidence cards and MS parent expansions; complete RS cases retain context/action/observed follow-up/source boundaries. No gold-based query or applicability labels."
+    },
+    {
+      "component": "Retriever adapter (small interface change)",
+      "reuse": [
+        "OrganizationCatalog.rank",
+        "HeadSession"
+      ],
+      "change": "Explicitly choose/freeze BGE or existing overlap; preserve public-prefix-plus-acquired query and identical locator for PPO/OneShot/NoText. Every changed selected resource binds a new terminal identity."
+    },
+    {
+      "component": "Resource delivery/renderer adapter",
+      "reuse": [
+        "OrganizedRenderer",
+        "organized_feedback terminal binding",
+        "actual request/response cache"
+      ],
+      "change": "Deliver versioned evidence bodies with provenance; parent expansion is a new acquired item; no invisible extra evidence. Keep four-head schema initially unless action change is empirically justified."
+    },
+    {
+      "component": "Reuse/feedback join + measurement adapter",
+      "reuse": [
+        "human_reference_reuse.py",
+        "organized_supervision.prepare_targets",
+        "comparison_union",
+        "OrganizedRun",
+        "qualified feedback gates"
+      ],
+      "change": "Match exact actual replies and measurement payloads; leave missing outcomes pending. Keep BC/PPO learner and optimizer; add a qualified feedback source and measured latency cost only after evidence is ready."
+    }
+  ]
+}

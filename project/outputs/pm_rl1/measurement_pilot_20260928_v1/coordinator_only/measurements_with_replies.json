@@ -1,0 +1,3045 @@
+[
+  {
+    "pilot_index": 11,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "That's a great direction to consider. Exploring alternative energy sources can be a really fulfilling area of research. It's also a field that's becoming increasingly important. Have you thought about how you might approach this new area of interest?",
+    "measurement": {
+      "response_sha256": "7415c2db117ba6ab18cd52412eec437d21671fbc982b3566eb379aab9c19e12a",
+      "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+      "raw_output_sha256": "428f3953db3647ea89890340bc451b9e2ed09f72aa6ecf4681a112c0de17c560",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "Expecting ',' delimiter: line 3 column 149 (char 184)",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/56d7b8a0e900246b7b614b2f878c0b0bb4a8931d249045ece0e9522137ab7871.raw.json"
+  },
+  {
+    "pilot_index": 12,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you talked to your parents about how you feel?",
+    "measurement": {
+      "response_sha256": "be941f6ba52a4f51399cbb3a1dbbf83d7b8917b8373e29e68ab447071afed8ae",
+      "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+      "raw_output_sha256": "ccdf084bac64997c024a98263adaee33cc20e4b6372e8d8781a896ea4a859dc0",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the seeker's shift in understanding their parents' perspective and reinforce their autonomy as they approach adulthood.",
+          "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "I am 17"
+            },
+            {
+              "source_id": "C:T024",
+              "quote": "I guess I understand a bit more put like that"
+            }
+          ],
+          "reason": "The reply accurately reflects the user's current age ('almost an adult' given user stated 'I am 17') and directly responds to the user's last turn expressing partial understanding of the parents' viewpoint. It balances validation of empathy with empowerment regarding personal decision-making without violating boundaries or creating false expectations. The follow-up question encourages continued communication suitable for the current supportive tone."
+        },
+        "claims": [
+          {
+            "response_quote": "you're almost an adult",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "I am 17"
+              }
+            ],
+            "reason": "User stated they are 17 years old; being 17 is generally considered nearly 18 in common parlance regarding adulthood milestones."
+          },
+          {
+            "response_quote": "you're trying to see things from their perspective",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T024",
+                "quote": "I guess I understand a bit more put like that"
+              }
+            ],
+            "reason": "User's final statement indicates a shift towards accepting the supporter's explanation regarding parental safety concerns."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked user age claim against current session statement (C:T013). Checked interpretation of user's latest sentiment against C:T024. Verified boundary alignment with 17-year-old status.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 174
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "I am 17",
+          "positions": [
+            {
+              "start": 90,
+              "end": 97
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T024",
+          "quote": "I guess I understand a bit more put like that",
+          "positions": [
+            {
+              "start": 6,
+              "end": 51
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "you're almost an adult",
+          "positions": [
+            {
+              "start": 108,
+              "end": 130
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "I am 17",
+          "positions": [
+            {
+              "start": 90,
+              "end": 97
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "you're trying to see things from their perspective",
+          "positions": [
+            {
+              "start": 15,
+              "end": 65
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T024",
+          "quote": "I guess I understand a bit more put like that",
+          "positions": [
+            {
+              "start": 6,
+              "end": 51
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/e8b4a99a1a0cc22b3168b3d54b0771c3aa20ed130f7f15d604fc64eb1dce6aeb.raw.json"
+  },
+  {
+    "pilot_index": 2,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+    "measurement": {
+      "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+      "raw_output_sha256": "04733e2fe4bf677fe0197595334b95e35d3a89caa2ecf739d0e05bad57dbcad1",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/c664d8bfb8424305ca045fd856f44e736760f3295063d3dd69d6b7988d7782b8.raw.json"
+  },
+  {
+    "pilot_index": 9,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+    "measurement": {
+      "response_sha256": "765bbf40f3b0deed8bd36edb7c4ce8b09f4b74c82f0eb4c397b035afdd586b58",
+      "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+      "raw_output_sha256": "158fd3140fcfe2852b1bc9854d97bcf2acdcfd33287d49e487bee5b5708389ed",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker requests validation and consideration of using their existing therapy sessions to process the emotional complexity surrounding the ex-partner's outreach.",
+          "response_quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+            }
+          ],
+          "reason": "The reply validates the user's proposed course of action without contradiction, references their specific history (help with stress/career) correctly, and provides a supportive open question to guide next steps. No important defect found."
+        },
+        "claims": [
+          {
+            "response_quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "My sessions have been helping a lot with stress and career stuff."
+              }
+            ],
+            "reason": "Directly corroborated by the seeker's statement in the current turn regarding past session benefits."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Evaluated factual claims regarding therapy efficacy, consistency with user's history, and identity acknowledgment (Charlotte). Checked against current session C:T016 and prior established history.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 454
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 138
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+          "positions": [
+            {
+              "start": 120,
+              "end": 202
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff.",
+          "positions": [
+            {
+              "start": 46,
+              "end": 111
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/1450ae8bc758adb10834a838d26b3a6bcaca8a07b37a5c082c342a4af79b094d.raw.json"
+  },
+  {
+    "pilot_index": 1,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It is like you are caught between two opposing emotions.\n\nOn one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.\n\nThat is a tough spot to be in.\n\nHave you considered talking to your manager or a mentor about your concerns and aspirations?\n\nSometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+    "measurement": {
+      "response_sha256": "1f921a6fcbcd782f0d419354294c2f2e119abe1b4b5bc355e818a6e809e7c97a",
+      "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+      "raw_output_sha256": "c3b6e89aefd373f05d460280656b17f4c33487908d1b5ac9f5adbeae59a7e9c8",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/6b24f44c6f99f19c6a7ef8d6a9894a91d86c898b902204c5ba0f947a8b275a12.raw.json"
+  },
+  {
+    "pilot_index": 9,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+    "measurement": {
+      "response_sha256": "33e5dccbd9186b32698b716fbae18470584d06a58484b9bbd20cdc65aa3c1a39",
+      "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+      "raw_output_sha256": "3c1ce46ec62dbdde7682d8353f48cf172e72b6dcdc7e95dfda5dfe287d9c6702",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the user's plan to consult therapy for current emotional distress, acknowledging their history with effective sessions.",
+          "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+            }
+          ],
+          "reason": "The reply fully aligns with the user's explicit suggestion to engage in therapy. It validates the plan ('That's a great idea') and accurately reflects the user's testimony in C:T016 regarding past benefits ('helping a lot with stress and career stuff'). The response is coherent, supportive, and avoids boundary violations or unsupported claims. It appropriately invites further exploration without adding unnecessary information or advice outside the user's scope."
+        },
+        "claims": [
+          {
+            "response_quote": "you've already seen the benefits in other areas of your life",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "My sessions have been helping a lot with stress and career stuff"
+              }
+            ],
+            "reason": "The statement accurately summarizes the user's declaration in C:T016 that sessions have helped with stress and career stuff, constituting 'other areas' compared to the current emotional issue."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all assertions regarding the user's therapy history and well-being against C:T016. Verified name consistency (Charlotte in C:T001 matches H006+ history implicitly confirmed by context though not needed for this specific reply).",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 445
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 138
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "you've already seen the benefits in other areas of your life",
+          "positions": [
+            {
+              "start": 135,
+              "end": 195
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff",
+          "positions": [
+            {
+              "start": 46,
+              "end": 110
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/35309ff9920bc416536a846215a2d0ab4b853fe1211c028360f6800f1f672c5b.raw.json"
+  },
+  {
+    "pilot_index": 10,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions after spending your entire life in Sydney. What is it about Canberra that you miss?",
+    "measurement": {
+      "response_sha256": "ea3fe4503e5f2849ff7a10ec92fdec8983c304eed82af912bda9ab94dbe52d5e",
+      "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+      "raw_output_sha256": "1668a61ee4d885c2684ea87f02a89ec22253545c4137d909973702db00d25bf7",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "source ID not in legal evidence",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/76fba60f582abab2bacd2f7a40c564be92c268884eadf0f0f7c01002a4e20b22.raw.json"
+  },
+  {
+    "pilot_index": 9,
+    "condition": "OFF",
+    "repeat": 1,
+    "reply": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+    "measurement": {
+      "response_sha256": "33e5dccbd9186b32698b716fbae18470584d06a58484b9bbd20cdc65aa3c1a39",
+      "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "6db6ca37773ae7a66df6d837deec763a3a730a21f69b640df0df1643b393c608",
+      "raw_output_sha256": "bbd6920415cf29b89040572479b59846aa438b4e0749a07fab7dc83003a59ae5",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker indicates they need to talk about therapy and wants validation for this step.",
+          "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights.",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff."
+            }
+          ],
+          "reason": "The reply validates the user's expressed intent, aligns with the emotional tone of the final turn, provides constructive affirmation without imposing external expectations, and appropriately closes with an open question to guide the next step. No important needs or constraints were missed."
+        },
+        "claims": [
+          {
+            "response_quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "My sessions have been helping a lot with stress and career stuff."
+              }
+            ],
+            "reason": "The claim that the user has seen benefits corresponds directly to the user's statement that their sessions are helping with stress and career issues."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked identity constraint regarding user self-correction from 'Charlotte' (C:T001) to 'Alex' (C:T002); verified no name was used in the reply to avoid violation. Validated therapy history and outcomes against C:T016.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 111
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+          "positions": [
+            {
+              "start": 117,
+              "end": 196
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff.",
+          "positions": [
+            {
+              "start": 46,
+              "end": 111
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/e808009425b557174f0b5c2676e6797792aa906c0047dba1d689408ef47a782f.raw.json"
+  },
+  {
+    "pilot_index": 6,
+    "condition": "ON",
+    "repeat": 1,
+    "reply": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+    "measurement": {
+      "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+      "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "a36f04af4329d46d53c92192953c995f790dfd7b20b9bb4f32a164e024b33a41",
+      "raw_output_sha256": "ca16f31e37c0bc4f168b9f3dd1658172dac01904597864a03cd45eee46d993c0",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/1374a962809c673bbf2a2af8f9f313258a8996771ca0730ce2c1c9d987954e26.raw.json"
+  },
+  {
+    "pilot_index": 8,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+    "measurement": {
+      "response_sha256": "3e6f198330d0801f850567d15ce80fa270b8ca87b94eeb8e4517790b7fffa6f7",
+      "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+      "raw_output_sha256": "e145e5e7436c57bab8d2ea884f96553f889c6ead1f2efbd5c675d5828416569b",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "seeker seeks emotional support and a space to express feelings regarding a general need for conversation.",
+          "response_quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+          "evidence": [
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, I really needed someone to talk to today."
+            }
+          ],
+          "reason": "The reply validates the user's emotional bid accurately without imposing unnecessary advice or assumptions. It creates a safe space for disclosure matching the user's implicit request for connection."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Evaluated for factual accuracy against full history (H001-H007), checking for identity consistency (name 'Emily'), references to prior sessions (job stress, partner Bob, son Jerry, therapy status). No explicit personal claims or identity violations were detected.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 234
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/7aa4bf6b0c3ff61853c1081e12db337d83129b4974f3efb0aaf9d68a4a0e9760.raw.json"
+  },
+  {
+    "pilot_index": 3,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+    "measurement": {
+      "response_sha256": "df8943d719de61e20d396cfd58b952b67c9f29a7a81b1fbb3e15397393167e9a",
+      "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+      "raw_output_sha256": "16432c39aa3406b7b736f3bfe5e41e6333e34661f27a884bc0f6c6e29c47072d",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "missing required source evidence",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/cfe9b2d67b8da271257b18d38ca5c687b65ed5813a4192441e088c905427bc3b.raw.json"
+  },
+  {
+    "pilot_index": 8,
+    "condition": "style",
+    "repeat": 1,
+    "reply": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+    "measurement": {
+      "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+      "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "d7cc63ec7e5e5518a732a1e2b8e6c4285b8054f33bf5739b8e614bbce90b0a3c",
+      "raw_output_sha256": "990f38b147e1ad9f60cff8c9cab00ea6f83c4c26a1e1d9cbc2263fae9a3fb764",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker explicitly requests someone to talk to for emotional support ('I really needed someone to talk to today.')",
+          "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+          "evidence": [
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, I really needed someone to talk to today."
+            },
+            {
+              "source_id": "H007:T000",
+              "quote": "Hey Emily"
+            },
+            {
+              "source_id": "H006:T001",
+              "quote": "Of course, Emily. I'm here for you."
+            }
+          ],
+          "reason": "The reply is appropriate, empathetic, and fully responsive to the immediate need for listening. However, it scores q=3 rather than q=4 because it omits the user's established name 'Emily' despite consistent usage in the three immediately preceding sessions (H005-H007), which represents a lapse in persona consistency and context constraints. Additionally, the sentence structure 'What is been going on' contains grammatical awkwardness that slightly detracts from coherence compared to polished expectations for q=4."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Verified persona consistency (name 'Emily' referenced in H005-H007). Confirmed no timeline conflicts with the provided evidence (Current: 2024-11-05, Last Session: 2024-10-25). Checked for factual assertions regarding user status; none found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 227
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "H007:T000",
+          "quote": "Hey Emily",
+          "positions": [
+            {
+              "start": 0,
+              "end": 9
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "H006:T001",
+          "quote": "Of course, Emily. I'm here for you.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 35
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/e22fa4f58396f934a3899c09f0051283ba454e5ab0bff16641596a846c10cd07.raw.json"
+  },
+  {
+    "pilot_index": 7,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "Not at all!\n\nI am here to listen and help in any way I can.\n\nIt is completely normal to have a lot on your mind, and it is great that you are reaching out for support.\n\nTake a deep breath and feel free to share as much or as little as you'd like.\n\nI am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?",
+    "measurement": {
+      "response_sha256": "918a240e26dffdf34a13d35c1e6ad96044405cfe6a560ce168d49cadecfd767b",
+      "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+      "raw_output_sha256": "2197bc4fd5d653aa05913cc539512fa42c7e28c2027333140205726828e17d58",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/170d260ce3570fb785fcdbb5198db20fba101c69267e9087744195dd43d716bb.raw.json"
+  },
+  {
+    "pilot_index": 3,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It is like you are carrying the weight of uncertainty.\n\nThat can be really tough.\n\nHave you thought about talking to someone you trust, like a friend or family member, about how you are feeling?\n\nSometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+    "measurement": {
+      "response_sha256": "9a8b39bb206c9462c495c13804d40534a41e0ca4c8d4915dbc1513953d3c59fc",
+      "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+      "raw_output_sha256": "5efc605fbb36d6dc842cdbdad8e81553bc50ce590dc40a6c217bafe5d77673b6",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/66e4cccfd915a228997e8fe243ba5e6bc4c0a82d990c744e94eea6cfeca208f8.raw.json"
+  },
+  {
+    "pilot_index": 11,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+    "measurement": {
+      "response_sha256": "78295b41284f7b86d94fd42ec12034572e1e30222d328e0bb6468ce198b5eb8e",
+      "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+      "raw_output_sha256": "4265b6ef05dc9de93196dd4fed3c42ed3c14176b4bf23b231eb0bfe06d6cbbb1",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "findings do not exactly index the declared errors",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/2683dbcdb66aa9888927773b2dadddeee1973b820e9d364c5e7d3aa63297dc1d.raw.json"
+  },
+  {
+    "pilot_index": 11,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+    "measurement": {
+      "response_sha256": "fc6fad604d267afac19a73e19ac275d046f6baea88f49fb68918a9473b560a9a",
+      "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+      "raw_output_sha256": "9be09ffe369da97d31dcd13b261847a81bb09b3c8620f9a6db46921b38ddf880",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker (Andrew) expresses interest in exploring renewable energy as a research focus that aligns with his values (C:T007). He seeks validation and further reflection on this consideration.",
+          "response_quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+            }
+          ],
+          "reason": "Reply appropriately validates the seeker's expressed interest, affirms the connection between renewable energy and his stated values, and opens space for deeper exploration through targeted follow-up questions. Response matches the turn's length-appropriate nature (a continuation/clarification prompt), respects all constraints, and coherently extends the conversation."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Checked personal identity (Andrew is consistently identified as the seeker across sessions H005/H007/H008-H010/C); verified no temporal/factual contradictions about the seeker's research focus; confirmed no invented personal history (reply does not assert facts about past events); verified no explicit-boundary violations. Current legal material establishes Andrew is a student considering career/research direction changes; reply does not contradict any known constraints.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 322
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 139
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/acb7bb6b18054f2f46e7400d6950c87a51be33e7a3452b92fd421800ba70d61a.raw.json"
+  },
+  {
+    "pilot_index": 3,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling? Sometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+    "measurement": {
+      "response_sha256": "16834ac17e414203f18d19a6511f98253832a65882bc4ebd2b126884c6f3e8a1",
+      "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+      "raw_output_sha256": "de77761770e105b47c7dc85aaf405b651f689b4b94c834cbf9d89563da605486",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/b83c82d760f8d2091f5770cc0ab2d075177fd611c7473216292cd51fa4632ae3.raw.json"
+  },
+  {
+    "pilot_index": 5,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+    "measurement": {
+      "response_sha256": "5e9bdb1153a68819ada0bbfa942b35ccac625593753b42992a804379ef7d9301",
+      "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+      "raw_output_sha256": "9d1803701385f45c7bf0190ea4733eea44b734cc787f3b88d0f8edf059870410",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/f044f16ae2a1fb6190f6ca860be8a0f1cc8f5fc19487e48a2cdd6126dcab6f09.raw.json"
+  },
+  {
+    "pilot_index": 12,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+    "measurement": {
+      "response_sha256": "125da077267000d4d219ca555dc5487f88452b4e77c7858c447d64e08f7efff0",
+      "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+      "raw_output_sha256": "4fc13a198eb3c102ad9f6cd08fb22167a317a3351967cfc237b48f0e138b7314",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validation of the seeker's shifting perspective on parental concerns and empowerment to maintain agency regarding her relationship.",
+          "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "I am 17 and feel like I should be able to have a boyfriend now"
+            },
+            {
+              "source_id": "C:T021",
+              "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!"
+            }
+          ],
+          "reason": "The reply effectively validates the seeker's progress (C:T024) and offers constructive, boundary-appropriate advice consistent with her expressed age (17). It respects the ongoing dynamic with parents discussed throughout the current session and provides safe, non-directive guidance without inventing facts or contradicting established constraints. No significant errors."
+        },
+        "claims": [
+          {
+            "response_quote": "you're almost an adult",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "I am 17 and feel like I should be able to have a boyfriend now"
+              }
+            ],
+            "reason": "Seeker self-identifies as 17 in C:T013; 'almost an adult' is a contextually supported inference regarding maturity status relative to the 'almost 18' marker mentioned by supporter in C:T021."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked seeker's stated age against personal claims in the reply. Verified no violations of confidentiality, safety, or role boundaries. Confirmed no contradictions between the reply and current session history regarding parental conflict resolution strategies.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 340
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "I am 17 and feel like I should be able to have a boyfriend now",
+          "positions": [
+            {
+              "start": 90,
+              "end": 152
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T021",
+          "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!",
+          "positions": [
+            {
+              "start": 0,
+              "end": 78
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "you're almost an adult",
+          "positions": [
+            {
+              "start": 108,
+              "end": 130
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "I am 17 and feel like I should be able to have a boyfriend now",
+          "positions": [
+            {
+              "start": 90,
+              "end": 152
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/234590844382181f55359d767325433b90427024f259e83d77466084b7546a0d.raw.json"
+  },
+  {
+    "pilot_index": 4,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It can be really tough to move on from a breakup, especially when you said it ended amicably. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+    "measurement": {
+      "response_sha256": "679387b3782fa6e3e2ff724d0c55807a87757f6667f4a0929650c918012a1e78",
+      "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+      "raw_output_sha256": "6d98b577754dfa91eba8355990892493253f4bc45c2883bb2af96346b3edecb5",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "duplicate JSON key: m",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/e6f10eb821e02fedd16087cafe6faf97747fcaecc912dcf1060c419b47f2766c.raw.json"
+  },
+  {
+    "pilot_index": 6,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It's amazing how much time and energy we can spend dwelling on the negative. It sounds like you've already reconciled with your father in person, and that's a really brave and healthy step.",
+    "measurement": {
+      "response_sha256": "970feaba219fd47dea8b6a13dd7ed766db02098e06aa55c64663a448783d8c68",
+      "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+      "raw_output_sha256": "de6b039498379f3ba14ef8e2462ec637e2c9334cf5943857062ff64da667d7d0",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "findings do not exactly index the declared errors",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/eea7ce55c48b5cb319f52a750311c1baa02b21a517855e78a53f068c6ef911d0.raw.json"
+  },
+  {
+    "pilot_index": 11,
+    "condition": "damage",
+    "repeat": 1,
+    "reply": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+    "measurement": {
+      "response_sha256": "78295b41284f7b86d94fd42ec12034572e1e30222d328e0bb6468ce198b5eb8e",
+      "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "ab7b0d1326bc93dcf50cf1eb1234ac267cd9ce4b9a617fb82ea7463ed544a2de",
+      "raw_output_sha256": "a4953dcecefc56136555c1e79c7fab33b9b5a9ccdf74f61575c2b2e405c2cde1",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "scored record contains unresolved uncertainty or inconsistent m",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/59284e0cfe27588a04ad6777b1bb00432418b24109369177879c18a52e18a978.raw.json"
+  },
+  {
+    "pilot_index": 6,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+    "measurement": {
+      "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+      "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+      "raw_output_sha256": "79357bc3d8a6880d7795a3d0c32bed265a0601fba3e7aafac08ea5cbdf3c9ebd",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "findings do not exactly index the declared errors",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/bf625e2ae29ce4a0c8a6dd121732d5e0e19bb92c84a3628c9ca181220cc6e3aa.raw.json"
+  },
+  {
+    "pilot_index": 1,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+    "measurement": {
+      "response_sha256": "8c47ba18fe764fdafc0a99bc178e2c1f90b56f7e69c45802999b593d6183e908",
+      "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+      "raw_output_sha256": "79d8075740f3f5e3ad82821172c8e4f6cd8e23571770dc1e317963296a040cc0",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the user's conflicting feelings (relief vs stagnation fear) regarding a missed promotion and encourage elaboration on barriers to career progress.",
+          "response_quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+          "evidence": [
+            {
+              "source_id": "C:T014",
+              "quote": "I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+            }
+          ],
+          "reason": "The reply fully addresses the user's specific emotional conflict expressed in C:T014 by validating both the relief and the fear. It avoids giving unsolicited advice, maintains appropriate boundaries, and invites further exploration of the user's stated concerns without adding unnecessary complexity. It is coherent, respectful, and directly responsive to the immediate venting need."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Checked identity consistency (Jane), historical references to promotions (C:T002, C:T004), relationship status with Eliza (C:T013), and career concerns (C:T014). No identity errors, temporal errors, or unsupported assertions found in the reply.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 259
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T014",
+          "quote": "I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+          "positions": [
+            {
+              "start": 18,
+              "end": 155
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/c46887eccd6be1123915a706cb7d99829af561da88720020b5e99e71adc733f7.raw.json"
+  },
+  {
+    "pilot_index": 8,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+    "measurement": {
+      "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+      "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+      "raw_output_sha256": "5bf60037eaa2fdf6319cdbdde75db7ffb11e832fa4489ba3ee541dfd94dd4562",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker expresses a strong need for connection and a listening ear.",
+          "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+          "evidence": [
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, I really needed someone to talk to today."
+            }
+          ],
+          "reason": "The reply effectively matches the turn's function by validating the emotional need and inviting disclosure. It respects the immediate context without forcing assumptions about prior specific topics (e.g., Bob, Jerry, finance), allowing the user to direct the conversation. Minor grammatical slips ('is been') are noted but do not compromise coherence, safety, or responsiveness, fitting the criteria where a brief acknowledgment and question suffice for a 4."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Evaluated against full legal evidence (H001 through H007 and C:T000). Verified that no personal factual claims (identity, history, health status) were asserted by the supporter in the current reply, thus no factual contradictions or boundary violations were identified. Checked temporal alignment relative to H007 (2024-10-25) vs C:T000 (2024-11-05).",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 227
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/c97b7e250d8d3fbd4113b81c93846d62c094d23ad456d974cb6a3cacc4ab3d03.raw.json"
+  },
+  {
+    "pilot_index": 10,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It sounds like you are still navigating the complexities of change.\n\nIt is normal to feel a mix of emotions when leaving behind familiar places and people.\n\nWhat is it about Canberra that you miss?",
+    "measurement": {
+      "response_sha256": "624332c144055770038b30608f0ba8452f229554d3ac8565698ab6c714c5bdba",
+      "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+      "raw_output_sha256": "793ece1e413cbc6a60ee9ab35a31a885cd083bd6a261766635cf1a29275d1512",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker reflects on moving to Sydney and admits missing things from Canberra, expressing ambivalence about the move.",
+          "response_quote": "It sounds like you are still navigating the complexities of change.\n\nIt is normal to feel a mix of emotions when leaving behind familiar places and people.\n\nWhat is it about Canberra that you miss?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+            }
+          ],
+          "reason": "The reply directly validates the seeker's ambivalence and validates the normality of mixed emotions associated with relocation, matching the specific details of the move mentioned in the current turn. It asks a relevant follow-up question that encourages further disclosure without forcing advice or ignoring the immediate conversational thread. No constraints were violated."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you are still navigating the complexities of change.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+              }
+            ],
+            "reason": "The user describes a move motivated by wanting a fresh start but accompanied by missing elements, constituting a navigation of change."
+          },
+          {
+            "response_quote": "It is normal to feel a mix of emotions when leaving behind familiar places and people.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+              }
+            ],
+            "reason": "The user explicitly states missing some things ('people/places') from the location left ('Canberra'). The generalization applies correctly to this specific context."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked references to the move to Sydney, Canberra, missing things, and the nature of the transition described in the current session prefix. Verified no contradictions with past history regarding the move or location details.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you are still navigating the complexities of change.\n\nIt is normal to feel a mix of emotions when leaving behind familiar places and people.\n\nWhat is it about Canberra that you miss?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 197
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 143
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you are still navigating the complexities of change.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 67
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 143
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It is normal to feel a mix of emotions when leaving behind familiar places and people.",
+          "positions": [
+            {
+              "start": 69,
+              "end": 155
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 143
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/86162be1941db768e99100799cdcfaa1a5fe7a3a88c62320ce7041b3ed2dbfa3.raw.json"
+  },
+  {
+    "pilot_index": 2,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+    "measurement": {
+      "response_sha256": "d38c2613d16b88b2f23bf9e0b80628f533368160c96902c4ecaf170025a93b07",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+      "raw_output_sha256": "57077cbbf5712716bec00fb787f0269bfb2f3aad43a6f850c1cb253301db3c39",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/76007e37e614d8ae7dbcd7e085619b4496ae634eb2db83c23addee3efc798d1e.raw.json"
+  },
+  {
+    "pilot_index": 12,
+    "condition": "style",
+    "repeat": 1,
+    "reply": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+    "measurement": {
+      "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+      "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "063c8f68905d5f871fc775ad08e5382b68e945d8bcb042d157768a0b211e7c57",
+      "raw_output_sha256": "54c59660269c3da43640caa0b8712da7f28041856c0b14f402d0b5b370b07a2e",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/660330768668853b49d745dcd3c4fab00f18c9581a35cd2758d250e61231398e.raw.json"
+  },
+  {
+    "pilot_index": 5,
+    "condition": "OFF",
+    "repeat": 1,
+    "reply": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+    "measurement": {
+      "response_sha256": "5e9bdb1153a68819ada0bbfa942b35ccac625593753b42992a804379ef7d9301",
+      "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "838d03fcaef88d5efa051c405902587d62241da24826b63529d718924cabe9b9",
+      "raw_output_sha256": "a0197b9ae243fb6e3f4e36c755c3c6cee28cfd971735f8a0158a377e50cdd823",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "missing required source evidence",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/103ae1954b39af7a62c04de55391718897cd70bd282f1f2ed428789a0532355c.raw.json"
+  },
+  {
+    "pilot_index": 2,
+    "condition": "ON",
+    "repeat": 1,
+    "reply": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+    "measurement": {
+      "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "1a958ba36019ef5ac61ac557d4a14b8966c3c1ed119339f160a4c442169255b7",
+      "raw_output_sha256": "5d04fce3396237971f97e353a87e5cec1c04012dbe0238f51c48687d4cd74d99",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/783a232843fcc4a5e1d17f595e892fe20c4730a8f1d1eef89603c387ab5ca44d.raw.json"
+  },
+  {
+    "pilot_index": 2,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It's natural to feel certain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+    "measurement": {
+      "response_sha256": "d0e489a125dd996bacad2b00e319e97ea8606145ff7834828abb4d90a94bde94",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+      "raw_output_sha256": "748f9c2d7a993e84ce4bd2480b0d67bf8777b81f0e98e8bb1740c4c16dbec860",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/eed8b4b8684cc01c8597c2bf8c30eced109977c510c03ff8d22bf99125a4751c.raw.json"
+  },
+  {
+    "pilot_index": 2,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It is natural to feel uncertain about how your supervisor will respond.\n\nBut it might be worth having an open and honest conversation with them about your concerns.\n\nThey might be more understanding than you think, and it could lead to some positive changes.\n\nWhat is holding you back from having that conversation?",
+    "measurement": {
+      "response_sha256": "468d180b6de9303136be4fb97be0e094eee3f36b158db3f95b053eaa70e59adb",
+      "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+      "raw_output_sha256": "fb65fad17cebfb0fce8b62d7fac6515b234da23b43707c9d6331b0c0cf4e682b",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/a82527124379f6c59a1550eaa25673727b08c3c47634a2891ce5ae3106aabda6.raw.json"
+  },
+  {
+    "pilot_index": 10,
+    "condition": "ON",
+    "repeat": 1,
+    "reply": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+    "measurement": {
+      "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+      "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "4d9ee9d9267380b60633291e8aee734015532d007a1c0639c5c40a9522ee5771",
+      "raw_output_sha256": "11f5fb84cb592d6e545642dfc04a4711ec27ec0e471407102c05f2b6a6d66ddd",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/9a3db68ea1bd1c51e4aa32bffc763b6c15f7d63fcc435805e04aff542ce49f10.raw.json"
+  },
+  {
+    "pilot_index": 10,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+    "measurement": {
+      "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+      "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+      "raw_output_sha256": "f9e429f709b0758e007af47c1794433dcbc0da589d75f82e0dc456e8432808d1",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Explore the seeker's ambivalence about relocating from Canberra to Sydney as mentioned in the final turn.",
+          "response_quote": "What are some of the things you miss about Canberra?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "but I miss some things too"
+            }
+          ],
+          "reason": "The reply accurately reflects the user's stated actions (moving to Sydney) and emotional state (missing things in Canberra), validating their experience before asking a relevant follow-up question. It is concise, empathetic, and directly builds on the last speaker's content without introducing new topics or violating boundaries."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're still navigating the complexities of your decision to move",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "my recent move to Sydney"
+              }
+            ],
+            "reason": "This statement mirrors the user's explicit mention of their recent relocation in the current session."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked identity (Jimmy), timeline (2025-06-01 current date vs. 2025-05-20 last past session), and specific facts mentioned in current turn (move to Sydney, missing things). Verified no contradictions in supporting statements.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "What are some of the things you miss about Canberra?",
+          "positions": [
+            {
+              "start": 171,
+              "end": 223
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "but I miss some things too",
+          "positions": [
+            {
+              "start": 116,
+              "end": 142
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're still navigating the complexities of your decision to move",
+          "positions": [
+            {
+              "start": 0,
+              "end": 80
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "my recent move to Sydney",
+          "positions": [
+            {
+              "start": 6,
+              "end": 30
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/3dbf99af53b026859f7fb53cf82e60df1123b28bd685058f266eec89ce78ab3c.raw.json"
+  },
+  {
+    "pilot_index": 6,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It's amazing how much time and energy we can spend dwelling on the negative. It sounds like you're making a conscious effort to shift your focus now, and that's a really brave and healthy step.",
+    "measurement": {
+      "response_sha256": "36dc00f2925e0a8232f422a0695c562665ebe53cf04a25402618ed07b9dc154e",
+      "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+      "raw_output_sha256": "14802a4521fd470cfe24ebfc45b4d709be5af96dbdb27699dade084ea13d259a",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "missing required source evidence",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix",
+        "remove_outer_json_fence"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/ca4a30d24ef9bded94ca05843960bef845d7dc96484414056d0afed65eb45d1b.raw.json"
+  },
+  {
+    "pilot_index": 1,
+    "condition": "OFF",
+    "repeat": 1,
+    "reply": "It's like you're caught between two opposing emotions. On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations? Sometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+    "measurement": {
+      "response_sha256": "43005cc8bdc6256a16216764a607d5908c75a8638e5a84384e84d30965493940",
+      "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "aa250d0ae21efee5e38822b93d9b7938dc503d7f26e07baa0c7c431e73c017bb",
+      "raw_output_sha256": "dc51c145c6e28e0577ec1bc8b815d51919f5076656444999f97406a7bc41fa6a",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/1c090a8f86da7a00ea4ed082cd67c3c4920501accf62f8766c490457f4419700.raw.json"
+  },
+  {
+    "pilot_index": 5,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It can be really tough to navigate all those challenges at once. It's great that you felt comfortable sharing those things with your siblings. Did talking about it with them help you feel any clearer about your direction or more at peace about the situation with your parents?",
+    "measurement": {
+      "response_sha256": "579a33e6bea33abce32dcdb42d9acd447801dcb03643ff46a3167187e6087033",
+      "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+      "raw_output_sha256": "99c4dc9696d17da6438b587e4a56f2568245d695618b87a2b2074343b76b01c9",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/cb7190569c9417b4fc14f658835041affd5793ce950df6b8de313f8a07917d62.raw.json"
+  },
+  {
+    "pilot_index": 9,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've never seen any benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+    "measurement": {
+      "response_sha256": "32383d2b8d37209daf54f88b9c42da74ce052df491496dc2c1fc798d7fad54d8",
+      "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+      "raw_output_sha256": "66e26cbfa0b5524245c04a2f2ca2cf49eaeb06bf8fcb2aa812845d1b178e3b31",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 1,
+      "m": 1,
+      "parsed": {
+        "status": "scored",
+        "q": 1,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "Charlotte expresses that her existing therapy sessions are 'helping a lot' and asks for further discussion on using therapy for the current relationship issue.",
+          "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "My sessions have been helping a lot with stress and career stuff."
+            }
+          ],
+          "reason": "The reply makes a definitive claim ('never seen any benefits') that directly contradicts the user's explicit statement in the immediate previous turn ('helping a lot'). This factual error creates a significant trust breach, dismissing the user's positive experience with therapy and undermining the supportive intent of the validation."
+        },
+        "claims": [
+          {
+            "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+            "relation": "contradicted",
+            "severity": 1,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "My sessions have been helping a lot with stress and career stuff."
+              }
+            ],
+            "reason": "User explicitly reports therapy sessions are helping a lot, whereas the claim states she has never seen any benefits in her life."
+          }
+        ],
+        "misuse_findings": [
+          0
+        ],
+        "coverage": "Checked all personal factual claims in the reply against the complete evidence base, specifically C:T016 regarding therapy efficacy and H012/C:T016 regarding mental health treatment history.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+          "positions": [
+            {
+              "start": 117,
+              "end": 194
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff.",
+          "positions": [
+            {
+              "start": 46,
+              "end": 111
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+          "positions": [
+            {
+              "start": 117,
+              "end": 194
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff.",
+          "positions": [
+            {
+              "start": 46,
+              "end": 111
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/bccc188aee9ad2c1d5ef6e763c3f5db16252789abecb6c6bc7912c70c6e34e15.raw.json"
+  },
+  {
+    "pilot_index": 4,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+    "measurement": {
+      "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+      "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+      "raw_output_sha256": "d2e34dd06dc75988017658e5e1e77892926f7e33cf2c48a54f9fba2448279d9e",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the seeker's sadness regarding the breakup and explore the specific emotions driving their inability to move on (from C:T007: 'now I can not get over it').",
+          "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+            }
+          ],
+          "reason": "The reply accurately mirrors the current emotional state (sadness, difficulty moving on) and invites further elaboration without making unsupported assumptions or violating boundaries. It respects the established context of the breakup discussion in the current session."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Checked for personal factual claims regarding identity, history, or actions against C:T000-C:T007 and H001-H009. Found none in the reply; reply contained only general empathic statements and questions.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 329
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 89
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/fdfc2cfd6377c9e6d72b997c64fe35ec4dd0c39d23a8042413ad7770eec61aec.raw.json"
+  },
+  {
+    "pilot_index": 4,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "It sounds like the breakup was a result of a prolonged argument, rather than a specific incident or betrayal. It can be really tough to move on from a relationship when it ended in a way that feels unresolved. Would you like to talk more about what you're feeling and what's been going through your mind since the breakup?",
+    "measurement": {
+      "response_sha256": "bed3eafd9a2ec8cc9194058bd0f372483ff1b44157878f353ee067938ba39587",
+      "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+      "raw_output_sha256": "ff52ef9def30cdf777cefba07276091fc7de3b1176c8eb4485fa46cd4222b455",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker describes the breakup as stemming from mutual fighting ('keep fighting') and states they cannot get over it ('now I can not get over it'), indicating a need for validation and space to explore feelings.",
+          "response_quote": "It sounds like the breakup was a result of a prolonged argument, rather than a specific incident or betrayal. It can be really tough to move on from a relationship when it ended in a way that feels unresolved. Would you like to talk more about what you're feeling and what's been going through your mind since the breakup?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+            }
+          ],
+          "reason": "The reply accurately mirrors the cause ('keep fighting' -> 'prolonged argument') and the emotional state ('can not get over it' -> 'tough to move on', 'unresolved') without inventing facts. It appropriately invites the seeker to elaborate on their feelings, meeting the support need identified in the turn."
+        },
+        "claims": [
+          {
+            "response_quote": "the breakup was a result of a prolonged argument",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "both of us were keep fighting"
+              }
+            ],
+            "reason": "Seeker explicitly described the dynamic as 'keep fighting', supporting the summary of 'prolonged argument'."
+          },
+          {
+            "response_quote": "when it ended in a way that feels unresolved",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "now I can not get over it"
+              }
+            ],
+            "reason": "Seeker's statement 'can not get over it' indicates an unresolved ending from their perspective."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Evaluated personal claims regarding breakup dynamics and emotional state against current session C:T000-C:T007. Verified consistency with past sessions H001-H009; no contradictory personal history (e.g., university status, specific friend names like Henry) was invoked in the reply to create a mismatch.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like the breakup was a result of a prolonged argument, rather than a specific incident or betrayal. It can be really tough to move on from a relationship when it ended in a way that feels unresolved. Would you like to talk more about what you're feeling and what's been going through your mind since the breakup?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 322
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 89
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "the breakup was a result of a prolonged argument",
+          "positions": [
+            {
+              "start": 15,
+              "end": 63
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "both of us were keep fighting",
+          "positions": [
+            {
+              "start": 31,
+              "end": 60
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "when it ended in a way that feels unresolved",
+          "positions": [
+            {
+              "start": 164,
+              "end": 208
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "now I can not get over it",
+          "positions": [
+            {
+              "start": 63,
+              "end": 88
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/8b7c1ca550dff042bb0bd281004b08965ec0bfca285fd7b5757da9533859b2e3.raw.json"
+  },
+  {
+    "pilot_index": 8,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+    "measurement": {
+      "response_sha256": "7ab1d45d12e2b7a5836f2f74396b5b051046b2ba84646435f78748e3660aa77a",
+      "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+      "raw_output_sha256": "87095a624fb60923b0c5bd356ab6bf2ced028d5ad2be39576f95b9757ce89497",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker initiates contact stating a need for emotional support and conversation.",
+          "response_quote": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+          "evidence": [
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, I really needed someone to talk to today."
+            }
+          ],
+          "reason": "The response directly validates the seeker's expressed need for connection, normalizes their feelings, and offers a non-judgmental space to elaborate. It respects boundaries by avoiding specific assumptions about the user's problems not yet stated in the current session while remaining fully responsive to the request for talk."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Evaluated current session turn C:T000 against prior history (H001-H007). Checked for identity continuity (name 'Emily' established in H005-H007 but not used in reply, deemed appropriate/neutral), and verified no conflicting personal facts or constraints were violated in the reply text.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 219
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/f1807179d01e8435d75984d61f40f2bb6102d7f8d73054d3b2aec2db62f16084.raw.json"
+  },
+  {
+    "pilot_index": 10,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+    "measurement": {
+      "response_sha256": "8a2ee18b352f2fa4d1559e480280ea3466e57583d84822deafd2223085e7a918",
+      "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+      "raw_output_sha256": "b71949466e8d8d11d89724780d81ca1f5cc96fd4bed773d33f302a20e057ebe3",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the complexity of moving cities and explore what is being left behind as per user's disclosure in C:T007.",
+          "response_quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+            }
+          ],
+          "reason": "The reply accurately mirrors the emotional tone and content of the user's last turn (C:T007), acknowledging the mixed feelings about moving. It asks a targeted follow-up question ('What is it about Canberra that you miss?') that invites further elaboration on the user's specific constraint/admission without violating boundaries or introducing unsupported facts."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Checked current session turn C:T007 for consistency with the reply's validation of moving to Sydney and missing aspects of Canberra. Verified user name 'Jimmy' aligns with C:T000. Checked historical context for location details (Sydney/Canberra) consistent with prior moves discussed in H023-T026.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you're still navigating the complexities of change. It's normal to feel a mix of emotions when leaving behind familiar places and people. What is it about Canberra that you miss?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 193
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 143
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/67e213fce4d6dac843e0ae9a85b56d729d451982bd47416383b81888d2ebc793.raw.json"
+  },
+  {
+    "pilot_index": 4,
+    "condition": "style",
+    "repeat": 1,
+    "reply": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+    "measurement": {
+      "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+      "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "5e39f787875d616e43cb98bac2ff28f1aec6d33d72b2caf183386a60599464b6",
+      "raw_output_sha256": "c4d8f2a730b76a887acb9b8f881331ac7a184284c0e01a66ca9a20693c700105",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validation of the seeker's sadness and confusion regarding a recent breakup caused by mutual fighting, following the expression 'I am so sad' and 'can not get over it'.",
+          "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+          "evidence": [
+            {
+              "source_id": "C:T001",
+              "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+            }
+          ],
+          "reason": "The reply accurately reflects the expressed breakup and inability to process it ('can not get over it'). It validates the emotion without making unsupported assumptions about the cause beyond the user's description (fighting/disagreement). It follows the supportive pattern established in prior turns (listening) and asks relevant clarifying questions to aid processing, meeting the user's need for understanding and space to express sadness."
+        },
+        "claims": [
+          {
+            "response_quote": "It can be really tough to move on from a breakup",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T001",
+                "quote": "I just broke up with my girlfriend and sad about it"
+              }
+            ],
+            "reason": "User explicitly states they 'broke up'. Replying that moving on is tough is consistent with the disclosed event."
+          },
+          {
+            "response_quote": "feel stuck in those emotions",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "now I can not get over it"
+              }
+            ],
+            "reason": "User states they 'can not get over it', indicating feeling stuck emotionally."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked current session (C:T000-C:T007) for consistency with the reply's assertions regarding the breakup status and emotional state. Verified no identity mismatches (name 'Nick' omitted appropriately). Verified no factual claims contradicting history.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 329
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 89
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It can be really tough to move on from a breakup",
+          "positions": [
+            {
+              "start": 0,
+              "end": 48
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T001",
+          "quote": "I just broke up with my girlfriend and sad about it",
+          "positions": [
+            {
+              "start": 15,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "feel stuck in those emotions",
+          "positions": [
+            {
+              "start": 121,
+              "end": 149
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "now I can not get over it",
+          "positions": [
+            {
+              "start": 63,
+              "end": 88
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/045b3c44e351a02bb8a36f02e16089908e7a46a853e87c98b53efb94038d19c1.raw.json"
+  },
+  {
+    "pilot_index": 11,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "That's a great direction to consider! Renewable energy is a field that's not only aligned with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+    "measurement": {
+      "response_sha256": "14f8e5151d228e9c379790e7bea231d12ae8d8320e80f6474cde5ac12ef06fb7",
+      "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+      "raw_output_sha256": "a7741c372a3b2b3bbefde941e14a0be23c5412977f8254029812241a6915f31f",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Seeker (Andrew) shares consideration of renewable energy research in C:T007 after discussing overcoming self-doubt. Reply should validate this new interest while exploring underlying motivations.",
+          "response_quote": "That's a great direction to consider! Renewable energy is a field that's not only aligned with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+            }
+          ],
+          "reason": "Response fully responds to the immediate cue from C:T007, validating the user's expressed direction and appropriately inviting deeper reflection through targeted follow-up. The reply mirrors the user's own words ('aligned with your values') without inventing facts, demonstrates coherence with the current session's emotional trajectory (overcoming self-doubt), and contains no important defects. This is exactly the depth of engagement warranted by this turn—a brief acknowledgment plus an exploratory question that is all this message calls for."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Checked for claims about user identity (name/age/etc.), temporal references, personal history, or explicit-boundary violations across complete evidence spanning C:T000-C:T007 and all prior sessions H001-H010. No personal factual claims found in this reply—only supportive reflection on the user's explicitly stated interests.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That's a great direction to consider! Renewable energy is a field that's not only aligned with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 317
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 139
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/ab030a60f0ce679c0b66841b858f4053d31123960ab16053b153de644e6fbba2.raw.json"
+  },
+  {
+    "pilot_index": 7,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "Not at all! I'm here to listen and support you. It's completely normal to have a lot on your mind, and I'm happy to help you process things. What's been going on that's been weighing on you?",
+    "measurement": {
+      "response_sha256": "a244c055d184e58623e3a495f85ca1c6f0c4eb4ac08daf7ab16e61227d7b3036",
+      "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+      "raw_output_sha256": "407606d86042ee9c549cdf932b7f9281de27cefa3015dc16389ebbda98328789",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "Expecting value: line 7 column 21 (char 228)",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/4c135bc88452f0133529e890187ba98d6c64250c258901f62094cd21b56c83fb.raw.json"
+  },
+  {
+    "pilot_index": 9,
+    "condition": "ON",
+    "repeat": 0,
+    "reply": "That's a great idea. Talking to a therapist can provide a safe and non-judgmental space to explore your feelings and gain a deeper understanding of yourself. It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+    "measurement": {
+      "response_sha256": "c2ce9207299b60f1e090fceb79ee6c0caab03edf5dc2221df34aa8e93d608904",
+      "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+      "raw_output_sha256": "4e4e35cf0750b1be75c690b17386b491a01cd47445858de64ac5873aec705779",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "schema keys differ: status q m q_rationale claims misuse_findings coverage uncertainty_reasons",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/d37d4f905b0db827dde92d495434fcf46484a64b1553e9b36759dafe2dd6686a.raw.json"
+  },
+  {
+    "pilot_index": 6,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It is amazing how much time and energy we can spend dwelling on the negative.\n\nIt sounds like you are making a conscious effort to shift your focus now, and that is a really brave and healthy step.",
+    "measurement": {
+      "response_sha256": "7f61a7f8729dfd7231ede0ba9843209d71c74441073e24a83cd44d3c9217ace6",
+      "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+      "raw_output_sha256": "179a337b7a4fdd754524097e49693a725ddab7be5dc87feac58f2054e628cfa4",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "source ID not in legal evidence",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/c43ef3ae6f442f56b71c1bf21f29c066dcc130d9c02cb436f2151b11d3008b5e.raw.json"
+  },
+  {
+    "pilot_index": 5,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings.\n\nIt is great that you felt comfortable enough to open up to them.\n\nIt is also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate.\n\nDid your siblings offer any words of encouragement or advice that stood out to you?",
+    "measurement": {
+      "response_sha256": "4d094650f4202dae030f6f42a14822beda559e44e1563573e2b290298f9f25ba",
+      "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+      "raw_output_sha256": "b956b9821fbc3f213da75d43637980017eaab4cf7ff6326991ff9dc6d1438eb0",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "Expecting ',' delimiter: line 15 column 2 (char 1701)",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/fac05c6fff79ea4b8ad12f09c3d24994b587698eb36ba9329ffc2d92e10bb3af.raw.json"
+  },
+  {
+    "pilot_index": 12,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're already 25 years old and you should have a say in your own life. Have you talked to your parents about how you feel?",
+    "measurement": {
+      "response_sha256": "36f4fbe24e89b7c568b8aa522a9de4bc177504b90f8db118d13e757ae5629e3f",
+      "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+      "raw_output_sha256": "5c27e973f138451e68ce54e5d3f139f8d369e5dd0d18e40dc0d6a4d12cae4421",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "findings do not exactly index the declared errors",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/7d1b69c8c21890f391ee225aa04c3b928bb2fd37fce36f6e992782c4bfb2972b.raw.json"
+  },
+  {
+    "pilot_index": 7,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "Not at all! I'm here to listen and help in any way I can. It's completely normal to have a lot on your mind, and it's great that you're reaching out for support. Take a deep breath and feel free to share as much or as little as you'd like. I'm here to listen without judgment. What's been going on that's been weighing on your mind?",
+    "measurement": {
+      "response_sha256": "9ae1a955f0d31bc997742518ec024bc60e827bb1ac302b97e0db83da4856f0b0",
+      "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+      "raw_output_sha256": "327532bf614fead9554046b7930986754c090fb00260b10b9f88bb8d71fc850d",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/9a4d2cecf08eb47606885fddd34156165a1dfa213eb0eb4993c901f1b2343ad2.raw.json"
+  },
+  {
+    "pilot_index": 1,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It's like you're caught between two opposing emotions. On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations? Sometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+    "measurement": {
+      "response_sha256": "43005cc8bdc6256a16216764a607d5908c75a8638e5a84384e84d30965493940",
+      "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+      "raw_output_sha256": "9740f338b30f2b3138ebf2d42ecbac4c006cad674ca1b77555912119b27cecee",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate mixed feelings (relief vs. stagnation fears) and provide potential next steps for career growth after a missed promotion.",
+          "response_quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations?",
+          "evidence": [
+            {
+              "source_id": "C:T014",
+              "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+            }
+          ],
+          "reason": "The response accurately reflects the user's stated emotions in the current turn (T014) and offers a constructive suggestion. It is coherent and responsive without violating boundaries or missing explicit constraints. While it transitions from venting to actionable advice, this aligns with previous support patterns in the history regarding career stress, making it appropriate. No major defect prevents a score of 3."
+        },
+        "claims": [
+          {
+            "response_quote": "On one hand, you're relieved about not having to move",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T014",
+                "quote": "relieved I don't have to move overseas"
+              }
+            ],
+            "reason": "User explicitly stated relief about not moving in the current turn."
+          },
+          {
+            "response_quote": "worried about getting stuck in your career",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T014",
+                "quote": "nagging fear I'll remain stagnant in my career"
+              }
+            ],
+            "reason": "User explicitly stated the fear of remaining stagnant/career stagnation."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked personal claims regarding relief about relocation and fear of career stagnation against current turn T014. Identity (Jane) and temporal context verified against full history. No unsupported personal facts or identity assertions found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations?",
+          "positions": [
+            {
+              "start": 55,
+              "end": 306
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 155
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "On one hand, you're relieved about not having to move",
+          "positions": [
+            {
+              "start": 55,
+              "end": 108
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T014",
+          "quote": "relieved I don't have to move overseas",
+          "positions": [
+            {
+              "start": 50,
+              "end": 88
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "worried about getting stuck in your career",
+          "positions": [
+            {
+              "start": 140,
+              "end": 182
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T014",
+          "quote": "nagging fear I'll remain stagnant in my career",
+          "positions": [
+            {
+              "start": 108,
+              "end": 154
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/1c1a25976e40921933aec0a5a200a9e3f2fce8eb9bbc1b03f6ca169c0237979d.raw.json"
+  },
+  {
+    "pilot_index": 1,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It's like you're caught between two opposing emotions. On one hand, you're disappointed about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations? Sometimes just sharing your thoughts and feelings with someone who can offer guidance and support can help you gain clarity and momentum.",
+    "measurement": {
+      "response_sha256": "7bc11cf2b9f69b8dbbcfa4beda4e21e73956145b27a50e6c47e36acc6fa039a5",
+      "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+      "raw_output_sha256": "4d1731dfb72ed834c7cb4749bd596fd43bb2a2b24140e008061d17fe70c45efd",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "findings do not exactly index the declared errors",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/2b2c583a35a5718d44e355a9c7d896301056a76019e624f298cf692753916be9.raw.json"
+  },
+  {
+    "pilot_index": 5,
+    "condition": "damage",
+    "repeat": 0,
+    "reply": "It takes a lot of courage to share those kinds of feelings and concerns with your parents. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+    "measurement": {
+      "response_sha256": "ee0f08c6aedbee83af62e62db74a03525b4dbd567f3e1b90890034c9a23b7182",
+      "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+      "raw_output_sha256": "7093932658935f8b349443b3b8a3b511c6e775f046d55ce620b65363957d5f0a",
+      "reward_eligible": false,
+      "measurement_status": "parse_or_evidence_failure",
+      "error": "quote is absent from bound original text",
+      "q": null,
+      "m": null,
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ]
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/d29c3f26dcc8420bd604c82ba94ea241bf387d594dacf44d749ea4d4b10ca32e.raw.json"
+  },
+  {
+    "pilot_index": 4,
+    "condition": "OFF",
+    "repeat": 0,
+    "reply": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+    "measurement": {
+      "response_sha256": "dba8c0e5a6d1a829897f491c7b524ee70664e897f0079e60e17a45714e357781",
+      "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+      "raw_output_sha256": "23357d68463b61a3c171a7d1549c4b3b67c6471a269fc0b55106564307f2ad47",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validate the user's grief following a breakup involving mutual conflict, and encourage exploration of lingering negative feelings.",
+          "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad?",
+          "evidence": [
+            {
+              "source_id": "C:T001",
+              "quote": "I just broke up with my girlfriend and sad about it"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+            }
+          ],
+          "reason": "The reply accurately reflects the breakup context and the user's stated difficulty ('can not get over it'). It provides validation and a gentle probe into the specific emotions driving the stagnation. It respects boundaries by avoiding unsolicited advice or diagnosis. No factual claims are contradicted."
+        },
+        "claims": [
+          {
+            "response_quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T001",
+                "quote": "I just broke up with my girlfriend and sad about it"
+              }
+            ],
+            "reason": "The pronoun 'her' correctly refers to the female partner identified as 'girlfriend' in C:T001. The focus on the relationship matches C:T001 context."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked user identity markers (name absent in current prefix, not asserted), partner identity (girlfriend->her consistency), and current event details (breakup, fighting). No unsupported personal facts or historical contradictions found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 227
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "I just broke up with my girlfriend and sad about it",
+          "positions": [
+            {
+              "start": 15,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 89
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+          "positions": [
+            {
+              "start": 228,
+              "end": 323
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T001",
+          "quote": "I just broke up with my girlfriend and sad about it",
+          "positions": [
+            {
+              "start": 15,
+              "end": 66
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/ed84a73e800231819cd2a455a6b128486a8e50e64bed69e20e030cc94bd8c117.raw.json"
+  },
+  {
+    "pilot_index": 12,
+    "condition": "style",
+    "repeat": 0,
+    "reply": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+    "measurement": {
+      "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+      "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+      "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+      "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+      "parser_version": "pm-rl1-qm-exact-span-v1",
+      "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+      "raw_output_sha256": "02f44f5b3557a77215f01ef366673788af1cb6a2ba9a8a8f6606041883aa107a",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Validation of seeker's growing understanding of parental perspective while reinforcing autonomy after grounded conflict.",
+          "response_quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "I am 17"
+            },
+            {
+              "source_id": "C:T024",
+              "quote": "Well, I guess I understand a bit more put like that."
+            }
+          ],
+          "reason": "The reply appropriately validates the seeker's concession of understanding (C:T024) and empowers them based on the disclosed age (C:T013: 17). It offers a supportive question regarding communication without violating boundaries or making unsupported factual claims."
+        },
+        "claims": [
+          {
+            "response_quote": "you are almost an adult",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "I am 17"
+              }
+            ],
+            "reason": "Consistent with the legal evidence stating the seeker is 17 years old, approaching majority age (18)."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Verified user identity as a 17-year-old student grounded by parents per C:T013 and C:T019. Checked consistency of the 'almost adult' statement against current session facts. Verified parental relationship context matches prior turns.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 232
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "I am 17",
+          "positions": [
+            {
+              "start": 90,
+              "end": 97
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 52
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "you are almost an adult",
+          "positions": [
+            {
+              "start": 112,
+              "end": 135
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "I am 17",
+          "positions": [
+            {
+              "start": 90,
+              "end": 97
+            }
+          ]
+        }
+      ],
+      "format_transformations": [
+        "remove_closed_thinking_prefix"
+      ],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+    },
+    "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/measurement_pilot_20260928_v1/judge/05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6/5e9fd9797fd3fed9cb5418203a8248fa9cd246f934df39c1b166f75f44b21711.raw.json"
+  }
+]

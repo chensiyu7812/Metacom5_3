@@ -1,0 +1,100 @@
+{
+  "response_sha256": "468d180b6de9303136be4fb97be0e094eee3f36b158db3f95b053eaa70e59adb",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "fb65fad17cebfb0fce8b62d7fac6515b234da23b43707c9d6331b0c0cf4e682b",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker (Amanda) expressed hesitation about discussing workload adjustments with her supervisor due to uncertainty about their reaction.",
+      "response_quote": "It is natural to feel uncertain about how your supervisor will respond.\n\nBut it might be worth having an open and honest conversation with them about your concerns.",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply perfectly aligns with the final seeker turn's specific concern regarding the supervisor interaction. It validates the emotion ('natural to feel uncertain'), proposes the suggested next step ('open and honest conversation'), and respects the established context where previous attempts at communication had mixed outcomes (H008, H009, H012) without making false promises. The follow-up question ('What is holding you back') effectively deepens the exploration of the barrier. No chronological or factual mismatches are present given the progression of work stress, promotion, and illness topics across the legal evidence."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked identity ('Amanda' used consistently across prefix and replies); checked temporal consistency (promotion timing aligns with H018/H019/C prefix; illness context from C:T003/H019 acknowledged implicitly via supervisor focus); checked intent match (reply addresses the specific hesitation about the supervisor conversation raised in C:T015).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is natural to feel uncertain about how your supervisor will respond.\n\nBut it might be worth having an open and honest conversation with them about your concerns.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 164
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "parse_or_evidence_failure",
+  "quote_transformations": [
+    {
+      "part": 0,
+      "field": "response_quote",
+      "provided": "It is natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns.",
+      "matched_original": "It is natural to feel uncertain about how your supervisor will respond.\n\nBut it might be worth having an open and honest conversation with them about your concerns."
+    },
+    {
+      "part": 0,
+      "field": "evidence[0].quote",
+      "source_id": "C:T015",
+      "provided": "I've been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they'll react.",
+      "matched_original": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+    }
+  ],
+  "normalized_final_json": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker (Amanda) expressed hesitation about discussing workload adjustments with her supervisor due to uncertainty about their reaction.",
+      "response_quote": "It is natural to feel uncertain about how your supervisor will respond.\n\nBut it might be worth having an open and honest conversation with them about your concerns.",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply perfectly aligns with the final seeker turn's specific concern regarding the supervisor interaction. It validates the emotion ('natural to feel uncertain'), proposes the suggested next step ('open and honest conversation'), and respects the established context where previous attempts at communication had mixed outcomes (H008, H009, H012) without making false promises. The follow-up question ('What is holding you back') effectively deepens the exploration of the barrier. No chronological or factual mismatches are present given the progression of work stress, promotion, and illness topics across the legal evidence."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked identity ('Amanda' used consistently across prefix and replies); checked temporal consistency (promotion timing aligns with H018/H019/C prefix; illness context from C:T003/H019 acknowledged implicitly via supervisor focus); checked intent match (reply addresses the specific hesitation about the supervisor conversation raised in C:T015).",
+    "uncertainty_reasons": []
+  },
+  "normalization_scope": "only whitespace and straight/curly quote glyphs; no word or source-ID changes",
+  "original_format_transformations": [
+    "remove_closed_thinking_prefix"
+  ]
+}

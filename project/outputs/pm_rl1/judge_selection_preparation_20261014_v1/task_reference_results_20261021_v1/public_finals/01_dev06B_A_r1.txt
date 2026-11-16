@@ -1,0 +1,70 @@
+{
+  "status": "scored",
+  "q": 2,
+  "q_rationale": {
+    "current_need": "The seeker is angry about her mother's control over her friendships and directly asks the previous supporter how that person dealt with a similar situation. The new AI should acknowledge the anger, clarify that the earlier experience belongs to a previous speaker rather than itself, and then continue helping with the seeker's situation.",
+    "response_unit_ids": [
+      "R001",
+      "R002",
+      "R003",
+      "R004"
+    ],
+    "source_turn_ids": [
+      "C:T007",
+      "C:T008",
+      "C:T009"
+    ],
+    "reason": "The reply offers relevant empathy and validates the anger about friendship restrictions, but it does not answer or clarify the seeker's direct question about how the earlier supporter dealt with the similar situation. It then pivots to a question that presupposes the seeker has already had a feelings-focused conversation with her mother about the rules. That is an important missed need and an unsupported personal presupposition, so the response is basically responsive but not fully appropriate."
+  },
+  "assessments": [
+    {
+      "response_unit_id": "R001",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is an empathic acknowledgment, not a specific personal factual assertion."
+    },
+    {
+      "response_unit_id": "R002",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": [
+        "C:T001",
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The seeker reports mixed sadness and anger, dislikes arguing with her mother, says her mother never approves of most things, argues about friend choices, and says the situation makes her angry. This supports the reflection that the mother situation is causing tension."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": [
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The seeker specifically says she believes she has freedom to choose her friends rather than her mother controlling this, and that this makes her angry. The reflection about anger at restrictions is therefore supported; the additional clause about it being natural to push back is generic rather than a personal factual claim."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "unsupported",
+      "severity": 0.25,
+      "source_turn_ids": [
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The question presupposes that the seeker has already completed a conversation with her mother specifically about how the mother's rules make her feel. The current record shows arguments about friend choices and anger, but does not report that specific feelings-focused conversation. Past-session material about a heart-to-heart discussion concerned a different parent conflict and was a supporter suggestion, not confirmation of this action. This is a localized unsupported personal presupposition rather than a complete loss of the supportive context."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "The alternative outcome clause asks whether communication calms the anger or escalates the argument. It is a tentative question and does not assert that either outcome occurred."
+    }
+  ],
+  "coverage": "Reviewed all four reply units against the complete current prefix C:T000-C:T009 and the legal past sessions H001-H002. The key direct question is C:T009 following the earlier supporter's C:T008 disclosure of a similar situation. H001 concerns thesis stress and is unrelated. H002 concerns a different parent conflict about travel and traditional beliefs; its discussion/recommendation turns do not confirm that the seeker had the specific feelings-focused conversation about friendship rules presupposed in R004.",
+  "uncertainty_reasons": []
+}

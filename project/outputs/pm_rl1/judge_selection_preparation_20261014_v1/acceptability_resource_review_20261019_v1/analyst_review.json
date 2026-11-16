@@ -1,0 +1,933 @@
+{
+  "version": "acceptability-applicability-analyst-v1",
+  "not_independent_human": true,
+  "not_reward_labels": true,
+  "no_new_q_m": true,
+  "classification_definitions": {
+    "plausibly_acceptable": "按最低要求草案有可接受依据；不是正式合格认证",
+    "explicit_problem": "存在可定位的问题；不重写旧q/m或STOP",
+    "unresolved": "整体合格边界仍未确定；不是失败、平局或零奖励"
+  },
+  "rows": [
+    {
+      "row_id": "context_01_0000",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "无资源。",
+      "reason": "承接与建议得到原研究者认可；团队士气/生产力的事实预设与一般讨论双读法仍保留，不能自动变成新的合格标签。",
+      "reply_spans": [
+        "how this favoritism affects your team's morale and productivity"
+      ],
+      "evidence": [
+        {
+          "id": "C:T001",
+          "role": "seeker",
+          "text": "Im feeling down and need some advice as to how do I handle this situation"
+        },
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        }
+      ],
+      "issue": "team_impact_reading",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_01_1000",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "RS建议询问是否与他人讨论，回复出现相同动作。",
+      "reason": "有可追溯的策略采用；询问讨论是否发生，没有认定发生。避开OFF团队影响争点，但OFF并非已裁定不合格，不能计确定跨门槛改善。",
+      "reply_spans": [
+        "Have you talked to anyone else about this situation"
+      ],
+      "evidence": [
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_01_0100",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "MP记录姐妹支持照护压力，与本次职场问题并非同一事实。",
+      "reason": "未看到姐妹细节进入回复；仍保留与OFF相同的团队影响双读法。",
+      "reply_spans": [
+        "how this favoritism affects your team's morale and productivity"
+      ],
+      "evidence": [
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        },
+        {
+          "id": "H004:T007",
+          "role": "seeker",
+          "text": "I did, last week actually. She's been supportive, but I think she's also really worried."
+        }
+      ],
+      "issue": "team_impact_reading",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_01_0010",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "MS是照护母亲的旧会话；回复未明确使用其中独有信息。",
+      "reason": "当前已明确存在职场偏袒与困扰，讨论工作环境并未额外认定士气或生产力后果；存在合理可接受依据，但不是人类认证。",
+      "reply_spans": [
+        "how this favoritism affects your work environment"
+      ],
+      "evidence": [
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        },
+        {
+          "id": "H003:T004",
+          "role": "seeker",
+          "text": "Sure, it's my mom. She's been really sick recently, and it's been hard to manage everything."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_01_0001",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "ME记录过去获得支持；未发现需要此条历史才能支持的新事实。",
+      "reason": "记录事件、寻求HR支持被表达为可选策略，不断言已经实施。比OFF更具体不自动意味着更优。",
+      "reply_spans": [
+        "such as documenting specific instances or seeking support from HR"
+      ],
+      "evidence": [
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        },
+        {
+          "id": "H004:T019",
+          "role": "seeker",
+          "text": "I'll try. Thanks again for listening. It helps to know I'm not alone in this."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_01_1111",
+      "context_id": "context_01",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "承接对职场偏袒的不满，并允许分析、探询或建议；不要求唯一最佳处理办法。",
+      "resource_delta": "组合含相同RS和三类记忆；可见提问与RS一致，不能识别各项边际贡献。",
+      "reason": "以是否与他人讨论的开放问题承接；没有充分证据表明额外三类记忆相对单RS有必要收益。",
+      "reply_spans": [
+        "have you discussed this specific situation with anyone else"
+      ],
+      "evidence": [
+        {
+          "id": "C:T006",
+          "role": "seeker",
+          "text": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "id": "C:T008",
+          "role": "seeker",
+          "text": "Yes, it bothers me as I cannot tolerate injustice"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_0000",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "无资源。",
+      "reason": "研究者确认了谈话已发生的预设；旧旅行讨论不能直接支持本次谈话。还存在未澄清身份；原人评给2–3/.25，不能据此补造总体不合格标签。",
+      "reply_spans": [
+        "Did you find that talking to her about how her rules make you feel helped to calm the anger"
+      ],
+      "evidence": [
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T004",
+          "role": "seeker",
+          "text": "So I've been dating and my parents are aware. But recently after I said I want to go on a trip with my boyfriend, my parents have all sorts of opinions about it. And all their traditional beliefs that I did not know existed are now on the surface and they are kinda forcing me to follow it. "
+        },
+        {
+          "id": "H002:T010",
+          "role": "seeker",
+          "text": "I have. It's been a long stressful month of discussion. The problem is I don't share their beliefs, and I haven't been really \"saving myself\". I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about."
+        },
+        {
+          "id": "H002:T021",
+          "role": "supporter",
+          "text": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them"
+        }
+      ],
+      "issue": "action_presupposition_and_identity_omission",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_1000",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "RS询问是否向朋友表达感受，回复有明确对应。",
+      "reason": "不再使用OFF的已发生母女谈话句式，但仍没有处理用户对前一支持者经历的询问；事实风险减少与总体合格须分开。",
+      "reply_spans": [
+        "Have you talked to any of your friends about how you feel"
+      ],
+      "evidence": [
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        }
+      ],
+      "issue": "identity_omission",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_0100",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "MP是旧会话中的“最受宠孩子”；未被回复明确引用。",
+      "reason": "控制感/不信任以问题探索，不是既定动机；仍未回应身份承接，保留整体适当性边界。",
+      "reply_spans": [
+        "Is it the feeling of being controlled, or the sense that she doesn't trust your judgment?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T007",
+          "role": "seeker",
+          "text": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T020",
+          "role": "seeker",
+          "text": "BTW if you didn't guess I'm their favorite child. "
+        }
+      ],
+      "issue": "identity_omission",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_0010",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "MS是此前关于与男友旅行和父母信念的讨论。",
+      "reason": "回复复述当前交友自主与愤怒；没有明确借用旅行经历。提问允许多种继续方式，但身份承接问题未解决。",
+      "reply_spans": [
+        "Do you want to talk more about what specifically makes you angry"
+      ],
+      "evidence": [
+        {
+          "id": "C:T007",
+          "role": "seeker",
+          "text": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T004",
+          "role": "seeker",
+          "text": "So I've been dating and my parents are aware. But recently after I said I want to go on a trip with my boyfriend, my parents have all sorts of opinions about it. And all their traditional beliefs that I did not know existed are now on the surface and they are kinda forcing me to follow it. "
+        }
+      ],
+      "issue": "identity_omission",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_0001",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "ME描述此前一个月旅行/关系讨论；回复即原06A。",
+      "reason": "OFF的具体已发生谈话预设不再出现；原研究者仍指出缺少身份澄清。不能把少一个问题算已经整体合格。",
+      "reply_spans": [
+        "Is it the feeling of being controlled, or the fear of disappointing her?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T004",
+          "role": "seeker",
+          "text": "So I've been dating and my parents are aware. But recently after I said I want to go on a trip with my boyfriend, my parents have all sorts of opinions about it. And all their traditional beliefs that I did not know existed are now on the surface and they are kinda forcing me to follow it. "
+        },
+        {
+          "id": "H002:T010",
+          "role": "seeker",
+          "text": "I have. It's been a long stressful month of discussion. The problem is I don't share their beliefs, and I haven't been really \"saving myself\". I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about."
+        }
+      ],
+      "issue": "identity_omission",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_02_1111",
+      "context_id": "context_02",
+      "analyst": "Codex",
+      "classification": "unresolved",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户询问前一支持者如何处理其亲身经历；新AI不能认领，需以不误导方式处理身份承接，同时回应愤怒与交友自主。",
+      "resource_delta": "组合包含旅行谈话ME和该MS，以及RS/MP。",
+      "reason": "“how have you tried”再次预设沟通尝试；当前有争论、历史有另一话题沟通，支持关系并不确定。身份问题同样保留。",
+      "reply_spans": [
+        "how have you tried to communicate that to her?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T007",
+          "role": "seeker",
+          "text": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "id": "C:T008",
+          "role": "supporter",
+          "text": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T004",
+          "role": "seeker",
+          "text": "So I've been dating and my parents are aware. But recently after I said I want to go on a trip with my boyfriend, my parents have all sorts of opinions about it. And all their traditional beliefs that I did not know existed are now on the surface and they are kinda forcing me to follow it. "
+        },
+        {
+          "id": "H002:T010",
+          "role": "seeker",
+          "text": "I have. It's been a long stressful month of discussion. The problem is I don't share their beliefs, and I haven't been really \"saving myself\". I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about."
+        }
+      ],
+      "issue": "identity_omission_and_communication_reading",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_0000",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "当前对话本身已经提供导师反馈、老同学及新视角；无需历史即可支持回复。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "their insights"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_1000",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "RS提供肯定/鼓励继续求助；回复有肯定，但无法排除仅由当前对话引出。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "How are you feeling about your thesis now?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_0100",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "MP记录治疗费用顾虑；回复没有使用该历史内容。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "now that you've had that conversation"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_0010",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "MS是过去论文受挫记录；新回复也可由当前论文与朋友谈话直接支持，未检出必要的独有历史贡献。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "Have you been able to make any progress since that conversation?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_0001",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "ME记录另一过去谈话使人更乐观；当前已明确朋友谈话有帮助，不能将两次事件混为一条来源。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "this new view"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_03_1111",
+      "context_id": "context_03",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "肯定老同学的帮助，延续对论文新视角的讨论；帮助者和谈话已发生均在当前对话中明确。",
+      "resource_delta": "组合回复的视角/卸下重担已在当前对话出现；未检出额外历史对最低需求的必要贡献。",
+      "reason": "未将老同学的帮助归给AI；后续问题与当前话题衔接。泛化肯定不是最优性证明，仍只有分析者复核。",
+      "reply_spans": [
+        "lift that weight off your shoulders"
+      ],
+      "evidence": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+        },
+        {
+          "id": "C:T005",
+          "role": "seeker",
+          "text": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+        },
+        {
+          "id": "C:T011",
+          "role": "seeker",
+          "text": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+        },
+        {
+          "id": "C:T013",
+          "role": "seeker",
+          "text": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_0000",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "无资源已能承接与澄清。",
+      "reason": "对当前尚未说明的困难保持开放；未检出需要资源才能满足的最低需求。这里的认可只是草案适用性分析。",
+      "reply_spans": [
+        "what's been going on"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_1000",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "explicit_problem",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "实际RS原文为“share that it is a difficult time to be job hunting”；回复将该情境套到当前用户。",
+      "reason": "当前前缀和两次合法过去会话没有求职依据。原研究者已明确指出同一回复问题；这是来源不支持的个人情境指派，不是证明用户现实中绝不求职。OFF无此问题。",
+      "reply_spans": [
+        "especially when it comes to job hunting"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": "unsupported_job_hunting_from_RS",
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_0100",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "MP记录过去睡眠困难；回复没有把它升级为当前困境。",
+      "reason": "对当前尚未说明的困难保持开放；未检出需要资源才能满足的最低需求。这里的认可只是草案适用性分析。",
+      "reply_spans": [
+        "What specifically has been making things difficult?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_0010",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "MS记录过去饮酒/婚姻问题；回复没有把它升级为当前困境。",
+      "reason": "对当前尚未说明的困难保持开放；未检出需要资源才能满足的最低需求。这里的认可只是草案适用性分析。",
+      "reply_spans": [
+        "How can I support you today?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_0001",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "ME记录过去饮酒影响婚姻；回复维持开放探询。",
+      "reason": "对当前尚未说明的困难保持开放；未检出需要资源才能满足的最低需求。这里的认可只是草案适用性分析。",
+      "reply_spans": [
+        "what's been going on"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    },
+    {
+      "row_id": "context_04_1111",
+      "context_id": "context_04",
+      "analyst": "Codex",
+      "classification": "plausibly_acceptable",
+      "classification_kind": "offline_applicability_hypothesis_not_eligibility_label",
+      "reward_eligible": false,
+      "human_label": null,
+      "new_model_request": false,
+      "current_need": "用户只说近来困难；先承接并询问具体原因，不能擅自指定求职、睡眠或婚姻为当前原因。",
+      "resource_delta": "含同一求职RS，但回复未出现求职断言；不能由单RS一次结果推断其必然被采用。",
+      "reason": "对当前尚未说明的困难保持开放；未检出需要资源才能满足的最低需求。这里的认可只是草案适用性分析。",
+      "reply_spans": [
+        "How can I support you today?"
+      ],
+      "evidence": [
+        {
+          "id": "C:T002",
+          "role": "seeker",
+          "text": "Honestly, things have been a bit tough lately."
+        },
+        {
+          "id": "H001:T003",
+          "role": "seeker",
+          "text": "yes.i have sleeping problem"
+        },
+        {
+          "id": "H002:T003",
+          "role": "seeker",
+          "text": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+        }
+      ],
+      "issue": null,
+      "old_scores_untouched": true
+    }
+  ]
+}

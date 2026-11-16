@@ -1,0 +1,2896 @@
+总体判断
+这份方案在诚实性上合格：它把"实现完成 / 有研究证据 / 达到预期正目标"分成三层，未测的结果不填 0，缺口也如实列了出来。我抽查了几处说法，都属实：
+
+两个校验脚本都通过。
+代码里确实写死了 18/96 前缀（qualified_learning.py:44-55、organized_learning.py:106）。
+遇到容量或预算耗尽时，现有代码确实只抛 ValueError，没有退路。
+问题在于它更像一份合规清单，不太像一份能尽快拿到结论的执行方案。下面几处比 Codex 自己列的缺口更要紧。
+
+主要问题
+1. 第一个科学信号排得太靠后
+
+整个 DAG 承重的是 P07，也就是"资源到底有没有增量"。P10–P13 全部以它为正作前提。
+但 P07 前面串着 P03（完整资源库编译器加 schema）、P04（BGE 检索、按秒计成本、STOP 保护层、训练规模参数化、只读评估入口）、P05 和 P06。
+P07 里的 R/M 条件本身就是"直接提供资料"，用不到检索、成本接口、保护层和训练参数化。
+11-15 已经有 24 段历史、12 个案例、3 份方法草稿和 3 处 MP/ME 修复，可以直接手工物化来跑。
+按现在的顺序，很可能先花两三周做基建，最后 P07 仍然是 null。
+2. P07 没有预先写好"失败后转向哪里"
+
+先验并不乐观：
+11-05 历史价值检验没过门槛（C 对 OFF 4 胜 5 平 1 负，实质性改进为 0）。
+11-12/13 的 RS 阶梯测试和困难时刻测试，都和 placebo 差不多。
+唯一的大反差是 QA：OFF 答对 0/14，C 答对 13/14。
+11-15 审计对我的反驳是合理的："7 条单句技巧"不等于"完整方法加案例"，所以完整 RS 仍然没有定论。
+但方案只写了"保留负面结果"，没写清 P07 没过之后，P10–P13 还做不做、论文主张改成什么。资源没有增量时，PM 学到的最优策略就是一直 STOP，后面的训练都是空转。
+3. 人评通量与 PPO 在数量上对不上，这是最硬的约束
+
+P07 一项就要 336 次判断，方案自己估算约 11–28 小时。P06、P08 的人评还要另算。
+P10 要求每个训练终点都和同前缀的 OFF 回复直接配对比较。PPO 需要几百到几千个终点。
+到目前累计的人评参照只有 55 条，自动裁判 J01–J18 和 SSJ 都没能通过资格。
+奖励是三值（好/平/差），而历史上 24 对里有 17 对打平，信号会很稀疏。
+所以 P12 几乎肯定会落到"有限集合"分支。那实质上是对一张已测表格做监督选择，不是 RL。
+方案诚实地写了"完整域 PPO 未完成"，但这等于承认论文里的 RL 主张大概率拿不到。这件事应该现在定下来，而不是到 P10 才发现。
+4. 没有时间预算，工程仪式偏重
+
+18 个工作单、约 2000 行 schema、19 个合法例加 21 个拒绝例、record_sha256 规范化、Holm 校正、分组功效模拟，都在任何资源被证明有用之前就要做完。
+这和你之前定的"及格、尽快出结果"有冲突。
+真正撑得起有效性的应保留：来源和时点隔离、同一套栈对比、不跨 G 搬标签、未知不填 0、OFF 回复不泄漏隐藏信息。
+方案没有任何工作单级的时间盒，也没有截止日期。从 9/30 到现在约 7 周，自然支持场景的训练仍是 0 次。
+5. 两项"缺口"其实应该改成"局限"
+
+X1 独立英语纵向确认数据：这类数据基本不存在，EvoEmo 的 18 个构造人物几乎是唯一来源。应直接把主张限定为"在 EvoEmo 上按 owner 分组留出，加 ESC-Eval 外评"，并写进局限，而不是一直挂着"未完成"。
+RQ-SX（G 与 PM 配对）：它依赖 P08 用 SFT 得到 G1。11-04 那次执行器 LoRA 已经失败过，建议现在就降为可选。
+我的建议（按优先级）
+先跑一个最小版 P07（P07-lite），不等 P03/P04：
+用 11-15 的现成资产，条件取 B/F/R/M/D_R/D_M。
+前缀取 12 个有需求的开发前缀，主比较只看 R/F、M/B、R/D_R、M/D_M，约 48 对，人评 2–4 小时。
+预先写好门槛，以及过和不过两种情况下各走哪条路。
+现在就决定 RL 的奖励从哪来。 首选是在记忆依赖轮做可验证奖励的 PPO，比如事实或约束是否被正确使用，QA 已经证明这里有大反差；自然支持的帮助性只用人评做外评。如果不这么做，就接受"有限集合选择加 BC/OneShot"为主结果。
+推迟部分基建：P03 的完整编译器和 P04 中与训练相关的接口，等 P07-lite 过门槛后再做。schema 可以保留为合同，但不用先全部实现。
+补时间盒和截止日期，把 X1、X2、RQ-SX 从目标清单移到局限里。
+另外想确认一下：这项研究有没有投稿截止日期？这决定上面第 4 条要收多紧。需要的话，我可以把这几条写成给 Codex 的修订指令。
+
+
+
+没有截止日期，有些时间去做。只是我要的是一份，切实可行，能解决现在的问题，能让codex直接照着执行就能正确做完整个研究的完整方案。所以，所有的步骤和细节都需要在上面了。
+12:02 PM
+没有截止日期的话，重点就是把方案做到"照着做不会走偏"。我先把现有资产、代码和数据的实际状态核一遍，再写一份完整的修订方案。
+
+
+
+Bash Read 11-15 results and 11-16 summary design
+IN
+cd /home/tokkio/Metacom5_3/project/docs && cat reviews/20261115/pm_rl1_resource_organization_and_execution/RESULTS_ZH.md; echo ======; sed -n 1,200p reviews/20261116/pm_rl1_session_summary_design/DESIGN_ZH.md | head -c 9000
+
+OUT
+# 2026-11-15 离线准备结果与实际剩余工作
+
+本轮在用户接受[总体路线](../pm_rl1_research_audit_and_route/REPORT_ZH.md)后，执行了版本整理、记忆来源审查与完整RS候选建设。具体组织与后续执行见[主方案](PLAN_ZH.md)。本报告不是资源收益实验结果，所有新增审阅均明确标为助手审阅。
+
+## 已交付
+
+| 工作 | 实际产物 | 边界 |
+|---|---|---|
+| 版本与复用 | 39个来源文件SHA256、7类资产复用规则、10个Claude回复池元数据 | 尚未做新请求与旧回复/人评逐条连接；不能报可复用标签数 |
+| 记忆来源固定抽样 | 24段完整导出会话、15 owners，train18/dev6；约10,596词 | 来自冻结隔离train/dev合法历史；不是全库遍历或真人临床资料 |
+| 记忆语义首审 | 24段全部逐段审阅，88条有原话定位的观察 | 非穷尽事件频率、非独立人评、非收益标签 |
+| 当前表示对照 | 3个MP/ME条目与原话、源会话和当前目录身份精确连接 | 尚无全编译召回率，也不证明所有问题进入了已运行G的payload |
+| 候选表示修复 | 3条独立sidecar，修正陈述并区分行动与自报反应 | 原引用、旧身份及4个目录文件哈希不变；尚未接入生产视图 |
+| RS完整案例 | 12个不同ESConv train对话，保留完整前情、连续行动与紧随反应 | 固定种子与策略配额选取；不是12张高质量正例 |
+| 方法依据 | 3个TIP35方法草稿及出处/原领域/未知项 | 未专业审核；许可式建议草稿的PDF精确页码仍待核验 |
+| 确认材料盘点 | EvoEmo、ESC外源角色、AnnoMI metadata清单 | 尚未认证出新的未暴露英文纵向记忆确认集 |
+
+版本：[审阅说明](../../../../outputs/pm_rl1/research_preparation_20261115_v1/versions/REVIEW_ZH.md)、[manifest](../../../../outputs/pm_rl1/research_preparation_20261115_v1/versions/VERSION_REUSE_MANIFEST.json)。
+
+记忆：[分析](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/MEMORY_PREPARATION_ZH.md)、[固定抽样清单](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/SAMPLE_MANIFEST.json)、[源绑定核验](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/VALIDATION.json)。
+
+RS：[实际逐卡审阅](../../../../outputs/pm_rl1/research_preparation_20261115_v1/rs/SEMANTIC_REVIEW_ZH.md)、[候选JSONL](../../../../outputs/pm_rl1/research_preparation_20261115_v1/rs/case_candidates.jsonl)、[方法草稿](../../../../outputs/pm_rl1/research_preparation_20261115_v1/rs/METHOD_UNITS_DRAFT.json)、[构造检查](../../../../outputs/pm_rl1/research_preparation_20261115_v1/rs/BUILD_CHECKS.json)。
+
+## 新证据改变了什么
+
+### 1. 不能再由“4个结果字段”推断原历史没有行动反馈
+
+固定24段里识别了建议17条、意向20条、尝试18条、自报反应18条、未知12条、明确偏好3条。这是88条助手选记的来源观察，类别可能涉及同一事件，不是全库计数或需求率。
+
+三处精确对照见[原记录与当前视图](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/CURRENT_VIEW_COMPARISONS_PRIVATE.json)：
+
+- `mp::mvu_2a73b2853cdd499d576e2ab5`：原话报告已经挂过电话且朋友容易生气；概括却写成避免挂断。引用存在不能抵消概括的语义偏移，也不能反推G必然采用了错误概括。
+- `mp::mvu_785a6f6f9e719c52ef13fc57`：引用包含写作工作坊有所帮助、冒名顶替感仍出现；概括只保留参加工作坊。需要把事件和主观反应表达清楚，不能把它包装成稳定档案或客观疗效。
+- `me::mvu_c8da36ab41b1d4da5464dd8d`：引用中有“知道并非孤身一人有帮助”和线上社群支持；结构字段的 outcome 为空。这不是源文丢失，也不能强归因为某一项社群干预的效果。
+
+由此可执行的修复是精确的陈述/状态修复及候选视图，随后追踪“原文→编译→时点投影→检索→实际G输入→回复”的断点。不能把本次18条自报反应一律声称为18个漏抽。
+
+本轮已将三处问题做成[候选修复sidecar](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/CANDIDATE_VIEW_REPAIRS_PRIVATE.json)，[来源与原身份核验通过](../../../../outputs/pm_rl1/research_preparation_20261115_v1/memory/CANDIDATE_REPAIR_VALIDATION.json)。挂电话及工作坊归入历史事件候选；社群支持与“知道不孤单”的反应分开，不建立无依据的因果链接。当前有效性仍unknown，未覆盖旧资源或冒充完成接入。
+
+### 2. 完整案例不是质量保证
+
+逐卡阅读发现，原标 `Reflection of feelings` 的一例主要是在说supporter自己的电影偏好；原标 `Information` 的另一例是保证自己能解决所有问题。还有案例包含未经核验的事实、健康保证及不应由AI照搬的亲身经历；即时反馈并不证明其内容正确。
+
+这批固定样本保留为质量审查和负例资产，不因结果不利而换成12张看似成功的卡。可供进一步适配审核的条目与暂停正向使用的条目已逐卡列出。**当前是12候选、3方法草稿、0已验证资源增益；没有形成可直接推广的专业RS库。**后续应按预定来源质量标准扩大候选并留下全部筛选理由，而非针对目标回复结果挑赢家。
+
+### 3. 检索与父会话回读有真实接口缺口
+
+新有序域的locator仍是词重合；BGE状态编码不能当BGE检索。`GET_MS`当前只读MS排名首项，父文定向优先尚需共享适配器。方案已经明确这两处新增工程，未写成已经上线。
+
+### 4. 独立确认来源尚未补齐
+
+见[确认清单](../../../../outputs/pm_rl1/research_preparation_20261115_v1/versions/CONFIRMATION_READINESS_ZH.md)：EvoEmo旧test为3 owners/48前缀，其中32有明确历史曝光，另16也不能称未暴露；ESC外源173张中历史分配121张confirmatory，但尚未和Claude等开发曝光逐键连接；AnnoMI候选133个示范尚无本准备包的可用导入/分组。
+
+这些是未认证数量，不等于断言所有材料都不可用。ESC角色和AnnoMI方法示范不能补同一人物的纵向记忆。继续开发不受阻；正式英语记忆泛化主张仍需新来源或明确限定为已有构造人物上的组间评估。中文ENPMR另列补充实验，不能悄悄替代英语确认。
+
+## 下一步的收口条件
+
+阶段A完成了版本盘点；逐条复用连接需在新payload固定后执行。阶段B完成了24段来源首审、12案例结构及方法草稿，**尚未完成专业适用性审核、完整抽取召回率、36前缀清单、最终评价协议和独立确认集**。因此没有将B标为全部完成，也没有启动C生成。
+
+下一批任务依次为：
+
+1. 把有依据的记忆表示问题变成新版本候选视图，校验时点、指代与原文支持；保持旧资源身份不变。
+2. 完成可用于开发的来源方法与案例适配；需要专业判断的部分独立列出，不冒充已经审核。
+3. 固定目标前缀、全部条件与来源排除；绑定G、renderer、盲评、时间及统计协议。
+4. 执行一次机制比较；按结果定位修复；然后接共享检索、简单选择器及顺序/RL比较。
+
+这使后续每次实验都能回答一个明确问题，不再以“又跑了一批回复”替代研究进展。完整顺序及验收见[主方案第5节](PLAN_ZH.md#5-按什么顺序推进到研究完成)。
+
+## 本轮检查与执行范围
+
+源哈希、严格过去、原话角色/跨度、完整行动块、来源train限制以及同源/未知谱系拒绝均有机械检查。父谱系排除仍依赖主流程提供完整祖先别名闭包，不能夸大为已经穷尽所有改写。语义首审不能由机械检查证明正确。
+
+没有加载或调用G/J/embedding模型，没有训练、GPU实验或新增付费。未改生产代码、历史资源库或旧Paper-1结果。输出目录保存本地资源准备；文档目录保留方案、审阅结果、状态和可复核脚本。整合校验见[CHECKS.json](CHECKS.json)。
+======
+# PM-RL1 会话摘要与长期记忆设计
+
+2026-11-16（Asia/Tokyo）。用户明确提出加入“本次完整会话结束后的 summary”尝试，并要求从问题定位推进到解决机制。本文件将 MS 会话摘要纳入新候选版本，保留旧实验原文身份；不再将完整原文规定为唯一可用的运行时表示。
+
+## 1. 当前实现与设计修正
+
+当前每个 MS 是**一个被取得的完整过去会话**，不是自动将全部历史注入 G。候选生成直接使用 `document.transcript`，新目录中的 `summary=None`；GET_MS 每次取得排名首项，renderer 只交付已取得的条目。11/11 的短视图是引用前后相邻轮次的摘录，不是完整会话的总结。
+
+已核对两个 train 实物：p2_conv_10 为21轮，esc242 为43轮，当前 MS 正文与冻结完整来源逐字符一致，没有 summary。原对话正文分别为327和788个空白分词；加入每轮角色标签后的旧载荷计数为348和831，二者口径不同。代码入口：[候选物化](../../../../src/metacom_pm/paper1/multi_view_memory/candidate_adapter.py)、[MS封装](../../../../src/metacom_pm/rl1/representation.py)、[获取与交付](../../../../src/metacom_pm/rl1/resource_organization.py)。
+
+原文完整能保证来源可追溯，但不保证模型读起来最好。长会话会产生阅读成本、重复内容及关键信息埋没；会话数量增加还会增加检索难度。新设计分别处理“每个单元过长”和“单元越来越多”两个问题。
+
+## 2. 推荐结构：会后写摘要，运行时按需读，原文可回查
+
+```mermaid
+flowchart LR
+  A[一次会话完整结束] --> B[不可变原文归档]
+  B --> C[该会话独立摘要与来源锚点]
+  B --> D[MP时点档案与ME事件更新候选]
+  C --> E[按人物 主题 时间建立索引]
+  D --> E
+  F[后续会话当前前缀] --> E
+  E --> G[PM获取相关记忆或停止]
+  G --> H[已取得摘要与其他资源]
+  H --> I[需要时显式获取对应原文]
+  H --> J[STOP后G回复]
+  I --> J
+```
+
+图中摘要写入与父文定向获取为新设计，尚未接入当前运行器。建库不属于在线GET；原文回查也不能免费发生。
+
+### 2.1 写入时机与更新规则
+
+每次会话结束，冻结原文版本，再生成该会话的摘要。第t次会话的完整摘要供第t+1次或更晚会话使用；第t次内部的任一待回复前缀都不能看到它。离线实验可以从已完成的过去会话重建摘要，但生成器不得看到后续测试问题、答案、回复或收益。
+
+保存两种时间：来源结束/逻辑顺序，以及真实生成与就绪时间。历史数据只有日期/会话rank时，使用经过验证的严格过去rank，不伪造秒级结束时间。离线今天重建的摘要不声称历史当天已实际存在。在线摘要任务若尚未完成，条目仍不可取得；系统按已声明的RAW或无摘要路径工作，不暗中等待且漏计成本。
+
+摘要按每段原会话独立生成并保留版本。更正摘要从相应原文重建，不不断用“上一次总摘要＋新对话”覆盖唯一记忆。新会话报告事实变化，应生成新证据，更新当前MP投影或ME事件关系；旧会话摘要仍表示当时说过什么。会话重新打开或原文修订会改变来源hash，旧摘要不得自动绑定新全文。
+
+### 2.2 摘要应保留什么
+
+MS-SUM保持会话过程，不能退化为一串无关系事实。主体是一段可读的英文总结，必要时附简短条目：
+
+- 本次主要处境、明确情绪表达、人物关系、时间和重要转折。
+- 用户明确的诉求、现实限制、拒绝或偏好，保留它们的适用范围。
+- 支持者提过什么；用户只是考虑、已经尝试，还是明确报告了反应。
+- 哪些困难仍未解决、哪些事项只是计划或待确认。
+- 对理解有影响的否定、更正、矛盾和未知。
+
+每个重要命题有原文轮次/跨度锚点，索引保留人名与关键实体。机械引用校验只证明锚点存在，不能证明概括忠实，仍需语义检查。G的紧凑正文不附全部引文与审核日志；这些放在来源侧表，否则“摘要＋所有原文引用”可能比原会话还长。评估必须量实际交付正文，不能只量其中的摘要段落。
+
+不预设固定200字或固定压缩比就是最优。先保留支持判断所需信息，再比较长度与质量；困难会话允许更长摘要。特别长的原会话若超出写入器上下文，后续采用保持话题/事件边界的分段，保留指代和源跨度；不把任意等长切块再合并视为已解决保真问题。
+
+示例：历史说“挂过电话，但朋友很生气”，摘要保留尝试及不良反应；不能写成用户避免挂电话。结尾致谢不能被总结成问题已解决。一次“画画不适合我”不能推成永远排斥所有创作活动。
+
+### 2.3 与MP、ME的分工
+
+| 视图 | 回答的问题 | 更新方式 |
+|---|---|---|
+| MP | 截至此刻哪些个人事实仍成立？ | 从原文证据更新时点投影，保留更正/冲突 |
+| ME | 发生过什么、做到哪一步、本人报告什么反应？ | 追加或连接有依据的事件状态 |
+| MS-SUM | 那一次对话整体谈了什么、怎样发展、留下什么？ | 每会话独立生成；原文、摘要内容或写入器配置改变时另立版本 |
+| MS-RAW | 当时具体怎么说，摘要省略了什么？ | 完整归档，按需取得 |
+
+不先把原文压成摘要再仅从摘要提取MP/ME，否则一个遗漏会传播到全部视图。可以共用一次建库生成来降低成本，但各视图的命题都应直接绑定原文，语义和身份分别验证。重复信息通过来源关联处理，不因为同源而删除不同语境。
+
+## 3. 长历史增长的实际处理机制
+
+**第一，摘要减少单次会话的阅读体积。第二，检索和停止控制本轮读取哪些会话。第三，档案/事件视图使简单需求不必每次重读会话。**三者共同处理增长问题，仅把全文改成摘要而继续全部拼接，仍会越来越长。
+
+最初保持固定共享BGE与来源/时点过滤；同时保留原文关键词和实体的检索入口，避免摘要删掉的罕见信息永远无法被找到。检索器内部可以使用完整合法索引，但不向PM免费暴露候选正文/向量。索引成本单列；不将一次查询必须扫描全库当成最终实现。
+
+运行时检索相关单元，PM决定继续取得还是STOP；原生上下文边界保持不变，不借本次摘要设计偷偷恢复top-4或四次GET硬限制。需要实际部署的延迟操作点时，根据共同质量—等待曲线选择，不能把未经测试的任意长度写成最佳。
+
+不默认“越旧越无用”，也不靠删除旧原文控制上下文。旧信息可以退出常用工作视图、进入归档索引；事实的当前有效性与来源的新旧分别处理。高频跨会话主题的专题总览是后续候选，不先增加一层可能失真的滚动总摘要。若新增专题总览，必须从可追溯来源重建，按目标时点版本化。
+
+## 4. 用可实施的机制修复问题
+
+| 问题 | 本次设计的解决机制 | 验收 |
+|---|---|---|
+| 完整会话冗长、关键信息埋没 | 会后独立生成任务相关但不看未来问题的会话摘要 | 同源RAW/SUM下的保真、帮助性及真实在线成本 |
+| 历史越积越多 | 分层索引、按需读取、MP/ME直接读取常用事实/事件 | 随合法历史量增加的召回、成本与漏用曲线 |
+| 压缩丢失指代、否定和行动阶段 | 自足陈述、原文锚点、保留未知；不合格摘要拒收 | 固定反例与实际源文语义审查，不以引用命中率冒充保真 |
+| 摘要遗漏，后续无法恢复 | 保留原文索引与显式同源回查 | 查回正确父文、恢复所需信息、实际计入读取与生成成本 |
+| 多次归纳产生漂移 | 每会话原文独立写入；修改从原文重建 | 版本hash绑定，旧摘要不被未来事实污染 |
+| 原文中的建议被写成执行结果 | 写入schema区分建议/意向/行动/自报反应 | 挂电话、工作坊、社群等已发现反例通过 |
+| G仍把旧记忆当现在事实 | 渲染时保留“当时报告”、时间与当前未知；必要时条件监督 | 同前缀相关/无关资源下事实误用及帮助性 |
+| 资料正确但效果仍一般 | 在同版本实验中查是否需要不同表示/取量/执行适配 | 不把低质量单一摘要器的失败概括成所有摘要无效 |
+
+RS沿用方法—案例两层设计。新的MS摘要保留过去支持行动及用户反应，使后续RS能结合已尝试/拒绝的方式调整建议；但不能将个人历史变成某种方法的因果疗效标签。
+
+## 5. 两阶段比较，第一步可以直接接入现有研究
+
+### S1：只比较表示
+
+同一个合法目标前缀、同一组源会话、同一排序、同G/基础指导，比较OFF、RAW、SUM。可
+Shell cwd was reset to /home/tokkio
+Bash Read top-level AGENTS.md rules
+IN
+cd /home/tokkio/Metacom5_3 && git diff --stat AGENTS.md project/src/metacom_pm/rl1/AGENTS.md | tail -3; wc -l AGENTS.md project/src/metacom_pm/rl1/AGENTS.md; sed -n 1,140p AGENTS.md
+
+OUT
+ AGENTS.md                            | 14 +++++++++++---
+ project/src/metacom_pm/rl1/AGENTS.md |  4 ++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+  235 AGENTS.md
+   19 project/src/metacom_pm/rl1/AGENTS.md
+  254 合計
+# Repository Research Authority for Codex / Agents
+
+## Current successor scope (PM-RL1, updated 2026-11-16)
+
+For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/` and the current
+single-turn research, start with `project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md`
+and `project/docs/plans/pm_rl1_master_20261116/EXECUTION_STATE.json`.
+Use `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md` for evidence history and
+`project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md` for original goals.
+The user requested the consolidated execution plan and a new completed-session
+summary candidate. New MS-SUM and historical MS-RAW keep separate identities;
+the preserved Paper-1 raw-only clause below does not prohibit this candidate.
+The new plan's schemas, adapters and experiments are not already implemented
+merely because their work packages exist. Follow their actual dependency and
+acceptance records; do not reopen direction approval or invent model results.
+The user authorized this successor on September 28. Existing Paper-1 contracts,
+outcome locks and result identities below remain preserved; do not reinterpret
+their four-head route as a prohibition on the separately authorized RL1 work.
+Natural-support reward remains unqualified; engineering PPO results are not
+natural-support research outcomes. Publication and CI fixes create no training
+or paid-call authorization. Current CPU CI runs both `test_paper1_*.py` and
+`test_rl1_*.py` without private output folders or model downloads.
+
+## Preserved Paper-1 authority
+
+Before making any research-design, evaluation, baseline, training-data,
+PM-semantics, feature, measurement, CI, or Paper-1 execution change, read these
+current entry points in order:
+
+1. `project/configs/paper1_public_only.yaml`
+2. `project/docs/PM_PAPER1_EXECUTION_CHECKLIST_20260903_ZH.md`
+3. `project/docs/PM_PAPER1_HUMAN_REFERENCE_V2_AMENDMENT_20260908_ZH.md`
+4. `project/docs/PM_PAPER1_PRE_EFFECT_STABILIZATION_20260904_ZH.md`
+5. `project/data/paper1_authority/paper1_latency_constrained_selective_policy_amendment_20260904_v2.json`
+6. `project/data/paper1_authority/paper1_task_effect_coding_v2.json`
+7. `project/data/paper1_authority/paper1_pairwise_teacher_qualification_plan_v3.json`
+8. `project/data/paper1_authority/paper1_pairwise_teacher_human_reference_design_20260908_v2.json`
+9. `project/data/paper1_authority/paper1_pairwise_teacher_human_instrument_20260908_v2.json`
+10. `project/data/paper1_authority/paper1_gemini_pairwise_teacher_identity_20260908_v2.json`
+11. `project/data/paper1_authority/paper1_pairwise_teacher_preflight_20260904_v1.json`
+12. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json`
+13. `project/data/paper1_authority/paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json`
+14. `project/data/paper1_authority/paper1_pairwise_teacher_generator_request_binding_20260904_v1.json`
+15. `project/data/paper1_authority/paper1_pairwise_teacher_local_generation_result_20260904_v1.json`
+16. `project/data/paper1_authority/paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json`
+17. `project/data/paper1_authority/paper1_official_dg_execution_policy_amendment_20260904_v1.json`
+18. `project/data/paper1_authority/paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json`
+19. `project/data/paper1_authority/paper1_active_generator_selection_binding_20260904_v1.json`
+20. `project/data/paper1_authority/paper1_generator_backend_retirement_local_amendment_20260903_v1.json`
+21. `project/docs/PM_PAPER1_BINARY_BENEFIT_SCOPE_AND_API_BUDGET_AMENDMENT_20260903_ZH.md`
+22. `project/data/paper1_authority/paper1_binary_benefit_scope_and_api_budget_amendment_20260903_v1.json`
+23. `project/docs/PM_PAPER1_V2_1_CONSISTENCY_AMENDMENT_20260903_ZH.md`
+24. `project/data/paper1_authority/paper1_v2_1_consistency_amendment_20260903_v1.json`
+25. `project/docs/PM_PAPER1_CLIENT_OBSERVED_LATENCY_AND_FRONTIER_AMENDMENT_20260903_V2_ZH.md`
+26. `project/data/paper1_authority/paper1_client_observed_latency_and_frontier_amendment_20260903_v2.json`
+27. `project/data/paper1_authority/paper1_client_latency_measurement_contract_v3.json`
+28. `project/docs/PM_PAPER1_OFFICIAL_ESC_EVAL_COMPATIBILITY_AMENDMENT_20260902_ZH.md`
+29. `project/data/paper1_authority/paper1_official_esc_eval_compatibility_amendment_20260902_v1.json`
+30. `project/docs/PM_PAPER1_THRESHOLD_POLICY_CALIBRATION_AMENDMENT_20260831_ZH.md`
+31. `project/data/paper1_authority/paper1_threshold_policy_calibration_amendment_20260831_v1.json`
+32. `project/docs/PM_PAPER1_EXECUTION_RECONCILIATION_20260816_ZH.md`
+33. `project/data/paper1_authority/paper1_execution_reconciliation_20260816_v1.json`
+34. `project/docs/PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`
+35. `project/docs/PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md`
+36. `project/data/pm_v1_5_contracts/pm_paper1_official_evaluation_priority_20260816_v1.json`
+37. `project/docs/PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`
+38. `project/data/pm_v1_5_contracts/pm_paper1_final_execution_blueprint_20260816_v1.json`
+
+The config and checklist are navigation/state surfaces; the linked JSON and
+human amendments are the controlling contracts. Older clauses remain active
+only where a later authority explicitly preserves them.
+
+The current operational machine contracts under
+`project/data/paper1_authority/` are:
+
+- `paper1_latency_constrained_selective_policy_amendment_20260904_v2.json`
+- `paper1_task_effect_coding_v2.json`
+- `paper1_pairwise_teacher_reference_amendment_20260908_v2.json`
+- `paper1_pairwise_teacher_qualification_plan_v3.json`
+- `paper1_pairwise_teacher_human_reference_design_20260908_v2.json`
+- `paper1_pairwise_teacher_human_instrument_20260908_v2.json`
+- `paper1_gemini_pairwise_teacher_identity_20260908_v2.json`
+- `paper1_pairwise_teacher_preflight_20260904_v1.json`
+- `paper1_pairwise_teacher_dg_first_turn_authorization_20260904_v1.json`
+- `paper1_pairwise_teacher_dg_first_turn_result_20260904_v1.json`
+- `paper1_pairwise_teacher_generator_request_binding_20260904_v1.json`
+- `paper1_pairwise_teacher_local_generation_result_20260904_v1.json`
+- `paper1_pairwise_teacher_human_sheet_manifest_20260908_v2.json`
+- `paper1_pairwise_effect_oracle_contract_v1.json`
+- `paper1_training_evaluation_alignment_contract_v1.json`
+- `paper1_decision_correctness_evaluation_v1.json`
+- `paper1_client_latency_measurement_contract_v3.json`
+- `paper1_end_to_end_latency_policy_contract_v1.json`
+- `paper1_natural_turn_appropriateness_rubric_v1.json`
+- `paper1_official_dg_execution_policy_amendment_20260904_v1.json`
+- `paper1_official_mistral24b_formal_schedule_contract_20260904_v1.json`
+- `paper1_active_generator_selection_binding_20260904_v1.json`
+
+## Authority precedence
+
+- **The 2026-09-18 follow-up budget is the binding money constraint: about USD 10 planned, USD 20 never exceeded, across ALL remaining paid work.** Read the `followup_total_budget_20260918` block of `project/data/paper1_authority/paper1_static_amount_calibration_execution_20260917_v1.json` and `project/docs/PM_PAPER1_FOLLOWUP_BUDGET_PLAN_20260918_ZH.md`. It covers first attempts, retries, the DG simulated user, judges, training labels and the formal evaluation together -- not per stage -- and it supersedes the proposed USD 15 single-stage cap, which must be re-planned inside the total. The older USD 50 cap and its USD 5 primary-retry reserve stay in force underneath; the stricter constraint binds first. New spend is measured from an immutable boundary snapshot taken at USD 1.50724291, so a resumed run cannot reset its own allowance. Enforcement lives in `project/src/metacom_pm/paper1/followup_budget.py` and is wired into both the synchronous and Batch executors; a submitted batch counts in full from submission until it settles. USD 10 is a plan, not an approval gate -- do not stop and re-ask on reaching it. Quotation: `project/scripts/paper1/84_plan_followup_research_budget.py`. The full original scope does not fit: RQ1 ESC-Eval is free and local, while the paid load is RQ2 official scoring, dominated by the DG simulated user and by the Summary judge. Amount calibration must not consume the budget before the formal evaluation is paid for. No plan is selected and no paid call is authorized.
+- **The 2026-09-17 static amount-calibration execution record scopes the free local generation stage.** Read `project/data/paper1_authority/paper1_static_amount_calibration_execution_20260917_v1.json` and `project/docs/PM_PAPER1_STATIC_AMOUNT_EXECUTION_20260917_ZH.md`. The prepared package was re-verified: all eight artifact hashes match, every request's messages still hash to its recorded `request_sha256`, and the shared true-OFF is exactly one row per target. Scripts 79 (resumable local Generator batch), 80 (official scoring executor) and 81 (recovery, coverage audit and k recommendation) complete the execution chain that 77/78 alone did not provide. Local natural-end generation is authorized and free; paid official scoring, fold-external k recommendations, k* freeze, formal outcomes and PM training are each separately unauthorized and fail closed. The proposed USD 15 scoring stage is still not approved. All four scoped outcome locks stay CLOSED and the executors only assert them, never edit them. Other-project KVCacheNet jobs keep the A6000: the device preflight refuses to load below 18 GiB free and never falls back to another device. The upstream QA and Summary parsers are reproduced from the pinned commit, with `json-repair==0.52.4` vendored under `project/outputs/paper1_calibration/vendor_python/` so the frozen Generator environment is unmodified.
+- **The 2026-09-17 researcher continuation preserves the judge study and advances concrete static calibration preparation.** Read `project/data/paper1_authority/paper1_measurement_study_and_static_amount_preparation_20260917_v1.json`, `project/docs/PM_PAPER1_JUDGE_MEASUREMENT_STUDY_20260917_ZH.md` and `project/docs/PM_PAPER1_STATIC_AMOUNT_CALIBRATION_PACKAGE_20260917_ZH.md`. The completed judge experiments are retained as an exploratory measurement analysis supporting the unchanged main RQ1/RQ2. A seed-0 task/owner/fold component-then-target sample contains 85 QA and 63 Summary targets; 1,924 exact natural-end Generator requests and official scorer templates are prepared. No new responses, API calls, formal outcomes or PM training occurred. The proposed USD 15 scoring stage is not yet authorized and its length scenarios are estimates, not output caps or a guaranteed full-batch price. Other-project KVCacheNet jobs occupy A6000; do not stop them or silently move the frozen Generator to different hardware. No GPU job was queued by this preparation.
+- **The 2026-09-17 local-development closeout records the completed authorized comparison.** Read `project/data/paper1_authority/paper1_local_teacher_development_closeout_20260917_v1.json` and `project/docs/PM_PAPER1_LOCAL_TEACHER_DEVELOPMENT_RESULTS_20260917_ZH.md`. All 822 scheduled development records completed (821 natural ends, one technical timeout); total recorded generation starts including discontinued configurations are 873, conservatively accounted GPU generation wall is 10,878.764 seconds, and new API cost is zero. Prefer Qwen3.5-9B general-task thinking for local development/evidence review, retain Compass as a supplementary comparator, and do not promote any configuration to autonomous all-task material-benefit labeling. Explicit format normalization is separate from strict parsing. Summary full-history evidence and natural-end generation are developed and recorded; official scoring remains unchanged. Continue ordinary official-quality top-k preparation without another unlimited candidate contest. No k*, formal label, outcome, paid-call or PM-training authorization is created by this result record.
+- **The current 2026-09-17 researcher authorization permits practical development and natural-end local experiments.** Read `project/data/paper1_authority/paper1_pragmatic_teacher_development_20260917_v1.json` and `project/docs/PM_PAPER1_PRACTICAL_DEVELOPMENT_AND_NATURAL_END_20260917_ZH.md`. The researcher explicitly approved proceeding with Selene/Compass/Qwen comparison, existing-reference reuse, response-content inspection, and natural-end generation. Do not ask again for these actions. Development examples may inform versioned fixes; report reused-sample development evidence honestly. Do not impose absolute untouched-data requirements or automatically discard all 97 linked targets. Ordinary grouped PM cross-fitting, runtime gold/future exclusion and fair baseline conditions remain. Use EOS/EOT, separate technical guard interruptions, and preserve old artifacts. This local scope adds no paid API or formal training authorization.
+- **The 2026-09-17 qualification closeout has scoped precedence for completed-review provenance, candidate disposition and execution progress.** Read `project/data/paper1_authority/paper1_gemini_qualification_closeout_20260917_v1.json` and `project/docs/PM_PAPER1_GEMINI_QUALIFICATION_RESULTS_20260917_ZH.md`. The completed A sheet is a joint-human review; six-case followup and assistant fact sensitivity stay separate, and AI B is exploratory. Do not request another full human sheet or invent independent inter-human agreement. The researcher approved the USD 0.10 frozen qualification; 100 physical calls completed 96 presentations, with 92 valid verdicts, four parser failures, and USD 0.0654614 conservatively accounted. This candidate was not promoted; apply the existing V3 weak-teacher fallback. Nonzero provider-reported thinking usage is disclosed despite unchanged `thinkingBudget=0` requests. Original identity/proposal counters remain historical snapshots. This closeout opens no calibration/confirmatory lock and authorizes no PM training.
+- **The 2026-09-08 human-reference V2 amendment has scoped precedence** for DG reference evidence, the corresponding teacher rubric/payload, offline human forms and ingest. The original design requested two independent 96-item reviews; the completed-review provenance is now described by the 2026-09-17 closeout above. All 142 replies and original item orders are preserved. DG includes the unchanged related-history excerpt and complete strict-past raw history, identical for humans and the teacher. V1 sheets remain provenance. The V2 amendment itself authorized no Gemini call, formal outcome, PM training, budget increase or new empirical gate.
+- **The 2026-09-04 Pre-Effect Stabilization has highest scoped precedence** for the primary multi-head overflow rule, task-specific effect coding V2, pairwise-equivalent semantics, and the return to the 96-presentation dual-human teacher reference. The 401 compiler's source-grounding verification and the effect oracle's resource-correctness role do not create a separate candidate-factuality pass gate. It adds no empirical gate and does not reopen outcomes.
+- **The 2026-09-04 teacher human-reference design fixes the measurement denominator** at 80 base semantic pairs + 16 reversed presentations = 96 blinded presentations, each reviewed by both primary raters = 192 primary judgements. Adjudication is separate.
+- **The 2026-09-04 official DG and Mistral schedule contracts have scoped precedence** for the disclosed one-attempt generation amendment and arm-balanced local official scoring. They do not guarantee per-item determinism and do not change official prompts, schemas, metrics or temperature omission.
+- **The 2026-09-03 binary-benefit scope/API-budget amendment has scoped precedence** for the Paper-1 claim boundary, cost-neutral magnitude diagnostics, paid-teacher cascade and cumulative USD 50 API hard stop. The four L2 heads predict probability of task-defined material positive effect; they do not predict request-level gain magnitude or expected utility. Magnitude diagnostics remain task-by-head, reuse already generated paired outcomes and never create a new call, selection rule or empirical gate. Expected-utility, dynamic amount/top-k, joint-action and sequential/RL learning are future work.
+- **The 2026-09-03 V2.1 consistency amendment has highest scoped precedence** for the active Multi-View ontology, official-primary-quality threshold surface, timeout/fallback separation, target-level latency microblocks, and pre-call token-bin latency lookup. It repairs implementation/construct mismatches before any formal outcome and creates no empirical method gate.
+- **The 2026-09-03 client-observed latency/frontier V2 amendment has scoped precedence only** over V1's PM-runtime timing boundary, mandatory tighter task SLA, and hard-SLA-first primary selection. Primary latency is client send-to-final-visible p95; client send-to-first-visible p95 is the experience guardrail. The only primary catastrophic constraint is Client E2E Completion `< 60000 ms`; tighter budgets are optional named deployment scenarios/sensitivities and cannot block Paper execution. Among catastrophic-feasible policies, use official-quality one-SE admissibility then minimize client p95/median completion, p95 TTFT, tokens and ON rate. Report the quality-latency frontier without a project composite or binary PASS/FAIL.
+- **The 2026-09-03 latency-constrained selective-policy V1 amendment is historical provenance.** Its still-valid quality/action separation is incorporated by V2; its allocator, backend timing boundary, mandatory tighter task SLA and hard-SLA-first selection are superseded.
+- **The 2026-09-02 official ESC-Eval compatibility amendment has scoped precedence only** over the project-added full-string ESC-RANK parser, its runtime readiness gate, and any evaluator-winner wording that could replace the official RQ1 scorer. The primary RQ1 capability scorer must reproduce the pinned official `score.py` parser and seven adapter/rubric mappings. Strict/full-string and multi-label checks are supplemental diagnostics only. Qwen, DeepSeek, and an independent-family judge remain blinded qualification/sensitivity candidates but cannot replace official ESC-Eval in the RQ1 main capability table. It does not open any outcome lock or alter PM, Generator, arms, splits, metrics, or claims.
+- **The 2026-08-31 threshold-policy-calibration amendment has scoped precedence only** over the fixed-0.5-primary-policy clause. The four heads still learn materially-positive paired-effect probability with Cost excluded from label/loss. The primary operating point is selected only from grouped OOF or outer-training/inner-OOF effects by the frozen quality-first one-standard-error then minimum-Generator-input-token rule. Confirmatory and held-out outer-target outcomes are forbidden; fixed 0.5, eligible-always-on, and always-off remain mandatory references. It does not alter the learner, ontology, Route A, public sources, Generator, benchmark arms, or official metric hierarchy.
+- **The 2026-08-20 structural split/fold decisions and canonical RS treatment identities remain frozen facts.** The old prequalification PASS-gate language, v7 precision repair, and master progress statuses are historical operations, not current progression gates.
+- **The 2026-08-20 resource-amount amendment and its old memory surfaces are historical provenance.** Current exact RS treatment identities and structural folds remain frozen facts, but final amount/cap calibration is still pending under the current checklist; do not revive the old fixed-0.5, 384-token or evaluator clauses.
+- **The 2026-08-17 semantic-memory-compiler amendment and semantic-memory v7/v8/v9 code are historical DEV provenance.** Active MP/ME/MS semantics and candidate artifacts are governed by the Multi-View config and 2026-09-03/04 authorities. The active Multi-View compiler's internal version string ending in `v7` is an implementation identity, not authorization to reactivate the old semantic-memory-v7 design.
+- **The execution reconciliation override remains controlling** for Generator identity, benefit-only soft targets, removal of empirical PASS gates, treatment-delivery validity, exact-evidence cross-fitting, and per-head claim reporting. Its fixed-0.5-primary-policy clause alone is superseded by the 2026-08-31 scoped amendment.
+- **Research scope / claims** are governed by `PM_FINAL_FROZEN_RESEARCH_PROGRAM_20260816_ZH.md`.
+- **Final evaluation / measurement hierarchy** is governed by `PM_PAPER1_OFFICIAL_EVALUATION_PRIORITY_20260816_ZH.md` and its machine-readable contract. Official ESC-Eval / ES-MemEval capability metrics outrank all internally defined Quality/Risk/Function rubrics.
+- **Implementation-level feature schema and leakage controls** inherit from `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md` only where the current config/checklist and later amendments do not supersede it. Its old repeated-effect gates and old execution status are not active.
+- Teacher qualification plans V1/V2 and the 2026-09-04 human sheets/instrument/identity are historical provenance; V3 plan and the 2026-09-08 V2 reference contracts govern new human submissions and teacher requests. The original sampling, blind keys and generation artifacts remain active source identities.
+- `paper1_task_effect_coding_v1.json`, the semantic-memory v7/v8/v9 DEV packages, `data/v3_authority`, and `scripts/v3` are historical/superseded provenance and must not drive new changes or routine CI.
+- If the older training contract or V5.3 code conflicts with these authorities, **do not change the research design to match old code**. Report the conflict and migrate the implementation.
+- Do not silently resolve a pre-outcome research choice. If a required freeze item is not determined by the zero-outcome audit, mark it `IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED`.
+
+## Critical data rule — public sources only
+
+Paper 1 uses only public prior-work resources for active training/effect/evaluation:
+
+- `ESConv` -> RS Strategy-RAG resource/training;
+- `ESC-Eval` -> RQ1 evaluation only;
+- `ES-MemEval/EvoEmo` -> MP/MS/ME training/candidate source and RQ2 evaluation.
+
+**Do not read, sample, audit, repair, compile, retrieve from, train on, validate on, or cite for Paper 1 any obsolete synthetic longitudinal training data.**
+
+In particular, the entire path below is deprecated and off-limits for active Paper-1 work:
+Shell cwd was reset to /home/tokkio
+Bash Read rest of AGENTS.md and rl1 AGENTS.md
+IN
+cd /home/tokkio/Metacom5_3 && sed -n 140,235p AGENTS.md; echo ====; cat project/src/metacom_pm/rl1/AGENTS.md
+
+OUT
+`project/data/pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1/`
+
+The same applies to any old synthetic 80-user/11-user derivatives, old 256 effect labels, old background-conditioned effect rows, and old MS fallback labels. Historical files may remain in Git history/archive branches only for provenance.
+
+## Non-negotiable semantics
+
+- Method name: **Policy Manager (PM)**, not MetaCom.
+- Generator is already frozen, but formal Paper-1 work must bind it in a new full-stack freeze manifest.
+- `RS`: inject-or-not the globally amount-calibrated retrieved Strategy-RAG bundle of atomic-move units; not strategy-category prediction. Top-1 remains a candidate amount, not a predeclared final primary.
+- `MP`: target-time **Current Profile View** containing stable slot-like facts; no response-preference history. Temporary emotion, short-term stress and one-off situations belong to ME.
+- `ME`: strictly-past **Atomic Event/Experience Timeline**; action -> user-observed outcome is one ME subtype, not the definition of ME.
+- `MS`: one complete strictly-past raw same-user session transcript; no semantic event atoms, generated summary, observation annotation, or current/last-message fallback.
+- Four binary heads; runtime still admits 16 combined resource configurations; no direct 16-class learner.
+
+## Paper-1 learning route A
+
+- Each head learns first-order state x eligible-candidate marginal utility.
+- Formal ON/OFF effect contrasts use the canonical background: **all other optional components OFF**.
+- Other-component ON/OFF bits are not final head features.
+- Interaction-aware/background-conditioned learning is future work only.
+- `ineligible` is deterministic OFF and not a learned negative example.
+- Primary learner remains four standardized L2-regularized logistic-regression heads.
+- The primary effect unit is an independent state/group. Identical deterministic prompt repeats are robustness traces, not independent binomial supervision and never create an empirical PASS gate.
+- Cost is not part of the pure quality-effect training label or loss. Client-observed text latency enters deployment action-worthiness and the quality-latency frontier. The Paper primary rejects only catastrophic p95 completion at or above 60000 ms, then uses quality one-SE admissibility followed by minimum client p95/median completion, p95 TTFT, tokens and ON rate. Tighter deployment budgets are optional named sensitivities, not research blockers or PASS gates. Fixed 0.5 remains a mandatory transparent reference, not the unique primary.
+- The Paper-1 claim is probability-of-material-benefit selective opening under latency feasibility. Preserve raw task-specific `Q_ON/Q_OFF/delta_Q`, but do not describe the learner as request-level magnitude or expected-utility optimization. Any magnitude/benefit-capture/local-regret secondary must be task-by-head, OOF or sealed, cost-neutral, and paired with ON rate and harmful-open reporting.
+- All active Paper-1 paid LLM API calls share one cumulative USD 50 hard cap. A call may start only when settled cost plus outstanding reservations plus the next-call worst case remains within the cap; optional calls stop at USD 43 and at least USD 5 remains reserved for primary-run retry. Historical planning envelopes with a null cap do not override this later researcher authorization.
+
+## Feature rule — outcome-blind raw observables only
+
+The feature layer may describe the current state and exact eligible candidate, but it must not estimate resource utility before the PM.
+
+Allowed examples: fixed similarity, raw candidate/profile type, already-visible/redundancy flags, relative age, deterministic entity/thread overlap, explicit current-turn request markers, structural token cost.
+
+Forbidden examples: `worth_opening`, subjective `helpfulness`, subjective `response_feasibility_impact`, subjective `transferability`, subjective `continuity_need`, subjective `scope_specificity`, response/judge/gold/future fields, preference metadata, other-component bits.
+
+The active feature schema is defined in `PM_PAPER1_FINAL_EXECUTION_BLUEPRINT_20260816_ZH.md`.
+
+## Evaluation authority — official benchmark first
+
+- **Paper-1 final capability verdict is based on prior-work official metrics, not our internal Quality/Risk/Function rubric.**
+- RQ1 final benchmark: ESC-Eval; arms `R0 / RS Fixed-High / RS Matched-Random / Learned RS-PM`; report official `Fluency / Expression / Empathy / Information / Skillful / Humanoid / Overall`.
+- Because the Strategy Bank is ESConv-derived, the primary RQ1 transfer analysis uses non-ESConv-source English role cards; the full frozen English set is secondary and ESConv-derived cards are an overlap sensitivity slice.
+- RQ2 final benchmark: ES-MemEval; arms `No Memory / Full History / Official RAG Top-4 / Multi-View Fixed-High / Multi-View Matched-Random / Learned Multi-View PM`; report official QA / Summarization / Dialogue Generation metrics.
+- RS stays fixed in ES-MemEval main analysis.
+- Component-minus `-MP/-MS/-ME` are ablations and must be interpreted through official ES-MemEval metrics.
+- Formal claims require same-stack reruns with the frozen Generator.
+- Do not create a post-hoc composite or pick only favorable metrics.
+- **Internal Quality/Risk scorers are training-only / qualification / supplemental diagnostics. They must not become Paper-1 primary metrics or the final verdict.**
+- Objective Cost is a separate efficiency axis and may be reported beside official metrics, but it is not a capability score and cannot compensate for material official-metric degradation.
+- Formal benchmark runners must not use internal Q/R as their primary scorer or aggregate internal Q/R into a paper result composite.
+
+## Data / leakage authority
+
+- Strategy Bank: ESConv train only.
+- Formal RS effect construction must use leave-current-dialogue-out / fold-exclusive Strategy Bank retrieval.
+- Memory training/effect/candidate source: public ES-MemEval/EvoEmo only, with outcome-isolated cross-fitting.
+- Runtime PM never sees evaluation gold, outcome, reference, or future sessions.
+- Same-user longitudinal adaptation is allowed with target-outcome isolation. Primary folds use exact mechanical target/evidence lineage; broad semantic/shared-session components are sensitivity only.
+- No synthetic rescue for a sparse or failed head.
+
+## Treatment validity
+
+- Hard invalidation is limited to mechanical delivery/identity/integrity failures: compiler/schema failure, missing or mismatched assigned resource, wrong owner, future/gold leakage, arm/seed/prompt/candidate mismatch, terminal empty generation, or unparseable official scorer.
+- If the assigned resource was correctly delivered, Generator non-use, misuse, omission, or harm is a valid realized end-to-end effect. Semantic adoption is diagnostic only and must not filter rows.
+
+## Immediate implementation order
+
+Do not start formal PM training first.
+
+1. Treat the completed 401-run exact-span/owner/time/hash grounding as compiler evidence, not as a new empirical candidate-factuality pass gate. Resource correctness remains an explicit role inside the effect-oracle/teacher workflow.
+2. Use the completed 2026-09-08 V2 80-base/16-reversal package and the 2026-09-17 actual joint-human-reference closeout. Preserve original A, exploratory AI B and six-case followup bytes; keep posthoc sensitivity separate. Unresolved cases remain uncertain. Do not restart human review or use returned ratings as editable blank templates.
+3. Before reading pair outcomes, bind the common task-aware pairwise rubric and exact Gemini model/provider/prompt/parser/temperature/retry/cost identities. Claude is substitute-only within the existing cap; official benchmark scorers remain the final capability authorities rather than candidate pairwise teachers.
+4. Report teacher agreement, order stability, equivalent recall, position bias, parsing and cost. Weak measurement contracts identifiable labels/claims; it does not create another progression gate.
+5. Under separately authorized calibration locks, freeze amount/cap, exact feature and fold manifests, Generator/Step2 full-stack identity, seeds, matched-random construction, operating-point protocol and the exact API call manifest.
+6. Generate independent-state focal-head ON/OFF effects; preserve all five outcome classes and do not count deterministic repeats as new states.
+7. Train four standardized L2 heads and produce grouped/fold-specific OOF probabilities.
+8. Select operating points only from grouped OOF or outer-training/inner-OOF effects under Threshold V4. Keep confirmatory and held-out outer-target outcomes sealed.
+9. Before formal DG scoring, persist the exact arm-balanced Mistral request manifest and hash; resume its pending suffix without reshuffling.
+10. After the entire stack is frozen, open only the authorized locks and run official RQ1/RQ2 evaluation. Report official quality, decision behavior, Cost, latency, failures and clustered uncertainty without a binary Paper-1 PASS/FAIL.
+
+## Drift prevention
+
+Do not silently change the active authority to match old code.
+
+Any proposed change to frozen research scope must first be written as:
+
+`PROPOSED RESEARCH CHANGE — NOT AUTHORIZED`
+
+and must state what clause changes, why, what prior results become invalid, what must be rerun, and whether the paper claim changes. Wait for explicit user approval.
+
+Any implementation limitation that prevents the active public-data-only plan must be written as:
+
+`IMPLEMENTATION BLOCKER — RESEARCHER DECISION REQUIRED`
+
+with the missing public evidence, affected head/RQ/claim, and the smallest scientifically valid alternatives. Do not fall back to synthetic 11/80-user data.
+====
+# PM-RL1 scoped implementation
+
+Start with `project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_master_20261116/EXECUTION_STATE.json` for current work.
+The user requested the new session-summary candidate; preserve MS-RAW history
+and give MS-SUM separate source, representation, renderer and result identities.
+Read `project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md` and the user-supplied
+`project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md` for this namespace
+(the byte-identical copy of the user-supplied local plan). Current progress is
+indexed in `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md`.
+The user authorized this successor direction and engineering on 2026-09-28;
+do not re-request approval for dynamics/Step-2 solely because old Paper-1
+contracts placed those topics in future work. Preserve all old result identities.
+
+Runtime actors and critics receive only Observation, never EpisodeSpec, private
+inventories, receipts or snapshots. GET never calls G/J. Missing measurement is
+pending, never reward zero. All paid execution remains within the inherited
+shared budget and requires its atomic integration; local-only work has no paid
+provider fallback. Document partial milestones honestly.
+Shell cwd was reset to /home/tokkio
+Bash Read implementation map
+IN
+cd /home/tokkio/Metacom5_3/project && cat docs/plans/pm_rl1_master_20261116/IMPLEMENTATION_MAP_ZH.md
+
+OUT
+# PM-RL1 实施工作单与现有代码映射
+
+2026-11-16（Asia/Tokyo）。这是主方案的实施附件，按当前文件和函数核对。本文只给方案，不执行模型、训练、付费或正式评价。所有新模块/命令均明确标为“待实现”；旧脚本的 `prepare` 也可能加载 tokenizer、读取冻结私有数据或生成新包，不能把名称当成无副作用保证。
+
+## 1. 已有能力与必须补的连接
+
+| 能力 | 已核实的代码 | 可复用部分 | 必须改动/补齐 |
+|---|---|---|---|
+| 完整严格过去会话 | `paper1/multi_view_memory/candidate_adapter.py`；`rl1/representation.py` | 原文、owner/rank/来源检查 | 新摘要正文另立身份，原RAW不覆盖 |
+| 资源目录与获取 | `rl1/resource_organization.py` | OrganizedItem、规范交付、原生容量、逐步GET | `existing_item`目前只提取past_report/full_source_conversation/ai_action；`directory`硬读完整MS；必须支持新reader view |
+| 原文绑定 | `rl1/resource_value_probe.py:match_session` | 原文与隔离合法历史精确对应 | 当前硬读`full_source_conversation`；新增按source hash/span绑定摘要的方法，不能让summary冒充raw通过旧函数 |
+| 内容可见性 | `rl1/organized_policy_interface.py` | HeadSession、白名单Observation、无正文NoText、初始承诺程序 | 新摘要与混合扩读需要新interface identity；私有来源ID不进入actor |
+| 检索 | `OrganizationCatalog.rank`；QA脚本176中的BGE路径 | 当前词重叠作为历史对照；BGE来源/向量校验方法 | 新共享retriever适配器，明确过滤、查询更新、排序及tie-break；BGE状态编码不等于检索已接通 |
+| 全可见正文编码 | `organized_features.py`、`organized_encoding.py` | 原生窗口分块、缓存、向量身份、计时 | 摘要/新资源正文改变即重新绑定；池化信息损失另测，不等于信息无损 |
+| 实际回复与内容身份 | `organized_feedback.py`、`generation.py`、`cache.py`、`cached_generation_worker.py` | 完整messages、实际G/runtime/token/draw绑定，缺测pending | 新Gemma/renderer须接对应生成适配器；不只凭模型目录名复用Llama/P2缓存 |
+| 人评连接 | `human_reference_reuse.py`；脚本139 | 原证据和实际回复精确匹配 | 新回复必须新判断；55异质记录不能统一冒充55奖励样本 |
+| 监督与反馈共享 | `organized_supervision.py` | prepare_targets、prepare_supervised、comparison_union | 新反馈契约与成本；未测计划保持未知，不给OneShot较少反馈 |
+| BC/PPO协调 | `organized_learning.py`、`qualified_learning.py`、`organized_rollout.py` | 优化、checkpoint、恢复、策略版本/轨迹绑定 | 当前资格/固定规模假设须适配，不能把新机制实验包直接塞进去 |
+| OneShot | `organized_oneshot.py:ProgramReturnModel` | 初始视图、可变长度程序、预测收益搜索 | 冻结搜索预算；当前`formal_search_budget_frozen=False`，不声称穷尽最优 |
+| 完整参考客户端时间 | `client_latency.py`、`latency_serving.py` | client send→首/尾文本，阶段计时与超时记录 | 目前是local_reference_queue_client；网络/Tokkio语音桥接另做 |
+| 官方能力评价 | `esc_rank_runtime.py`、`esc_eval_official_parser.py`、`paper1/execution/dg_official.py`、`paper1/evaluation/static_official_scoring.py` | 官方解析、prompt及部分运行模板 | 为新最终系统建立独立runner/输入绑定；不把旧冻结脚本换输入后仍称原实验 |
+
+以上路径默认相对`project/src/metacom_pm/`；脚本路径见第4节。Tokkio部署代码未在本轮仓库文件名扫描中发现，不能据此断言整台机器不存在，但也不能把当前参考队列脚本称为已完成Tokkio接入。
+
+## 2. 最容易导致“方案看似齐全但跑不通”的四处
+
+1. **反馈与成本接口不是即插即用。**`OrganizedEpisode.__init__`强制`type(cost) is TokenCost`；`QualifiedRoute`要求旧q/m资格及`QUALIFIED_MEASUREMENT_USE`，`OrganizedRun`也检查这些绑定。新的人工配对反馈和真实秒数目标必须另立可验证适配器。不能伪造旧资格通过检查，也不能把旧token惩罚和新秒惩罚重复扣除。
+2. **训练规模写死在旧协调器中。**`make_run_manifest`要求12 owners×8＝96 train前缀、3 owners/18 dev、seeds17/29/43；当前收集batch为16。新12开发＋24诊断是机制实验，不是现成可训练清单。需要参数化新分组/规模manifest并留住旧回归。
+3. **正式保留集路径尚未开放。**当前`OrganizationCatalog`只接受`train/dev`。最终确认材料不能改名为dev以绕过检查；需独立只读评估构造路径/用途控制，禁止其产物进入训练。
+4. **原文扩读和语音端点未实现。**`GET_MS`只取当前MS排名首项；`EXPAND_MS(j)`尚无动作/特征/OneShot实现。参考客户端也没有Tokkio用户话语结束、首个有效语音和语音完成事件。这些是明确的后期工程任务。
+
+## 3. 依赖顺序和工作单
+
+主入口使用P00–P17编号，本文I0–I11是实现切片，不是第二套进度。对应为：I0→P00/P01；I1→P03；I2→P05/P06/P07且依赖P02；I3→P02/P07/P10；I4→P08；I5→P04/P09；I6→P02/P04/P10；I7→P10/P11；I8→P09/P12；I9→P13；I10→P14/P15；I11→P16/P17。以主方案工作单的状态为唯一进度。
+
+主方案已选定新接口默认：所有方法共用显式容量/头耗尽STOP保护层，OneShot称OneShot-Guarded；旧step/replay的raise语义保留原身份，新版本需单独实现与测试。Random仅按开发实测校准并冻结，不按确认耗时事后匹配。来源/hash/owner错误不能被保护层改成正常STOP。
+
+每一单关闭时必须保存`input_manifest.json`、源/代码/协议hash、实际产物清单、检查结果与结论范围。建议新运行根目录为`project/outputs/pm_rl1/master_20261116_v1/<run_id>/`，每次身份变化另立run，不覆盖旧结果。以下文件名是待实现的新产物合同，不表示文件已经存在。
+
+### I0 统一输入和暴露用途
+
+- 输入：11/15版本复用清单、24源会话审查、12RS候选、3方法草稿、3MS摘要样例、现行曝光metadata。
+- 实现：来源登记/祖先家族闭包、source hash、合法切点、development/confirmation用途表。只从既有隔离train/dev导出建立开发资源，不重新读取废弃来源。来源未知不能默认独立。
+- CPU验收：同owner严格过去；当前源会话末尾摘要不能用于本会话中途；目标同源RS/改写/视频排除；缺失家族标pending；同一请求旧复用必须精确匹配实际回复。
+- 输出：`source_registry.jsonl`、`family_map.jsonl`、`exposure_registry.jsonl`、`version_dependency.json`、`reuse_join_report.json`。
+- 下一步：开发可继续；独立确认不足同时进入补源任务，不等训练结束才处理。
+
+### I1 四资源写入与读取视图
+
+- 输入：I0合法来源和`RESOURCE_SPEC_ZH.md`/schema。
+- 待实现：版本化资源编译器；分别生成RS方法/案例、MP时点槽位、ME事件阶段、MS_RAW/MS_SUM。摘要writer只读已结束源会话，不读目标问题或gold；生成发生在GET之前。
+- 最小改动：为`existing_item`显式选择reader/search text；更新`directory`的MS分支；摘要来源绑定不调用假定raw正文的`match_session`；保留old schema可重放。
+- CPU验收：挂电话/工作坊/社群/指代四类反例；错误source hash、错speaker、错offset、未来summary、未完成session、未知当前状态被升级等必须拒绝；完整MS原文逐字可恢复；审计引文不默认注入摘要reader。
+- 输出：`resources/*.jsonl`、`source_anchors.jsonl`、`writer_manifest.json`、`reader_payloads.jsonl`、`resource_validation.json`。schema通过不替代专业适用性或语义审查。
+
+### I2 同源RAW/SUM表示包和资源机制包
+
+- 输入：I1通过来源检查的候选、冻结开发G及tokenizer、目标前缀/来源家族manifest、事先确定的反馈协议。
+- 待实现：新只物化payload的比较脚本；复用`OrganizedRenderer`思路，冻结实际messages与原生token；准备阶段不得调用G/J。
+- RAW/SUM子实验：固定同源会话、排序和其他资源，OFF/RAW/SUM；可选SUM＋RAW诊断单列，不称按需回查。RAW超容量项单列，不能截断或静默删除。
+- 资源机制实验：B/F/R/M/MF/MR/D_R/D_M与原七配对；不自动做所有摘要版本×所有条件的大网格。每个condition有精确来源、适用状态、未适用原因和request identity。
+- CPU验收：OFF为空可选资源；同目标G及基础指导一致；错配资源也是真实来源；所有目标未来和评价标签不出现在messages；去重只在精确请求一致时进行。
+- 输出：`prefix_manifest.jsonl`、`condition_payloads.jsonl`、`request_registry.jsonl`、`comparison_plan.json`、`capacity_report.json`、`generation_manifest.json`。
+- 进入生成前必须收口：G/runtime、资源/renderer、帮助性量表、评审安排、源分组统计、补测上限和预算；这不是再次询问研究方向。
+
+### I3 实际生成、盲评和结果连接
+
+- 复用：`LocalNaturalGenerator`及当前Gemma候选运行参考、GPU guard、原子请求账本/缓存、实际EOS记录。脚本167/176/178是历史协议参考，不直接覆写它们的冻结输入。
+- 待实现：绑定新manifest的通用runner和盲评导出/导入；提交人评的顺序盲化、反向呈现或重复校验依预定协议，不靠人工挑赢例。
+- 验收：自然结束/超时/失败分开；缺生成或反馈保持pending；人评绑定准确current prefix、实际reply hash及合法证据；回复编辑或G改变使旧偏好不可直接迁移。
+- 输出：`generation_results.jsonl`、`attempt_ledger`、`blind_presentations.jsonl`、`feedback_receipts.jsonl`、`mechanism_results.json`。
+- 分支：资料不足修资源；G误用做I4；检索问题留I5；测量不足改锚点或人工有限表。负面结果保留，不反复补抽同协议直到通过。
+
+### I4 条件执行适配与G0/G1绑定
+
+- 复用参考：脚本87/88/91的P2训练/诊断/冻结流程、脚本163/164/165/166的后续修订；其中旧弱目标不作为新帮助性金标。
+- 待实现：同前缀相关/无/无关资源成组监督数据，事实与约束变化有原文支持；OFF目标不得泄漏隐藏历史。独立分组开发用于epoch/adapter选择。
+- 验收：不仅NLL下降；比较G0与G1各自ON−OFF、无关记忆误用及基础支持质量。保持同训练预算与数据来源记录。adapter/runtime/chat template/decoder各自hash。
+- 输出：`conditional_supervision.jsonl`、`adapter_manifest.json`、`G0_G1_results.json`、`executor_decision.json`。
+- 分支：无可保留G1时保留G0并报告RQ-X范围；RQ-SX保持未回答，不能用单G结论代替。
+
+### I5 共享实际检索与检索效果保留
+
+- 待实现：共享BGE检索适配器。先合法过滤后排序；定义静态prefix查询和动态prefix＋acquired查询版本，tie-break、重复来源、RS子类型组装统一。保留词面基线。
+- 复用：QA176的完整来源/BGE向量绑定方法；`organized_encoding.py`仅用于状态编码和缓存，不作为检索已经完成的证据。
+- CPU验收：改变隐藏候选正文不得直接改变actor输入；改变被取得正文可按公开规则改变下次查询；OneShot/BC/PPO调用相同locator；未取得向量和gold不入Observation；缓存不能跨encoder/query版本误用。
+- 输出：`retrieval_manifest.json`、`ranking_receipts.jsonl`、`retrieval_vs_direct_results.json`、`retrieval_timing.jsonl`。
+- 进入策略学习：检索路径可重放，错误类型和实际收益保留已测；直接有用而检索失效时先修检索。
+
+### I6 新反馈与真实成本适配
+
+- 待实现：`EffectObservation`和`MeasuredCost`的版本化合同；允许有效人工配对、独立维度判断、tie、uncertain、pending、technical_failure分别存在。旧q/m分数与新配对效用不静默互换。
+- 真实秒数成本接`client_latency.seconds_return`或新适配器，但当前函数只给`candidate_not_training_qualified`，尚未接PPO。决定使用绝对等待还是ON相对OFF增加、主要端点及权重/约束时，所有方法一致且在确认结果前固定。
+- CPU验收：pending不入优化；同一结果只结算一次；秒成本不同时再扣token代理；trace/runtime/deployment不匹配拒绝；人工有限表没有的terminal返回unknown。
+- 输出：`feedback_contract.json`、`cost_contract.json`、`measured_terminal_table.jsonl`、`feedback_coverage.json`、`measurement_use_record.json`。
+- 有限人工表分支：只在实测终点支持的范围内做有限计划学习；不得对任意新PPO终点插值填零。扩大on-policy探索之前须有取得新可靠反馈的可运行路径。
+
+### I7 固定、OneShot和BC
+
+- 复用：`organized_supervision.prepare_targets/prepare_supervised/comparison_union`、`organized_oneshot.ProgramReturnModel`及原MLP训练基础。
+- 待实现：新run manifest与协调器配置，分组train/dev规模由清单决定；旧96/18、batch16、seeds17/29/43配置保留为历史回归，不被新机制样本冒充满足。
+- 验收：全部方法使用同反馈union、可见信息、retriever、G和成本；OneShot只基于初始Observation选完整程序，不用未来正文筛可行性；冻结搜索计算预算，报告近似搜索而非全局最优。
+- 输出：`policy_training_manifest.json`、`shared_feedback_union.json`、`baseline_checkpoints/`、`baseline_results.json`及可复现训练日志。
+
+### I8 顺序、PPO与可选原文扩读
+
+- 复用：`OrganizedRun`、`OrganizedRollout`的恢复/轨迹/优化流程，改动只在新domain、feedback、cost和schedule适配处。
+- 先在四头GET域比较BC/PPO、OneShot、简单停止及NoText。当前NoText只遮PM已读正文，retriever仍可用正文；需另加固定查询对照才回答整个系统的读后检索价值。
+- 混合MS域是独立扩展：新增`EXPAND_MS(j)`或明确共享父文优先规则，更新action schema、mask、policy head、program encoder与baseline；j是已取得摘要的公共序号，内部source ID不进入actor。不是把一个新动作塞入旧range(5)代码。
+- 验收：新动作非法索引/未读摘要/重复扩读/超容量拒绝；原文实取、实交付、实计费；已读摘要不退款；比较方法同域。G/J仍只在STOP路径，扩读不调用摘要器。
+- 输出：`sequential_results.json`、`no_text_and_fixed_query_results.json`；如实施混合域另有`hybrid_domain_manifest.json`和其同域结果。
+
+### I9 G与PM原配/交叉换配
+
+- 前提：I4有可保留G1，I7/I8分别训练PM0/PM1。
+- 实现：相同冻结评估前缀上G0+PM0、G0+PM1、G1+PM0、G1+PM1；两G各保留相同简单基线。反馈仍来自各G的实际回复，训练反馈预算公平，不能跨G拷贝效用标签。
+- 验收：renderer可兼容但G/tokenizer/runtime各自绑定；评估不更新PM；失败/不可行独立记录；数据分组不因换配改变。
+- 输出：`cross_pair_manifest.json`、`G_PM_cross_pair_results.json`，解释RQ-SX及资源价值随G变化的范围。
+
+### I10 冻结最终评价
+
+- 待实现：只读heldout构造入口；把source split与用途分开验证，不能为了通过当前train/dev检查改标签。最终manifest先冻结G/PM、资源、检索、renderer、测量、种子及报告表，再揭示确认结果。
+- 官方ESC-Eval：复用官方7维parser/adapter/runtime，角色秘密只给seeker。新增完整对话运行adapter；Claude分支仅是实现参考，先核分支身份与曝光。
+- ES-MemEval：QA/Summary/DG按原官方协议分表报告；单轮自然帮助性是另一表。`static_official_scoring.py`是parser，不是自动完成全实验的runner。
+- 独立自然支持：使用已核定家族/owner来源；确认材料不足时报告范围，不把历史已见材料改名未见。新的指标/提示不可冒充官方原版。
+- CPU验收：heldout无训练引用；来源/曝光分组可查；解析失败不填0；裁判原始输出、解析版和任务单位保留；禁止在最终结果后选G/threshold。
+- 输出：`final_freeze.json`、`official_ESC_results.json`、`official_memory_results.json`、`independent_support_results.json`、`failure_registry.jsonl`。
+
+### I11 完整等待、Tokkio与研究收口
+
+- 复用：`ReferenceStreamClient`和`latency_serving.prepare_online/stream_generate`做本地完整路径；现脚本154是旧固定情境协议，创建新manifest版本。
+- 待实现：Tokkio transport与事件桥接，记录用户话语结束、ASR完成、PM/检索/编码、G首有效文本、TTS首有效语音、语音完成。首个有效内容不以占位声/无内容ack代替；实际网络并发与硬件/cache策略记录。
+- 比较：相同G和场景配对、方法顺序交替/随机、暖机与冷启动分开，失败等待保留；写入摘要成本另报并按实际访问次数摊销。秒数代理不能当正式部署实测。
+- 输出：`deployment_regime.json`、`client_traces.jsonl`、`speech_traces.jsonl`、`quality_wait_frontier.json`。
+- 完成标准：主方案各RQ有结果或明确未回答范围；方法、来源、原始结果、代码/模型/协议版本、统计、局限和复现runbook齐全。正面假设未成立不等于可以伪造“完成”；若某外部依赖未取得，论文的对应主张必须收窄或保留未完成。
+
+## 4. 已存在的入口与命令边界
+
+以下CLI参数从源码argparse核实；**它们是现有历史协议入口，不是新主方案的一键runner**。只有在明确需要复核旧包时使用，不能让新输入覆盖其固定输出目录。
+
+| 已存在脚本（相对project/scripts） | 已有参数/模式 | 作用与注意 |
+|---|---|---|
+| `rl1/131_prepare_resource_organization.py` | `--audit --output --tokenizer-dir` | 旧资源组织物化；加载tokenizer，需新schema适配 |
+| `rl1/138_prepare_organized_policy_interface.py` | `--organization --output --g-tokenizer --bge-tokenizer` | 旧五动作接口和特征计划 |
+| `rl1/139_audit_human_reference_reuse.py` | `--output` | 旧参照复用审计；新请求应走新精确join |
+| `rl1/140_check_organized_learnability.py` | `--output --episodes {16,128}` | 学习机械验证，不是自然支持正结果 |
+| `rl1/141_prepare_organized_training.py` | `--output` | 旧固定来源训练准备；不得直接套新36样本 |
+| `rl1/142_encode_organized_training.py` | `--package --output` | 真BGE编码，不是纯CPU结构检查 |
+| `rl1/143_generate_organized_initial.py` | `prepare/check/execute; --package --output --approval` | 实际生成入口；执行记录需与具体manifest及既有授权绑定 |
+| `rl1/145_validate_organized_initial.py` | `--package --encoding --output` | 旧包验证 |
+| `rl1/154_measure_reference_client_latency.py` | `prepare/run/summarize; --output` | 本地参考客户端，不是Tokkio |
+| `rl1/176_probe_qa_resource_gain.py` | `screen/encode/controls/prepare/run/collect; --output` | 旧QA完整协议；encode/run均有实际计算 |
+| `rl1/178_probe_typed_resource_views.py` | `prepare/run/collect; --output` | 旧42次typed协议；不是新summary实验 |
+| `paper1/80_execute_official_static_scoring.py` | `--package --bound --out --execute --limit --timeout` | 旧QA/Summary执行器；可能付费，不能直接作为新授权 |
+
+新增命令建议集中为**待实现**的`project/scripts/rl1/master_workflow.py`，提供`validate-sources / compile-resources / prepare-comparisons / collect-feedback / train-baselines / train-sequential / evaluate / measure-deployment`子命令。每个子命令先有`--manifest --output --preflight-only`，生成/训练/付费操作不得由preflight触发。该文件当前不存在，工作单先实现它再运行，不在本附件中给出伪可执行的新命令。
+
+## 5. 现可运行的CPU回归命令
+
+以下命令从项目根目录执行，使用本机已存在的Python环境；只运行公开fixture，不依赖私有输出或下载模型。它们验证当前基础，不表示新实现已经通过。本轮未运行这些测试，因为本轮只整理方案。
+
+```bash
+cd /home/tokkio/Metacom5_3/project
+PYTHONPATH=src /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q -m 'not gpu' tests/test_rl1_resource_organization.py tests/test_rl1_resource_value_probe.py tests/test_rl1_typed_resource_views.py tests/test_rl1_organized_policy_interface.py -o addopts=
+```
+
+修改反馈/训练适配时执行对应现有回归：
+
+```bash
+PYTHONPATH=src /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q -m 'not gpu' tests/test_rl1_organized_supervision.py tests/test_rl1_organized_learning.py tests/test_rl1_organized_learning_bridge.py tests/test_rl1_human_reference_reuse.py tests/test_rl1_client_latency.py -o addopts=
+```
+
+新功能必须补真实边界测试：摘要源会话未来泄漏、来源hash更换、训练/确认分流、人工未知反馈不优化、实际秒成本不重复扣除、共享检索一致性、扩读权限/容量。不要仅断言新文件输出等于自己的快照。修改范围完成后，按仓库CI执行一次`tests/test_paper1_*.py tests/test_rl1_*.py`非GPU套件；无新变更或未解决失败时不反复全量测试。
+
+## 6. 每次接续的最小执行规则
+
+1. 读主方案、状态与下一未完成工作单，核对实际产物和hash；历史pending不能覆盖后来完成记录。
+2. 先复用现有明确可用组件，只新增本单接口；遇到上述硬编码限制就写明适配，不绕过检查。
+3. 本单的CPU预检和实际run分别记账；数据、生成、反馈、训练、确认结果五种完成状态不能互相替代。
+4. 使用已有授权推进；旧Paper-1限制不否决已授权RL1或summary候选。新的实际调用按具体范围核对，不因脚本有`--approval`参数就机械重复请求方向许可。
+5. 付费仍共享既有总账、在途责任额与USD20硬上限，不按阶段重置；指定GPU被占时不终止其他项目或偷换设备。
+6. 对真实未解决的外部依赖，记录可继续的并行工作和会受影响的主张。不得用“方案已写完”冒充研究完成。
+Shell cwd was reset to /home/tokkio
+Bash Find RQ definitions and cap origin in audit report
+IN
+cd /home/tokkio/Metacom5_3/project/docs && grep -nE "RQ-?S|RQ-?X|RQ-?SX|top-?4|四次GET|2048|任意上限|任意截断" reviews/20261115/pm_rl1_research_audit_and_route/REPORT_ZH.md | head -40
+
+OUT
+35:| 10/23—29 | 区分来源、G、评价、PM；解除 rank-prefix、top4、4 GET、2,048 限制 | 179 个原先不可达 MS 位置恢复可达；可达不等于有益 |
+Shell cwd was reset to /home/tokkio
+Bash Read original RL1 implementation plan head
+IN
+cd /home/tokkio/Metacom5_3/project/docs && sed -n 1,60p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md
+
+OUT
+# PM-RL1：单轮资源选择与执行学习——环境及训练实施方案
+
+版本：2026-09-28；范围：第一版有限步资源决策。本文是研究与实现设计，不是已经运行的 RL 实验报告。
+
+## 0. 最终建议与近期边界
+
+近期研究只回答：给定当前对话前缀与合法历史，系统能否按需获取资源、正确使用，并改善当前回复质量、误用风险和资源成本之间的取舍。
+
+一个 episode 从真实数据中的合法 pre-supporter 前缀开始，经历至多四次资源 GET，STOP 后生成一次回复、评分并结束。**没有模拟用户，没有下一轮用户话语，没有心理状态转移，没有跨会话写回，没有联合在线更新。** 使用多会话历史不等于研究多轮未来回报。
+
+先训练执行器的监督适配，再冻结执行器训练小 PM。两模块都有真实训练与评价，但按阶段学习。旧四头及其结果继续保留；v3.1 作为长期路线图，当前不执行其中跨轮环境、seeker、重访和联合训练网格。
+
+三项优先级：
+
+1. 定义并验证真实的数据与程序转移；
+2. 建立能分辨当前回复差异的评价证据；
+3. 在这个环境上比较监督选择与有限步 RL。
+
+如果可靠标签与有限计划监督选择已经解决问题，保留这个结果，不为 RL 名称增加无意义调用。若奖励只反映模型裁判偏好，结论必须限定为该代理目标。
+
+## 1. 当前仓库与结果：本次审查依据
+
+### 1.1 代码身份与审查范围
+
+2026-09-28 重新查询仓库全部 11 个分支。活动分支仍为 `work/paper1-rq1-integration-20260816`，HEAD 为 `ba6917069cc6257ca8e64729509ce0f27e3cdc9b`，最后提交日期为 2026-09-17；`main` 为旧路线 `3c7e416a55aaca265fef63a39d9f101cde787f5b`。
+
+重新枚举完整树 2,703 项、2,548 个文件；Python 文件分为：当前 paper1 源码 116、当前脚本 78、其他/历史源码 179、其他/历史脚本 535、测试 372、其他 4。目录名和数量不代表全部都是当前有效实现。
+
+本次复用并重新核对上次 483 个相关文件的 Git blob SHA；发现本地审查副本的 `runtime_v7.py` 尾部不完整，已从同一 commit 重新取得全文，最终483个文件全部一致，未修改远端代码。沿当前入口重新检查关键数据、候选、检索、交付、评分、冻结、预算和服务路径，补查 6 个共享模块：`api.py`、`attempt_ledger.py`、`config.py`、`io.py`、`esc_rank_runtime.py`、`esc_eval_official_parser.py`。当前 paper1 的 194 个 Python 文件已做 AST/接口盘点；下述设计依据恢复后的完整版本。
+
+这是一项覆盖当前研究链路、仓库结构和结果身份的系统审查，**不是逐行证明全仓库 1,284 个 Python 文件正确**。历史和已弃用合成训练数据没有重新读取或投入研究。未连接服务器、未执行完整 pytest/PyTorch/GPU 测试、未训练研究模型；不能将仓库里历史 checkpoint 当成当前四头或 RL 的已完成结果。
+
+### 1.2 可确认的资产与限制
+
+| 资产/结果 | 实际证据 | 本版处理 |
+|---|---|---|
+| 当前 Generator | Llama‑3.1‑8B‑Instruct，本地 BF16、固定权重/模板身份 | 复用基础模型，分别绑定固定指导和 LoRA 执行器 |
+| BGE‑M3 | 固定检索、向量身份、相似度排序、ID tie-break | 保留候选排序，不先训练新 retriever |
+| 来源 | 18 个虚拟 owner，401 sessions | 合成并人工审阅的公开来源；不是 18 名真实受试者 |
+| 历史 MP / ME | 713 / 1,523；最终 profile slots 388 | 用历史版本重建切点视图，不能把最终状态倒灌过去 |
+| MS | 完整历史会话原文 | 保留 raw 表示，不额外引入摘要模型 |
+| ME 中行动—已观察结果 | 4 条；coping_attempt 374 条 | 主线研究一般事件、时序与合理使用，不声称学会个体行动疗效 |
+| 编译 | 802 logical calls、804 attempts | 编译完成不等于资源实质有益；保留拒收/核验记录 |
+| 四头 | 当前合同是 standardized L2 logistic；远端正式训练计数仍为 0 | 先核对服务器后续产物，不宣称已训练完成 |
+| Gemini 资格 | 96 呈现，100 调用，92 有效，未获 material-effect teacher 资格 | 不继续把它默认用作 RL 奖励；不重做旧 96 题 |
+| ESC-RANK | 24 题官方运行已完成；Overall 对人工 A/B 的 QWK 约 0.373/0.508 | 可作为独立测量来源之一，不能当无误真值或直接继承到新单轮任务 |
+| 1,924 生成、1,631 unique scorer payload | 用户此前报告，未包含在本次可见的远端结果中 | 服务器逐请求验收，不能预设已具备可用 RL 标签 |
+| 自然结束、Qwen 后续检查 | 用户此前报告本地有进展 | 不重复实现已修功能；先绑定真实版本与产物 |
+
+较早的 QWK 0.7571 是人工之间的 Overall 一致性，不是 Gemini 资格或新奖励有效性。Qwen 换序一致也只能说明特定输入上的部分稳定性，不能直接证明本任务收益判断正确。
+
+### 1.3 当前代码能复用什么，具体缺什么
+
+以下路径相对 `project/src/metacom_pm/`：
+
+| 当前文件/目录 | 已有能力 | 新版需要补充或修正 |
+|---|---|---|
+| `paper1/data/memory_source.py`、`materializer.py` | sanitized runtime，与 gold/原始标注隔离 | 新 `PrefixSpec`；原官方 Target.cutoff 是全部历史末端，不能用于中途前缀 |
+| `paper1/multi_view_memory/candidate_adapter.py` | strict-past、owner/span 检查、先过滤再取 profile 最新版本 | 新切点适配；同 rank 冲突保留；不能简单把后一次提及当成事实更正 |
+| `paper1/execution/packing.py` | 固定排序、精确 Top-k prefix、超预算不截断 | 组合计划、逐步 GET、合法动作 mask、总预算 |
+Shell cwd was reset to /home/tokkio
+Bash List original plan sections and RQs
+IN
+cd /home/tokkio/Metacom5_3/project/docs && grep -nE "^#{1,3} " PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md | head -60; grep -nE "RQ|研究问题" PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md | head -30
+
+OUT
+1:# PM-RL1：单轮资源选择与执行学习——环境及训练实施方案
+5:## 0. 最终建议与近期边界
+21:## 1. 当前仓库与结果：本次审查依据
+23:### 1.1 代码身份与审查范围
+33:### 1.2 可确认的资产与限制
+52:### 1.3 当前代码能复用什么，具体缺什么
+74:## 2. 新研究与旧研究的关系
+90:## 3. 先行研究：采用什么，暂不采用什么
+106:## 4. 数据构造：不生成用户未来
+108:### 4.1 三个分开的数据用途
+116:### 4.2 切分和数量是先验上限
+126:### 4.3 来源与可用时间
+134:## 5. 环境的精确定义
+136:### 5.1 Episode 与不变对象
+151:### 5.2 Actor/critic 的 observation
+161:### 5.3 这是哪一种状态问题
+169:## 6. 动作与确定性转移
+171:### 6.1 首版动作
+181:### 6.2 合法性与预算
+191:### 6.3 转移函数 T
+210:## 7. Step‑2：研究对象与环境部件的边界
+226:## 8. 奖励测量：最大的实际缺口
+228:### 8.1 四层必须分开
+237:### 8.2 主线 reward record
+251:### 8.3 必须先做的小型测量检查
+261:### 8.4 训练奖励与正式测量分开
+271:## 9. 奖励函数与信用分配
+298:## 10. 可控、可审计与可信分别怎样验证
+300:### 10.1 必须有的记录
+308:### 10.2 机械检查
+319:### 10.3 行为与测量检查
+329:### 10.4 技术失败与语义失败
+337:## 11. 先建立可验证的非 RL 基线
+339:### 11.1 单头完整剂量表是第一座桥
+347:### 11.2 一次性计划对照
+355:## 12. RL 训练方法：一套小策略，不先做算法网格
+357:### 12.1 主建议
+365:### 12.2 网络与信息
+371:### 12.3 共同初始化与训练额度
+385:### 12.4 开真模型前必须验证的学习行为
+391:## 13. 正式实验的最小结构
+393:### 13.1 执行实验
+399:### 13.2 策略与执行交叉
+414:### 13.3 可得结论
+424:## 14. 统计、复用与测试暴露
+434:## 15. 计算与API：先核对清单，不先消费
+463:## 16. Codex 的实现模块与接线顺序
+505:## 17. 本次设计的验证与未完成项
+513:## 18. 给服务器Codex的接手指令
+527:## 19. 关键来源
+84:- RQ-S：相同来源/执行器/预算下，情境化与顺序资源策略是否优于固定取量和一次性计划？
+85:- RQ-X：Step‑2 训练是否降低误用、提高资源增量，而不只是提高无资源回复能力？
+86:- RQ-SX：执行器变化后资源价值是否改变；分别适配的 PM 是否比直接换配更合适？
+Shell cwd was reset to /home/tokkio
+Bash Read original plan key sections (data, actions, reward, baselines, RL)
+IN
+cd /home/tokkio/Metacom5_3/project/docs && sed -n 74,90p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md; sed -n 106,135p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md; sed -n 169,210p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md; sed -n 226,300p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md; sed -n 337,425p PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md
+
+OUT
+## 2. 新研究与旧研究的关系
+
+旧 Paper‑1：四个二元收益头、其他资源 OFF 的一阶对照、统一校准剂量、冻结执行器、任务分开的官方指标。旧结果继续按旧定义解释。
+
+PM-RL1：当前轮内多次资源动作、按情境决定量、允许有限跨类型组合、以当前回复效用与资源成本训练；另训练 Step‑2 的监督适配。属于用户本轮已明确要求的后续研究范围，不再次询问是否允许研究动态量/Step‑2。
+
+创建独立 `pm_rl1` namespace 和 scoped amendment，写清旧条款变化、影响产物及需重算范围；不要改旧 JSON 以假装旧测试全兼容。本次设计和免费工程工作已获用户方向授权；具体付费批次仍须核对既有适用授权与实际清单。
+
+三项正式问题：
+
+- RQ-S：相同来源/执行器/预算下，情境化与顺序资源策略是否优于固定取量和一次性计划？
+- RQ-X：Step‑2 训练是否降低误用、提高资源增量，而不只是提高无资源回复能力？
+- RQ-SX：执行器变化后资源价值是否改变；分别适配的 PM 是否比直接换配更合适？
+
+本版不回答长期心理效果、模拟用户有效性、多模态状态估计、最佳心理治疗策略或联合 RL 优越性。
+
+## 3. 先行研究：采用什么，暂不采用什么
+## 4. 数据构造：不生成用户未来
+
+### 4.1 三个分开的数据用途
+
+1. `legacy_dose`：服务器验收后的旧 QA/Summary 等剂量表。用于旧路线收口、缓存兼容分析和环境机制检查；不能自动当自然支持任务的正式训练数据。
+2. `natural_prefix`：本版主研究。从 EvoEmo 原始当前 session 中选一个 seeker 发言之后、supporter 回复之前的切点。当前 session 公开前缀给模型，之前完整 sessions 才可成为记忆候选。原后续文本一律隔离。
+3. `controlled_diagnostics`：有明确答案的来源/更正/未知结果/冗余/互补测试。优先从真实公开来源作可追踪干预；必要程序构造单列诊断，不冒充自然训练用户，不复活已弃用合成目录。
+
+ESConv train 用于 RS bank 及必要执行示例；ESC‑Eval 角色卡维持旧正式评价用途，不转作本版训练池。RS 排除当前 dialogue 及已识别 seed 重叠；EvoEmo 的派生来源与 ESConv 有交集，必须记录重叠关系。
+
+### 4.2 切分和数量是先验上限
+
+复用已实际冻结且兼容的 owner split；否则沿 v3.1 的 `sha256("pmseq-v2-owner|"+owner_id)` 排序，12/3/3 train/dev/test。所有派生样本随 owner、原 session、源事实家族整体分组；不为当前版本重抽到有利 split。
+
+核心上限：96 train prefixes（12 owners 各最多8），24 dev（3 owners 各最多8），48 test（3 owners 各最多16），同一 session 最多一个主 prefix。先完成免费 census：每 owner 合法 session 数、候选类型、token、纠正/意向/结果覆盖；不足则下调共同规模，不能读取未来或复制近似样本补满。
+
+当前 session 至少有一次用户发言；记忆实验至少有一个已完成的过去 session。切点按固定 hash 选，不能根据生成质量选“容易有收益”的前缀。控制场景与自然场景分开报告；训练/开发已看到的同事实改写不进入 test。
+
+只有三个 test owners，结果必须呈现逐 owner 效应。样本、PM seed、生成重复不是新的独立用户。其结论是本来源分布的受限验证，不能声称广泛人群泛化。
+
+### 4.3 来源与可用时间
+
+`available_at` 是信息首次可被系统看到的时间，不是事件发生时间。先做时间过滤，再解 MP 版本；当前 session 的公开更正优先用于理解旧记忆，但不能据未来更正重建过去视图。
+
+保留 713 条历史 MP 和 1,523 条 ME；不从最终 388 slots 倒推切点。MS 保留完整原始 session，禁止静默摘要或截断。相同时间的冲突版本保留歧义；过去的意向不会自动转为“已执行”，更不会转为“有效”。
+
+来源文件/完整 gold 只在构造与评价权限域；actor、critic、G 使用明确投影。继承旧数据的研究暴露清单，原来被人工/模型反复查看的项不能重新命名为 sealed test。
+
+## 5. 环境的精确定义
+
+## 6. 动作与确定性转移
+
+### 6.1 首版动作
+
+`STOP=0, GET_RS=1, GET_MP=2, GET_MS=3, GET_ME=4`。
+
+各类最多取4条，**总 GET 最多4次**，因此至多5个决策点（包含最后 STOP）。QA/Summary 的旧兼容测试固定 RS OFF；自然前缀允许四类。第一版不增加任意 item-ID 选择、重排、删资源、改 query、草稿重写或自问自答动作。
+
+GET_h 取该类尚未取得的下一条，取得后承诺完整交付给 G。Step‑2 可以语义上不采用，但不能把该条从 prompt 删除、退还 token 或改称“没有取过”。上一轮讨论的“排除资源”在本版落实为合理不采用；显式丢弃/重排是后续单独动作协议。
+
+这版主要学习类型、数量、组合和停止，不保证找出所有候选中的最佳任意子集；相似度首条不合适且挡住后续资源，是明确限制。
+
+### 6.2 合法性与预算
+
+资源预算初始候选 B=2,048 个 Generator tokens，包括整块说明、来源、分隔符、正文；同时检查完整 chat template/context 容量。此数是工程起点，不是实验结果。先用无 outcome 的容量 census 检查1,024/2,048/4,096档；若需变更，在任何新效果标签前统一冻结。主实验所有方法同 B。
+
+GET_h 只有下一条存在、j<K、完整新增计划不超 B/上下文时才合法。rank1 超预算时不能偷偷跳到 rank2；该头当前 mask 为 false。非法动作必须报协议错误，不自动映射 STOP 或返回有意义的负样本。
+
+STOP 始终合法，E=空即无资源。K 达到4或没有合法 GET 时只剩 STOP；这是研究任务的正常终止，不是 timeout。不得再另加一次“第5条探测”。
+
+完整四类、总量≤4时最多70个终值计数计划；三类 memory 最多35个。它们只是理论上界，预算/候选缺失后更少；不同取得顺序不应制造额外终值 treatment。
+
+### 6.3 转移函数 T
+
+GET_h：
+
+1. 验证旧 state hash、action mask、episode/version；
+2. 从冻结 I_h 取索引 n_h 的真实条目；
+3. 更新 n_h、E、j，按固定 RS→MP→MS→ME 与类内 rank 渲染；
+4. 重新计算真实 tokens 和新 mask，返回新的公开 observation；
+5. 记录 transition receipt。**不调用 LLM 来想象新状态，不产生用户反应。**
+
+STOP：
+
+1. 冻结 plan 与完整 prompt；
+2. 用冻结 X 实际生成一次回复，或读取身份完全一致的已生成训练缓存；
+3. 完整性检查后交独立评分接口；
+4. 保存原始回复、评分/证据及成本，返回 reward，episode 结束。
+
+任何评分缺失进入 pending/technical_failure，不能用 reward=0 冒充成功。训练中的缓存是“已观测终局反馈的复用”，不是一次新独立生成，也不是部署延迟测量。
+
+## 7. Step‑2：研究对象与环境部件的边界
+## 8. 奖励测量：最大的实际缺口
+
+### 8.1 四层必须分开
+
+1. 来源/时间合法：程序与 source span 核验。
+2. 内容相关/适用：与当前需要的关系，需要语义判断。
+3. 输出是否误用：事实、时间、人物、意向、已观察结果、边界等。
+4. 最终增益：同一执行器下，相对无资源或另一计划，回复是否更好。
+
+原 Gemini 资格不足、现有 ordinal 分数有压缩和裁判误差，不能把 old effect labels 直接连上 PPO 就宣称 reward 可信。
+
+### 8.2 主线 reward record
+
+自然支持任务使用一个新绑定的本地 current-turn evaluator：一次调用联合返回 q、misuse、证据与不确定性；不新增一套 LLM reward model 的梯度训练。
+
+`q ∈ {0,1,2,3,4}`：0 严重失配/不能使用；1 明显问题；2 基本回应但存在重要不足；3 贴合、连贯、适当；4 充分回应当前需要并尊重已知约束。只评价新生成的当前回复，相同历史作为语境；不能用此前优质原文把末句错误平均掉。分数是训练效用编码，不假设人类效用天然等距。
+
+`m ∈ {0,0.25,1}`：0 未发现资源相关误用；0.25 局部不影响核心建议的失准；1 实质性误用，如把未执行说成已有效、把过时限制当现在、将示例人物当用户、违背当前明确边界。所有错误带 response span、source span 与理由；unsupported/contradicted/uncertain 分开。没有声称事实时 precision=NA，不自动“资源使用满分”。
+
+同一评价材料构造规则用于所有 arms：x＋严格合法历史形成的评审证据＋被评价回复。评审可读完整合法证据来发现未取资源造成的遗漏，但看不到策略名、k、相似度、成本、训练 seed、Ours/baseline。actor/G 不读这些评价侧材料。
+
+m衡量输出中的资源相关错误风险；另记来源本身语义错误、检索不适配、生成扭曲、合理不采用、遗漏及无法确定的归因。若G忠实复述了一条编译错误的资源，不能仅因最终回答错了就断言是执行器误解。相同合法资源条件的配对实验用于减少这类混淆。
+
+若评审证据超出可用 context，先解决统一证据组织或标测量缺失，不能只向裁判提供某个方法取到的资源。无足够依据的错误或质量判断保留 uncertain，不填0。
+
+### 8.3 必须先做的小型测量检查
+
+从 train/dev 取12个真实前缀；每个构造4个回复：真实无资源/真实有资源、对其中一个做单点来源或状态损伤、内容保持的风格改写，共最多48个 score payload。自然差异是主体，故意损坏控制不是全部证据。
+
+检查：格式完整；来源证据能被复核；明确损伤是否被识别；风格变化是否无故主导；普通资源差异是否全平局；长回复是否得到无依据高分。预选12个 payload 重复一次只测稳定性；独立人工/不同评审盲看12个配对用于定位具体偏差。人和模型的审核身份分别记录；没有人工时不得声称 human validation。
+
+只允许一次针对明确问题的 train/dev rubric 修订，旧新版本不混标。不得按 PM 得分最高选 evaluator。没有足够分辨率时先做来源/执行错误研究；环境工程继续可完成，但不扩大“有帮助性优化”的 RL。
+
+这不是重做旧96题。是新任务的小型测量诊断；不存在自动保证可信的样本数或一致性阈值。需要扩大人工证据时先交付具体待审材料与其要支撑的主张，不要求用户先批准抽象大项目。
+
+### 8.4 训练奖励与正式测量分开
+
+J_train 固定本地模型、revision、prompt、decode、parser；X teacher 和 J_train 若同家族明确披露。正式保持独立来源核验和一份冻结的盲审子集；ESC-RANK 可作能力范围经检查后的补充维度，不能把新单轮 prompt 叫官方 ESC-Eval 复现。
+
+正式盲审的起始上限为24个配对：12对比较同资源下X_g/X_l，12对比较X_l下RL/OneShot；按3个test owners平衡、按hash选取、PM seed在结果前轮换，均隐藏方法身份。优先由独立人工做来源及适当性判断；若只有独立模型则准确标明。24对只是有界证据补充，不能保证统计充分或据此声称人类普遍偏好；评审不回流训练。
+
+可选小型官方 QA 外部验证：最多48个 outcome-isolated test targets×OFF/Fixed/OneShot/RL，共192个答案，用原官方 scorer；不需要 seeker。训练所有自然支持 reward 不用官方 API。QA 改善不能替代自然支持质量证据，旧完整 Paper‑1 官方对照另行收口，不与本版范围混同。
+
+无独立有效评价时，最终只能说模型学会优化已声明的代理，不说已经提高真实支持效果。
+
+## 9. 奖励函数与信用分配
+
+令 `U_X(x,E)=q_X(x,E)/4 − α m_X(x,E)`；初始 α=1，表示重大误用的惩罚与完整质量区间同量级。这是研究者定义的偏好，不是数据推导的心理常数。
+
+令 c(E) 为规范渲染后完整资源块的 G-token 数，空集为0；B 为共同 cap。初始 λ=0.05，γ=1。
+
+```
+GET:  r_j = -λ * [c(E_next) - c(E_now)] / B
+STOP: r_j = U_X(x,E_final) - U_X(x,empty)
+```
+
+于是完整回报严格为：
+
+`R = U_X(x,E_final) - U_X(x,empty) - λ*c(E_final)/B`。
+
+无资源基线每个 prefix×executor 只实际生成并测量一次，按完整身份缓存；在部署时不额外生成无资源答案。它在同一 episode 的所有动作计划之间是常数，因此不会改变最优计划，但有利于解释资源增量。若基线缺分数，先进入待处理，不把基线当0。
+
+STOP 不再扣第二次资源成本。tokenizer 的组合长度并非数学保证逐条单调，因此保存精确差值；无删除/重复 GET，状态无环，不存在来回领 token 奖励的路径。若改为非负逐次付费成本，必须重新定义总目标，不能一面裁差值一面声称上述等式仍成立。
+
+不把“相邻 k 的质量差”作为免费的 GET 奖励：它需要额外生成，而且第1条暂时没收益不意味着第2条无法形成互补。GET 后不调用 G/J，只有 STOP 时实际生成评分。γ=1 保证多一次 GET 不会额外折扣最终质量。
+
+λ 从小规模 dev 的质量/成本量级检查，不按 test 调整；初版不跑大网格。α、λ、评分锚点、技术失败规则需在真实训练前冻结。正式分别报告 q、m、质量增量、实际 tokens、延迟，不能只报混合 R。
+
+真实延迟首版不直接放进 reward：排队、加载、输出长度、并发噪声会混入硬件负载。先测端到端与各段成本，之后有稳定预测器再做独立 latency-aware 扩展。该版直接优化的是资源输入成本，不承诺实际延迟必降。
+
+其他计费/计算（PM 编码、固定检索、G 输出、训练 scorer、加载交换）全部记录。不能只报告 c(E) 就声称总算力减少。QA/Summary 若做环境桥接，仍用各自任务测量；不同任务数值不混成共同论文总分。
+
+## 10. 可控、可审计与可信分别怎样验证
+
+### 10.1 必须有的记录
+## 11. 先建立可验证的非 RL 基线
+
+### 11.1 单头完整剂量表是第一座桥
+
+对一个固定 head、prefix、executor，k=0..4 的反馈若齐全，整条停止路径只有5个可能终值。可精确算出哪个终值最优、每一步继续与停止的目标；这是检查 reward、停止规则和训练器的理想小环境。
+
+精确最优只供 train 教师或 sealed 后的 oracle 诊断；测试部署不能读取各 k 的真实分数。单头相邻量的实测差异可以诊断，不意味着线上策略可以免费读取。
+
+全部动作反馈已知时先用监督学习获得情境化剂量选择。称它为离线计划/监督选择，不能因把表格包进 env 就声称 RL 比监督更省标注。
+
+### 11.2 一次性计划对照
+
+OneShot-Dose 使用与顺序策略相同的初始公开前缀和 metadata，一次预测终值计划。最大动作集合与 RL 可到达集合相同，排除预算不可行项；不能让它只选5个计划而 RL选70个，再把差异全部归因顺序观察。
+
+用 train 中实际测过的 `(prefix, plan, q, m, cost)` 拟合效用预测器；未测计划不是0，也不是负例。特征可包括各类型剂量、相似度/长度及乘积项，但不偷看未 GET 正文。小样本中未测组合属于外推，需如实报告。
+
+最终 OneShot 与其他静态基线可以使用相同 executor 下**本轮所有训练方法已获得反馈的共同 union**，并报告数据来源；这样不让 RL 独占更大标注集。dev/test反馈不加入该包。另记录在线探索总调用与各方法的训练成本，不把自适应收集数据当无选择的总体样本。
+
+## 12. RL 训练方法：一套小策略，不先做算法网格
+
+### 12.1 主建议
+
+真实有限步训练首选 **masked feed-forward PPO**，取消上一版跨轮 recurrent PPO 的 GRU 和长轨迹状态。原因是：动作只有5个、每条最多5个决策点、实际 reward 来自冻结 X/J；on-policy 更新边界清楚，避免第一版把离线缺标签、Q值外推和循环 replay 一起引入。
+
+这不是 PPO 最优的理论判断。Double DQN 适合离散动作且能复用 transition，值得后续在真实调用成为瓶颈时研究；它需要特别检查未测动作的 bootstrap 和过估计。GRPO/token-level RL 不适合作为这一步小资源策略的默认实现。只因为 ESCA 用 PPO 或 RLFF 用 GRPO，不能决定本项目算法。
+
+缓存让已测终值可以反复用于采样，但缓存不让旧策略的动作 log-prob 变成当前策略。每个 PPO batch 的动作轨迹必须由该 batch 的冻结 behavior policy 重新采样；旧轨迹仅用于监督初始化/诊断，不放入未经校正的 PPO surrogate。
+
+### 12.2 网络与信息
+
+冻结 BGE‑M3；公开前缀编码＋已取得条目编码（按类型/rank最多4 slots并保留mask）＋原始 metadata/预算进入128维投影和两层128宽 MLP；5维 policy logits＋1维 value。相同 acquired set 用规范顺序编码；不输入 retrieval-order 决策路径作为额外暗示。
+
+全部标准化只fit train；owner/target/schema hash等不是网络特征。编码器不更新；已取得文本的编码可按identity缓存，但线上也必须在合法取得之后才释放给actor。缓存命中不代表真实首次部署编码成本为0。短前缀/条目长度上限、截断/分块规则在首次训练前统一冻结，不偷偷裁掉关键证据。
+
+### 12.3 共同初始化与训练额度
+
+首批24个 train prefixes，按owner平衡。每个最多15个计划：OFF 1、四类k1和k2共8、六种两类各Top1组合共6。X_g/X_l分别真实生成和评分，最多720个终值反馈对。低覆盖/超预算计划标不可行，不补0。
+
+利用这些**已测**终值建有限支持图，做 masked BC 初始化：只在能到已测终值的路径产生监督，合理并列保留。不得把未测 STOP 标负、也不得把未测组合填0。这个支持图是初始化来源，主 RL 仍可在合法动作域探索其他计划。
+
+P_g 在 X_g 上训练；P_l 在 X_l 上训练。网络、train/dev来源、初始seed、batch和 episode 额度相同；BC标签分别来自对应X。该比较包含监督与RL整体适配，不能独立声称在线RL再适配贡献。
+
+默认各128 episodes×3 seeds（17/29/43），合计768训练episodes；初始32同身份 smoke可计入128。均匀owner→该owner合法prefix抽样，所有重复标明不是独立样本。128是预算而非收敛保证；零信号/极低动作熵先诊断，不自动扩量。
+
+PPO起点：Adam lr3e-4、clip0.2、γ1、GAEλ1、value系数0.5、entropy0.01、grad clip0.5；16完整episodes/batch、4epochs、每minibatch4episodes。每个batch全部 reward 齐备后更新。forced STOP不计policy/entropy损失，可计value；初始化中未拟合的critic不得伪装已知oracle。
+
+开发评价只在64与128，各用同24dev前缀；主比较固定128终点，不各挑峰值checkpoint。训练前若计算预算不足，所有组统一降64×3并写清；不看test后延长落后组。第二RL算法不是近期必做。
+
+### 12.4 开真模型前必须验证的学习行为
+
+程序构造 E0：包含无需资源、取一条即可、首条暂时无收益但两条互补、错误/冗余资源、预算阻止行动等案例。真实训练小策略，而不只断言 reward 算式；与随机/Always STOP/精确DP比较，记录3seeds曲线。
+
+检查合法动作概率、log-prob重算、参数真实变化、critic target、γ=1 credit、终局无bootstrap、保存恢复与相同batch版本。若PPO无法在可解小任务学习，先修实现；本次文档检查没有替代这项服务器训练验收。
+
+## 13. 正式实验的最小结构
+
+### 13.1 执行实验
+
+48 test prefixes×OFF/相关合法/低相关合法三条件×X_b/X_g/X_l三个执行器，最多432个回复。相关性在生成前冻结；缺条件如实记录。X_g/X_l同提示，事实/适用性与q分开评价。
+
+比较无资源能力、资源增量 `q(E)-q(empty)`、重大误用及不采用。X_l在OFF也提升但资源增量不变，不能说学会了更强资源利用。单个SFT seed限制结论稳定性；若执行训练成为强主张，优先复现实验seed，而不是先增加第二RL算法。
+
+### 13.2 策略与执行交叉
+
+| 方法 | X_g | X_l |
+|---|---|---|
+| No Resource | 1 | 1 |
+| Fixed-Dose（dev选） | 1 | 1 |
+| Matched Random（dev定分布） | 1 | 1 |
+| OneShot-Dose（对应X训练） | 1 | 1 |
+| P_g | 3 PM seeds | 3 PM seeds |
+| P_l | 3 PM seeds | 3 PM seeds |
+
+共20个checkpoint/策略实例×48 test prefixes=最多960个回复。Fixed包含在共同动作/预算域中；匹配随机按dev的类型/剂量分布构造，test实际成本仍需报告，不宣称精确等成本。旧四头若已有可比checkpoint，可增加补充行，不能用新proxy冒称旧模型。
+
+与执行实验只有完全相同输入/模型/解码的请求才去重。去重共享结果保留统计相关性；不同seed/重复目的不能随意合并。
+
+### 13.3 可得结论
+
+- RL超过Fixed但未超过OneShot：说明自适应资源计划有价值，尚未证实逐步观察/继续决策的额外收益。
+- RL超过同数据、同动作域OneShot：支持本设置下序贯信息利用价值；还需排查模型容量、优化与可见信息差异，不能只由算法名称归因。
+- P_l/X_l超过P_g/X_l：支持针对执行器重新适配的整体价值。
+- X_l资源增量与来源指标改善：支持所测分布上的利用改善。
+- 训练reward涨而独立评分不涨：代理优化成功，真实任务收益未证实。
+
+主结果包括质量、误用/伤害、正收益捕获、无效取用、ON/GET分布、tokens、全链延迟和失败。正收益捕获与local regret只在有足够成对反馈的诊断子集定义；未测全计划不称全局oracle。无正收益分母记NA。
+
+## 14. 统计、复用与测试暴露
+Shell cwd was reset to /home/tokkio
+Bash Read 11-11 typed resources runbook
+IN
+cd /home/tokkio/Metacom5_3/project/docs/reviews && ls 20261111/ 20261105/ 2>/dev/null; ls 20261111/pm_rl1_typed_resources/ 2>/dev/null; sed -n 1,80p 20261111/pm_rl1_typed_resources/RUNBOOK_ZH.md 2>/dev/null | head -c 6000
+
+OUT
+20261105/:
+pm_rl1_alternate_executor_human_review
+pm_rl1_feedback_and_opportunity
+pm_rl1_history_necessity
+pm_rl1_history_necessity_human_review
+pm_rl1_incremental_help_human_review
+pm_rl1_qa_resource_gain
+pm_rl1_slight_positive_path
+pm_rl1_value_and_novelty_audit
+
+20261111/:
+pm_rl1_typed_resources
+CHECKS.json
+RESULTS_ZH.md
+RUNBOOK_ZH.md
+__pycache__
+verify.py
+# 已完成阶段的复核入口
+
+工作目录`/home/tokkio/Metacom5_3`。日期按客户端2026-11-11。
+
+## 检查
+
+```bash
+env PYTHONPATH=project/src /tmp/pmrl1-publication-20261022-venv/bin/python -m pytest -q project/tests/test_rl1_typed_resource_views.py project/tests/test_rl1_qa_gain_gate.py project/tests/test_rl1_resource_organization.py project/tests/test_rl1_resource_value_probe.py
+env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python project/docs/reviews/20261105/pm_rl1_qa_resource_gain/verify.py
+env HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python project/docs/reviews/20261111/pm_rl1_typed_resources/verify.py
+```
+
+本轮两个生成阶段均已关闭，不重跑`run`、`collect`或覆盖原包。核验不加载模型权重、不调用GPU/服务。原生token检查只加载本地tokenizer。
+
+## 实际执行记录
+
+QA：保持11月5日冻结包，原176脚本`run`接续（日志RUN_ATTEMPT_02.log），退出0，86请求完成；随后`collect`、人工式来源内容核查（助手，非独立人评）、177评估，得到ASSESSMENT_00。所有14题别名和5题要点在生成之前已固定。原加载前占用拒绝记录保留。
+
+新表示：178 `prepare`→独立来源子序列核查→178 `run`（RUN.log）→178 `collect`。准备和收集也使用上述paper1-judges-py312环境，系统默认Python缺torch不能运行其导入依赖。42请求完成后才修复collector的重复keyword错误，保留源码和POST_EXECUTION_ANALYSIS_FIX.json；不修改已执行请求、协议或旧输出。`verify.py`精确核查该差异，不能泛化为允许任何hash变化。
+
+准备时先修正了“旧raw turn ID被当成盲化数组下标”的新适配器错误；其命名空间差异原审计130已经记录。实际冻结包使用同源中唯一精确角色/跨度/原话定位，24/24前缀通过机械来源核验，然后按固定hash选择6个不同owner。没有根据生成结果调整样本。
+
+## 继续工作边界
+
+新增对照使用独立输出目录、版本和固定范围，不能把旧结果更名成新版本收益。下一阶段优先验证来源完整的记忆视图与强固定/简单停止/OneShot，不重开已关闭的自然支持正例搜索。语义生成、引用命中、短输入及未知结果均不自动成为正奖励。
+
+每个新表示需能回答：哪些原事实/限制/事件阶段保留，哪些未确定，实体或指代是否仍可解释，何时展开原文；后台写入成本和在线决策/检索/有效语音等待分别记录。使用同一个资源域、相同基础指导、相同冻结G比较方法。检索器或PM能利用的字段必须来自当时可见内容，不能包含题目gold或本轮评分。
+Shell cwd was reset to /home/tokkio
+Bash Check GPUs, disk, environments
+IN
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv; nvidia-smi --query-compute-apps=gpu_uuid,pid,process_name,used_memory --format=csv | head; df -h /opt/tokkio-data0 /home | tail -2; ls /opt/tokkio-data0/tokkio_envs/ ; ls /opt/tokkio-data0/ | head -30
+
+OUT
+index, name, memory.used [MiB], memory.total [MiB], utilization.gpu [%]
+0, NVIDIA RTX A4500, 1 MiB, 20470 MiB, 0 %
+1, NVIDIA RTX A6000, 1 MiB, 49140 MiB, 2 %
+gpu_uuid, pid, process_name, used_gpu_memory [MiB]
+/dev/sdb1       916G  524G  347G  61% /opt/tokkio-data0
+/dev/sda2       879G  804G   31G  97% /
+paper1-esc-rank-py311
+paper1-judges-py312
+paper1-mistral-vllm-py312
+paper1-py311
+paper1-qwen35-vllm-py312
+paper1-report-py311
+pmrl1_sft_vendor_20260929
+pmrl1_validation_vendor_20261103
+Projects
+containerd
+dubx
+hf-cache
+hf_cache
+kubelet
+local-path-provisioner
+local-path-provisioner.bak.2026-02-26-201702
+lost+found
+tokkio_cache
+tokkio_envs
+tokkio_external
+tokkio_logs
+tokkio_models
+tokkio_projects
+tokkio_runs
+tokkio_secrets
+tokkio_tmp
+12:05 PM
+还在核对运行栈（G 模型、数据路径、人评工具、延迟模型），核完就开始写方案。
+
+
+
+Bash Find G and BGE model paths used in 178 script
+IN
+cd /home/tokkio/Metacom5_3/project && grep -nE "gemma|Gemma|model_dir|MODEL|bge|BGE" scripts/rl1/178_probe_typed_resource_views.py | head -25; ls /opt/tokkio-data0/tokkio_models/ | head -40
+
+OUT
+25:MODEL = Path('/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3')
+47:    tok = AutoTokenizer.from_pretrained(MODEL, local_files_only=True)
+gemma-4-12B-it-707f0a3
+huggingface
+paper1_judges
+pmrl1_judges
+Shell cwd was reset to /home/tokkio
+Bash Inspect 11-05 human review tooling
+IN
+cd /home/tokkio/Metacom5_3/project/docs/reviews/20261105 && ls pm_rl1_history_necessity pm_rl1_history_necessity_human_review; grep -nE "html|页面|导出|export|\.json" pm_rl1_history_necessity/RESULTS_ZH.md | head -15
+
+OUT
+pm_rl1_history_necessity:
+CHECKS.json
+RESULTS_ZH.md
+RUNBOOK_ZH.md
+SCREENING_PROTOCOL.json
+VERIFY.log
+__pycache__
+build_review.py
+verify.py
+
+pm_rl1_history_necessity_human_review:
+CHECKS.json
+RESULTS_ZH.md
+RUNBOOK_ZH.md
+__pycache__
+ingest.py
+verify.py
+12:- [比较页面](/home/tokkio/Metacom5_3/project/outputs/pm_rl1/history_necessity_probe_20261105_v1/HUMAN_REVIEW_ZH.html)已准备：8 组三条排序，2 组只补 C/D 的双回复比较。共显示 28 条回复；原两项 C/OFF 不再提问。提供中文阅读译文、英文原文、完整当前与共同历史，可分批保存和导出。
+35:- 实际当前对话阅读顺序是导出文件的 owner/prefix 顺序，而非协议文字中的 owner/session 顺序。所有 96 个当前对话均已阅读，最终选择仍遵循固定 owner 轮转和 prefix 哈希排序；此偏差已在选择文件记录。
+36:- 页面隐藏生成条件，不能隐藏研究者已知的研究目标；这仍是一位研究者的帮助性判断。中文当前/历史是摘要，英文完整记录保留，不能把摘要当作新事实或新的理想答案。
+42:独立核验已覆盖 96/10 的筛选对应、来源所有权和时间、完整文本、C/D 身份、控制选择、30 个实际原生输入、EOS、6 个缓存、2 个旧答案以及人评显示绑定。HTML/JavaScript 检查及页面的空状态、分批导出、中文保存、续填、下载数据测试通过；页面行为测试使用 Node DOM 模拟，未冒充浏览器视觉测试。
+Shell cwd was reset to /home/tokkio
+Bash Locate EvoEmo data and pm_rl1 outputs
+IN
+cd /home/tokkio/Metacom5_3/project && grep -rnE "evoemo|EvoEmo" configs/*.yaml 2>/dev/null | head -8; ls data/ | head -40; ls outputs/pm_rl1/ | head -60
+
+OUT
+configs/pm_v2.yaml:29:# Policy-independent EvoEmo seeker tracks use the same finish-reason protocol,
+configs/pm_v2.yaml:36:  system_prompt_id: evoemo-fixed-seeker-v1
+configs/pm_v2.yaml:512:  # EvoEmo is development-informed external evaluation, not a pristine
+configs/pm_v1_5.yaml:38:#   dialogues). Besides the 84 EvoEmo-overlap exclusions, the exact 52 source
+configs/pm_v1_5.yaml:122:# Policy-independent EvoEmo seeker tracks use the same finish-reason protocol,
+configs/pm_v1_5.yaml:129:  system_prompt_id: evoemo-fixed-seeker-v1
+configs/pm_v1_5.yaml:185:    evoemo_instance_text_or_outcomes_used: false
+configs/pm_v1_5.yaml:460:    - pooling_esconv_and_evoemo_into_one_score
+esconv_auxiliary_v1_5_visible_v2_candidate
+esconv_test
+esconv_test_v1_5_visible_v2_candidate
+external
+paper1_authority
+paper1_evaluator_only_rs
+paper1_human_review
+paper1_public_memory
+paper1_public_rs
+pm_v1_5_contracts
+pm_v1_5_evo_style_synthetic_memory_v1_candidate
+pm_v1_5_formal_v8_19_2_runtime_projection_repair_candidate
+pm_v1_5_v5_3_formal_longitudinal_catalog_intake_v1
+strategy
+synthetic
+v3_authority
+actual_training_feedback_20261103_v1
+alternate_executor_human_review_20261105_v1
+alternate_executor_probe_20261104_v1
+balanced_learning_audit_20261104_v1
+bounded_relative_learning_20261104_v1
+bounded_relative_learning_20261104_v1_STATES.log
+bounded_relative_learning_20261104_v1_STATES_FIXED.log
+claude_pilot_20261022_v1
+claude_resource_preparation_20261022
+client_latency_pilot_20261104_v1
+client_latency_pilot_20261104_v1_EXECUTION.log
+completion_20260930_v2
+completion_preparation_20261022
+completion_stage_20261022_v1
+completion_stage_20261022_v2
+completion_stage_20261022_v3_before_primary_schema_delivery
+contextual_value_reference_20261104_v1
+dataset_diagnostics_20260930_v1
+decision_branches_20261104_v1
+decision_branches_20261104_v1_EXECUTED_SCRIPT.py
+decision_branches_20261104_v2
+decision_findings_20261104_v1
+development_closeout_20261014_v1
+engineering_20260928_v1
+evaluation_preparation_20260928_v1
+evidence_views_20261030_v1
+evidence_views_20261030_v2
+evidence_views_20261030_v3
+exact_equivalence_control_20261104_v1
+exact_equivalence_control_20261104_v1_LEARNING.log
+exact_equivalence_control_20261104_v1_STATES.log
+exact_equivalence_control_20261104_v1_VERIFICATION.json
+exact_equivalence_control_20261104_v1_inputs
+execution_bridges_20261030_v1
+execution_bridges_20261030_v2
+execution_bridges_20261030_v3
+execution_bridges_20261030_v4
+execution_bridges_20261030_v5
+execution_bridges_20261030_v6
+execution_bridges_20261103_v1
+executor_coverage_20260929_v1
+executor_engineering_20260929_v1
+executor_pilot_20260929_v1
+executor_pilot_20260929_v2
+executor_revision_20261104_v1
+executor_revision_20261104_v2
+executor_training_20260930_v1
+executor_use_probe_20261104_v1
+executor_use_probe_20261104_v1_EXECUTION.log
+executor_use_probe_20261104_v1_PREPARE.log
+feedback_and_opportunity_20261105_v1
+forward_backward_diagnosis_20261103_v1
+generation_queue_replay_20261022_v1
+history_necessity_human_review_20261105_v1
+history_necessity_probe_20261105_v1
+human_acceptance_20261014_v1
+human_acceptance_20261014_v2
+human_acceptance_20261014_v3_notes
+human_acceptance_20261014_v4_decision
+human_answer_reanalysis_20261103_v1
+Shell cwd was reset to /home/tokkio
+Bash Inspect my ESC pilot dir and human pairs status
+IN
+ls /opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/ | head -60; ls /opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/human_pairs_v1/ 2>/dev/null
+
+OUT
+SUMMARY_20261113_ZH.md
+__pycache__
+analyze.py
+analyze_h24.py
+analyze_human_pairs.py
+analyze_tree.py
+bugged_expected
+build_human_pairs.py
+ceiling.py
+ceiling_L8_replies.jsonl
+ceiling_L8_scores.jsonl
+ceiling_analyze.py
+ceiling_g.py
+ceiling_replies.jsonl
+ceiling_report.txt
+ceiling_scores.jsonl
+dialogues.jsonl
+dialogues_r2.jsonl
+ds_client.py
+ds_ledger.jsonl
+esc_judge.py
+esconv_judgeval.py
+esconv_judgeval_analyze.py
+esconv_judgeval_report.txt
+esconv_val_cj2.log
+esconv_val_dialogues.jsonl
+esconv_val_llm_cj2.jsonl
+esconv_val_llm_qwen35.jsonl
+esconv_val_qwen35.log
+esconv_val_rank.log
+esconv_val_rank_input.jsonl
+esconv_val_rank_scores.jsonl
+esconv_val_windows.jsonl
+g_compare.py
+g_compare_L8.txt
+gen.log
+gen_ceiling.log
+gen_ceiling_L8.log
+gen_guide.log
+gen_ladder.log
+gen_loop.py
+gen_mc.log
+gen_r2.log
+gen_tree.log
+guide.py
+guide_analyze.py
+guide_replies.jsonl
+guide_report.txt
+guide_scores.jsonl
+hard
+human24_input.jsonl
+human_pairs_v1
+judge_analyze.py
+judge_cj2.jsonl
+judge_cj2.log
+judge_compare.py
+judge_compare_report.txt
+judge_ds_hill.jsonl
+judge_ds_hill.log
+judge_ds_hol.jsonl
+FREEZE.txt
+JUDGE_COMPARE_PLAN_ZH.md
+JUDGE_PLAN_ZH.md
+PLAN_ZH.md
+items_blind.json
+manifest_PRIVATE.json
+rate_RATER_A.html
+rate_RATER_B.html
+Bash Inspect memory data and 11-15 preparation outputs
+IN
+cd /home/tokkio/Metacom5_3/project && ls data/paper1_public_memory | head; ls outputs/pm_rl1/ | sed -n 60,200p | tr '\n' ' '; echo; ls outputs/pm_rl1/research_preparation_20261115_v1/ outputs/pm_rl1/research_preparation_20261115_v1/*/ 2>/dev/null | head -50
+
+OUT
+es_memeval_public_active_multi_view_bge_amount_build_report_v1.json
+es_memeval_public_active_multi_view_bge_top8_v1.jsonl
+es_memeval_public_active_multi_view_resource_amount_surface_v1.json
+es_memeval_public_candidate_census_summary_v1.json
+es_memeval_public_candidate_census_v1.jsonl
+es_memeval_public_candidate_definition_decision_surface_build_report_v1.json
+es_memeval_public_candidate_definition_decision_surface_v1.json
+es_memeval_public_candidate_eligible_pool_summary_v1.json
+es_memeval_public_candidate_eligible_pool_v1.jsonl
+es_memeval_public_census_build_report_v1.json
+human_answer_reanalysis_20261103_v1 human_answer_reanalysis_20261103_v2 human_delivery_20261022_v1 human_readable_export_20261014_v1 human_reference_reuse_20261102_v1 human_reference_reuse_20261102_v2 incremental_help_human_review_20261105_v1 incremental_help_probe_20261105_v1 judge_selection_preparation_20261014_v1 latency_primary_audit_20261104_v1 learning_execution_20261022_v1 learning_handoff_20261022_v1 local_integration_20261023_v1 local_integration_20261023_v2 measurement_bottleneck_audit_20260929_v1 measurement_pilot_20260928_v1 measurement_resolution_20260929_v1 memoized_latency_pilot_20261104_v1 memoized_latency_pilot_20261104_v1_ADMISSION_RECHECK.log memoized_latency_pilot_20261104_v1_EXECUTION.log memoized_online_validation_20261104_v1 memoized_online_validation_20261104_v1.log organized_initial_encoding_20261103_v1 organized_initial_encoding_20261103_v2 organized_initial_generation_20261103_v1 organized_initial_generation_20261103_v2 organized_initial_training_20261103_v1 organized_initial_training_20261103_v2 organized_initial_validation_20261103_v1 organized_interface_handoff_20261102_v1 organized_learnability_20261103_v1 organized_learnability_20261103_v2 organized_learnability_20261103_v3 organized_policy_interface_20261102_v1 p3_v2_after_confirmation_20261014 p3_v2_development_audit_20261014 paid_development_snapshot_20261103_final paid_development_snapshot_20261103_refresh_final paid_development_snapshot_20261103_v1 paid_development_snapshot_20261103_v2 paid_development_snapshot_20261103_v3 paid_development_snapshot_20261103_v4 publication_20260930_v1 publication_20261002_v1 qa_resource_gain_20261105_v1 r04b_measurement_20260930_v1 real_preparation_closeout_20261103_v1 real_preparation_closeout_20261103_v2 reference_guided_review_20261103_v1 relative_feedback_pilot_20261104_v1 relative_feedback_pilot_20261104_v1_EXECUTION.log reorganization_20261029_v1 reorganization_20261029_v2 reorganization_20261029_v3 reorganization_20261029_v4 research_preparation_20261115_v1 resource_comparison_partial_20261030_v1 resource_comparison_remaining_20261030_v1 resource_comparison_remaining_20261030_v2 resource_comparison_results_20261031_v1 resource_comparison_review_20261031_v1 resource_organization_20261029_v1 resource_value_probe_20261104_v1 resource_value_probe_20261104_v1_EXECUTION.log resource_value_probe_20261104_v1_PREPARE.log resource_value_probe_20261104_v1_annotations.json reused_pair_g_latency_20261105_v1 root_cause_20261023_v1 root_cause_20261023_v2 root_cause_20261023_v3 root_cause_20261023_v4 route_accounting_20261014_v1 session_summary_design_20261116_v1 slight_positive_path_20261105_v1 source_and_capacity_20260928_v1 source_repair_20260929_v2 typed_resource_views_20261111_v1 value_and_novelty_audit_20261105_v1 
+outputs/pm_rl1/research_preparation_20261115_v1/:
+memory
+rs
+versions
+
+outputs/pm_rl1/research_preparation_20261115_v1/memory/:
+CANDIDATE_REPAIR_VALIDATION.json
+CANDIDATE_VIEW_REPAIRS_PRIVATE.json
+COMPARISON_INPUT_HASHES.json
+CURRENT_VIEW_COMPARISONS_PRIVATE.json
+INPUT_HASHES.json
+MEMORY_PREPARATION_ZH.md
+OUTPUT_HASHES.json
+REVIEW_PACK_PRIVATE.txt
+REVIEW_SUMMARY.json
+SAMPLE_MANIFEST.json
+SELECTED_COMPLETE_SESSIONS_PRIVATE.json
+SELECTION_PROTOCOL.json
+SEMANTIC_OBSERVATIONS_PRIVATE.json
+SEMANTIC_REVIEW_COVERAGE.json
+VALIDATION.json
+compare_current_views.py
+prepare_candidate_repairs.py
+prepare_inventory.py
+record_semantic_review.py
+validate_preparation.py
+
+outputs/pm_rl1/research_preparation_20261115_v1/rs/:
+BUILD_CHECKS.json
+CASE_REVIEW_VIEW_ZH.md
+METHOD_UNITS_DRAFT.json
+RS_ORGANIZATION_AND_INTERFACE_ZH.md
+SEMANTIC_REVIEW_ZH.md
+build_rs_case_candidates.py
+case_candidates.jsonl
+sources
+
+outputs/pm_rl1/research_preparation_20261115_v1/versions/:
+CONFIRMATION_READINESS.json
+CONFIRMATION_READINESS_ZH.md
+REVIEW_ZH.md
+VERSION_REUSE_MANIFEST.json
+build_version_manifest.py
+Shell cwd was reset to /home/tokkio
+Bash Locate owner split and source data constants
+IN
+cd /home/tokkio/Metacom5_3/project && grep -rlE "pmseq-v2-owner" src scripts data 2>/dev/null | head -5; grep -nE "^[A-Z_]+ *= *(Path|'|\")" src/metacom_pm/rl1/resource_value_probe.py src/metacom_pm/paper1/data/memory_source.py 2>/dev/null | head -20
+
+OUT
+src/metacom_pm/rl1/data.py
+scripts/rl1/69_analyze_dataset_features.py
+src/metacom_pm/rl1/resource_value_probe.py:10:VERSION = 'pmrl1-resource-value-probe-v1'
+src/metacom_pm/paper1/data/memory_source.py:85:TIMELINE_QUESTION_GROUP_ID = "timeline"
+Shell cwd was reset to /home/tokkio
+Bash Check latency pilot outputs
+IN
+cd /home/tokkio/Metacom5_3/project && ls outputs/pm_rl1/client_latency_pilot_20261104_v1 outputs/pm_rl1/latency_primary_audit_20261104_v1 outputs/pm_rl1/reused_pair_g_latency_20261105_v1 2>/dev/null | head -40; grep -rnE "ttft|TTFT" docs/reviews/20261105/*/RESULTS_ZH.md | head -5
+
+OUT
+outputs/pm_rl1/client_latency_pilot_20261104_v1:
+BGE_LOADED.json
+COUNTERS.json
+EXPECTED_HASH.json
+EXPECTED_PRIVATE.json
+G_LOADED.json
+LOAD_STARTED.json
+OUTPUT_MANIFEST.json
+PROTOCOL.json
+SUMMARY.json
+gpu_checks
+latency_000.result.private.json
+latency_000.started.json
+latency_001.result.private.json
+latency_001.started.json
+latency_002.result.private.json
+latency_002.started.json
+latency_003.result.private.json
+latency_003.started.json
+latency_004.result.private.json
+latency_004.started.json
+latency_005.result.private.json
+latency_005.started.json
+latency_006.result.private.json
+latency_006.started.json
+latency_007.result.private.json
+latency_007.started.json
+latency_008.result.private.json
+latency_008.started.json
+latency_009.result.private.json
+latency_009.started.json
+latency_010.result.private.json
+latency_010.started.json
+latency_011.result.private.json
+latency_011.started.json
+latency_012.result.private.json
+latency_012.started.json
+latency_013.result.private.json
+latency_013.started.json
+latency_014.result.private.json
+Shell cwd was reset to /home/tokkio
+Bash Find EvoEmo source paths and split code
+IN
+cd /home/tokkio/Metacom5_3/project && grep -nE "pmseq-v2-owner|def .*split|SOURCE|Path\(" src/metacom_pm/rl1/data.py | head -20; grep -rnE "/opt/tokkio-data0[^'\" ]*(evo|EvoEmo|memeval|ES-MemEval)[^'\" ]*" src/metacom_pm/rl1/*.py scripts/rl1/176*.py 2>/dev/null | head -8
+
+OUT
+20:def owner_split(users) -> dict[str, str]:
+21:    owners = sorted((u.owner_id for u in users), key=lambda s: stable_hash("pmseq-v2-owner|" + s))
+Shell cwd was reset to /home/tokkio
+Bash Read rl1 data loader and QA script constants
+IN
+cd /home/tokkio/Metacom5_3/project && sed -n 1,60p src/metacom_pm/rl1/data.py | head -70; grep -rnE "esconv|ESConv" scripts/rl1/176_probe_qa_resource_gain.py | head -3; grep -nE "^[A-Z_]+ *= " scripts/rl1/176_probe_qa_resource_gain.py | head -30
+
+OUT
+"""Construction-domain prefix/as-of adapters. No future suffix enters PrefixSpec.
+
+This is a development census, not a claim of unexposed test data. Exact shared
+transcripts are reported for source-family adjudication before dataset freeze.
+"""
+from collections import defaultdict
+from dataclasses import asdict
+from hashlib import sha256
+
+from metacom_pm.paper1.contracts import Head, TaskType
+from metacom_pm.paper1.data.memory_source import Target
+from metacom_pm.paper1.multi_view_memory.candidate_adapter import materialize_multi_view_candidates
+from .schema import PrefixSpec, PublicTurn, Resource, digest
+
+
+def stable_hash(text: str) -> str:
+    return sha256(text.encode()).hexdigest()
+
+
+def owner_split(users) -> dict[str, str]:
+    owners = sorted((u.owner_id for u in users), key=lambda s: stable_hash("pmseq-v2-owner|" + s))
+    if len(owners) != 18 or len(set(owners)) != 18:
+        raise ValueError("the declared 12/3/3 split requires 18 unique owners")
+    return {owner: "train" if i < 12 else "dev" if i < 15 else "test"
+            for i, owner in enumerate(owners)}
+
+
+def build_prefixes(users) -> tuple[tuple[PrefixSpec, ...], dict]:
+    split = owner_split(users)
+    all_prefixes, selected = [], []
+    source_groups = defaultdict(list)
+    for user in users:
+        eligible = []
+        for session in user.sessions:
+            source_groups[digest([(t.role, t.content) for t in session.turns])].append(
+                dict(owner=user.owner_id, split=split[user.owner_id], session=session.session_id,
+                     rank=session.chronological_rank))
+            if session.chronological_rank < 1:
+                continue
+            cuts = [i for i, t in enumerate(session.turns[:-1]) if
+                    t.role == "seeker" and session.turns[i + 1].role == "supporter"]
+            if not cuts:
+                continue
+            cut = min(cuts, key=lambda i: stable_hash(
+                f"pm-rl1-census-prefix-v1|{user.owner_id}|{session.session_id}|{i}"))
+            prefix = PrefixSpec(user.owner_id, session.session_id, session.chronological_rank,
+                                cut, session.timestamp, split[user.owner_id],
+                                tuple(PublicTurn(t.role, t.content) for t in session.turns[:cut + 1]))
+            eligible.append(prefix)
+        all_prefixes.extend(eligible)
+        selected.extend(sorted(eligible, key=lambda p: stable_hash(
+            "pm-rl1-census-session-v1|" + p.owner_id + "|" + p.session_id))[
+                :16 if split[user.owner_id] == "test" else 8])
+    shared = [rows for rows in source_groups.values() if len({r["owner"] for r in rows}) > 1]
+    return tuple(selected), dict(status="DEVELOPMENT_CENSUS_NOT_FROZEN", owner_split=split,
+        eligible_sessions=len(all_prefixes), selected_by_split={s: sum(p.split == s for p in selected)
+        for s in ("train", "dev", "test")}, shared_transcript_groups=shared,
+        pending=["fact-family grouping including descendants of shared sessions",
+                 "historical exposure manifest and held-out interpretation",
+                 "capacity census with RS before resource-budget freeze"])
+20:PROJECT = Path(__file__).resolve().parents[2]
+27:BASE = PROJECT / 'outputs/pm_rl1'
+28:OLD = BASE / 'dataset_diagnostics_20260930_v1'
+29:AUDIT = BASE / 'value_and_novelty_audit_20261105_v1'
+30:G_PRIOR = BASE / 'alternate_executor_probe_20261104_v1'
+31:MODEL = Path('/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3')
+203:SYSTEM = ('Answer the factual question about the person whose conversation archive is being queried. '
+Shell cwd was reset to /home/tokkio
+12:06 PM
+已经核对完 G（Gemma‑4‑12B 本地）、GPU 都空闲、11-05 的人评页面工具可以复用、人评对 32 对尚未评。再查两个路径后开始写方案。
+
+
+
+Bash Verify Tokkio app, RS data, judge models paths
+IN
+ls -la /home/tokkio/new_rag/data/app_full_2_tokkiocompat.py 2>&1 | head -2; ls /home/tokkio/Metacom5_3/project/data/paper1_public_rs | head; ls /opt/tokkio-data0/tokkio_models/pmrl1_judges /opt/tokkio-data0/tokkio_models/paper1_judges 2>/dev/null; ls /opt/tokkio-data0/tokkio_models/huggingface | head
+
+OUT
+-rw-rw-r-- 1 tokkio tokkio 57159  3月  3  2026 /home/tokkio/new_rag/data/app_full_2_tokkiocompat.py
+esconv_rs_atomic_move_zero_outcome_census_summary_v1.json
+esconv_rs_atomic_move_zero_outcome_census_v1.jsonl
+esconv_rs_canonical_bge_top8_report_v1.json
+esconv_rs_canonical_bge_top8_v1.jsonl
+esconv_rs_decision_state_identity_v1.jsonl
+esconv_rs_exact_canonical_treatments_v1.jsonl
+esconv_rs_renderer_boundary_audit_v1.json
+esconv_rs_renderer_card_audit_v1.jsonl
+esconv_rs_resource_amount_surface_20260820_v1.json
+esconv_rs_retriever_comparison_summary_v1.json
+/opt/tokkio-data0/tokkio_models/paper1_judges:
+compassjudger2_7b
+qwen35_9b
+selene_mini_8b
+uv_cache
+
+/opt/tokkio-data0/tokkio_models/pmrl1_judges:
+prometheus_66ffb1fc20be
+skywork_cba2f842f3f1
+hub
+models--mistralai--Mistral-Small-3.1-24B-Instruct-2503
+xet
+Bash Get EvoEmo census counts
+IN
+cd /home/tokkio/Metacom5_3/project && python3 - <<'EOF'
+import json,glob
+# count EvoEmo sessions per owner via eligible pool or census
+import os
+p='data/paper1_public_memory/es_memeval_public_candidate_census_summary_v1.json'
+d=json.load(open(p)); print({k:(v if not isinstance(v,(dict,list)) else type(v).__name__) for k,v in list(d.items())[:25]})
+EOF
+grep -nE "owners|sessions|seeker turns|3,225|275" docs/reviews/20261105/pm_rl1_history_necessity/RESULTS_ZH.md | head -8
+
+OUT
+{'candidate_source': 'accepted_semantic_memory_v6', 'final_retrieved_bundle_status': 'PENDING_M2_FREEZE_NOT_SELECTED_THIS_ROUND', 'identity_anomalies': 5, 'interpretation_note': 'This is layer 2 of 2 (B19.5) -- per-target scoring against visible_query_text (QA/Summary) or null (DG, no static query pre-generation). candidate_count/targets_with_coverage here are the eligible pool size restated per target (target-invariant per owner, B17); see features.build_eligible_pool for the pool layer reported once per owner. targets_with_coverage and target_candidate_edges count (target, candidate) pairs, not distinct memories -- see unique_candidate_count and owners_with_any_candidate for the distinct-memory view.', 'manifest_filename': 'es_memeval_public_candidate_census_v1.jsonl', 'manifest_rows': 4758, 'manifest_sha256': '902c97ab1225783f6f440c91b4da98728be81556bd3ceeacc5d3e369d0761bad', 'outcome_calls': 0, 'per_head': 'dict', 'per_head_per_task': 'dict', 'protocol': 'pm-paper1-zero-outcome-census-summary-v3', 'semantic_compiler_source': 'dict', 'superseded_note': "B19.7: this census supersedes all pre-B17 MP/MS/ME counts (the old MP=118/MS=1516/ME=239 edge counts assumed a per-target 'current session' cutoff that the official ES-MemEval evaluation harness does not actually use -- see memory_source module docstring). Do not cite the old numbers as freeze evidence.", 'targets_by_task': 'dict', 'targets_total': 1586, 'token_counter': 'dict'}
+7:- 在查看本批新回复前冻结筛选、输入和退出规则。协议身份：`1984752a285296fce7d328279e49b4a27538897211ba8660008e9ddbade03ebc`；最终选择身份：`50f9e8a86ec7d6e9b8a76e3a6149711ac4baeab4e96ae46f7f10e18ae72885b3`。
+Shell cwd was reset to /home/tokkio
+Bash Read decision correctness contract and RS method drafts
+IN
+cd /home/tokkio/Metacom5_3/project && python3 -c "
+import json;d=json.load(open('data/paper1_authority/paper1_decision_correctness_evaluation_v1.json'))
+print(json.dumps(d,ensure_ascii=False)[:3500])"; ls outputs/pm_rl1/research_preparation_20261115_v1/rs/sources; python3 -c "
+import json;d=json.load(open('outputs/pm_rl1/research_preparation_20261115_v1/rs/METHOD_UNITS_DRAFT.json'));print(json.dumps(d,ensure_ascii=False)[:1500])"
+
+OUT
+{"protocol": "paper1-decision-correctness-evaluation-v1", "status": "ACTIVE_PRE_OUTCOME", "date": "2026-09-03", "effect_correctness": {"unit": "grouped-OOF or outer-fold-held-out local effect row", "metrics": ["ON-benefit recall", "OFF-nonbenefit specificity", "unnecessary-open", "missed-benefit", "balanced accuracy", "Brier", "log loss", "calibration curve"], "equivalent": "nonbeneficial for deployment and separately reported", "uncertain_invalid": "excluded from accuracy denominator and fully reported"}, "action_correctness": {"oracle": "quality-beneficial AND no material harm AND active client-latency constraint-feasible", "metrics": ["beneficial-but-latency-infeasible rate", "latency-feasible ON precision", "latency-feasible ON recall", "p95 client-latency constraint violation rate", "R0+M0-sufficient avoided-unnecessary-intervention rate", "quality-admissible latency saving", "timeout/fallback rate"]}, "natural_turn_appropriateness": {"RS_source": "ESConv ordinary turns", "memory_source": "EvoEmo ordinary historical session turns", "public_only": true, "outcome_blind_sampling": true, "official_benchmark_replacement": false}, "confirmatory_local_slice": "sealed PM decision before unchosen counterfactual generation; never feeds training or threshold", "interactive_caveat": "ESC and DG local correctness is myopic fixed-prefix evidence, not global sequential-policy regret", "cross_task_composite": "FORBIDDEN", "formal_outcome_calls": 0}
+esconv_0009.json
+esconv_0105.json
+esconv_0136.json
+esconv_0312.json
+esconv_0366.json
+esconv_0560.json
+esconv_0573.json
+esconv_0668.json
+esconv_0992.json
+esconv_1073.json
+esconv_1108.json
+esconv_1201.json
+{"protocol": "pmrl1-rs-method-unit-draft-v1", "status": "source_grounded_draft_pending_domain_applicability_review", "source_scope": "SAMHSA TIP 35, Chapter 3: motivational interviewing in substance use disorder treatment; everyday ES generalization is unvalidated", "units": [{"method_id": "tip35_reflect_check_draft", "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK571068/", "source_section": "Reflective Listening / Forming complex reflections", "source_paraphrase": "A reflection expresses a tentative understanding of meaning or feeling. Listen to the subsequent response and revise if the understanding was wrong.", "original_domain": "substance use counseling", "source_based_boundary": "Tentative meaning is a hypothesis, not a fact about the client.", "everyday_ES_applicability": "unknown_pending_review", "AI_proposed_search_tags_pending_review": ["uncertain meaning", "feeling clarification", "repair misunderstanding"], "linked_case_ids": [], "case_crosswalk_review": "not_done", "runtime_approved": false, "incremental_value_to_G": "unknown"}, {"method_id": "tip35_advice_timing_draft", "source_url": "https://www.ncbi.nlm.nih.gov/books/NBK571068/table/ch3.t5/", "source_section": "Gordon's 12 Roadblocks to Active Listening", "source_paraphrase": "Premature or unsolicited advice can interrupt listening. This is a caution about conversational timing, not a ban on all practical assistance.", "original_domain": "substance use counseling", "source_based_boundary": "Use the cited
+Shell cwd was reset to /home/tokkio
+Bash Check generator implementation and base prompt in 178
+IN
+cd /home/tokkio/Metacom5_3/project && grep -nE "class LocalNaturalGenerator|vllm|def generate" src/metacom_pm/rl1/*.py | head -8; grep -nE "BASE|SYSTEM|common|基础" scripts/rl1/178_probe_typed_resource_views.py | head -10; ls src/metacom_pm/rl1/ | wc -l; ls tests | grep -c rl1
+
+OUT
+src/metacom_pm/rl1/local_backend.py:168:    def generate(self,request):
+src/metacom_pm/rl1/natural_batch.py:83:    def generate(self, request):
+src/metacom_pm/rl1/generation.py:54:class LocalNaturalGenerator:
+src/metacom_pm/rl1/generation.py:90:    def generate(self, request: dict) -> dict:
+src/metacom_pm/rl1/bound_generation.py:64:    def generate(self, request):
+23:BASE = PROJECT/'outputs/pm_rl1'
+24:TRAIN = BASE/'organized_initial_training_20261103_v2'
+45:    runtime = read(BASE/'alternate_executor_probe_20261104_v1/PROTOCOL.json')['runtime']
+98:                    BASE/'alternate_executor_probe_20261104_v1/PROTOCOL.json']
+115
+82
+Shell cwd was reset to /home/tokkio
+Bash Check Gemma runtime protocol and Tokkio app endpoints
+IN
+cd /home/tokkio/Metacom5_3/project && python3 -c "
+import json;d=json.load(open('outputs/pm_rl1/alternate_executor_probe_20261104_v1/PROTOCOL.json'));print(json.dumps(d.get('runtime'),ensure_ascii=False)[:1500])"; grep -rhoE "app_full[^ ]*|:8091|step1|step2" /home/tokkio/new_rag/data/app_full_2_tokkiocompat.py | sort | uniq -c | head
+
+OUT
+{"adapter": null, "attention": "sdpa", "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5", "cuda_device_order": "PCI_BUS_ID", "cuda_visible_devices": "1", "do_sample": false, "dtype": "bfloat16", "enable_thinking": false, "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e", "model_class": "AutoModelForMultimodalLM", "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3", "model_files": {"chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4", "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9", "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e", "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d", "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9", "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f", "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"}, "native_suppress_tokens": [258883, 258882], "packages": {"safetensors": "0.8.0", "tokenizers": "0.23.2", "torch": "2.7.1+cu128", "transformers": "5.17.0"}, "pad_token_id": 0, "policy": {"context_limit": 262144, "cycle_repetitions": 4, "cycle_width": 32, "eos_token_ids": [1, 106, 50], "timeout_seconds": 300.0}, "seed": 0}
+      2 :8091
+      1 app_full.py
+     18 step1
+     16 step2
+Shell cwd was reset to /home/tokkio
+12:15 PM
+核对完了。现在开始写方案：一份主文件，加一个给 Codex 用的状态文件。写完后把入口指过去。
+
+
+
+Bash Find BGE and ESC-Role paths, ESC split counts
+IN
+cd /home/tokkio/Metacom5_3/project && grep -rnoE "/opt/tokkio-data0/[^'\" )]*bge[^'\" )]*" scripts/rl1/176_probe_qa_resource_gain.py src/metacom_pm/rl1/*.py 2>/dev/null | head -3; grep -rnoE "/opt/tokkio-data0/[^'\" )]*(internlm|esc_role|ESC-Role|esc-role)[^'\" )]*" /opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/gen_loop.py src/metacom_pm/paper1 2>/dev/null | head -3; python3 -c "
+import json
+rows=[json.loads(l) for l in open('/home/tokkio/Metacom5_3/project/data/paper1_authority/paper1_esc_split_large52_frozen_v1.jsonl')]
+from collections import Counter; print(len(rows), Counter(r.get('split') or r.get('role') or r.get('partition') for r in rows)); print(list(rows[0].keys())[:12])"
+
+OUT
+/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/gen_loop.py:22:/opt/tokkio-data0/tokkio_external/ESC-Eval/ESC-Role/2e2a4733d2e71da242f348aad165fe171acd5df7
+173 Counter({'confirmatory': 121, 'calibration': 52})
+['card_key', 'category', 'official_file_index', 'overlap_slice', 'protocol', 'role_card_sha256', 'seed', 'selected_scenario', 'source', 'split']
+Shell cwd was reset to /home/tokkio
+Bash Locate BGE-M3 weights path
+IN
+cd /home/tokkio/Metacom5_3/project && grep -rnE "bge|BGE" scripts/rl1/176_probe_qa_resource_gain.py | grep -iE "path|dir|model" | head -5; ls /opt/tokkio-data0/hf-cache /opt/tokkio-data0/hf_cache 2>/dev/null | grep -i bge | head
+
+OUT
+scripts/rl1/176_probe_qa_resource_gain.py:126:    local = Path(config['bge_local_dir'])
+Shell cwd was reset to /home/tokkio
+Write PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md
+1008 lines
+# PM-RL1 完整执行方案 V2
+
+版本：2026-11-16（Asia/Tokyo）。由 Claude 应研究者要求，在审阅 [11-16 主方案](PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md) 后重写。
+状态：**研究者确认后生效**。生效后，本文取代 11-16 主方案的工作单（P00–P17）与执行顺序；11-16 的资源合同 [RESOURCE_SPEC_ZH.md](plans/pm_rl1_master_20261116/RESOURCE_SPEC_ZH.md) 仅作字段参考，[OPEN_QUESTIONS_ZH.md](plans/pm_rl1_master_20261116/OPEN_QUESTIONS_ZH.md) 作背景。历史结果、旧锁和旧身份全部保留，不改写。
+
+本方案保证的是：**无论中间结果正负，每一条分支都有写定的下一步，最终都能走到“研究完成”（每个问题有结果或有预先写定的不运行理由，论文和复现包齐全）。**它不保证每个假设都得到正结果。
+
+---
+
+## 0. Codex 怎样使用本方案
+
+### 0.1 入口文件
+
+- 本文件（唯一的执行依据）。
+- 状态表：[plans/pm_rl1_v2_20261116/EXECUTION_STATE.json](plans/pm_rl1_v2_20261116/EXECUTION_STATE.json)。
+- 决定记录：`plans/pm_rl1_v2_20261116/DECISIONS.jsonl`（一行一个决定：时间、步骤、规则原文、输入数字、结论）。
+
+### 0.2 每次执行的固定流程
+
+1. 读状态表，选第一个依赖已全部 `completed` 的 `ready` 步骤。多个可并行时按编号先后。
+2. 按本文对应小节执行：先写代码和 CPU 测试，再跑实际计算。
+3. 完成后：
+   - 保存产物；
+   - 运行该步骤的验收检查；
+   - 在该阶段产物目录写一页 `RESULTS_ZH.md`，内容是做了什么、关键数字、与方案的偏差；
+   - 更新状态表；
+   - git 提交，每个步骤一次提交。
+4. 遇到人工标注：
+   - 生成标注页面，状态置为 `waiting_human`；
+   - 给研究者一条消息，写明页面路径、批次和预计用时；
+   - 立即转去做不依赖该标注的步骤（每个阶段都列出了可并行项）。
+5. 遇到分支：按本文预先写定的规则判定，写入 `DECISIONS.jsonl`，然后继续。**不另行询问。**
+6. 只在 §0.4 列出的接触点联系研究者。
+
+### 0.3 禁止事项
+
+- 重开全项目审计或重读全部历史报告。历史报告只在本文点名时查阅。
+- 用旧的 pending 状态覆盖新的完成记录。
+- 为同一个测量问题再开一轮判官竞赛。
+- 看到相关结果之后修改预先写定的阈值或规则。
+- 给未标注的终点填 0。§7.6 规定的显式插补除外，且必须标记。
+- 终止或抢占他人的 GPU 任务。被占用时等待，先做 CPU 步骤，不换设备。
+- 读取或使用废弃的 80/11-user 合成数据（见仓库 AGENTS.md）。
+
+### 0.4 研究者接触点（只有这五个）
+
+| 编号 | 时机 | 需要研究者做什么 |
+|---|---|---|
+| T1 | S0 | 一条消息回答三项：① λ：一个“明显更好”的回复最多值得让用户多等几秒；② 第二评审 B 是否可用、每周约几小时；③ 确认采用本方案（即批准 §2 的设计变更） |
+| T2 | 每个标注批次 | 打开页面标注，导出 JSON 交回 |
+| T3 | S9c（如需付费） | 对给出的精确调用清单、报价和上限回复一句批准或拒绝 |
+| T4 | S10b | 提供 Tokkio 服务端点或访问方式 |
+| T5 | S2（可选） | 若有具备专业背景的审核人，安排约 2 小时审核 RS 方法单元 |
+
+---
+
+## 1. 研究目标、问题与完成标准
+
+### 1.1 目标
+
+在情感支持对话的每一轮回复前，PM 决定取得哪些外部资源，或者直接停止：
+
+- RS：有出处的方法与案例；
+- MP：个人档案；
+- ME：事件经历；
+- MS：过去的会话。
+
+冻结的 G 用已经取得的资源生成一次回复。要做到的是：回复对此刻的用户更有帮助、更恰当，资源误用更少，等待可以接受。
+
+一个 episode 只包含“获取 → 停止 → 一次回复”。不模拟用户后续反应，也没有多轮未来奖励。
+
+### 1.2 研究问题
+
+| 编号 | 问题 | 回答方式 |
+|---|---|---|
+| RQ0 资源价值（前提） | 资源组织优化后，各类资源在哪些情境让回复明显更好或更差？瓶颈在链条的哪一段？ | S3 试点（必要时 S4 修复） |
+| RQ1 情境选择 | 学到的 PM 在质量–等待取舍和决策正确性上，是否优于最强固定子集、规则、LLM 门控、匹配随机、全开、全关？ | S5 主表 + S6 |
+| RQ2 顺序与 RL | 读后再决定是否优于一次性承诺（OneShot）？PPO 是否优于同数据下对精确最优的监督模仿？ | S6 |
+| RQ3 执行器适配（条件） | 用相关/无/无关资源对 G 做成组监督，能否提高资源带来的增益、减少误用，同时不降低无资源时的质量？ | S7 |
+| RQ4 G–PM 配对（条件） | 换了 G 之后，重新适配的 PM 是否优于直接沿用？ | S8 |
+| 外部验证 | 官方 ESC-Eval、ES-MemEval；参考客户端与 Tokkio 实测等待 | S9、S10 |
+
+### 1.3 完成标准
+
+**研究完成**需要同时满足：
+
+- S0–S11 每一步为 `completed`，或为 `not_run_with_reason`，且理由属于本文预先写定的分支；
+- RQ0–RQ2 有结果（正或负）；
+- RQ3/RQ4 有结果，或按触发规则未运行；
+- 外部评价与等待测量已完成，或明确记录了缺少的外部条件；
+- 论文草稿与复现包完成。
+
+**预期正结果**：Gate A 通过，且主比较 P1（PM 对 Fixed-best）经校正后显著。没有达到时，按 §12 写对应的论文主张，不改名冒充。
+
+---
+
+## 2. 相对 11-16 方案的设计变更（确认本方案即视为批准）
+
+| # | 变更 | 原因 |
+|---|---|---|
+| C1 | **先拿科学信号。**S3 资源价值试点只依赖最小资源构建（S2）和本地生成。不等完整编译器、STOP 保护层、训练接口参数化等工程 | 资源有没有增量是整个研究的承重环节。此前多轮同类检验接近 null，应该先用最便宜的方式判别，再决定投入哪些工程 |
+| C2 | **动作域有限，并且全部制表。**<br>• 每类资源每轮最多取一个单元，单元大小在 S3 预写规则下确定；<br>• 检索查询只用当前前缀，所以单元内容只由“前缀 + 资源类”决定；<br>• 渲染顺序固定，终点回复只取决于取得的子集，最多 16 个；<br>• 每个可达终点都实际生成并人工标注 | PPO 的每个终点都有可靠奖励，不存在待评轨迹，也不需要等待反馈的 on-policy 批次。11-16 方案列出的“完整域 PPO 缺可靠反馈”的缺口由此消除。本条取代 10/23 去除上限后形成的“无任意上限”动作域定义 |
+| C3 | **奖励来自人工判断。**评审判断每个终点回复相对同前缀 OFF 回复是明显更好、差不多还是明显更差，再减去 λ×附加秒数。标注采用列表式页面 | 自动判官对细微差异的分辨率约 .55–.60，J01–J18、SSJ 都没有通过资格。相对 OFF 的人工三值判断是目前唯一可信的信号 |
+| C4 | **前缀按生成前的需求线索分层抽样**（记忆需求 / 方法需求 / 普通），不再按 hash 均匀抽取 | 均匀抽样时只有约 10/96 的前缀存在具体信息缺口，PM 学不到“该开”。分层只用生成前可见的信息，并按层分别报告 |
+| C5 | **评价采用 18 个 owner 的分组 6 折交叉验证。**任何策略的价值都用表格精确计算；另外对 PM 与最强基线做一组人工直接对比 | 原来只有 3 个 test owner，无法做聚类推断。表格可以精确评估任何策略，不需要再生成 |
+| C6 | **两位评审分担主表。**每个前缀的全部终点由同一人标注；20% 的前缀两人都标，用于测信度 | 工时减半，同一前缀内的比较仍出自同一人 |
+| C7 | **自动判官只作可选的加速器。**通过资格后才用于扩充训练标签，评价永远不用它 | 判官资格不再阻塞主线 |
+| C8 | **RQ3/RQ4 改为条件模块**，触发规则预先写定 | 两者依赖可保留的 G1 是否存在 |
+| C9 | **工程规则精简**（§14） | 保留与科学有效性相关的检查，去掉与有效性无关的仪式 |
+
+**保留不变**：
+
+- 11-16 的四资源分工；
+- MS-RAW 与 MS-SUM 分开身份；
+- 严格过去与同 owner 过滤；
+- 所有臂使用同一套栈比较；
+- 未知不当 0；
+- 共享付费预算账本与上限。
+
+---
+
+## 3. 固定技术栈（S0 冻结）
+
+| 项目 | 固定值 |
+|---|---|
+| G | Gemma-4-12B-it，路径 `/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3`。runtime 与 `outputs/pm_rl1/alternate_executor_probe_20261104_v1/PROTOCOL.json` 的 `runtime` 一致：bf16、sdpa、greedy、`enable_thinking=false`、EOS `[1,106,50]`、`CUDA_VISIBLE_DEVICES=1`（A6000） |
+| 生成上限 | `max_new_tokens=320`，按 EOS 自然结束。达到上限时记为 `technical_truncation`，不当作完整回复 |
+| 基础提示 B | S0c 冻结。要求口语、2–4 句、不超过 90 词、不编造历史。以 11-11 typed 实验的共同基础指导为起点 |
+| 资源块 | 追加在系统提示之后，标题为 “Notes”，内部固定顺序 RS→MP→ME→MS。统一说明：只在对此刻有帮助时使用；不要提到“笔记”；不要编造细节 |
+| 嵌入与检索 | BGE-M3，使用 `scripts/rl1/176_probe_qa_resource_gain.py` 配置中的 `bge_local_dir` 同一权重；dense 余弦相似度，L2 归一 |
+| 筛选与检查模型 | Qwen3.5-9B（`/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b`），环境 `paper1-qwen35-vllm-py312`，非思考模式，greedy |
+| 摘要写入器 | 同 G。提示用 [SUMMARY_WRITER_PROMPT_EN.md](reviews/20261116/pm_rl1_session_summary_design/SUMMARY_WRITER_PROMPT_EN.md) |
+| Python | `/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python`，加 `PYTHONPATH=project/src HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1` |
+| 代码位置 | 新包 `project/src/metacom_pm/rl1v2/`；脚本 `project/scripts/rl1v2/`；测试 `project/tests/test_rl1v2_*.py`；产物 `project/outputs/pm_rl1/v2/<stage>/` |
+| 随机性 | 抽样用 `sha256("pmrl1v2|<用途>|<键>")` 排序；训练种子 17/29/43 |
+
+可以复用的现有代码：
+
+- `paper1/data/memory_source.py`、`rl1/data.py`：隔离的数据加载和前缀切分；
+- `paper1/multi_view_memory/candidate_adapter.py`：MP/ME/MS 的时点物化；
+- `rl1/generation.py:LocalNaturalGenerator`：本地生成；
+- `rl1/client_latency.py` 与脚本 154 的测量路径：参考客户端计时；
+- `docs/reviews/20261105/pm_rl1_history_necessity/build_review.py` 与 `.../pm_rl1_history_necessity_human_review/ingest.py`：人评页面和导入。
+
+旧的 `organized_*` 学习协调器写死了 96/18 规模和旧的资格检查，**不要改造它们**。表格环境与 PPO 在新包中最小实现（§10）。
+
+---
+
+## 4. 数据与样本
+
+### 4.1 来源
+
+- **EvoEmo**（ES-MemEval 公开版）：18 个 owner、401 个会话，经现有隔离 loader 读取。
+- **ESConv train**：只用于 RS 案例。排除与 EvoEmo 有来源重叠的 ESConv 对话（配置中记录的 84 个重叠）。
+- **公开方法文献**：用于 RS 方法单元（§5.1）。
+- **ESC-Eval**：`data/paper1_authority/paper1_esc_split_large52_frozen_v1.jsonl` 中 121 张 confirmatory 卡，只在 S9 使用。
+
+### 4.2 折分配与 owner 角色
+
+- **6 折，每折 3 个 owner**，按 `sha256("pmrl1v2-fold|"+owner)` 排序分配。原 test owners p4/p7/p14 固定为第 6 折，这样 S9 可以用不含它们训练的 PM。
+- **试点 owners**：原 dev owners p1/p15/p18，加上按 `sha256("pmrl1v2-pilot|"+owner)` 从原 train owners 中选出的前 3 个（不取第 6 折）。
+- **18 个 owner 全部进入主表。**试点前缀与主表前缀不重叠。另报告“排除 6 个试点 owner、只看 12 个 owner”的敏感性分析。
+
+### 4.3 候选前缀普查（S1）
+
+- 对 `chronological_rank ≥ 1` 的会话，每个“seeker 发言之后紧接 supporter 回复”的位置都是候选切点。
+- 前缀 = 该会话开头到这句 seeker 发言。
+- 合法记忆 = 同一 owner、rank 严格更小的完整会话，以及由它们派生的资源。
+
+### 4.4 需求筛选（只用生成前可见的信息）
+
+1. **确定性特征**：
+   - 回指线索正则，如 `last time | I told you | remember | still | again | update | as I said | since we talked`；
+   - 与过去会话的实体重叠数；
+   - 求助线索，如 `what should I | any advice | how do I | I don't know what to do`；
+   - 前缀与过去会话的 BGE 最大相似度。
+2. **Qwen 筛选**（提示见附录 B）。
+   - 输入：前缀最后 6 轮；过去会话清单，每个会话给出日期/序号、前 120 词和实体。
+   - 输出 JSON：`need_type ∈ {memory_specific, memory_general, method, ordinary}`；`need_spec`（需要的具体过去信息，一句话，附源会话 ID）；`confidence`。
+3. **Codex 核对**：对入选试点和主表的每个 `memory_specific` 前缀，打开源会话核对 `need_spec` 是否存在且严格过去，标为 `assistant_verified`。不成立的改标为 `memory_general` 或 `ordinary`。
+4. **研究者抽查**：抽 20%，附在第一个 T2 批次中。
+5. **分层**：记忆需求 = `memory_specific ∪ memory_general`；方法需求 = `method`；普通 = `ordinary`。
+
+### 4.5 抽样配额
+
+在每个 owner 内按层排序（`sha256("pmrl1v2-sample|"+集合+"|"+prefix_id)`）取前 k 个。同一会话最多 1 个前缀；不够时放宽到 2 个并记录。
+
+| 集合 | owner | 每 owner 数量 | 层配额（记忆 / 方法 / 普通） | 合计 |
+|---|---|---|---|---|
+| 试点 P | 6 个试点 owner | 6 | 3 / 2 / 1 | 36 |
+| 复查 R1、R2（条件触发） | 6 个试点 owner | 3 | 2 / 1 / 0 | 每轮 18 |
+| 主表 M | 18 | 8 | 4 / 2 / 2 | 144 |
+| 执行器监督与评价（条件触发） | 6 个试点 owner | 剩余池 | 见 S7 | ≤ 156 |
+
+**某层不够时**：先用相邻层补（记忆不足用方法补，方法不足用普通补），记录实际数量。不读取未来内容，不复制样本。
+
+普查给出各层占全部候选的比例。主报告按层分别给出；次要报告用这个比例做“自然混合加权”。
+
+---
+
+## 5. 资源与检索（S2 构建）
+
+### 5.1 RS
+
+**方法单元**
+
+- 数量：目标 24–40 个。
+- 来源优先级：
+  1. 公共领域的美国政府材料：SAMHSA TIP 35（MI）与 TIP 57（创伤知情），NIMH、CDC 的应对指南，NCPTSD/NCTSN 的 *Psychological First Aid Field Operations Guide*；
+  2. 其次是 CC BY-NC-SA 许可的 WHO 材料，如 *Doing What Matters in Times of Stress*。
+  每个单元都记录许可。
+- 覆盖主题：反映式倾听与核对、情绪确认、开放式提问、问题解决步骤、行为激活、落地与呼吸技巧、睡眠基础、动员社会支持、温和的认知重评、价值澄清、决策权衡、引出改变语言、面对阻抗、悲伤支持基础、自我同情、担忧时间、边界与自信表达、危机安全检查与转介（如 988）。
+- 字段：`method_id, name, when_to_use（情境线索）, when_not_to_use, action_options（2–4 条）, example_phrasing（改写，不照抄原文）, limits, source{title, url, section, license, quote（不超过 2 句）}`。
+- 由 Codex 依据原文撰写。11-15 的 3 个 TIP 35 草稿并入。
+
+**案例**
+
+- 每个方法最多链接 2 个 ESConv train 完整案例。每个案例包含：前情（不超过 6 轮）、体现该方法的支持者连续行动、紧随其后的 seeker 反应、原始反馈分。
+- 召回：用 BGE，以方法的 `when_to_use + action_options` 去匹配支持者轮次，取 top-20。
+- 核对：Codex 逐条确认该案例确实体现了这个方法，且不含不安全内容或虚假承诺，然后取最多 2 个。
+- 11-15 的 12 张候选卡按其逐卡审阅结论处理：标为“暂停正向使用”的不入库。
+
+**F（常驻紧凑方法）**：全部方法单元的“名称 + 一句何时使用”列表，作为基础提示的可选附加部分。
+
+**专业审核（T5，可选）**：有审核人时，逐单元给出“适用 / 需改 / 不适用”，并据此修改。没有审核人时，在论文中列为局限，不阻塞后续步骤。
+
+**检索**
+
+- 查询：当前前缀最后 3 轮的文本。
+- 方法索引文本：`name + when_to_use + action_options`。
+- R_m：top-1 方法单元。
+- R_p：top-1 方法单元，加上它已链接的案例中与查询最相似的一个。
+- D_R：相似度最低的方法单元。
+
+### 5.2 MP
+
+- 用现行 Multi-View 编译结果（713 个 MP 版本），在切点时刻物化当前档案（`materialize_multi_view_candidates`）：先做严格过去过滤，再取最新版本，冲突保留。
+- 应用 11-15 的 3 条候选修复：`outputs/pm_rl1/research_preparation_20261115_v1/memory/CANDIDATE_VIEW_REPAIRS_PRIVATE.json`。
+- 渲染：事实列表，每条附“报告于 <日期或会话序号>”。
+- 超过 350 tokens 时，按与查询的相似度取前 10 条（固定规则）。
+
+### 5.3 ME
+
+- 来源：现行编译的 ME（1,523 条），严格过去。
+- 检索：按 BGE 相似度取 top-3。
+- 渲染：日期、事件、阶段（建议 / 打算 / 尝试 / 自报反应 / 未知）。编译字段缺少阶段时，附上源原话一句。
+
+### 5.4 MS
+
+- **RAW**：完整的过去会话逐轮原文（现行实现）。
+- **SUM**：对 401 个会话分别生成会后摘要，写入器只读该会话全文。保存源 hash 与写入器身份。
+  - 忠实性检查：Qwen 逐句判断“是否被原文支持”。有不受支持的句子时，带反馈重写一次；仍失败的，该会话的 SUM 标为 `unusable`，SUM 条件下该会话改用 RAW 并记录。
+  - Codex 人工审阅 24 份，必须包含已知的 3 个反例：挂电话、写作工作坊、线上社群支持。
+- **检索**：对 SUM 文本建 BGE 索引；RAW 条件也用 SUM 索引排序，保证 RAW 与 SUM 比较的是同一个会话。只检索同 owner、rank 严格小于当前会话的会话。
+- **MS 单元**：top-1；若 S3 预写规则判定，则改为 top-2。
+- **D_MS**：同 owner 合法过去会话中相似度最低者的 SUM。没有第二个可用会话时，该前缀不设 D_MS，并记录。
+- **MS_ORACLE**：`need_spec` 所指源会话的 SUM。只用于已核对的记忆需求前缀。
+
+### 5.5 存储（精简）
+
+- 目录：`outputs/pm_rl1/v2/bank/`。
+- 文件：`rs_methods.jsonl, rs_cases.jsonl, mp_versions.jsonl, me_events.jsonl, ms_raw.jsonl, ms_sum.jsonl, embeddings/<head>.npy, embeddings/<head>_rows.jsonl, MANIFEST.json`。
+- `MANIFEST.json` 记录每个文件的 sha256、生成代码的 commit 和所用模型身份。
+- 每条记录的字段：`id, head, owner, source_session_id, source_rank, source_sha256, text（读者视图）, provenance（原话或跨度）, version`。
+- 不要求实现 11-16 完整的 JSON Schema。
+
+### 5.6 资源侧必须有的 CPU 测试
+
+1. 同一 owner。
+2. `source_rank` 严格小于当前会话 rank；同一会话的摘要不能用于本会话内部的前缀。
+3. RS 不含与当前 owner 来源重叠的 ESConv 对话。
+4. 渲染后的 prompt 中没有 gold、未来内容或评价字段。
+5. token 数用 G 的 tokenizer 计算。
+
+用反例写测试：未来会话、错误 owner、同会话摘要、重叠的 ESConv 对话。
+
+---
+
+## 6. 决策环境（终点表）
+
+1. **动作**：`STOP, GET_RS, GET_MP, GET_ME, GET_MS`。每类最多取一次；某类没有合法单元时不可选；最多 4 次 GET。
+2. **终点确定性**：单元内容只取决于“前缀 + 资源类”，渲染顺序固定，所以终点回复只取决于取得的子集。终点数最多 2^4 = 16（含 OFF）。
+3. **观察**：
+   - **初始**：前缀嵌入（BGE，最后 3 轮）；各类可用标志；各类 top-1 检索相似度；各类单元的 token 数。这些是读取前就能看到的检索元数据。
+   - **每次 GET 之后**：增加该类单元正文的 BGE 嵌入（即内容可见）。NoText 消融不提供这一项。
+4. **奖励**：r(S) = y(S) − λ·ΔC(S)。
+   - y ∈ {+1, 0, −1}：人工对子集 S 的回复相对 OFF 回复的判断；
+   - ΔC：附加秒数（§8）；
+   - γ = 1，中间步骤奖励为 0。
+5. **性质**：这是一个有限、确定、所有终值都已观测的 MDP，可用动态规划精确求出每个前缀的最优策略。训练折用它做监督；测试折只把它当作诊断上界。
+
+---
+
+## 7. 人工标注协议
+
+### 7.1 评审
+
+- A：研究者；B：第二评审（T1 确认）。
+- 两人都不知道各条回复属于哪个条件。
+
+### 7.2 页面（复用 11-05 的页面与导入机制，改成列表式）
+
+每个前缀一屏，包括：
+
+- **当前对话**：英文原文，附中文阅读译文（标明只是辅助）。
+- **“这位用户的相关背景”面板**：该前缀所有条件用到的资源单元的并集，中性编号，D 单元也包含在内。RS 单元显示为“可参考的方法说明”。
+- **回复 0**：即 OFF，页面不说明它是 OFF。
+- **候选回复 1..n**：随机顺序；完全相同的文本只出现一次。
+
+每个候选回复相对回复 0 选择一项：**明显更好 / 差不多 / 明显更差 / 无法判断**。
+
+可多选的标签：
+
+- 正确用到用户过去信息
+- 过去信息用错、过时或张冠李戴
+- 插入不相关的过去话题
+- 重复追问已知信息
+- 给出具体、适合的帮助
+- 建议过早或不合适
+- 不安全或不当
+- 太长或不自然
+- 其他：___
+
+页面自动保存，可分批导出 JSON。导入脚本校验 `reply_sha256` 与前缀的绑定。
+
+### 7.3 锚点
+
+完整文本见附录 A，要点如下：
+
+- **明显更好**：对此刻这个人的体验有可感的改善。例如：正确用上相关的过去事实或事件；避开用户已说无效的建议；不重复问已知信息；在用户求助时给出具体、适用的帮助；更恰当地处理敏感点。
+- **差不多**：只是措辞、语气、长短不同，或者只是提到了历史，但帮助程度没有变化。
+- **明显更差**：历史用错、过时或张冠李戴；插入无关的历史；用户想被倾听时急于给建议；内容不安全；明显过长或不自然。
+- **无法判断**：只用于无法核实的情况。
+
+### 7.4 校准
+
+- S3 的第 1 批（6 个前缀）由两人都标。
+- 对比分歧，讨论 30 分钟，可以修订锚点一次（v2）。此后不再修改。
+- 分歧项按 v2 重新标注。
+
+### 7.5 信度
+
+在两人都标的前缀上，报告：三分类一致率、Cohen κ、非平局项的方向一致率。
+
+### 7.6 “无法判断”的处理
+
+1. 交给另一位评审标一次。
+2. 仍无法判断，或没有另一位评审：y = 0，标记 `imputed_tie`。
+3. 评价时对这些项给出 y = −1 与 y = +1 两个方向的上下界敏感性分析。
+
+### 7.7 工时估计
+
+按每个前缀约 5 分钟阅读、每个候选 30–45 秒估算：
+
+| 阶段 | 内容 | A | B |
+|---|---|---|---|
+| S3 试点 | 36 个前缀 × 约 11 个候选；B 重叠 18 个 | 约 7 h | 约 3.5 h |
+| S4 复查（每轮，条件触发） | 18 个前缀 × 约 5 个候选 | 约 2.5 h | 约 1 h |
+| S5 主表 | 144 个前缀 × 最多 15 个候选；A、B 各 72 个，另有 24 个重叠 | 约 22 h | 约 22 h |
+| S6 直接对比 | 最多 60 对 | 约 0.8 h | 约 0.8 h |
+| S7 RQ3（条件触发） | 36 个前缀 × 7 | 约 5 h | 约 1.5 h |
+| S8 RQ4（条件触发） | 48 个前缀 × 15 | 约 6 h | 约 6 h |
+
+所有条件模块都触发时，每人合计约 40–45 h。
+
+**只有 A 一人时**：主表全部由 A 标注（约 36 h），没有信度估计，论文中注明单评审。
+
+---
+
+## 8. 奖励、成本与 λ
+
+1. **y**：见 §7。
+2. **成本 ΔC**：用户能感到的附加秒数，即终点 S 相对 OFF 在“客户端发送 → 首个可见文本”上的增加量，包含 PM 决策、检索、编码和 G 预填充的增量。
+   - S0e：在参考客户端上实测至少 80 个请求，覆盖从 OFF 到全部取得的 token 范围。
+   - 拟合 `seconds = a + b·input_tokens + c·n_GET`，用留一前缀交叉验证计算 MAE。
+   - 用该模型给表中每个终点赋 ΔC。完成时间作为次要指标同样建模。
+   - S10 用实测数据校准。
+3. **λ = 1/X**：X 由研究者在 T1 给出。没有回答时默认 X = 3（研究者此前说过额外超过 3 秒不可接受）。
+   - 另外报告 λ ∈ {0, 0.1, 0.2, 1/3, 0.5, 1} 下的质量–等待前沿。
+   - 硬约束：ΔC 的 p95 超过 3 秒的终点在部署域中不可选。
+4. **训练与评价用同一个 r**，同时分别报告 y 和 ΔC。
+
+---
+
+## 9. 分阶段执行
+
+阶段依赖如下（只画必经路线和条件路线）：
+
+```mermaid
+flowchart TD
+  S0[S0 冻结与准备] --> S1[S1 前缀普查与需求筛选]
+  S1 --> S2[S2 资源构建]
+  S2 --> S3[S3 资源价值试点 RQ0]
+  S3 -->|Gate A 通过| S5[S5 主表]
+  S3 -->|Gate A 未通过| S4[S4 资源修复 ≤2 轮]
+  S4 -->|通过| S5
+  S4 -->|仍未通过| S5N[S5 缩小版 分支 N]
+  S3 -->|G 使用问题 ≥30%| S7a[S7 执行器适配 提前]
+  S7a --> S5
+  S5 --> S6[S6 策略学习与比较 RQ1 RQ2]
+  S5N --> S6
+  S6 --> S7b[S7 执行器适配 后置 条件]
+  S7b --> S8[S8 G–PM 配对 条件]
+  S6 --> S9[S9 冻结与官方外评]
+  S8 --> S9
+  S6 --> S10[S10 部署等待]
+  S9 --> S11[S11 收口]
+  S10 --> S11
+```
+
+### S0 冻结与准备
+
+**依赖**：无。
+
+**步骤**
+
+- **0a** 建立 `plans/pm_rl1_v2_20261116/DECISIONS.jsonl`，第一条记录为“采用 V2 方案”。建立 `outputs/pm_rl1/v2/`。
+- **0b** 发出 T1（一条消息，三项）。等待期间继续做 0c–0f。
+- **0c 冻结基础提示 B**：在试点 owner 的非试点前缀中按 hash 取 6 个，生成 OFF 回复。检查长度在 30–110 词之间、口语化、没有编造历史。不满足时修改一次。保存 `B.txt` 及 sha256。
+- **0d 冻结其他设置**：资源块模板、生成参数、BGE 身份、查询规则、折分配、试点 owners，写入 `outputs/pm_rl1/v2/S0/FREEZE_S0.json`。
+- **0e 延迟模型**：沿用 `client_latency.py` 的路径，新建 manifest；在 GPU1 实测至少 80 个请求；拟合并交叉验证，输出 `latency_model.json`。GPU 被占用时等待，先做其他步骤。
+- **0f 回归基线**：运行一次现有 `test_rl1_*.py` 的非 GPU 测试，记录结果。
+
+**产物**：`B.txt`、`FREEZE_S0.json`、`latency_model.json`、`RESULTS_ZH.md`。
+
+**验收**：
+
+- 6 条 OFF 回复全部自然结束且长度合格；
+- 延迟模型的留一 MAE 不超过 0.25 s，否则增加样本重拟一次；
+- T1 的答复已写入 `DECISIONS.jsonl`。若 T1 超过 7 天未回复，按默认值（X = 3，B 不可用）继续，并记录。
+
+### S1 前缀普查与需求筛选
+
+**依赖**：0d。
+
+**步骤**
+
+- **1a** 普查全部候选切点，输出 `candidates.jsonl`，字段：owner、session、rank、cut、`prefix_sha256`。
+- **1b** 计算确定性特征（§4.4）。
+- **1c** 用 Qwen 批量筛选全部候选（vLLM），输出 `screening.jsonl`。
+- **1d** 按 §4.5 抽出试点 36 个、主表 144 个，并把剩余池登记给 S4 和 S7。
+- **1e** Codex 核对 `need_spec`（§4.4 第 3 步）。
+- **1f** 报告各层比例和每个 owner 的配额满足情况。
+
+**验收**：
+
+- 前缀中没有未来文本（测试：切点之后的任何一句都不能出现在前缀中）；
+- 试点、主表、复查、执行器各集合互不重叠；
+- 抽样完全由 hash 决定，可复现。
+
+**可并行**：S2a–S2c（RS 不依赖前缀）。
+
+### S2 资源构建
+
+**依赖**：1d（2a–2c 可提前开始）。
+
+**步骤**
+
+- **2a** RS 方法单元 → `rs_methods.jsonl`。
+- **2b** 链接案例 → `rs_cases.jsonl`。
+- **2c** 生成 F 文本。
+- **2d** MP/ME 时点物化：只物化试点、主表、剩余池前缀实际需要的切点。
+- **2e** 为 401 个会话生成 MS-SUM，做忠实性检查，审阅 24 份。
+- **2f** 建立 BGE 索引和检索函数。自动诊断检索召回：在记忆需求前缀上，看 MS 检索的 top-1/top-2 是否命中 `need_spec` 的源会话。不需要人工。
+- **2g** 编写并通过 §5.6 的 CPU 测试。
+
+**产物**：`bank/*`、`summary_faithfulness.json`、`retrieval_recall.json`、`RESULTS_ZH.md`。
+
+**验收**：
+
+- 每个单元都有来源和 hash；
+- SUM 中 `unusable` 的比例已报告；
+- 检索召回已报告；
+- §5.6 测试全部通过。
+
+### S3 资源价值试点（RQ0）
+
+**依赖**：S2。
+
+**3a 条件**（每个试点前缀）：
+
+| 条件 | 内容 |
+|---|---|
+| OFF | 只有基础提示 B |
+| F | B + 常驻紧凑方法 |
+| R_m | top-1 方法单元 |
+| R_p | top-1 方法单元 + 最相似的已链接案例 |
+| D_R | 相似度最低的方法单元 |
+| MP | 当前档案 |
+| ME | top-3 事件 |
+| MS_RAW | top-1 会话原文 |
+| MS_SUM | top-1 会话摘要 |
+| MS_SUM2 | top-2 会话摘要 |
+| D_MS | 最不相关的会话摘要 |
+| MS_ORACLE | `need_spec` 源会话的摘要（只用于已核对的记忆需求前缀） |
+
+约 36 × 11 + 18 ≈ 414 次生成，相同请求去重。
+
+**3b 自动诊断**（不进入奖励）：
+
+- 交付检查：单元确实出现在 prompt 中；
+- Qwen 判断“回复中哪些陈述来自资源”；
+- 长度和问句数。
+
+**3c 标注**：A 标全部 36 个；B 标其中 18 个。第一批 6 个两人都标，用于 §7.4 的校准。
+
+**3d 预写分析规则**：在回收标注之前，把 3d–3f 的全部规则逐字写入 `DECISIONS.jsonl`。
+
+- **净值**：net = (#更好 − #更差) / n。
+- **归因净值**：A_net = (#更好且带机制标签 − #更差) / n。
+  - 记忆类条件的机制标签：“正确用到用户过去信息”；
+  - RS 类条件的机制标签：“给出具体、适合的帮助”。
+- 按层计算，给出 owner 聚类 bootstrap 的 90% 区间（描述用）。
+
+**3e Gate A**
+
+- **PASS_mem**：在记忆需求层，MP、ME、MS_SUM、MS_RAW 中至少有一个条件同时满足：
+  1. A_net ≥ 0.20；
+  2. A_net − A_net(D_MS) ≥ 0.15；
+  3. “带机制标签的更好”来自至少 3 个 owner。
+- **PASS_rs**：在方法需求层，R_m 或 R_p 同时满足：
+  1. A_net ≥ 0.20；
+  2. A_net − A_net(D_R) ≥ 0.15；
+  3. net ≥ net(F)。
+- **任一通过** → 按 3f 冻结资源设置，进入 S5。
+- **两项都未通过** → 进入 S4。
+
+**3f 设计决定**（规则预写，与 Gate 结果无关）：
+
+- **MS 表示**：在记忆需求层，若 net(SUM) ≥ net(RAW) − 0.05，则用 SUM；否则用 RAW。
+- **MS 剂量**：若 net(SUM2) − net(SUM) ≥ 0.10，则 MS 单元取 top-2；否则 top-1。
+- **RS 单元**：在方法需求层，若 net(R_p) − net(R_m) ≥ 0.05，则用方法 + 案例；否则只用方法。
+- **基础提示**：若 F 在全部前缀上的 net ≥ 0.10，且每一层的 net(F) ≥ −0.05，则主表用 B+F 作为基础（此时 RS 获取必须在 F 之上再有增值）；否则用 B。
+- **链条归因表**（记忆需求前缀）：
+  - MS_ORACLE 未被评为更好时，归入：
+    - ① 单元里没有所需信息（表示或写入问题）；
+    - ② 有信息但回复没用（G 未使用）；
+    - ③ 用了但被评为差不多（内在价值低）；
+    - ④ 用错了（G 误用）。
+  - MS_ORACLE 更好但检索得到的 MS 没有更好时，归入：⑤ 检索漏。
+- **RQ3 触发规则**：在有 ORACLE 的记忆需求前缀中，② + ④ 的占比 ≥ 30% 时，S7 在 S5 之前运行；G1 若成功，主表改用 G1。否则 S7 在 S6 之后运行。
+
+**产物**：`pilot_outputs.jsonl`、`pilot_labels.jsonl`、`pilot_analysis.json`、`attribution.json`、`gateA.json`、`RESULTS_ZH.md`。
+
+**可并行**（等待标注期间）：
+
+- S6 的代码：表格环境、DP、各方法、指标，用合成表测试；
+- S10a 参考客户端的准备；
+- S9b ESC-Eval 管线的接线。
+
+### S4 资源修复（条件：Gate A 两项都未通过；最多 2 轮）
+
+**每轮的修复选择**：按 3f 归因中占比最大的可修项，选一项主修复，最多再加一项次修复。
+
+| 主要归因 | 修复办法 |
+|---|---|
+| ⑤ 检索漏 | 查询改为“最后 3 轮 + 抽取出的需求实体”，或增加 BM25/实体通道做混合检索。用 2f 的自动召回指标衡量，不需要人工 |
+| ① 表示或写入问题 | 修改摘要写入提示或粒度；修复 MP/ME |
+| ② / ④ G 未使用或误用 | 提前运行 S7（RQ3） |
+| ③ 内在价值低 | 不修，记录在案。若 ③ 占主导，直接进入分支 N，因为继续修没有意义 |
+
+**复查**：
+
+- 用 R 集的 18 个前缀，只生成 OFF、修改涉及的条件和对应的 D 控制；
+- 标注后按与 Gate A 相同的规则判定。
+
+**两轮之后仍未通过** → 分支 N（§12）。
+
+### S5 主表构建
+
+**依赖**：Gate A 通过，或进入分支 N。分支 N 时每个 owner 只取 4 个前缀，共 72 个。
+
+**步骤**
+
+- **5a** 为主表全部前缀生成所有子集终点：每个前缀最多 16 个，约 2,300 次生成，约 6–8 GPU 小时。相同文本去重。
+- **5b** 按 §8 给每个终点赋 ΔC。
+- **5c 标注分配**：
+  - 按 owner 平衡，A、B 各 72 个前缀；另从各层按比例抽 24 个，两人都标。
+  - 每批 6 个前缀。第 1 批结束后检查每个前缀的耗时和平局率。
+  - B 不可用时，全部由 A 标注。
+- **5d** 汇总为 `terminal_table.jsonl`，每行：`prefix_id, subset, reply_sha256, rater, y, tags, ΔC, imputed_flag`。
+- **5e 方差检查**（只看标签，不看任何策略结果）：计算 Always-ALL 与 OFF 之差的前缀间标准差，估算最小可检测效应（MDE）。若 MDE > 0.25，且研究者在 T2 中同意追加约 18 小时，则主表扩充 72 个前缀（每个 owner 4 个）。在 S6 开始之前把这一决定写入 `DECISIONS.jsonl`。
+- **5f 判官加速器**（可选）：
+  - 用主表已有标注，在相同的列表式输入下评估 Qwen3.5-9B 与 CompassJudger2，以评审标签为参照。
+  - 资格条件：判官与人的一致率 ≥（A–B 一致率 − 0.05），且非平局项方向准确率 ≥ 0.75。
+  - 通过：可以给剩余池中只用于训练的额外前缀打标签，构成“扩充训练”敏感性臂。
+  - 不通过：不用。最多修订提示一次。
+
+**可并行**：
+
+- S6 代码完成后，先用已标注的部分跑通流程；
+- S9b ESC-Eval 管线；
+- S10a 参考客户端。
+
+### S6 策略学习与比较（RQ1、RQ2）
+
+**依赖**：5d（以及 5e 的决定）。
+
+**步骤**
+
+- **6a 学习性检查**：构造合成表 E0，包含这些情况：不需要资源、取一类即可、两类互补、取了反而有害、成本占主导。PPO 与 Seq-SL 在 E0 上都必须达到 DP 最优值的 95% 以上；达不到就修实现，不进入下一步。
+- **6b 训练**：§10 的全部方法 × 6 折。PPO 和 Seq-SL 各用 3 个种子。每折用其余 5 折、15 个 owner 的表训练；测试折只用于评价。全部超参数预先固定，不在测试折上调。
+- **6c 计算**：测试折上的策略价值、决策正确性、分层结果和前沿（§11）。
+- **6d 人工直接对比**：
+  - 在测试折前缀中，找出主 PM（M10，种子 17）与 Fixed-best 选择了不同终点的前缀，随机取最多 60 对；
+  - 由没有标注过该前缀主表的评审盲评“对此刻的用户哪个更好 / 差不多”，左右位置随机；
+  - 目的是检验“相对 OFF 的三值奖励”能否代表直接偏好。
+- **6e 统计**：见 §11。
+
+**产物**：`results_cv.json`、`decision_correctness.json`、`frontier.json`、`head_to_head.json`、`learning_curves.json`、`RESULTS_ZH.md`。
+
+### S7 执行器适配（RQ3，条件触发；运行时机见 3f）
+
+**触发**：3f 的规则，或 S4 选择了 ②/④。若 S6 之后才判断，看 S5 主表中单头记忆终点的“用错”标签率：≥ 15% 时运行，否则 `not_run_with_reason`。
+
+**7a 监督数据**：
+
+- 从试点 owner 剩余池中取最多 80 个记忆需求前缀和 40 个普通前缀，不能与试点、复查和 7c 评价集重叠。
+- 每个前缀构造三种输入：
+  - 相关：MS_ORACLE，或 `need_spec` 对应的单元；
+  - 无：不给资源；
+  - 无关：D_MS。
+
+**7b 目标回复**：
+
+- G0 对每种输入采样 4 个候选（temperature 0.7，种子固定）。
+- Qwen 检查器过滤：
+  - 相关输入：必须正确使用所需信息，且没有错误；
+  - 无关输入：不得引入 D 的内容；
+  - 无输入：不得编造历史。
+- 在通过过滤的候选中，按长度和口语性选 1 个。
+- Codex 抽查 30 条。“无”和“无关”的目标回复中不能出现未取得的隐藏信息。
+
+**7c 训练**：
+
+- LoRA：r = 16，α = 32，dropout 0.05，lr 1e-4，2 个 epoch，作用于 attention 与 MLP；
+- 环境 `pmrl1_sft_vendor_20260929`；
+- 保存 adapter 的 hash。
+
+**7d 评价**：
+
+- 另取 24 个记忆需求前缀和 12 个普通前缀（试点 owner 剩余池，未用于训练）。
+- 条件：{OFF, MS_ORACLE, MS（检索）, D_MS} × {G0, G1}。
+- 人工标注：每个 G 内各条件相对该 G 自己的 OFF；另加 G1-OFF 对 G0-OFF。共约 252 个判断。
+
+**7e 判定**（预写）。G1 成功需要同时满足：
+
+1. 记忆需求层，net_G1(ORACLE) − net_G0(ORACLE) ≥ 0.15；
+2. 误用标签率没有上升；
+3. G1-OFF 相对 G0-OFF 的 net ≥ −0.05，即无资源时质量不下降；
+4. 普通层 net_G1(D_MS) ≥ net_G0(D_MS)，即不更容易被无关信息带偏。
+
+允许一次有依据的修订（调整目标过滤规则或 epoch）。仍不成功则保留 G0，RQ3 报告为负。
+
+**后续**：
+
+- S7 在 S5 之前运行且成功：主表用 G1；RQ4 需要 G0 的表。
+- S7 在 S6 之后运行且成功：主表是 G0；RQ4 需要 G1 的表。
+
+### S8 G–PM 配对（RQ4，条件：S7 判定 G1 成功）
+
+1. 取主表的 2 个折（6 个 owner、48 个前缀），用另一个 G 生成所有终点，按同样的评审分配标注。
+2. **PM_other**：在这 48 个前缀上训练，两个折互为训练和测试。**PM_main**：主表上训练、不含这 6 个 owner 的折模型。
+3. 在这 48 个前缀上比较四种组合：
+   - G_main + PM_main
+   - G_main + PM_other
+   - G_other + PM_other
+   - G_other + PM_main
+   每种组合的价值用对应 G 的表精确计算。
+4. 报告：
+   - 两个 G 下各类资源的 ON−OFF 差，即资源价值是否随 G 改变；
+   - 原配与换配的差值及区间。样本小，按描述性结果报告。
+
+### S9 冻结与官方外评
+
+**依赖**：S6（以及 S8，若运行）。
+
+**9a 冻结**：写入 `outputs/pm_rl1/v2/S9/FINAL_FREEZE.json`，包括：
+
+- G、资源库版本、检索设置、基础提示、λ；
+- PM：每折模型和全数据模型。主模型为 M10 种子 17，另报告 3 个种子的结果。
+
+**9b ESC-Eval**
+
+- 卡片：121 张 confirmatory 非 ESConv 英文卡。
+- seeker：官方 ESC-Role，本地运行，路径 `/opt/tokkio-data0/tokkio_external/ESC-Eval/ESC-Role/2e2a4733d2e71da242f348aad165fe171acd5df7`。实现可参考 `/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/gen_loop.py`。角色秘密只交给 seeker。
+- 轮数：按官方协议；无法确定时用 5 轮，并注明。
+- 臂：OFF、Always-RS、Fixed-best（限 RS）、PM（记忆头不可用）。
+- 评分：官方 ESC-RANK 七维，使用官方 parser。按卡做配对 bootstrap。
+- 说明：这一项只检验 RS 决策。11-12 的实测显示 ESC-RANK 对细微差异的分辨率低，结果如实报告。
+
+**9c ES-MemEval**
+
+- 任务：第 6 折 owners（p4/p7/p14）的官方 QA、Summary、DG。
+- PM：用不含第 6 折训练的折模型。
+- 臂：No Memory、Full History、Official RAG Top-4、Fixed-best、PM。RS 固定为 OFF。
+- 流程：
+  1. 先按 `scripts/paper1/84_plan_followup_research_budget.py` 的方式出精确报价；
+  2. T3 请求批准；
+  3. 执行，使用共享账本，遵守 USD 20 硬上限。
+- 不批准或超出预算时：只运行可本地评分的部分，付费部分标为 `not_run_with_reason`。
+
+### S10 部署等待
+
+**10a 参考客户端文本端到端**
+
+- 60 个测试折前缀 × {OFF, Fixed-best, Always-ALL, PM}。
+- 顺序交错，先暖机。
+- 记录客户端发送 → 首个可见文本和完成时间的 p50/p95，以及 PM 决策、检索、编码、G 各段计时。
+
+**10b Tokkio**
+
+- 在 `/home/tokkio/new_rag/data/app_full_2_tokkiocompat.py` 的**副本**中加入 PM 步骤，不修改原文件；沿用 :8091 上的 policy step1/step2 路径接入。
+- 20 条语音话语 × 4 个臂，测量“话语结束 → 首个有效语音”和完成时间，并分段记录 VAD/ASR、PM、检索、G、TTS。
+- 需要 T4。没有端点时 10b 标为 `not_run_with_reason`，论文只报告 10a。
+
+**10c 质量–等待前沿**：用表格质量加实测秒数绘制，替代 S6 中基于模型的 ΔC 前沿作为部署版本。
+
+### S11 收口
+
+1. 结果总表：每个 RQ 标为“支持 / 不支持 / 未测”，并注明理由。
+2. 分支记录、负结果、局限：
+   - 构造人物；
+   - 只有 18 个 owner；
+   - 评审人数与信度；
+   - 有限动作域；
+   - RS 方法单元的专业审核状态；
+   - 没有独立的英语纵向确认数据。
+3. 复现包：代码 commit、全部 FREEZE 文件、终点表、标签、模型 checkpoint 和运行命令。
+4. 论文草稿。
+
+---
+
+## 10. 方法与训练细节（S6 前全部固定，不在测试折上调）
+
+### 10.1 共享特征
+
+- **初始观察 x0**：BGE（前缀最后 3 轮）1024 维；每类资源的可用标志、top-1 相似度、token 数 / 1000，共 12 维。
+- **顺序方法额外的观察**：每类资源一个是否已取得的标志；已取得单元的 BGE 嵌入，经共享线性层 1024→64 投影，未取得时为 0；再加步数 / 4。
+- 数值特征只在训练折上标准化。
+
+### 10.2 方法
+
+| 编号 | 方法 | 定义 |
+|---|---|---|
+| M1 | Always-OFF | 始终 STOP |
+| M2 | Always-ALL | 取全部可用资源 |
+| M3 | Fixed-best | 训练折上平均 r 最大的固定子集 |
+| M4 | 单头固定 ×4 | 每次只取某一类；仅报告，不作主比较 |
+| M5 | Screen-Rule | 依据 S1 的筛选标签：记忆需求 → 取 MS+ME（有 MP 线索时加 MP）；方法需求 → 取 RS；普通 → STOP。规则在 S0 写定 |
+| M6 | LLM-gate | Qwen3.5-9B 零样本：给出前缀、各类资源的说明和 top-1 相似度（不给内容），让它选择子集 |
+| M7 | Matched-Random | 子集大小按 M10 在训练折上的选择分布抽取，资源类在可用类中均匀抽取；取 100 次平均 |
+| M8 | OneShot | MLP 学习 f(x0, onehot(S)) → r̂，在训练折全部终点上用 MSE 训练，3 个种子集成；在可用子集中取 argmax |
+| M9 | Seq-SL | 在训练折每个前缀的全部可达状态（16 个）上，模仿 DP 最优动作，交叉熵训练。平局时取 ΔC 更小者，再平局取 STOP |
+| **M10** | **PPO-BCinit（主 PM）** | 以 M9 初始化，再用 PPO 训练 |
+| M11 | PPO-scratch | 随机初始化的 PPO |
+| M12 | PPO-NoText | 不提供已取单元的嵌入，以 NoText 版 Seq-SL 初始化 |
+| M13 | Oracle | 测试折 DP 最优，仅作诊断上界 |
+
+### 10.3 网络与超参数
+
+- **网络**：MLP 2 × 128，ReLU，dropout 0.1，weight decay 1e-4；策略头输出 5 个 logits 并做 mask；另有价值头。
+- **Seq-SL**：Adam，lr 1e-3，100 epochs，batch 64。
+- **OneShot**：Adam，lr 1e-3，200 epochs，batch 64。
+- **PPO**：Adam lr 3e-4，clip 0.2，γ = 1，GAE λ = 1，价值系数 0.5，熵系数从 0.01 线性降到 0.001，梯度裁剪 0.5；每次 rollout 256 个 episode，4 个 epoch，minibatch 64；每个种子每折共 30,000 个 episode；训练前缀均匀抽样。
+- **测试**：取 argmax 动作。
+- **种子**：17/29/43。报告均值和每个种子的结果。
+
+---
+
+## 11. 评价与统计
+
+### 11.1 单位
+
+- 分析单位是前缀，聚类单位是 owner（18 个）。
+- PPO 与 Seq-SL 先在每个前缀上对 3 个种子取平均。
+
+### 11.2 指标
+
+- **策略价值**：V(π) = 测试折前缀上的平均 r，汇总 6 个折，每个前缀只在折外评价一次。
+- **质量与等待**：质量 Q(π) = 平均 y；等待 W(π) = 平均 ΔC。另报告“更好率”和“更差率”（伤害）。以上都按层报告，并给出自然混合加权版本（§4.5）。
+- **决策正确性**：按 `paper1_decision_correctness_evaluation_v1.json` 的指标定义，以单头终点的标签 y({h}) 为每类资源的“开启是否有益”真值，计算 ON-benefit recall、OFF-nonbenefit specificity、unnecessary-open、missed-benefit、balanced accuracy。平局视为“非有益”，单独报告。
+- **行动正确性**：遗憾值 V(Oracle) − V(π)；策略达到 Oracle 值的前缀比例。
+
+### 11.3 主比较（预先写定，Holm 校正，3 项）
+
+- **P1**：V(M10) − V(M3)
+- **P2**：V(M10) − V(M8)
+- **P3**：V(M10) − V(M9)
+
+做法：
+
+- 按前缀配对；
+- owner 聚类 bootstrap 10,000 次，给出 95% 区间；
+- 用 owner 层面的符号翻转置换检验求 p 值（2^18 种，精确计算）；
+- 判为“支持”的条件：Holm 校正后 p < 0.05，且区间不含 0。
+
+### 11.4 次要结果（描述性，给出区间）
+
+- 与 M1、M2、M5、M6、M7 的比较；
+- M10 对 M12：读后内容的价值；
+- λ 前沿；
+- 按层的结果；
+- 敏感性分析：
+  - 排除 6 个试点 owner；
+  - `imputed_tie` 的上下界；
+  - 分别只用 A 或只用 B 标注的前缀；
+  - 判官扩充训练臂（若有）。
+
+### 11.5 直接对比
+
+报告 6d 中 PM 被偏好、平局、Fixed-best 被偏好的比例，以及与表格推断方向的一致率。
+
+### 11.6 噪声说明
+
+标签噪声会抬高 Oracle 值。用 24 个双评前缀，分别以 A 和 B 的标签计算 Oracle 值，报告两者的差距，作为上界抬高程度的估计。
+
+### 11.7 精度预期
+
+粗略估计：144 个前缀、18 个聚类、ICC 约 0.1，每个前缀差值的标准差约 0.6–0.8 时，标准误约 0.07，80% 功效下的最小可检测效应约 0.2。更小的效应可能检测不到。始终报告区间；“不显著”不写成“相等”。
+
+---
+
+## 12. 结果分支与论文主张
+
+| 分支 | 条件 | 执行范围 | 论文主张 |
+|---|---|---|---|
+| B-pos | Gate A 通过，P1 显著 | 全部 | 资源优化后，学到的 PM 在质量–等待取舍上优于最强固定子集；RQ2 按 P2/P3 的结果报告 |
+| B-fixed | Gate A 通过，P1 不显著 | 全部 | 资源在需求轮次上确有价值，但最强固定子集已经吸收了大部分收益；情境选择没有显示出额外优势。RQ2 照常报告 |
+| B-N | 经过 S4 修复后 Gate A 仍未通过 | S5 缩小版（72 个前缀）、S6、S9、S10 | 测量研究：资源优化后，单轮情感支持中资源何时有益、何时有害；PM 学到的主要是“关”（避免伤害与成本）。不主张“学会何时开”。按链条归因写清瓶颈 |
+
+各问题的单独判定：
+
+- **RQ2 为正**：P2 或 P3 显著。
+- **读后价值**：看 M10 对 M12 的区间。
+- **RQ3 / RQ4**：按 7e 和 S8 的结果判定。
+
+**所有分支都写入论文，不挑选。**
+
+---
+
+## 13. 资源预算
+
+### 13.1 人工
+
+见 §7.7。必经路线（S3 + S5 + S6）每人约 30 小时；所有条件模块都触发时约 45 小时。
+
+### 13.2 GPU（本地，全部用 GPU1 A6000；Qwen 可用 GPU0 A4500）
+
+| 步骤 | 内容 | 估计时长 |
+|---|---|---|
+| S1c | 筛选数千条 | 约 2 h |
+| S2e | 401 份摘要及忠实性检查 | 约 3 h |
+| S3 | 约 414 次生成 | 约 1.5 h |
+| S5 | 约 2,300 次生成 | 约 7 h |
+| S7 | 生成、训练和评价 | 约 8–10 h |
+| S8 | 约 770 次生成 | 约 3 h |
+| S9b | ESC-Eval：121 张卡 × 4 个臂 × 5 轮，约 2,400 次 G 调用，加 seeker 与评分 | 约 15 h |
+| S6 | 训练（小 MLP，CPU 也可） | 不超过 2 h |
+
+### 13.3 费用
+
+只有 S9c 可能付费，走 T3。其余全部本地运行，不产生费用。
+
+### 13.4 粗略日程
+
+| 阶段 | 预计用时 |
+|---|---|
+| S0–S2 | 2–3 周 |
+| S3 | 1–2 周（取决于标注） |
+| S4 | 0–4 周（条件） |
+| S5 | 4–6 周（取决于标注） |
+| S6 | 1–2 周 |
+| S7–S8 | 0–5 周（条件） |
+| S9–S10 | 2–3 周 |
+| S11 | 2 周 |
+
+合计约 3–6 个月。
+
+---
+
+## 14. 工程规则
+
+### 14.1 保留（与有效性直接相关）
+
+- 同 owner 与严格过去过滤；同会话的摘要不用于本会话。
+- 每个资源记录都绑定源会话 hash。
+- 所有臂使用相同的 G、基础提示、资源块模板和检索。
+- prompt 中不出现 gold、未来内容或评价字段。
+- 标签绑定到精确的回复 sha256。G、资源正文或渲染方式一旦改变，就重新生成并重新标注，不搬旧标签。
+- 未知不当 0（§7.6 的显式插补除外）。
+- 按 owner 分组交叉验证；试点前缀不进入主表。
+- 阈值与规则在看到相关标签之前写入 `DECISIONS.jsonl`。
+- 付费调用使用共享账本，遵守 USD 20 硬上限。
+- 不抢占他人 GPU。
+
+### 14.2 放弃或放宽
+
+- 11-16 的 2,000 行 JSON Schema 和 19 合法 / 21 拒绝 fixture：改用简单的 dataclass 校验加 §5.6 的反例测试。
+- 逐条记录的规范化 hash：改为文件级 sha256 加回复 sha256。
+- development / repair_check / final_confirmation 三用途分流：由交叉验证和“试点前缀不进主表”替代。
+- STOP 保护层、`EXPAND_MS`、训练规模参数化改造：表格环境下不需要。
+- 每次执行重新审计全仓。
+
+### 14.3 每个步骤的记录
+
+- `input_manifest.json`：输入文件及其 sha256；
+- 代码 commit；
+- 产物清单及 sha256；
+- `RESULTS_ZH.md`。
+
+测试写真实边界：泄漏、表格环境、DP、指标计算。不写“输出等于自身快照”这类测试。
+
+---
+
+## 15. 外部依赖与缺失时的处理
+
+| 依赖 | 缺失时的处理 |
+|---|---|
+| 第二评审 B | 全部由 A 标注，工时增加；没有信度估计；论文中注明单评审 |
+| RS 专业审核（T5） | 列为局限；RS 主张限于“有出处的支持行为资源”，不主张临床有效 |
+| 独立英语纵向确认数据 | **不作为本研究目标。**泛化范围写明为：EvoEmo 构造人物上的 owner 分组交叉验证，加 ESC-Eval 外部评价 |
+| Tokkio 端点（T4） | 10b 标为 `not_run_with_reason`，只报告参考客户端结果 |
+| 付费预算（T3） | 9c 中的付费部分标为 `not_run_with_reason` |
+
+---
+
+## 附录 A：标注锚点全文（页面顶部显示）
+
+> 你会看到一位用户和支持者的对话，以及这位用户过去的一些相关背景。下面有“回复 0”和若干候选回复，都是对用户最后一句话的回应。请把**每个候选回复和回复 0 比较**：
+>
+> - **明显更好**：如果你是这位用户，此刻会明显更受帮助或更被理解。常见原因：正确用上了你过去说过的相关事情；避开了你说过没用的建议；没有再问你已经说过的事；你在求助时给了具体、适合你的办法；更恰当地处理了敏感的地方。
+> - **差不多**：只是说法、语气、长短不同；或者提到了过去的事，但并没有因此更有帮助。**拿不准时选“差不多”。**
+> - **明显更差**：把过去的事说错、说成过时的状态、张冠李戴；扯进不相关的旧话题；你只想被倾听时它急着给建议；内容不安全或不合适；明显太长、不像说话。
+> - **无法判断**：只在缺少信息、无法核实时使用。
+>
+> 背景信息可能有用，也可能无关。请不要因为回复“提到了背景”就判为更好。请按“对这个人、在这个时刻”来判断。
+
+## 附录 B：需求筛选提示要点（S1c，英文执行）
+
+- 角色：“You screen a support-conversation turn BEFORE any reply is written.”
+- 输入：最后 6 轮；过去会话清单（日期或序号、前 120 词、实体）。
+- 任务：
+  1. 判断一个好的下一句回复是否需要用户过去会话中的**具体信息**，若需要，指出是哪一条、在哪个会话；
+  2. 用户是否在寻求具体的应对办法或指导；
+  3. 输出 JSON：`{"need_type": "...", "need_spec": "... | null", "source_session_ids": [...], "confidence": 0-1}`。
+- 约束：不写回复；不推测未来；不确定时选 `memory_general` 或 `ordinary`。
+- 冻结：提示文本及其 sha256 写入 `FREEZE_S0.json`。
+
+## 附录 C：代码模块与命令（待实现）
+
+### 包 `src/metacom_pm/rl1v2/`
+
+| 模块 | 内容 |
+|---|---|
+| `prefixes.py` | 普查、特征、抽样、折分配 |
+| `screen.py` | Qwen 筛选，批量运行与解析 |
+| `bank.py` | RS、MP、ME、MS 构建；摘要与忠实性检查 |
+| `retrieve.py` | BGE 索引、过滤、检索 |
+| `render.py` | 基础提示加 Notes 块的组装，token 计数 |
+| `generate.py` | 包装 `LocalNaturalGenerator`；批量生成；请求去重与缓存 |
+| `labels.py` | 列表式页面生成、导入、校验 |
+| `table_env.py` | 终点表、动作 mask、DP |
+| `policies.py` | M1–M13 |
+| `ppo.py` | 最小 PPO 实现 |
+| `evaluate.py` | 交叉验证汇总、指标、bootstrap、置换检验、前沿 |
+| `latency.py` | 测量、拟合、赋值 |
+
+### 脚本 `scripts/rl1v2/`
+
+每个阶段一个脚本：`s0_freeze.py`、`s1_prefixes.py`、`s2_bank.py`、`s3_pilot.py`（子命令 `generate | page | ingest | analyze`）、`s4_repair.py`、`s5_table.py`、`s6_learn.py`、`s7_executor.py`、`s8_pairing.py`、`s9_external.py`、`s10_latency.py`。
+
+所有脚本统一参数 `--out outputs/pm_rl1/v2/<stage> [--dry-run]`。`--dry-run` 只做 CPU 检查，不加载模型。
+
+### 测试 `tests/test_rl1v2_*.py`
+
+至少覆盖：
+
+- 泄漏：未来会话、错误 owner、同会话摘要、ESConv 重叠；
+- 渲染中不出现评价字段；
+- 表格环境的 mask 与终点唯一性；
+- DP 在已知小表上求得正确最优；
+- PPO 在 E0 上的学习性；
+- 指标与 bootstrap 在已知数据上的数值。
+
+## 附录 D：与 11-16 工作单的对应关系
+
+| 11-16 工作单 | V2 对应 |
+|---|---|
+| P00 | S0（只登记本方案用到的旧资产） |
+| P01 | S1 |
+| P02 | §7 与 S0 |
+| P03 | S2 |
+| P04 | S2f + S6（表格环境替代在线接口改造） |
+| P05 | S0d + S1d |
+| P06、P07 | S3 |
+| P08 | S4 + S7 |
+| P09 | S2f + S4 |
+| P10 | S5 |
+| P11、P12 | S6 |
+| P13 | S8 |
+| P14 | S9a |
+| P15 | S9b、S9c |
+| P16 | S10 |
+| P17 | S11 |
+
+11-16 中“完整域 PPO 可靠反馈”的缺口，由 C2 + C3 消除。“独立英语纵向确认”的缺口，按 §15 改为局限，不再作为目标。
+Bash Create V2 execution state JSON
+IN
+mkdir -p /home/tokkio/Metacom5_3/project/docs/plans/pm_rl1_v2_20261116 && cd /home/tokkio/Metacom5_3/project/docs/plans/pm_rl1_v2_20261116 && python3 - <<'EOF'
+import json
+steps = [
+ ("S0a",[],"建立DECISIONS.jsonl与outputs/pm_rl1/v2/"),
+ ("S0b",["S0a"],"T1: λ / B可用工时 / 确认采用V2"),
+ ("S0c",["S0a"],"冻结基础提示B（6条OFF检查）"),
+ ("S0d",["S0c"],"FREEZE_S0.json（模板/参数/BGE/查询/折/试点owners/筛选提示）"),
+ ("S0e",["S0a"],"参考客户端≥80请求延迟模型"),
+ ("S0f",["S0a"],"现有rl1 CPU回归基线"),
+ ("S1a",["S0d"],"候选切点普查"),
+ ("S1b",["S1a"],"确定性需求特征"),
+ ("S1c",["S1a"],"Qwen需求筛选"),
+ ("S1d",["S1b","S1c"],"抽样：试点36/主表144/剩余池"),
+ ("S1e",["S1d"],"need_spec核对"),
+ ("S1f",["S1d"],"层比例与配额报告"),
+ ("S2a",["S0d"],"RS方法单元"),
+ ("S2b",["S2a"],"RS案例链接"),
+ ("S2c",["S2a"],"F常驻文本"),
+ ("S2d",["S1d"],"MP/ME时点物化+3条修复"),
+ ("S2e",["S0d"],"401会话MS-SUM+忠实性检查+24份审阅"),
+ ("S2f",["S2d","S2e","S2b","S1e"],"BGE索引/检索/召回诊断"),
+ ("S2g",["S2f"],"资源侧CPU反例测试"),
+ ("S3a",["S2g"],"试点条件生成"),
+ ("S3b",["S3a"],"自动诊断"),
+ ("S3d",["S3a"],"预写分析规则入DECISIONS（回收标注前）"),
+ ("S3c",["S3d"],"试点标注（T2）"),
+ ("S3e",["S3c"],"Gate A"),
+ ("S3f",["S3c"],"设计决定+链条归因+RQ3触发"),
+ ("S4",["S3e"],"资源修复（条件，≤2轮）"),
+ ("S5a",["S3e","S3f"],"主表全部子集生成"),
+ ("S5b",["S5a","S0e"],"ΔC赋值"),
+ ("S5c",["S5a"],"主表标注（T2，分批）"),
+ ("S5d",["S5c","S5b"],"terminal_table汇总"),
+ ("S5e",["S5d"],"方差检查与扩表决定"),
+ ("S5f",["S5d"],"判官加速器（可选）"),
+ ("S6a",["S0d"],"合成表E0学习性检查（可在S3/S5等待期完成）"),
+ ("S6b",["S5e","S6a"],"全方法×6折训练"),
+ ("S6c",["S6b"],"测试折指标/决策正确性/前沿"),
+ ("S6d",["S6b"],"PM vs Fixed-best人工直接对比（T2）"),
+ ("S6e",["S6c","S6d"],"统计与RESULTS"),
+ ("S7",["S3f"],"执行器适配RQ3（条件；时机见3f）"),
+ ("S8",["S7","S6e"],"G–PM配对RQ4（条件）"),
+ ("S9a",["S6e"],"FINAL_FREEZE"),
+ ("S9b",["S9a"],"ESC-Eval官方"),
+ ("S9c",["S9a"],"ES-MemEval官方（T3）"),
+ ("S10a",["S9a"],"参考客户端端到端"),
+ ("S10b",["S9a"],"Tokkio语音（T4）"),
+ ("S10c",["S10a"],"质量–等待前沿"),
+ ("S11",["S9b","S9c","S10c","S10b"],"收口：结果/局限/复现/论文"),
+]
+state = {
+ "version":"pmrl1-v2-state-20261116",
+ "plan":"../../PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md",
+ "plan_adopted_by_researcher": False,
+ "allowed_status":["pending","ready","in_progress","waiting_human","completed","not_run_with_reason","blocked_external"],
+ "branch":None,
+ "rq3_timing":None,
+ "steps":{sid:{"depends_on":deps,"title":t,"status":("ready" if not deps else "pending"),
+              "outputs":[],"results_doc":None,"commit":None,"note":None} for sid,deps,t in steps},
+}
+json.dump(state,open("EXECUTION_STATE.json","w"),ensure_ascii=False,indent=1)
+print(len(steps))
+EOF
+python3 -c "import json;json.load(open('/home/tokkio/Metacom5_3/project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json'));print('ok')"
+
+OUT
+46
+ok
+Shell cwd was reset to /home/tokkio
+Edit AGENTS.md
+Edit failed
+Edit AGENTS.md
+Edit failed
+Bash Add V2 pointers to status log and old plan header
+IN
+cd /home/tokkio/Metacom5_3/project/docs && python3 - <<'EOF'
+p='PM_RL1_CURRENT_STATUS.md'
+s=open(p,encoding='utf-8').read()
+line=('2026-11-16 新增[执行方案V2](PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)，取代11-16主方案的P00–P17工作单与顺序：先做资源价值试点（S3）再建工程；'
+ '动作域改为每类最多一个单元、全部终点制表并人工三值标注（相对OFF），PPO奖励精确无pending；前缀按生成前需求分层；18 owner分组6折交叉验证；RQ3/RQ4条件触发；'
+ '所有分支规则预写。Codex从[V2状态表](plans/pm_rl1_v2_20261116/EXECUTION_STATE.json)的S0开始，S0b需研究者确认采用V2。下方为历史时点。\n\n')
+open(p,'w',encoding='utf-8').write(line+s)
+p='PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md'
+s=open(p,encoding='utf-8').read()
+note='> **2026-11-16 更新：本文的P00–P17工作单与执行顺序已由[执行方案V2](PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)取代。**本文保留作背景与字段参考。\n\n'
+lines=s.split('\n',1)
+open(p,'w',encoding='utf-8').write(lines[0]+'\n\n'+note+lines[1])
+print('done')
+EOF
+head -4 PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md; head -c 300 PM_RL1_CURRENT_STATUS.md
+
+OUT
+done
+# PM-RL1 主执行方案
+
+> **2026-11-16 更新：本文的P00–P17工作单与执行顺序已由[执行方案V2](PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)取代。**本文保留作背景与字段参考。
+
+2026-11-16 新增[执行方案V2](PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)，取代11-16主方案的P00–P17工作单与顺序：先做资源价值试点（S3）再建工程；动作域改为每类最多一个单元、全部终点制表并人工三值标注（相对OFF），PPO奖励精确无pendin
+Shell cwd was reset to /home/tokkio
+Bash Point AGENTS.md entry files to V2 plan
+IN
+cd /home/tokkio/Metacom5_3 && python3 - <<'EOF'
+import re
+p='AGENTS.md'; s=open(p,encoding='utf-8').read()
+old="""single-turn research, start with `project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md`
+and `project/docs/plans/pm_rl1_master_20261116/EXECUTION_STATE.json`."""
+new="""single-turn research, start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`
+and `project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` (V2 supersedes the
+P00–P17 work packages of `PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md`; its §0 defines
+the execution loop, the only researcher touchpoints T1–T5, and pre-written branch rules)."""
+assert s.count(old)==1; s=s.replace(old,new); open(p,'w',encoding='utf-8').write(s)
+p='project/src/metacom_pm/rl1/AGENTS.md'; s=open(p,encoding='utf-8').read()
+old="""Start with `project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_master_20261116/EXECUTION_STATE.json` for current work."""
+new="""Start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` for current work
+(V2 supersedes the 11-16 P00–P17 work packages; new code goes to `rl1v2/`)."""
+assert s.count(old)==1; s=s.replace(old,new); open(p,'w',encoding='utf-8').write(s)
+print('ok')
+EOF
+git diff --stat | tail -5
+
+OUT
+ok
+ AGENTS.md                                         | 16 +++++++++++++---
+ project/docs/PM_RL1_CURRENT_STATUS.md             |  8 ++++++++
+ project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md |  6 ++++++
+ project/src/metacom_pm/rl1/AGENTS.md              |  5 +++++
+ 4 files changed, 32 insertions(+), 3 deletions(-)
+Shell cwd was reset to /home/tokkio
+12:29 PM
+方案和状态文件都写好了，入口也已指向 V2。最后修一处配额细节，并更新记忆。
+
+
+
+Edit PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md
+Modified
+Bash Record V2 plan in project memory
+IN
+cd /home/tokkio/.claude/projects/-home-tokkio/memory && cat >> project_pm_rl1.md <<'EOF'
+- 11-16 later: user said no deadline, wants ONE complete plan Codex can follow to finish the whole study. I wrote docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md + docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json (46 steps S0a–S11) and pointed AGENTS.md / rl1/AGENTS.md / CURRENT_STATUS / old master plan header to it. Core V2 design: S3 resource-value pilot first (36 need-stratified prefixes, 12 conditions incl. F/D/ORACLE, pre-written Gate A + design rules + chain attribution); finite domain = ≤1 unit per head, static query, canonical render → ≤16 terminals/prefix, ALL generated and human-labeled ternary vs OFF (listwise page) → exact table env, PPO with no pending; 18-owner 6-fold CV (fold 6 = p4/p7/p14), main table 144 prefixes split between raters A/B (+24 overlap); methods M1–M13 (primary M10 PPO-BCinit; P1 vs Fixed-best, P2 vs OneShot, P3 vs Seq-SL DP-imitation, Holm); RQ3/RQ4 conditional; branches B-pos/B-fixed/B-N. Human load ≈30 h/rater core, ≈45 h with all conditional modules. Touchpoints T1–T5 only. Status: awaiting researcher confirmation via S0b/T1.
+EOF
+sed -i 's/^- \[PM-RL1 State\](project_pm_rl1.md) — .*/- [PM-RL1 State](project_pm_rl1.md) — Current PM-RL1 work in Metacom5_3; 11-16 I wrote V2 execution plan (table-based human-labeled RL, S0–S11); awaiting researcher confirmation, 0 natural training so far/' MEMORY.md; grep -n "PM-RL1 State" MEMORY.md
+
+OUT
+9:- [PM-RL1 State](project_pm_rl1.md) — Current PM-RL1 work in Metacom5_3; 11-16 I wrote V2 execution plan (table-based human-labeled RL, S0–S11); awaiting researcher confirmation, 0 natural training so far
+12:30 PM
+写给：Codex 执行代理（请你先审阅，确认后再交给它执行）。
+
+我写了一份新的完整方案，Codex 可以按状态表从第一步 S0a 一直执行到研究收口：
+
+主方案：PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md
+状态表：EXECUTION_STATE.json，共 46 步，每步写明依赖。
+AGENTS.md、rl1/AGENTS.md、CURRENT_STATUS 和旧方案的开头都已经改为指向 V2。这些改动都可以撤回。
+
+它怎么解决现在的问题
+1. 先确认资源有没有用，再搭工程（S3）
+
+36 个前缀按"需要记忆 / 需要方法 / 普通"分层抽样，只用回复生成前就能看到的线索。
+每个前缀比较 12 种条件，包括常驻方法、内容不相关的同类资源对照，以及直接给出正确会话（"标准答案"上界）。
+判断"资源有价值"的门槛、各类设计怎么选、问题出在链条哪一段，这些规则都在回收标注之前写死。
+2. 消除"PPO 没有可靠反馈"这个缺口
+
+每类资源每轮最多取一个单元，检索只用当前前缀。这样每个前缀最多 16 种结果，全部实际生成，全部由人工标注"相对不取资源的回复是明显更好 / 差不多 / 明显更差"。
+PPO 是在完整的表上训练，每个结果的奖励都是确定的，不存在待评状态。
+任何策略都可以直接在表上精确算出得分。
+3. 解决评价单位太少
+
+18 个 owner 分 6 折交叉验证，按 owner 聚类做 bootstrap 和置换检验。
+主比较预先定为三项：PM 对最好的固定组合、对一次性选择（OneShot）、对模仿精确最优解的监督策略。
+4. 每个结果都有写定的去向
+
+分三条分支：正结果、PM 与固定组合打平、资源无价值。三条都能走到论文收口。
+执行器适配（RQ3）和 G 与 PM 的配对（RQ4）只在预写条件满足时运行。
+需要你确认的三件事
+人工工时是最大的成本。 必经路线每位评审约 30 小时，条件模块全部触发约 45 小时。只有你一人评审时，主表约 36 小时，而且没有信度估计。
+动作域会收窄。 改为"每类最多一个单元"，等于收回 10/23 去掉上限后的"无任意上限"定义。这是让奖励可靠的代价。S3 会先测一下每类多取一个是否有用，用来决定单元取多大。
+不再追求独立英语纵向确认数据。 改为写进局限。
+Codex 开始执行时，第一件事（S0b）就是向你要三项答复：
+
+λ：一个明显更好的回复最多值得让用户多等几秒，默认 3 秒；
+第二评审是否可用，每周大约几小时；
+是否确认采用 V2。
+本轮只写了方案和状态文件、改了入口指向，没有运行任何模型或实验。

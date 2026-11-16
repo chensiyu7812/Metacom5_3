@@ -1,0 +1,43 @@
+{
+  "protocol": "pm-rl1-full-prefix-bge-v1",
+  "binding": {
+    "binding_version": "paper1-bge-m3-embedding-binding-v2",
+    "repo": "BAAI/bge-m3",
+    "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+    "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+    "pooling_mode": "cls",
+    "normalize_embeddings": true,
+    "embedding_dimension": 1024,
+    "max_seq_length": 8192,
+    "truncation_side": "right",
+    "dtype": "torch.float32"
+  },
+  "runtime": {
+    "torch_version": "2.3.1+cu121",
+    "sentence_transformers_version": "5.1.0",
+    "weights_sha256_verified": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e"
+  },
+  "rs_alias_sha256": "382737a23a78cbe9943c02bf368561a6996a2393ed0f98d4deffb29cb570813a",
+  "query": "entire public current-session prefix",
+  "tie_break": "candidate_id",
+  "probe_only": true,
+  "pilot_input_freeze_sha256": "61d8d8b9c32aba6c2b789ec3d59f2b0ecbc06bbc3deb3d6ad471028cd85d2084",
+  "renderer_identity": "34e7df59a45ce62584b86f2681aa8adeee791eb84d81077db1e62dab58ac5018",
+  "elapsed_seconds": 61.1737262980314,
+  "script_sha256": "ce7220aa1d2b18b184bcd11620de3f89384e0251b9ac868ad7cf175337d942ff",
+  "artifact_sha256": {
+    "episode_specs_private.json": "15466ee97ba03682851a90c73d738250ac39726e689320f2555351a4ccf9377e",
+    "mechanical_traces.json": "068ab90c6d682803b04708cbc475fba962506aa49ec897f1e4c2415811991adf",
+    "capacity_probe.json": "9c85df5ad1dd8d09bae2e2da922cedf5cee7d8ba01ae0e8c03a37ef55ec651b4",
+    "legal_evidence_private.json": "81e45ec6f1fde39e70bcc5ba83b8cbd47b82418d481932d4a5f7f8238623723a",
+    "source_exposure_audit.json": "c8b28a911c1044234f6f6d50a51133b538715ee7735df90af3c2e7a1ede2cd8a",
+    "input_freeze.json": "61d8d8b9c32aba6c2b789ec3d59f2b0ecbc06bbc3deb3d6ad471028cd85d2084"
+  },
+  "outcome_calls": 0,
+  "api_cost_usd": 0,
+  "limitations": [
+    "fact-family grouping including descendants of shared sessions",
+    "historical exposure manifest and held-out interpretation",
+    "capacity census with RS before resource-budget freeze"
+  ]
+}

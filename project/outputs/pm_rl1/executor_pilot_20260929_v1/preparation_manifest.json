@@ -1,0 +1,49 @@
+{
+  "status": "INPUTS_PREPARED_CONDITION_RELEVANCE_AUDIT_PENDING",
+  "retrieval": {
+    "protocol": "pm-rl1-full-prefix-bge-v1",
+    "binding": {
+      "binding_version": "paper1-bge-m3-embedding-binding-v2",
+      "repo": "BAAI/bge-m3",
+      "revision": "9a0624b896d81da7492a910ffa53731274b6cf3d",
+      "model_safetensors_sha256": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e",
+      "pooling_mode": "cls",
+      "normalize_embeddings": true,
+      "embedding_dimension": 1024,
+      "max_seq_length": 8192,
+      "truncation_side": "right",
+      "dtype": "torch.float32"
+    },
+    "runtime": {
+      "torch_version": "2.3.1+cu121",
+      "sentence_transformers_version": "5.1.0",
+      "weights_sha256_verified": "993b2248881724788dcab8c644a91dfd63584b6e5604ff2037cb5541e1e38e7e"
+    },
+    "rs_alias_sha256": "382737a23a78cbe9943c02bf368561a6996a2393ed0f98d4deffb29cb570813a",
+    "query": "entire public current-session prefix",
+    "tie_break": "candidate_id",
+    "probe_only": true
+  },
+  "renderer_identity": "34e7df59a45ce62584b86f2681aa8adeee791eb84d81077db1e62dab58ac5018",
+  "budget": 2048,
+  "author_calls": 0,
+  "parameter_updates": 0,
+  "API_usd": 0,
+  "bge_load_seconds": 4.585017450153828e-06,
+  "bge_encode_seconds": 13.132641837000847,
+  "total_seconds": 31.370154738076963,
+  "source_hashes": {
+    "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "data/paper1_public_memory/es_memeval_public_multi_view_session_results_v1.jsonl": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "data/paper1_public_rs/esconv_rs_exact_canonical_treatments_v1.jsonl": "382737a23a78cbe9943c02bf368561a6996a2393ed0f98d4deffb29cb570813a"
+  },
+  "files": {
+    "roster_private.json": "7a4b904b793f57f69ae53a0c681afbcf0bf0c59eb117f2f70d7af878bbde8f9b",
+    "selection.json": "f876bb47f1d5d61437449462e92d22c8785da2e7d35f313899eb540328470100",
+    "episode_specs_private.json": "0446f9125e34bb39b7bc56038c385b2f460956afcec764720d4b9f6cd6632b82",
+    "condition_options_private.json": "fb417931d5877403e5ab3c17647980ae0952f8eacbe45e7cf492e62f61d8e493",
+    "legal_evidence_private.json": "96a94c7efad1b0813675c4b2259b460439234a7c2cb14cdd510d04e5a54895ed",
+    "coordinator_only/evidence_source_map.json": "f539692d59df5204f1349eff7e7606b30eb9c70dc632173e504cdefe0eded36a"
+  },
+  "code_sha256": "7de87e936bac07dbab627e7737edeefb4f573882da1650963951489dd6fce45c"
+}

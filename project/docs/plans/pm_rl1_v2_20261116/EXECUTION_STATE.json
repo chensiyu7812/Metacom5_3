@@ -1,0 +1,535 @@
+{
+ "version": "pmrl1-v2-state-20261116",
+ "plan": "../../PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md",
+ "plan_adopted_by_researcher": false,
+ "allowed_status": [
+  "pending",
+  "ready",
+  "in_progress",
+  "waiting_human",
+  "completed",
+  "not_run_with_reason",
+  "blocked_external"
+ ],
+ "branch": null,
+ "rq3_timing": null,
+ "steps": {
+  "S0a": {
+   "depends_on": [],
+   "title": "建立DECISIONS.jsonl与outputs/pm_rl1/v2/",
+   "status": "ready",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S0b": {
+   "depends_on": [
+    "S0a"
+   ],
+   "title": "T1: λ / B可用工时 / 确认采用V2",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S0c": {
+   "depends_on": [
+    "S0a"
+   ],
+   "title": "冻结基础提示B（6条OFF检查）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S0d": {
+   "depends_on": [
+    "S0c"
+   ],
+   "title": "FREEZE_S0.json（模板/参数/BGE/查询/折/试点owners/筛选提示）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S0e": {
+   "depends_on": [
+    "S0a"
+   ],
+   "title": "参考客户端≥80请求延迟模型",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S0f": {
+   "depends_on": [
+    "S0a"
+   ],
+   "title": "现有rl1 CPU回归基线",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1a": {
+   "depends_on": [
+    "S0d"
+   ],
+   "title": "候选切点普查",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1b": {
+   "depends_on": [
+    "S1a"
+   ],
+   "title": "确定性需求特征",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1c": {
+   "depends_on": [
+    "S1a"
+   ],
+   "title": "Qwen需求筛选",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1d": {
+   "depends_on": [
+    "S1b",
+    "S1c"
+   ],
+   "title": "抽样：试点36/主表144/剩余池",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1e": {
+   "depends_on": [
+    "S1d"
+   ],
+   "title": "need_spec核对",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S1f": {
+   "depends_on": [
+    "S1d"
+   ],
+   "title": "层比例与配额报告",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2a": {
+   "depends_on": [
+    "S0d"
+   ],
+   "title": "RS方法单元",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2b": {
+   "depends_on": [
+    "S2a"
+   ],
+   "title": "RS案例链接",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2c": {
+   "depends_on": [
+    "S2a"
+   ],
+   "title": "F常驻文本",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2d": {
+   "depends_on": [
+    "S1d"
+   ],
+   "title": "MP/ME时点物化+3条修复",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2e": {
+   "depends_on": [
+    "S0d"
+   ],
+   "title": "401会话MS-SUM+忠实性检查+24份审阅",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2f": {
+   "depends_on": [
+    "S2d",
+    "S2e",
+    "S2b",
+    "S1e"
+   ],
+   "title": "BGE索引/检索/召回诊断",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S2g": {
+   "depends_on": [
+    "S2f"
+   ],
+   "title": "资源侧CPU反例测试",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3a": {
+   "depends_on": [
+    "S2g"
+   ],
+   "title": "试点条件生成",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3b": {
+   "depends_on": [
+    "S3a"
+   ],
+   "title": "自动诊断",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3d": {
+   "depends_on": [
+    "S3a"
+   ],
+   "title": "预写分析规则入DECISIONS（回收标注前）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3c": {
+   "depends_on": [
+    "S3d"
+   ],
+   "title": "试点标注（T2）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3e": {
+   "depends_on": [
+    "S3c"
+   ],
+   "title": "Gate A",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S3f": {
+   "depends_on": [
+    "S3c"
+   ],
+   "title": "设计决定+链条归因+RQ3触发",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S4": {
+   "depends_on": [
+    "S3e"
+   ],
+   "title": "资源修复（条件，≤2轮）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5a": {
+   "depends_on": [
+    "S3e",
+    "S3f"
+   ],
+   "title": "主表全部子集生成",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5b": {
+   "depends_on": [
+    "S5a",
+    "S0e"
+   ],
+   "title": "ΔC赋值",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5c": {
+   "depends_on": [
+    "S5a"
+   ],
+   "title": "主表标注（T2，分批）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5d": {
+   "depends_on": [
+    "S5c",
+    "S5b"
+   ],
+   "title": "terminal_table汇总",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5e": {
+   "depends_on": [
+    "S5d"
+   ],
+   "title": "方差检查与扩表决定",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S5f": {
+   "depends_on": [
+    "S5d"
+   ],
+   "title": "判官加速器（可选）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S6a": {
+   "depends_on": [
+    "S0d"
+   ],
+   "title": "合成表E0学习性检查（可在S3/S5等待期完成）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S6b": {
+   "depends_on": [
+    "S5e",
+    "S6a"
+   ],
+   "title": "全方法×6折训练",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S6c": {
+   "depends_on": [
+    "S6b"
+   ],
+   "title": "测试折指标/决策正确性/前沿",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S6d": {
+   "depends_on": [
+    "S6b"
+   ],
+   "title": "PM vs Fixed-best人工直接对比（T2）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S6e": {
+   "depends_on": [
+    "S6c",
+    "S6d"
+   ],
+   "title": "统计与RESULTS",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S7": {
+   "depends_on": [
+    "S3f"
+   ],
+   "title": "执行器适配RQ3（条件；时机见3f）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S8": {
+   "depends_on": [
+    "S7",
+    "S6e"
+   ],
+   "title": "G–PM配对RQ4（条件）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S9a": {
+   "depends_on": [
+    "S6e"
+   ],
+   "title": "FINAL_FREEZE",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S9b": {
+   "depends_on": [
+    "S9a"
+   ],
+   "title": "ESC-Eval官方",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S9c": {
+   "depends_on": [
+    "S9a"
+   ],
+   "title": "ES-MemEval官方（T3）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S10a": {
+   "depends_on": [
+    "S9a"
+   ],
+   "title": "参考客户端端到端",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S10b": {
+   "depends_on": [
+    "S9a"
+   ],
+   "title": "Tokkio语音（T4）",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S10c": {
+   "depends_on": [
+    "S10a"
+   ],
+   "title": "质量–等待前沿",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  },
+  "S11": {
+   "depends_on": [
+    "S9b",
+    "S9c",
+    "S10c",
+    "S10b"
+   ],
+   "title": "收口：结果/局限/复现/论文",
+   "status": "pending",
+   "outputs": [],
+   "results_doc": null,
+   "commit": null,
+   "note": null
+  }
+ }
+}

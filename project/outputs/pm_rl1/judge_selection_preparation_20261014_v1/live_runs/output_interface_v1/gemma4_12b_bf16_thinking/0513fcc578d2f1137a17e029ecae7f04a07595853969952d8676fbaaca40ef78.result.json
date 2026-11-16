@@ -1,0 +1,261 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16_thinking",
+    "configuration_identity": "46bd1b9b9954e86940f836db3e819b7cb589866321cb47f46b3e08fd990d0965",
+    "phase": "engineering",
+    "ordinal": 2,
+    "item_key": "dev15B",
+    "draw": "primary",
+    "messages_identity": "b541f867fe73507f59d1300aa70bc56cb5ffa9f2370885ce0c9a932879d8f3fe",
+    "schema_identity": "0c1163b9008d6abb2db9b9ef79819f95da2b752b6cec9375ce859676e30d8d73",
+    "paired_slot": "55ad7757e2e8f0fd5a85a2181e125f8d03ed9ce2f04073bc78fd0efcde3ae13f",
+    "seed": 3485033069,
+    "schedule_position": 5,
+    "input_utf8_bytes": 56316,
+    "original_slot_request_id": "ba358344ad688a3ff84cdd6dd8d6e343f5491b34e5c75fa3abe6d1b379a58e4b",
+    "original_configuration_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "0513fcc578d2f1137a17e029ecae7f04a07595853969952d8676fbaaca40ef78"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16_thinking",
+    "configuration_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "phase": "engineering",
+    "ordinal": 2,
+    "item_key": "dev15B",
+    "draw": "primary",
+    "messages_identity": "b541f867fe73507f59d1300aa70bc56cb5ffa9f2370885ce0c9a932879d8f3fe",
+    "schema_identity": "0c1163b9008d6abb2db9b9ef79819f95da2b752b6cec9375ce859676e30d8d73",
+    "paired_slot": "55ad7757e2e8f0fd5a85a2181e125f8d03ed9ce2f04073bc78fd0efcde3ae13f",
+    "seed": 3485033069,
+    "schedule_position": 5,
+    "input_utf8_bytes": 56316,
+    "request_id": "ba358344ad688a3ff84cdd6dd8d6e343f5491b34e5c75fa3abe6d1b379a58e4b"
+  },
+  "protocol_identity": "ebc0e0a46e67adcb1364ff7b18eb5d3b8f8affdd8682860c2ce7e2fcded53371",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "0229cd6adcded5a7082ace51b60fd17ccbe7ec0816670dafcce687120a27cbe5",
+      "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "46bd1b9b9954e86940f836db3e819b7cb589866321cb47f46b3e08fd990d0965",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "0513fcc578d2f1137a17e029ecae7f04a07595853969952d8676fbaaca40ef78",
+      "raw_output_sha256": "37340f4d235673f891150e67bf486ed2e1ca33bcfd01492e294ef5eaeffb92a7",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 1,
+      "m": 1,
+      "parsed": {
+        "status": "scored",
+        "q": 1,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The seeker is sharing how a conversation with an old college friend provided her with a new perspective on her thesis and helped her feel better.",
+          "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+            }
+          ],
+          "reason": "The supporter commits a material error by misattributing the source of the seeker's new perspective. The seeker explicitly states in C:T013 that 'we' (referring to her and the old college friend mentioned in C:T003 and C:T005) chatted for a while and that this conversation helped her see things from a different perspective. The supporter incorrectly claims that 'Talking with me' provided this perspective."
+        },
+        "claims": [
+          {
+            "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+            "relation": "contradicted",
+            "severity": 1,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+              }
+            ],
+            "reason": "The supporter asserts that the seeker's new perspective came from talking to the supporter, but the seeker's turn C:T013 indicates the perspective came from a conversation with her old college friend."
+          }
+        ],
+        "misuse_findings": [
+          0
+        ],
+        "coverage": "The response addresses the seeker's mention of a new perspective but misidentifies the source of that perspective.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "Talking with me helped you see your thesis from a different perspective.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 72
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Talking with me helped you see your thesis from a different perspective.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 72
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 1,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The seeker is sharing how a conversation with an old college friend provided her with a new perspective on her thesis and helped her feel better.",
+          "response_unit_ids": [
+            "R001"
+          ],
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "The supporter commits a material error by misattributing the source of the seeker's new perspective. The seeker explicitly states in C:T013 that 'we' (referring to her and the old college friend mentioned in C:T003 and C:T005) chatted for a while and that this conversation helped her see things from a different perspective. The supporter incorrectly claims that 'Talking with me' provided this perspective."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "contradicted",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The supporter asserts that the seeker's new perspective came from talking to the supporter, but the seeker's turn C:T013 indicates the perspective came from a conversation with her old college friend."
+          }
+        ],
+        "misuse_findings": [
+          0
+        ],
+        "coverage": "The response addresses the seeker's mention of a new perspective but misidentifies the source of that perspective.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 1,
+        "q_rationale": {
+          "current_need": "The seeker is sharing how a conversation with an old college friend provided her with a new perspective on her thesis and helped her feel better.",
+          "response_unit_ids": [
+            "R001"
+          ],
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "The supporter commits a material error by misattributing the source of the seeker's new perspective. The seeker explicitly states in C:T013 that 'we' (referring to her and the old college friend mentioned in C:T003 and C:T005) chatted for a while and that this conversation helped her see things from a different perspective. The supporter incorrectly claims that 'Talking with me' provided this perspective."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "contradicted",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The supporter asserts that the seeker's new perspective came from talking to the supporter, but the seeker's turn C:T013 indicates the perspective came from a conversation with her old college friend.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a follow-up question based on the incorrect premise established in R001.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "The response addresses the seeker's mention of a new perspective but misidentifies the source of that perspective.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 1,
+      "derived_error_indexes": [
+        0
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 1,
+        "q_rationale": {
+          "current_need": "The seeker is sharing how a conversation with an old college friend provided her with a new perspective on her thesis and helped her feel better.",
+          "response_unit_ids": [
+            "R001"
+          ],
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "The supporter commits a material error by misattributing the source of the seeker's new perspective. The seeker explicitly states in C:T013 that 'we' (referring to her and the old college friend mentioned in C:T003 and C:T005) chatted for a while and that this conversation helped her see things from a different perspective. The supporter incorrectly claims that 'Talking with me' provided this perspective."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "contradicted",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The supporter asserts that the seeker's new perspective came from talking to the supporter, but the seeker's turn C:T013 indicates the perspective came from a conversation with her old college friend."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a follow-up question based on the incorrect premise established in R001."
+          }
+        ],
+        "coverage": "The response addresses the seeker's mention of a new perspective but misidentifies the source of that perspective.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": -0.75,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "7c6c12a169e259fc87c53a4e54e4d91ba4be2b76f6cd61cd8557c23e0e6d376c",
+      "adapted_final_sha256": "37340f4d235673f891150e67bf486ed2e1ca33bcfd01492e294ef5eaeffb92a7",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 1,\n  \"q_rationale\": {\n    \"current_need\": \"The seeker is sharing how a conversation with an old college friend provided her with a new perspective on her thesis and helped her feel better.\",\n    \"response_unit_ids\": [\n      \"R001\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T013\"\n    ],\n    \"reason\": \"The supporter commits a material error by misattributing the source of the seeker's new perspective. The seeker explicitly states in C:T013 that 'we' (referring to her and the old college friend mentioned in C:T003 and C:T005) chatted for a while and that this conversation helped her see things from a different perspective. The supporter incorrectly claims that 'Talking with me' provided this perspective.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"contradicted\",\n      \"severity\": 1,\n      \"source_turn_ids\": [\n        \"C:T013\"\n      ],\n      \"reason\": \"The supporter asserts that the seeker's new perspective came from talking to the supporter, but the seeker's turn C:T013 indicates the perspective came from a conversation with her old college friend.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a follow-up question based on the incorrect premise established in R001.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the seeker's mention of a new perspective but misidentifies the source of that perspective.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 231.2792232320062,
+  "API_usd": 0
+}

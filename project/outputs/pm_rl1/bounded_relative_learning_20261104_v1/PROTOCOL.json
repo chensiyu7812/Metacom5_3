@@ -1,0 +1,33 @@
+{
+  "scope": "REAL_DATA_RELATIVE_FEEDBACK_DIAGNOSTIC",
+  "feedback_protocol": "750f449484e769d4699f0015e86c6ce9c915d4e0f90921b7a916706df5d60bb3",
+  "endpoints_identity": "91ac00abdeff4e3268533674e44e56b5fd6ad2f2ce1a93cf3b1706c3dffd3c84",
+  "cost_model_identity": "f91aff500fec7b0dd119abf6a1c856c36f413202d6bc84f832c5ea6ff1a42375",
+  "weights": [
+    0.0,
+    0.05,
+    0.2
+  ],
+  "training_weight": 0.05,
+  "seeds": [
+    17,
+    23,
+    42
+  ],
+  "episodes_per_seed": 128,
+  "batch_size": 16,
+  "supervised": {
+    "epochs": 50,
+    "batch_size": 64,
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "value_head_only_steps": 500
+  },
+  "training_data": "four original train prefixes; fixed candidate tree; no dev/test",
+  "feedback_utility": "ordinal +1/0/-1 relative OFF; includes overall harm; not q/m or human cardinal values",
+  "cost_uncertainty": "short paths extrapolate per-component overhead; +/-50% overhead and held-prefix p90 G error sensitivity",
+  "completion_rule": "all preselected endpoints must have resolved feedback; never discard by score",
+  "formal_natural_qualification": false,
+  "permission": "Current researcher request: 好的，试试看，看看能不能解决现在的问题。",
+  "identity": "2623f82f9ba50355651c570ce076f4f9911709ab6f91c4fb8edbfcfcc8f48cfc"
+}

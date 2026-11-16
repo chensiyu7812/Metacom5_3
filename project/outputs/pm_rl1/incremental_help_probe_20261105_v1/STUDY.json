@@ -1,0 +1,79 @@
+{
+  "API_cost_usd": 0,
+  "cards_identity": "1e863da7eae51c864d1d0f2a5a5c3415e4997881090610e7df93691c1f39ab29",
+  "cases": [
+    "N06",
+    "N13"
+  ],
+  "conclusions": [
+    "Evaluate factual use, support-action change, and judged helpfulness separately.",
+    "OFF may already provide the same useful action; this falsifies claimed increment for that reply.",
+    "TARGET_ONLY is not a head-selection action; REAL_MS_PATH acquires every preceding resource.",
+    "Both Gs use identical system/user messages. No hypothesized benefit, reference answer or human label is injected.",
+    "No source mention reward, no zero-filled failures, no new human questionnaire automatically.",
+    "One greedy response per condition; no causal population or generalization claim; G timing is not deployment waiting."
+  ],
+  "hypotheses": [
+    {
+      "case": "N06",
+      "hypothesis": {
+        "anchors": [
+          "H017:T005",
+          "H017:T011",
+          "H017:T013",
+          "H017:T017"
+        ],
+        "caveats": [
+          "考虑与导师谈并不表示已经谈过。",
+          "不能把更早物理课老师与当前研究导师当成同一人。",
+          "不评估医学诊疗正确性。"
+        ],
+        "disconfirmation": "ON只重复身体不适、放慢节奏或沟通导师；历史未改变方案，或引用过载反而增加压力。",
+        "hypothesis": "已有接近退课的过载经历、珍惜使自己开心的活动；研究导师曾支持。可探讨研究的有限范围或延期，不默认牺牲社团。",
+        "incremental_information": "当前已经说社团是休息和身体不适；新增的是过去过载程度、保留活动的明确意愿及这位导师曾支持。",
+        "reasonable_OFF": "只凭当前身体不适和犹豫，也能建议暂缓承诺或与导师沟通；这些一般建议本身不能证明历史贡献。",
+        "target": "H017"
+      },
+      "target": "H017"
+    },
+    {
+      "case": "N13",
+      "hypothesis": {
+        "anchors": [
+          "H009:T007",
+          "H009:T009",
+          "H009:T010"
+        ],
+        "caveats": [
+          "过去一次的解释疲惫不是稳定人格或永不求助偏好。",
+          "H008计划写信，未证明写过、送过或有效。",
+          "研究者偏好不是这位seeker的个人档案。"
+        ],
+        "disconfirmation": "ON只是复述疲惫或另加待办；OFF已同样降低负担；泛泛关怀不能证明特定事实有效。",
+        "hypothesis": "之前担心老师误解，且反复解释使她疲惫；可降低求助负担，保留不再解释全部的选择，而非再次泛泛建议向多人讲述。",
+        "incremental_information": "当前提到怕给人添负担、和父母争执；没有说曾担心老师误解或已厌倦重复解释。",
+        "reasonable_OFF": "倾听、承认压力、允许暂不行动本来就是合理策略；任何问句都不能自动判坏。",
+        "target": "H009"
+      },
+      "target": "H009"
+    }
+  ],
+  "identity": "2d0c290abfbd6c13862810cd963cdfbc371b292a92ddba16e07f11b16397f836",
+  "inputs_identity": "7cc9ce80e2230e12a7794b6ce0a882264f99cfc31cb63c8cf3824947968fadcc",
+  "max_new_alternate_G": 8,
+  "max_new_original_G": 3,
+  "old_original_inputs_reused": 5,
+  "original_protocol": "727300ed8970c1c3d97685967f155da2c5e2d809d5d52a2cdf56f6e68eacaa7c",
+  "qualified_rewards": 0,
+  "reused_identity": "992543d3fa48803b76bc32f52af8fc8b8541ffb20362dd1535195a02cc91b67a",
+  "scope": "TWO_CASE_INCREMENTAL_INFORMATION_MECHANISM_DIAGNOSTIC",
+  "selection": "Based on current missing constraints and exact legal past source, before any new output; original OFF/MS1 inspected for baseline interpretation.",
+  "source_hashes": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/feedback_and_opportunity_20261105_v1/OPPORTUNITIES_PRIVATE.json": "19341377bc0e4096cd842a03e20bb22207bd63ad4b953fc2a9082f51fc4c851a",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/feedback_and_opportunity_20261105_v1/OPPORTUNITY_SOURCES.json": "94e6bc6bbac92ec2b0e0298a76345902d961644aa82da74e04c65a52fd841a5f",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/organized_initial_generation_20261103_v2/RESPONSES_PRIVATE.json": "06c911ddc0ff01b18360edb366592148445be7998ee41af9f60c2703838cdf98",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/organized_initial_training_20261103_v2/MENU_PRIVATE.json": "2ba3013190bec232d45fbaf5643fa790b9405355b91674734784886e681977a5",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/organized_initial_training_20261103_v2/PACKAGE_MANIFEST.json": "63f2507a35222b707d6603f796abce33247a15c42d88c0d64126716188389c68"
+  },
+  "training_updates": 0
+}

@@ -1,0 +1,36 @@
+{
+  "transport": "deepseek",
+  "request_identity": "972920659acb0324c979c090111161d5caf903a48e4c534caa3884aeb2ac8472",
+  "native_thinking": "enabled",
+  "request_started_unix": 1792637703.3757408,
+  "response_headers": {
+    "Date": "Thu, 22 Oct 2026 02:55:03 GMT"
+  },
+  "id": "1bb04034-b41e-4e3d-b324-d68ce7b21eaf",
+  "model": "deepseek-flash",
+  "created": 1792637703,
+  "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "usage": {
+    "prompt_tokens": 10554,
+    "completion_tokens": 986,
+    "total_tokens": 11540,
+    "prompt_tokens_details": {
+      "cached_tokens": 2304
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 670
+    },
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 8250
+  },
+  "choices": [
+    {
+      "message": {
+        "content": "{\"status\":\"scored\",\"q\":4,\"q_rationale\":{\"current_need\":\"Reassurance that it is okay to talk, plus a welcoming invitation to begin when ready.\",\"response_unit_ids\":[\"R001\",\"R002\",\"R003\"],\"source_turn_ids\":[\"C:T000\"],\"reason\":\"The reply directly answers the seeker's permission-seeking question, offers non-intrusive presence, and invites them to share without demanding detail. That fully fits this brief opening turn.\"},\"assessments\":[{\"response_unit_id\":\"R001\",\"relation\":\"non_factual\",\"severity\":0,\"source_turn_ids\":[],\"reason\":\"A generic evaluative reassurance responding to the seeker's question; it does not assert a specific personal fact about the user.\"},{\"response_unit_id\":\"R002\",\"relation\":\"non_factual\",\"severity\":0,\"source_turn_ids\":[],\"reason\":\"An offer of present listening support; it makes no personal biographical or user-specific factual claim.\"},{\"response_unit_id\":\"R003\",\"relation\":\"non_factual\",\"severity\":0,\"source_turn_ids\":[],\"reason\":\"An open, non-presuppositional invitation to talk; it does not assert that the user has already disclosed a particular issue.\"}],\"coverage\":\"Reviewed the final seeker turn and the supplied past-session context. The reply contains no specific personal factual claims requiring historical support, and its brief reassurance and invitation are appropriate for this opening turn.\",\"uncertainty_reasons\":[]}",
+        "reasoning_content": "We need answer JSON only. Need evaluate candidate reply to final seeker turn: \"Hey, I just need to talk to someone. Is that okay?\" New AI assistant. Reply units:\nR001 \"That sounds completely okay.\"\nR002 \"I'm here to listen.\"\nR003 \"What's on your mind?\"\n\nNeed q. Current need: reassurance that talking is okay, permission, presence, invite. Reply does exactly. q=4 likely. Check misuse factual claims. No personal facts about user. \"I'm here to listen\" is role presence, ordinary, not false? New AI can listen. \"That sounds completely okay\" generic evaluative. No unsupported personal facts. Assessments likely non_factual for all, severity 0. Need source_turn_ids for non_factual can be empty? Schema says source_turn_ids array, nonempty for supported or contradicted. For non_factual can be empty. Need coverage string. q_rationale object current_need, response_unit_ids nonempty, source_turn_ids nonempty legal source-turn IDs. For q rationale source turn IDs maybe C:T000. Since N current user ask. Could cite C:T000. Need assessments with exact fields. For non_factual source_turn_ids can be [] perhaps. Need maybe mention C:T000 reason? Relation non_factual, severity 0, source_turn_ids []? It says each object source_turn_ids array; nonempty for supported or contradicted. So empty okay. But q_rationale requires nonempty source_turn_ids. Use C:T000.\n\nNeed ensure no status uncertain. q integer. Explain decisive reason. q_rationale reason mention direct reassurance and invitation. Coverage nonempty string. No m output. Assessments:\nR001 relation non_factual severity 0 source_turn_ids [] reason evaluative reassurance; \"completely okay\" generic not personal fact. Maybe it's an evaluative response to user's request; no factual claim. \nR002 non_factual severity 0 source_turn_ids [] reason offer of presence/listening; role-appropriate, no biography.\nR003 non_factual severity 0 source_turn_ids [] reason open invitation; no personal factual presupposition.\nCould maybe relation supported for R001? It's not a personal fact, non_factual. Good.\n\nNeed q_rationale source_turn_ids nonempty: [\"C:T000\"]. response_unit_ids all three. current_need: \"reassurance that it's okay to talk and an invitation to begin.\" Reason.\n\nNeed exactly top-level fields: status, q, q_rationale, assessments, coverage, uncertainty_reasons. Good.\n\nNeed no additional text. final JSON.\n\nCheck \"That sounds completely okay.\" Could there be issue: The user asks \"is that okay?\" Reply \"That sounds completely okay\" maybe odd because \"sounds okay\" but supportive. Fine.\n\nPotential \"I'm here to listen\" maybe assistant claims ongoing availability? It's current only; okay. No misuse.\n\nq=4 because brief acknowledgment/question all this turn calls for. Good.\n\nNeed coverage string audit. mention complete current prefix and past sessions checked; no personal claims requiring historical support. No unresolved ambiguity.\n\nEnsure q_rationale exactly four fields. Good.\n\nFinal."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "total_seconds": 6.030066790001001
+}

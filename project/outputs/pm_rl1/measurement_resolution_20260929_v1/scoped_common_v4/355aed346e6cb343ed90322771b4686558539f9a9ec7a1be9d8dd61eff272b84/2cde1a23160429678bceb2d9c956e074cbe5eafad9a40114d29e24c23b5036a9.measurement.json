@@ -1,0 +1,148 @@
+{
+  "response_sha256": "16834ac17e414203f18d19a6511f98253832a65882bc4ebd2b126884c6f3e8a1",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "c710c79b9f07279fbffc462ff2acf617e299254591a1e49b0603096ffa5ee5c6",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses feelings of uncertainty, burden, and trust difficulties regarding asking for help.",
+      "response_quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling? Sometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "evidence": [
+        {
+          "source_id": "C:T008",
+          "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too."
+        },
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "The reply coherently mirrors the user's emotional state ('weight of uncertainty', 'tough') without inventing facts. It respects the user's stated constraint in C:T012 ('hard for me to ask for help') by framing the suggestion tentatively ('Have you thought about?') rather than directive. It provides appropriate empathy and a gentle option that aligns with the user's history of needing support (H006-H010) while acknowledging the hesitation. There are no boundary violations or mismatches."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Fully responds to C:T012. Addresses the emotional tone. Does not invent facts (no personal history claimed). Respectful of trust constraint.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling? Sometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 292
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses feelings of uncertainty, burden, and trust difficulties regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T012"
+      ],
+      "reason": "The reply coherently mirrors the user's emotional state ('weight of uncertainty', 'tough') without inventing facts. It respects the user's stated constraint in C:T012 ('hard for me to ask for help') by framing the suggestion tentatively ('Have you thought about?') rather than directive. It provides appropriate empathy and a gentle option that aligns with the user's history of needing support (H006-H010) while acknowledging the hesitation. There are no boundary violations or mismatches."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Fully responds to C:T012. Addresses the emotional tone. Does not invent facts (no personal history claimed). Respectful of trust constraint.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses feelings of uncertainty, burden, and trust difficulties regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T012"
+      ],
+      "reason": "The reply coherently mirrors the user's emotional state ('weight of uncertainty', 'tough') without inventing facts. It respects the user's stated constraint in C:T012 ('hard for me to ask for help') by framing the suggestion tentatively ('Have you thought about?') rather than directive. It provides appropriate empathy and a gentle option that aligns with the user's history of needing support (H006-H010) while acknowledging the hesitation. There are no boundary violations or mismatches."
+    },
+    "assessments": [],
+    "coverage": "Fully responds to C:T012. Addresses the emotional tone. Does not invent facts (no personal history claimed). Respectful of trust constraint.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses feelings of uncertainty, burden, and trust difficulties regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T012"
+      ],
+      "reason": "The reply coherently mirrors the user's emotional state ('weight of uncertainty', 'tough') without inventing facts. It respects the user's stated constraint in C:T012 ('hard for me to ask for help') by framing the suggestion tentatively ('Have you thought about?') rather than directive. It provides appropriate empathy and a gentle option that aligns with the user's history of needing support (H006-H010) while acknowledging the hesitation. There are no boundary violations or mismatches."
+    },
+    "assessments": [],
+    "coverage": "Fully responds to C:T012. Addresses the emotional tone. Does not invent facts (no personal history claimed). Respectful of trust constraint.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

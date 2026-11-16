@@ -1,0 +1,653 @@
+﻿2026-10-23T01:28:36.7567184Z Current runner version: '2.338.0'
+2026-10-23T01:28:36.7584806Z ##[group]Runner Image Provisioner
+2026-10-23T01:28:36.7585339Z Hosted Compute Agent
+2026-10-23T01:28:36.7585795Z Version: 20261012.601
+2026-10-23T01:28:36.7586219Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-23T01:28:36.7586693Z Build Date: 2026-10-12T17:48:21Z
+2026-10-23T01:28:36.7587125Z Worker ID: {6f1f876b-8c7b-49ee-aa64-a9ee30942c02}
+2026-10-23T01:28:36.7587571Z Region: centralus
+2026-10-23T01:28:36.7587948Z Cloud: Azure
+2026-10-23T01:28:36.7588311Z ##[endgroup]
+2026-10-23T01:28:36.7589395Z ##[group]Operating System
+2026-10-23T01:28:36.7589836Z Ubuntu
+2026-10-23T01:28:36.7590164Z 24.04.5
+2026-10-23T01:28:36.7590542Z LTS
+2026-10-23T01:28:36.7590895Z ##[endgroup]
+2026-10-23T01:28:36.7591222Z ##[group]Runner Image
+2026-10-23T01:28:36.7591629Z Image: ubuntu-24.04
+2026-10-23T01:28:36.7592454Z Version: 20261012.334.1
+2026-10-23T01:28:36.7593301Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-23T01:28:36.7594185Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-23T01:28:36.7594800Z ##[endgroup]
+2026-10-23T01:28:36.7595523Z ##[group]GITHUB_TOKEN Permissions
+2026-10-23T01:28:36.7597079Z Contents: read
+2026-10-23T01:28:36.7597431Z Metadata: read
+2026-10-23T01:28:36.7597816Z Packages: read
+2026-10-23T01:28:36.7598173Z ##[endgroup]
+2026-10-23T01:28:36.7599640Z Secret source: Actions
+2026-10-23T01:28:36.7600301Z Cache mode: write
+2026-10-23T01:28:36.7600951Z Prepare workflow directory
+2026-10-23T01:28:36.8132034Z Prepare all required actions
+2026-10-23T01:28:36.8163021Z Getting action download info
+2026-10-23T01:28:37.0515639Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-23T01:28:37.2117108Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-23T01:28:37.3253115Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-23T01:28:37.5042053Z Complete job name: pytest
+2026-10-23T01:28:37.5496307Z ##[group]Run actions/checkout@v4
+2026-10-23T01:28:37.5496710Z with:
+2026-10-23T01:28:37.5496962Z   repository: chensiyu7812/Metacom5_3
+2026-10-23T01:28:37.5499291Z   token: ***
+2026-10-23T01:28:37.5499527Z   ssh-strict: true
+2026-10-23T01:28:37.5499766Z   ssh-user: git
+2026-10-23T01:28:37.5500014Z   persist-credentials: true
+2026-10-23T01:28:37.5500279Z   clean: true
+2026-10-23T01:28:37.5500527Z   sparse-checkout-cone-mode: true
+2026-10-23T01:28:37.5500809Z   fetch-depth: 1
+2026-10-23T01:28:37.5501045Z   fetch-tags: false
+2026-10-23T01:28:37.5501289Z   show-progress: true
+2026-10-23T01:28:37.5501536Z   lfs: false
+2026-10-23T01:28:37.5501761Z   submodules: false
+2026-10-23T01:28:37.5502009Z   set-safe-directory: true
+2026-10-23T01:28:37.5502286Z   allow-unsafe-pr-checkout: false
+2026-10-23T01:28:37.5502651Z env:
+2026-10-23T01:28:37.5502875Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:28:37.5503142Z ##[endgroup]
+2026-10-23T01:28:37.6151162Z Syncing repository: chensiyu7812/Metacom5_3
+2026-10-23T01:28:37.6152744Z ##[group]Getting Git version info
+2026-10-23T01:28:37.6153150Z Working directory is '/home/runner/work/Metacom5_3/Metacom5_3'
+2026-10-23T01:28:37.6154109Z [command]/usr/bin/git version
+2026-10-23T01:28:37.6209652Z git version 2.55.0
+2026-10-23T01:28:37.6225347Z ##[endgroup]
+2026-10-23T01:28:37.6239545Z Temporarily overriding HOME='/home/runner/work/_temp/f1fa7d6b-f798-4ffa-9506-5fbd403879e3' before making global git config changes
+2026-10-23T01:28:37.6240991Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T01:28:37.6244092Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-23T01:28:37.6291112Z Deleting the contents of '/home/runner/work/Metacom5_3/Metacom5_3'
+2026-10-23T01:28:37.6293938Z ##[group]Initializing the repository
+2026-10-23T01:28:37.6297589Z [command]/usr/bin/git init /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-23T01:28:37.6386157Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-23T01:28:37.6387372Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-23T01:28:37.6388211Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-23T01:28:37.6389022Z hint: call:
+2026-10-23T01:28:37.6389369Z hint:
+2026-10-23T01:28:37.6389826Z hint: 	git config --global init.defaultBranch <name>
+2026-10-23T01:28:37.6390365Z hint:
+2026-10-23T01:28:37.6390873Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-23T01:28:37.6391682Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-23T01:28:37.6392347Z hint:
+2026-10-23T01:28:37.6392710Z hint: 	git branch -m <name>
+2026-10-23T01:28:37.6393122Z hint:
+2026-10-23T01:28:37.6393679Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-23T01:28:37.6398737Z Initialized empty Git repository in /home/runner/work/Metacom5_3/Metacom5_3/.git/
+2026-10-23T01:28:37.6406110Z [command]/usr/bin/git remote add origin https://github.com/chensiyu7812/Metacom5_3
+2026-10-23T01:28:37.6457822Z ##[endgroup]
+2026-10-23T01:28:37.6458626Z ##[group]Disabling automatic garbage collection
+2026-10-23T01:28:37.6459231Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-23T01:28:37.6478952Z ##[endgroup]
+2026-10-23T01:28:37.6479575Z ##[group]Setting up auth
+2026-10-23T01:28:37.6485320Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T01:28:37.6518832Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T01:28:37.6805733Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T01:28:37.6836307Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T01:28:37.7016344Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T01:28:37.7048083Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T01:28:37.7226735Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-23T01:28:37.7261800Z ##[endgroup]
+2026-10-23T01:28:37.7262358Z ##[group]Fetching the repository
+2026-10-23T01:28:37.7267861Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +b2d5743f42a66d72188ea07536c023ae48e6c1c4:refs/remotes/pull/3/merge
+2026-10-23T01:28:44.7892428Z From https://github.com/chensiyu7812/Metacom5_3
+2026-10-23T01:28:44.7893579Z  * [new ref]         b2d5743f42a66d72188ea07536c023ae48e6c1c4 -> pull/3/merge
+2026-10-23T01:28:44.7895611Z ##[endgroup]
+2026-10-23T01:28:44.7896400Z ##[group]Determining the checkout info
+2026-10-23T01:28:44.7897978Z ##[endgroup]
+2026-10-23T01:28:44.7902809Z [command]/usr/bin/git sparse-checkout disable
+2026-10-23T01:28:44.7949618Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-23T01:28:44.7979029Z ##[group]Checking out the ref
+2026-10-23T01:28:44.7981390Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+2026-10-23T01:28:45.8034932Z Updating files:  45% (1466/3192)
+2026-10-23T01:28:45.8084112Z Updating files:  46% (1469/3192)
+2026-10-23T01:28:45.8112076Z Updating files:  47% (1501/3192)
+2026-10-23T01:28:45.8580153Z Updating files:  48% (1533/3192)
+2026-10-23T01:28:45.8603335Z Updating files:  49% (1565/3192)
+2026-10-23T01:28:45.8619069Z Updating files:  50% (1596/3192)
+2026-10-23T01:28:45.8635081Z Updating files:  51% (1628/3192)
+2026-10-23T01:28:45.8655602Z Updating files:  52% (1660/3192)
+2026-10-23T01:28:45.8677126Z Updating files:  53% (1692/3192)
+2026-10-23T01:28:45.8699514Z Updating files:  54% (1724/3192)
+2026-10-23T01:28:45.8719310Z Updating files:  55% (1756/3192)
+2026-10-23T01:28:45.8740220Z Updating files:  56% (1788/3192)
+2026-10-23T01:28:45.8756874Z Updating files:  57% (1820/3192)
+2026-10-23T01:28:45.8777107Z Updating files:  58% (1852/3192)
+2026-10-23T01:28:45.8796255Z Updating files:  59% (1884/3192)
+2026-10-23T01:28:45.8819567Z Updating files:  60% (1916/3192)
+2026-10-23T01:28:45.8837508Z Updating files:  61% (1948/3192)
+2026-10-23T01:28:45.8855244Z Updating files:  62% (1980/3192)
+2026-10-23T01:28:45.8878987Z Updating files:  63% (2011/3192)
+2026-10-23T01:28:45.8904077Z Updating files:  64% (2043/3192)
+2026-10-23T01:28:45.8969562Z Updating files:  65% (2075/3192)
+2026-10-23T01:28:45.8970154Z Updating files:  66% (2107/3192)
+2026-10-23T01:28:45.8974171Z Updating files:  67% (2139/3192)
+2026-10-23T01:28:45.8989705Z Updating files:  68% (2171/3192)
+2026-10-23T01:28:45.9013211Z Updating files:  69% (2203/3192)
+2026-10-23T01:28:45.9036316Z Updating files:  70% (2235/3192)
+2026-10-23T01:28:45.9056196Z Updating files:  71% (2267/3192)
+2026-10-23T01:28:45.9076125Z Updating files:  72% (2299/3192)
+2026-10-23T01:28:45.9100015Z Updating files:  73% (2331/3192)
+2026-10-23T01:28:45.9124370Z Updating files:  74% (2363/3192)
+2026-10-23T01:28:45.9142197Z Updating files:  75% (2394/3192)
+2026-10-23T01:28:45.9160022Z Updating files:  76% (2426/3192)
+2026-10-23T01:28:45.9177737Z Updating files:  77% (2458/3192)
+2026-10-23T01:28:45.9194775Z Updating files:  78% (2490/3192)
+2026-10-23T01:28:45.9240279Z Updating files:  79% (2522/3192)
+2026-10-23T01:28:45.9255593Z Updating files:  80% (2554/3192)
+2026-10-23T01:28:45.9272516Z Updating files:  81% (2586/3192)
+2026-10-23T01:28:45.9293560Z Updating files:  82% (2618/3192)
+2026-10-23T01:28:45.9319865Z Updating files:  83% (2650/3192)
+2026-10-23T01:28:45.9350017Z Updating files:  84% (2682/3192)
+2026-10-23T01:28:45.9376063Z Updating files:  85% (2714/3192)
+2026-10-23T01:28:45.9391329Z Updating files:  86% (2746/3192)
+2026-10-23T01:28:45.9404788Z Updating files:  87% (2778/3192)
+2026-10-23T01:28:45.9419019Z Updating files:  88% (2809/3192)
+2026-10-23T01:28:45.9434134Z Updating files:  89% (2841/3192)
+2026-10-23T01:28:45.9455214Z Updating files:  90% (2873/3192)
+2026-10-23T01:28:45.9472889Z Updating files:  91% (2905/3192)
+2026-10-23T01:28:45.9488654Z Updating files:  92% (2937/3192)
+2026-10-23T01:28:45.9504163Z Updating files:  93% (2969/3192)
+2026-10-23T01:28:45.9520657Z Updating files:  94% (3001/3192)
+2026-10-23T01:28:45.9534619Z Updating files:  95% (3033/3192)
+2026-10-23T01:28:45.9548752Z Updating files:  96% (3065/3192)
+2026-10-23T01:28:45.9562030Z Updating files:  97% (3097/3192)
+2026-10-23T01:28:45.9574473Z Updating files:  98% (3129/3192)
+2026-10-23T01:28:45.9589941Z Updating files:  99% (3161/3192)
+2026-10-23T01:28:45.9590200Z Updating files: 100% (3192/3192)
+2026-10-23T01:28:45.9590490Z Updating files: 100% (3192/3192), done.
+2026-10-23T01:28:45.9817823Z Note: switching to 'refs/remotes/pull/3/merge'.
+2026-10-23T01:28:45.9818060Z 
+2026-10-23T01:28:45.9818247Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-23T01:28:45.9818733Z changes and commit them, and you can discard any commits you make in this
+2026-10-23T01:28:45.9819201Z state without impacting any branches by switching back to a branch.
+2026-10-23T01:28:45.9819456Z 
+2026-10-23T01:28:45.9819660Z If you want to create a new branch to retain commits you create, you may
+2026-10-23T01:28:45.9819952Z do so (now or later) by using -c with the switch command. Example:
+2026-10-23T01:28:45.9820236Z 
+2026-10-23T01:28:45.9820325Z   git switch -c <new-branch-name>
+2026-10-23T01:28:45.9820439Z 
+2026-10-23T01:28:45.9820518Z Or undo this operation with:
+2026-10-23T01:28:45.9820823Z 
+2026-10-23T01:28:45.9820892Z   git switch -
+2026-10-23T01:28:45.9820978Z 
+2026-10-23T01:28:45.9821128Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-23T01:28:45.9821578Z 
+2026-10-23T01:28:45.9821819Z HEAD is now at b2d5743 Merge b1231e6d8fa1a1d4a3f6643c4dd7291c8f69bc37 into 3c7e416a55aaca265fef63a39d9f101cde787f5b
+2026-10-23T01:28:45.9871039Z ##[endgroup]
+2026-10-23T01:28:46.0037355Z [command]/usr/bin/git log -1 --format=%H
+2026-10-23T01:28:46.0062399Z b2d5743f42a66d72188ea07536c023ae48e6c1c4
+2026-10-23T01:28:46.0444657Z ##[group]Run actions/setup-python@v5
+2026-10-23T01:28:46.0444873Z with:
+2026-10-23T01:28:46.0445028Z   python-version: 3.11
+2026-10-23T01:28:46.0445184Z   cache: pip
+2026-10-23T01:28:46.0445357Z   cache-dependency-path: project/pyproject.toml
+2026-10-23T01:28:46.0445563Z   check-latest: false
+2026-10-23T01:28:46.0447083Z   token: ***
+2026-10-23T01:28:46.0447239Z   update-environment: true
+2026-10-23T01:28:46.0447408Z   allow-prereleases: false
+2026-10-23T01:28:46.0447573Z   freethreaded: false
+2026-10-23T01:28:46.0447723Z env:
+2026-10-23T01:28:46.0447863Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:28:46.0448019Z ##[endgroup]
+2026-10-23T01:28:46.1323492Z ##[group]Installed versions
+2026-10-23T01:28:46.1449036Z (node:2087) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T01:28:46.1449707Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T01:28:46.1450232Z Successfully set up CPython (3.11.17)
+2026-10-23T01:28:46.1450579Z ##[endgroup]
+2026-10-23T01:28:46.1660856Z [command]/opt/hostedtoolcache/Python/3.11.17/x64/bin/pip cache dir
+2026-10-23T01:28:46.3853763Z /home/runner/.cache/pip
+2026-10-23T01:28:46.5816201Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.11.17-pip-c91dacf37b0ce9a42378841d216e86456836d296d8459cd0eeee957eb4521c95
+2026-10-23T01:28:46.5884985Z (node:2087) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T01:28:47.7497623Z Received 92274688 of 306462417 (30.1%), 87.9 MBs/sec
+2026-10-23T01:28:48.7495778Z Received 159383552 of 306462417 (52.0%), 76.0 MBs/sec
+2026-10-23T01:28:49.5821541Z Received 306462417 of 306462417 (100.0%), 103.2 MBs/sec
+2026-10-23T01:28:49.5821979Z Cache Size: ~292 MB (306462417 B)
+2026-10-23T01:28:49.5921300Z [command]/usr/bin/tar -xf /home/runner/work/_temp/bed8b6d4-0d02-4f50-891f-e5f21227b187/cache.tzst -P -C /home/runner/work/Metacom5_3/Metacom5_3 --use-compress-program unzstd
+2026-10-23T01:28:49.9100930Z Cache restored successfully
+2026-10-23T01:28:49.9241697Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.11.17-pip-c91dacf37b0ce9a42378841d216e86456836d296d8459cd0eeee957eb4521c95
+2026-10-23T01:28:50.0027190Z ##[group]Run python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.3.1+cpu"
+2026-10-23T01:28:50.0027744Z [36;1mpython -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.3.1+cpu"[0m
+2026-10-23T01:28:50.0330837Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:28:50.0331070Z env:
+2026-10-23T01:28:50.0331233Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:28:50.0331440Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:28:50.0331726Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:28:50.0331973Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:28:50.0332196Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:28:50.0332419Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:28:50.0332656Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:28:50.0332884Z ##[endgroup]
+2026-10-23T01:28:50.5607627Z Looking in indexes: https://download.pytorch.org/whl/cpu
+2026-10-23T01:28:50.9321746Z Collecting torch==2.3.1+cpu
+2026-10-23T01:28:51.0536946Z   Using cached torch-2.3.1%2Bcpu-cp311-cp311-linux_x86_64.whl (190.4 MB)
+2026-10-23T01:28:51.3618957Z Collecting filelock (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.3630896Z   Using cached filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+2026-10-23T01:28:51.5491880Z Collecting typing-extensions>=4.8.0 (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.5503206Z   Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-23T01:28:51.6301785Z Collecting sympy (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.6313107Z   Using cached sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+2026-10-23T01:28:51.6553393Z Collecting networkx (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.6562548Z   Using cached networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+2026-10-23T01:28:51.6925709Z Collecting jinja2 (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.7074754Z   Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+2026-10-23T01:28:51.7308009Z Collecting fsspec (from torch==2.3.1+cpu)
+2026-10-23T01:28:51.7317747Z   Using cached fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+2026-10-23T01:28:51.7626548Z Collecting MarkupSafe>=2.0 (from jinja2->torch==2.3.1+cpu)
+2026-10-23T01:28:51.7780381Z   Using cached markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+2026-10-23T01:28:51.7975807Z Collecting mpmath<1.4,>=1.1.0 (from sympy->torch==2.3.1+cpu)
+2026-10-23T01:28:51.7985670Z   Using cached mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+2026-10-23T01:28:51.8009070Z Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-23T01:28:51.8017512Z Using cached filelock-3.32.3-py3-none-any.whl (98 kB)
+2026-10-23T01:28:51.8026133Z Using cached fsspec-2026.7.0-py3-none-any.whl (206 kB)
+2026-10-23T01:28:51.8199861Z Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+2026-10-23T01:28:51.8345904Z Using cached markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+2026-10-23T01:28:51.8354757Z Using cached networkx-3.6.1-py3-none-any.whl (2.1 MB)
+2026-10-23T01:28:51.8373724Z Using cached sympy-1.14.0-py3-none-any.whl (6.3 MB)
+2026-10-23T01:28:51.8399322Z Using cached mpmath-1.3.0-py3-none-any.whl (536 kB)
+2026-10-23T01:28:51.9235480Z Installing collected packages: mpmath, typing-extensions, sympy, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+2026-10-23T01:29:03.0042659Z 
+2026-10-23T01:29:03.0052367Z Successfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 sympy-1.14.0 torch-2.3.1+cpu typing-extensions-4.16.0
+2026-10-23T01:29:03.0058900Z 
+2026-10-23T01:29:03.0059220Z [notice] A new release of pip is available: 26.2.1 -> 26.2.2
+2026-10-23T01:29:03.0059636Z [notice] To update, run: pip install --upgrade pip
+2026-10-23T01:29:03.0874657Z ##[group]Run python -m pip install -e ".[dev]"
+2026-10-23T01:29:03.0874887Z [36;1mpython -m pip install -e ".[dev]"[0m
+2026-10-23T01:29:03.0931819Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:29:03.0931976Z env:
+2026-10-23T01:29:03.0932098Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:29:03.0932273Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:03.0932520Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:29:03.0932774Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:03.0933000Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:03.0933239Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:03.0933459Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:29:03.0933643Z ##[endgroup]
+2026-10-23T01:29:03.2880401Z Obtaining file:///home/runner/work/Metacom5_3/Metacom5_3/project
+2026-10-23T01:29:03.2893717Z   Installing build dependencies: started
+2026-10-23T01:29:04.0914637Z   Installing build dependencies: finished with status 'done'
+2026-10-23T01:29:04.0920321Z   Checking if build backend supports build_editable: started
+2026-10-23T01:29:04.3375922Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-23T01:29:04.3383393Z   Getting requirements to build editable: started
+2026-10-23T01:29:04.5800041Z   Getting requirements to build editable: finished with status 'done'
+2026-10-23T01:29:04.5807280Z   Preparing editable metadata (pyproject.toml): started
+2026-10-23T01:29:04.7753121Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-23T01:29:04.8751312Z Collecting httpx<1,>=0.27 (from metacom-pm==4.0.0)
+2026-10-23T01:29:04.8761665Z   Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-23T01:29:04.9974260Z Collecting numpy<3,>=1.26 (from metacom-pm==4.0.0)
+2026-10-23T01:29:04.9987726Z   Using cached numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+2026-10-23T01:29:05.1135871Z Collecting pandas<3,>=2.2 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.1148102Z   Using cached pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+2026-10-23T01:29:05.1887405Z Collecting pydantic<3,>=2.8 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.1899881Z   Using cached pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+2026-10-23T01:29:05.2256447Z Collecting PyYAML<7,>=6 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.2267351Z   Using cached pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-10-23T01:29:05.2991716Z Collecting scikit-learn<2,>=1.5 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.3003852Z   Using cached scikit_learn-1.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.3 kB)
+2026-10-23T01:29:05.3729549Z Collecting scipy<2,>=1.13 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.3741879Z   Using cached scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+2026-10-23T01:29:05.4146295Z Collecting tiktoken<0.13,>=0.12 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.4157839Z   Using cached tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (6.7 kB)
+2026-10-23T01:29:05.4172522Z Requirement already satisfied: torch<3,>=2.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from metacom-pm==4.0.0) (2.3.1+cpu)
+2026-10-23T01:29:05.4463166Z Collecting transformers<5,>=4.44 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.4473356Z   Using cached transformers-4.57.6-py3-none-any.whl.metadata (43 kB)
+2026-10-23T01:29:05.5327368Z Collecting huggingface-hub<1,>=0.24 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.5337461Z   Using cached huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)
+2026-10-23T01:29:05.5425612Z Requirement already satisfied: networkx<4,>=3.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from metacom-pm==4.0.0) (3.6.1)
+2026-10-23T01:29:05.5733902Z Collecting json-repair==0.52.4 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.5743700Z   Using cached json_repair-0.52.4-py3-none-any.whl.metadata (11 kB)
+2026-10-23T01:29:05.6037147Z Collecting jsonschema<5,>=4.18 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.6046642Z   Using cached jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-23T01:29:05.6330143Z Collecting pytest<9,>=8 (from metacom-pm==4.0.0)
+2026-10-23T01:29:05.6339526Z   Using cached pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-23T01:29:05.6585899Z Collecting anyio (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-23T01:29:05.6595536Z   Using cached anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-23T01:29:05.6917203Z Collecting certifi (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-23T01:29:05.6926647Z   Using cached certifi-2026.10.19-py3-none-any.whl.metadata (2.5 kB)
+2026-10-23T01:29:05.7145708Z Collecting httpcore==1.* (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-23T01:29:05.7155927Z   Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-23T01:29:05.7367823Z Collecting idna (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-23T01:29:05.7377423Z   Using cached idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-23T01:29:05.7575770Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-23T01:29:05.7586231Z   Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-23T01:29:05.7601187Z Requirement already satisfied: filelock in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (3.32.3)
+2026-10-23T01:29:05.7603629Z Requirement already satisfied: fsspec>=2023.5.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (2026.7.0)
+2026-10-23T01:29:05.8149513Z Collecting hf-xet<2.0.0,>=1.1.3 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:05.8159758Z   Using cached hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+2026-10-23T01:29:05.8206503Z Collecting packaging>=20.9 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:05.8215496Z   Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-23T01:29:05.8460380Z Collecting requests (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:05.8469479Z   Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-10-23T01:29:05.8729662Z Collecting tqdm>=4.42.1 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:05.8738751Z   Using cached tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+2026-10-23T01:29:05.8767965Z Requirement already satisfied: typing-extensions>=3.7.4.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (4.16.0)
+2026-10-23T01:29:05.8976773Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-23T01:29:05.8986231Z   Using cached attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-23T01:29:05.9177487Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-23T01:29:05.9186608Z   Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-23T01:29:05.9425151Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-23T01:29:05.9434490Z   Using cached referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-23T01:29:06.0816466Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-23T01:29:06.0829492Z   Using cached rpds_py-2026.9.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-23T01:29:06.1067410Z Collecting python-dateutil>=2.8.2 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-23T01:29:06.1077312Z   Using cached python_dateutil-3.0.0-py2.py3-none-any.whl.metadata (8.2 kB)
+2026-10-23T01:29:06.1388117Z Collecting pytz>=2020.1 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-23T01:29:06.1397267Z   Using cached pytz-2026.5-py2.py3-none-any.whl.metadata (22 kB)
+2026-10-23T01:29:06.1601060Z Collecting tzdata>=2022.7 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-23T01:29:06.1609928Z   Using cached tzdata-2026.5-py2.py3-none-any.whl.metadata (1.4 kB)
+2026-10-23T01:29:06.1795878Z Collecting annotated-types>=0.6.0 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.1804839Z   Using cached annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-23T01:29:06.6213051Z Collecting pydantic-core==2.50.1 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.6225710Z   Using cached pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+2026-10-23T01:29:06.6413224Z Collecting typing-inspection>=0.4.4 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.6422642Z   Using cached typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-23T01:29:06.6615757Z Collecting iniconfig>=1 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.6624957Z   Using cached iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+2026-10-23T01:29:06.6828254Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.6837311Z   Using cached pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+2026-10-23T01:29:06.7061161Z Collecting pygments>=2.7.2 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-23T01:29:06.7072094Z   Using cached pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-23T01:29:06.7336824Z Collecting joblib>=1.4.0 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-23T01:29:06.7346735Z   Using cached joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+2026-10-23T01:29:06.7635328Z Collecting narwhals>=2.0.1 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-23T01:29:06.7645435Z   Using cached narwhals-2.27.1-py3-none-any.whl.metadata (15 kB)
+2026-10-23T01:29:06.7843193Z Collecting threadpoolctl>=3.5.0 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-23T01:29:06.7853004Z   Using cached threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+2026-10-23T01:29:07.0259612Z Collecting regex>=2022.1.18 (from tiktoken<0.13,>=0.12->metacom-pm==4.0.0)
+2026-10-23T01:29:07.0273212Z   Using cached regex-2026.9.29-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+2026-10-23T01:29:07.0311205Z Requirement already satisfied: sympy in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from torch<3,>=2.3->metacom-pm==4.0.0) (1.14.0)
+2026-10-23T01:29:07.0314250Z Requirement already satisfied: jinja2 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from torch<3,>=2.3->metacom-pm==4.0.0) (3.1.6)
+2026-10-23T01:29:07.1169365Z Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers<5,>=4.44->metacom-pm==4.0.0)
+2026-10-23T01:29:07.1181632Z   Using cached tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+2026-10-23T01:29:07.2305871Z Collecting safetensors>=0.4.3 (from transformers<5,>=4.44->metacom-pm==4.0.0)
+2026-10-23T01:29:07.2318127Z   Using cached safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+2026-10-23T01:29:07.2636309Z Collecting cloudpickle>=3.0 (from joblib>=1.4.0->scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-23T01:29:07.2646228Z   Using cached cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+2026-10-23T01:29:07.2862974Z Collecting six>=1.6 (from python-dateutil>=2.8.2->pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-23T01:29:07.2872469Z   Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-10-23T01:29:07.3641767Z Collecting charset_normalizer<4,>=2 (from requests->huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:07.3653905Z   Using cached charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-23T01:29:07.3905922Z Collecting urllib3<3,>=1.26 (from requests->huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-23T01:29:07.3915991Z   Using cached urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+2026-10-23T01:29:07.3997163Z Requirement already satisfied: MarkupSafe>=2.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from jinja2->torch<3,>=2.3->metacom-pm==4.0.0) (3.0.3)
+2026-10-23T01:29:07.4009277Z Requirement already satisfied: mpmath<1.4,>=1.1.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from sympy->torch<3,>=2.3->metacom-pm==4.0.0) (1.3.0)
+2026-10-23T01:29:07.4034971Z Using cached json_repair-0.52.4-py3-none-any.whl (26 kB)
+2026-10-23T01:29:07.4043883Z Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-23T01:29:07.4052587Z Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-23T01:29:07.4061284Z Using cached huggingface_hub-0.36.2-py3-none-any.whl (566 kB)
+2026-10-23T01:29:07.4071344Z Using cached hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+2026-10-23T01:29:07.4090659Z Using cached jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-23T01:29:07.4099321Z Using cached numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+2026-10-23T01:29:07.4151556Z Using cached pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+2026-10-23T01:29:07.4189673Z Using cached pydantic-2.14.1-py3-none-any.whl (488 kB)
+2026-10-23T01:29:07.4199258Z Using cached pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+2026-10-23T01:29:07.4212472Z Using cached pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-23T01:29:07.4221544Z Using cached pluggy-1.7.0-py3-none-any.whl (27 kB)
+2026-10-23T01:29:07.4230149Z Using cached pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2026-10-23T01:29:07.4240364Z Using cached scikit_learn-1.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.3 MB)
+2026-10-23T01:29:07.4269878Z Using cached scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+2026-10-23T01:29:07.4362187Z Using cached tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl (1.2 MB)
+2026-10-23T01:29:07.4374228Z Using cached transformers-4.57.6-py3-none-any.whl (12.0 MB)
+2026-10-23T01:29:07.4411684Z Using cached tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+2026-10-23T01:29:07.4428210Z Using cached annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-23T01:29:07.4436678Z Using cached attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-23T01:29:07.4444972Z Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-23T01:29:07.4453230Z Using cached iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+2026-10-23T01:29:07.4461344Z Using cached joblib-1.6.0-py3-none-any.whl (306 kB)
+2026-10-23T01:29:07.4470266Z Using cached cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+2026-10-23T01:29:07.4478332Z Using cached jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-23T01:29:07.4486516Z Using cached narwhals-2.27.1-py3-none-any.whl (483 kB)
+2026-10-23T01:29:07.4495676Z Using cached packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-23T01:29:07.4525162Z Using cached pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-23T01:29:07.4525650Z Using cached python_dateutil-3.0.0-py2.py3-none-any.whl (94 kB)
+2026-10-23T01:29:07.4529945Z Using cached pytz-2026.5-py2.py3-none-any.whl (506 kB)
+2026-10-23T01:29:07.4538712Z Using cached referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-23T01:29:07.4546953Z Using cached regex-2026.9.29-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (804 kB)
+2026-10-23T01:29:07.4556763Z Using cached requests-2.34.2-py3-none-any.whl (73 kB)
+2026-10-23T01:29:07.4565662Z Using cached charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (269 kB)
+2026-10-23T01:29:07.4574436Z Using cached idna-3.20-py3-none-any.whl (69 kB)
+2026-10-23T01:29:07.4582795Z Using cached urllib3-2.8.0-py3-none-any.whl (135 kB)
+2026-10-23T01:29:07.4591412Z Using cached certifi-2026.10.19-py3-none-any.whl (136 kB)
+2026-10-23T01:29:07.4599936Z Using cached rpds_py-2026.9.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (375 kB)
+2026-10-23T01:29:07.4609048Z Using cached safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+2026-10-23T01:29:07.4618143Z Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-10-23T01:29:07.4626262Z Using cached threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+2026-10-23T01:29:07.4634432Z Using cached tqdm-4.70.1-py3-none-any.whl (80 kB)
+2026-10-23T01:29:07.4642840Z Using cached typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-23T01:29:07.4650980Z Using cached tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+2026-10-23T01:29:07.4659762Z Using cached anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-23T01:29:07.6199685Z Building wheels for collected packages: metacom-pm
+2026-10-23T01:29:07.6206331Z   Building editable for metacom-pm (pyproject.toml): started
+2026-10-23T01:29:07.7653606Z   Building editable for metacom-pm (pyproject.toml): finished with status 'done'
+2026-10-23T01:29:07.7657115Z   Created wheel for metacom-pm: filename=metacom_pm-4.0.0-0.editable-py3-none-any.whl size=1611 sha256=56a34655c6bdf8cd27d8b19f9cbdc12e7ff05c7975b9cea01b05daeeda2d6ef1
+2026-10-23T01:29:07.7658139Z   Stored in directory: /tmp/pip-ephem-wheel-cache-q_06hwka/wheels/1e/db/48/50e91fb647de66ece34589fef8920d01f616b9079151904eda
+2026-10-23T01:29:07.7668665Z Successfully built metacom-pm
+2026-10-23T01:29:07.8446217Z Installing collected packages: pytz, urllib3, tzdata, typing-inspection, tqdm, threadpoolctl, six, safetensors, rpds-py, regex, PyYAML, pygments, pydantic-core, pluggy, packaging, numpy, narwhals, json-repair, iniconfig, idna, hf-xet, h11, cloudpickle, charset_normalizer, certifi, attrs, annotated-types, scipy, requests, referencing, python-dateutil, pytest, pydantic, joblib, httpcore, anyio, tiktoken, scikit-learn, pandas, jsonschema-specifications, huggingface-hub, httpx, tokenizers, jsonschema, transformers, metacom-pm
+2026-10-23T01:29:21.9885945Z 
+2026-10-23T01:29:21.9902752Z Successfully installed PyYAML-6.0.3 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.10.19 charset_normalizer-3.5.2 cloudpickle-3.1.2 h11-0.16.0 hf-xet-1.7.0 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-0.36.2 idna-3.20 iniconfig-2.3.1 joblib-1.6.0 json-repair-0.52.4 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 metacom-pm-4.0.0 narwhals-2.27.1 numpy-2.4.6 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pydantic-2.14.1 pydantic-core-2.50.1 pygments-2.21.0 pytest-8.4.2 python-dateutil-3.0.0 pytz-2026.5 referencing-0.37.0 regex-2026.9.29 requests-2.34.2 rpds-py-2026.9.1 safetensors-0.8.0 scikit-learn-1.9.1 scipy-1.17.1 six-1.17.0 threadpoolctl-3.7.0 tiktoken-0.12.0 tokenizers-0.22.2 tqdm-4.70.1 transformers-4.57.6 typing-inspection-0.4.4 tzdata-2026.5 urllib3-2.8.0
+2026-10-23T01:29:21.9909603Z 
+2026-10-23T01:29:21.9909960Z [notice] A new release of pip is available: 26.2.1 -> 26.2.2
+2026-10-23T01:29:21.9910216Z [notice] To update, run: pip install --upgrade pip
+2026-10-23T01:29:22.2602116Z ##[group]Run python -m compileall -q src scripts tests
+2026-10-23T01:29:22.2602400Z [36;1mpython -m compileall -q src scripts tests[0m
+2026-10-23T01:29:22.2658005Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:29:22.2658163Z env:
+2026-10-23T01:29:22.2658290Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:29:22.2658615Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:22.2658888Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:29:22.2659137Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:22.2659365Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:22.2659589Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:22.2659813Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:29:22.2660004Z ##[endgroup]
+2026-10-23T01:29:24.1951194Z ##[group]Run pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py -ra -o addopts= --junitxml=pytest-results.xml
+2026-10-23T01:29:24.1951666Z [36;1mpytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py -ra -o addopts= --junitxml=pytest-results.xml[0m
+2026-10-23T01:29:24.2006997Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:29:24.2007147Z env:
+2026-10-23T01:29:24.2007267Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:29:24.2007438Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:24.2007703Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:29:24.2007945Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:24.2008165Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:24.2008386Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:29:24.2008746Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:29:24.2008951Z ##[endgroup]
+2026-10-23T01:30:02.6764158Z ........................................................................ [  4%]
+2026-10-23T01:30:02.8546551Z ........................................................................ [  8%]
+2026-10-23T01:31:17.5961572Z ........................................................................ [ 13%]
+2026-10-23T01:31:18.1004788Z ........................................................................ [ 17%]
+2026-10-23T01:31:35.6646650Z ........................................................................ [ 22%]
+2026-10-23T01:32:05.0579202Z ........................................................................ [ 26%]
+2026-10-23T01:32:05.1083400Z ........................................................................ [ 31%]
+2026-10-23T01:32:17.0880531Z ...........................................s............................ [ 35%]
+2026-10-23T01:32:17.1457343Z ........................................................................ [ 40%]
+2026-10-23T01:32:20.4689075Z ........................................................................ [ 44%]
+2026-10-23T01:32:48.2019751Z ........................................................................ [ 49%]
+2026-10-23T01:32:50.9169944Z ........................................................................ [ 53%]
+2026-10-23T01:32:51.0116301Z ........................................................................ [ 58%]
+2026-10-23T01:32:51.1746946Z ........................................................................ [ 62%]
+2026-10-23T01:32:56.7205247Z ........................................................................ [ 67%]
+2026-10-23T01:32:58.7967696Z ........................................................................ [ 71%]
+2026-10-23T01:33:00.4289008Z .......................................s...................s............ [ 76%]
+2026-10-23T01:33:01.4944768Z ........................................................................ [ 80%]
+2026-10-23T01:33:04.0412849Z ........................................................................ [ 85%]
+2026-10-23T01:33:19.8124601Z ............................................................ssssssssssss [ 89%]
+2026-10-23T01:33:20.0118904Z ssssssssssssssssssss.................................................... [ 94%]
+2026-10-23T01:33:52.2272409Z ...................................................................sssss [ 98%]
+2026-10-23T01:33:53.1189893Z sssssssssssssssssssssss                                                  [100%]
+2026-10-23T01:33:53.1190986Z - generated xml file: /home/runner/work/Metacom5_3/Metacom5_3/project/pytest-results.xml -
+2026-10-23T01:33:53.1191713Z =========================== short test summary info ============================
+2026-10-23T01:33:53.1192436Z SKIPPED [1] tests/test_paper1_bge_m3_encoder.py:11: could not import 'sentence_transformers': No module named 'sentence_transformers'
+2026-10-23T01:33:53.1193691Z SKIPPED [1] tests/test_paper1_llama_tokenizer.py:15: frozen tokenizer not present at /home/chenzhi/paper1_runs/frozen_tokenizers/llama31_8b_instruct_tokenizer.json
+2026-10-23T01:33:53.1194514Z SKIPPED [1] tests/test_paper1_portable_manifests.py:205: no rg binary on PATH in this environment
+2026-10-23T01:33:53.1195114Z SKIPPED [1] tests/test_rl1_feedback_source_evidence.py:130: historical private credential/transport adapter
+2026-10-23T01:33:53.1195811Z SKIPPED [1] tests/test_rl1_feedback_workflow.py:243: historical private credential/transport adapter
+2026-10-23T01:33:53.1196214Z SKIPPED [1] tests/test_rl1_relation_reference.py:195: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1196700Z SKIPPED [1] tests/test_rl1_relation_reference.py:69: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1197331Z SKIPPED [1] tests/test_rl1_relation_reference.py:182: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1197753Z SKIPPED [1] tests/test_rl1_relation_reference.py:199: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1198152Z SKIPPED [1] tests/test_rl1_relation_reference.py:75: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1198743Z SKIPPED [1] tests/test_rl1_relation_reference.py:89: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1199282Z SKIPPED [1] tests/test_rl1_relation_reference.py:161: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1199826Z SKIPPED [1] tests/test_rl1_relation_reference.py:131: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1200366Z SKIPPED [1] tests/test_rl1_relation_reference.py:177: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1201105Z SKIPPED [1] tests/test_rl1_relation_reference.py:186: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1201678Z SKIPPED [1] tests/test_rl1_relation_reference.py:140: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1202234Z SKIPPED [1] tests/test_rl1_relation_reference.py:221: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1202730Z SKIPPED [1] tests/test_rl1_relation_reference.py:264: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1203130Z SKIPPED [1] tests/test_rl1_relation_reference.py:261: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1203539Z SKIPPED [1] tests/test_rl1_relation_reference.py:216: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1203935Z SKIPPED [1] tests/test_rl1_relation_reference.py:164: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1204299Z SKIPPED [1] tests/test_rl1_relation_reference.py:233: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1204655Z SKIPPED [1] tests/test_rl1_relation_reference.py:172: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1205012Z SKIPPED [1] tests/test_rl1_relation_reference.py:226: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1205367Z SKIPPED [1] tests/test_rl1_relation_reference.py:110: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1205747Z SKIPPED [1] tests/test_rl1_relation_reference.py:152: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1206150Z SKIPPED [1] tests/test_rl1_relation_reference.py:254: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1206502Z SKIPPED [1] tests/test_rl1_relation_reference.py:211: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1206852Z SKIPPED [1] tests/test_rl1_relation_reference.py:246: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1207205Z SKIPPED [1] tests/test_rl1_relation_reference.py:117: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1207619Z SKIPPED [1] tests/test_rl1_relation_reference.py:106: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1207978Z SKIPPED [1] tests/test_rl1_relation_reference.py:168: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1208588Z SKIPPED [1] tests/test_rl1_relation_reference.py:206: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1208960Z SKIPPED [1] tests/test_rl1_relation_reference.py:136: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1209326Z SKIPPED [1] tests/test_rl1_relation_reference.py:122: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1209678Z SKIPPED [1] tests/test_rl1_relation_reference.py:146: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1210031Z SKIPPED [1] tests/test_rl1_relation_reference.py:156: requires preserved local engine and relation inputs
+2026-10-23T01:33:53.1210380Z SKIPPED [1] tests/test_rl1_task_reference.py:67: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1210718Z SKIPPED [1] tests/test_rl1_task_reference.py:131: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1211059Z SKIPPED [1] tests/test_rl1_task_reference.py:73: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1211394Z SKIPPED [1] tests/test_rl1_task_reference.py:176: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1211726Z SKIPPED [1] tests/test_rl1_task_reference.py:190: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1212052Z SKIPPED [1] tests/test_rl1_task_reference.py:149: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1212378Z SKIPPED [1] tests/test_rl1_task_reference.py:96: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1212708Z SKIPPED [1] tests/test_rl1_task_reference.py:202: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1213128Z SKIPPED [1] tests/test_rl1_task_reference.py:230: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1213454Z SKIPPED [1] tests/test_rl1_task_reference.py:157: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1213781Z SKIPPED [1] tests/test_rl1_task_reference.py:138: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1214145Z SKIPPED [1] tests/test_rl1_task_reference.py:123: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1214501Z SKIPPED [1] tests/test_rl1_task_reference.py:91: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1214827Z SKIPPED [1] tests/test_rl1_task_reference.py:219: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1215154Z SKIPPED [1] tests/test_rl1_task_reference.py:209: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1215509Z SKIPPED [1] tests/test_rl1_task_reference.py:198: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1215869Z SKIPPED [1] tests/test_rl1_task_reference.py:193: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1216196Z SKIPPED [1] tests/test_rl1_task_reference.py:115: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1216521Z SKIPPED [1] tests/test_rl1_task_reference.py:172: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1216847Z SKIPPED [1] tests/test_rl1_task_reference.py:82: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1217171Z SKIPPED [1] tests/test_rl1_task_reference.py:102: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1217498Z SKIPPED [1] tests/test_rl1_task_reference.py:167: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1217824Z SKIPPED [1] tests/test_rl1_task_reference.py:180: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1218150Z SKIPPED [1] tests/test_rl1_task_reference.py:153: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1218683Z SKIPPED [1] tests/test_rl1_task_reference.py:141: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1219050Z SKIPPED [1] tests/test_rl1_task_reference.py:163: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1219374Z SKIPPED [1] tests/test_rl1_task_reference.py:223: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1219880Z SKIPPED [1] tests/test_rl1_task_reference.py:106: requires preserved local engine and task inputs
+2026-10-23T01:33:53.1220317Z 1544 passed, 65 skipped, 1 deselected in 267.57s (0:04:27)
+2026-10-23T01:33:53.8951389Z ##[group]Run actions/upload-artifact@v4
+2026-10-23T01:33:53.8951565Z with:
+2026-10-23T01:33:53.8951691Z   name: pm-cpu-tests-pull_request
+2026-10-23T01:33:53.8951847Z   path: project/pytest-results.xml
+2026-10-23T01:33:53.8951999Z   if-no-files-found: warn
+2026-10-23T01:33:53.8952133Z   compression-level: 6
+2026-10-23T01:33:53.8952274Z   overwrite: false
+2026-10-23T01:33:53.8952399Z   include-hidden-files: false
+2026-10-23T01:33:53.8952537Z env:
+2026-10-23T01:33:53.8952654Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:33:53.8952817Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:53.8953058Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:33:53.8953298Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:53.8953513Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:53.8953732Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:53.8953973Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:33:53.8954155Z ##[endgroup]
+2026-10-23T01:33:54.0021991Z (node:2300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T01:33:54.0022511Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T01:33:54.0054151Z With the provided path, there will be 1 file uploaded
+2026-10-23T01:33:54.0057818Z Artifact name is valid!
+2026-10-23T01:33:54.0058220Z Root directory input is valid!
+2026-10-23T01:33:54.2918138Z Beginning upload of artifact content to blob storage
+2026-10-23T01:33:54.3082318Z (node:2300) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-23T01:33:54.4555876Z Uploaded bytes 36737
+2026-10-23T01:33:54.4952326Z Finished uploading artifact content to blob storage!
+2026-10-23T01:33:54.4952947Z SHA256 digest of uploaded artifact zip is 42cd3ac3eddc12bc9211934b255eebcce39b486cc467308e0ec83abfc34b97e3
+2026-10-23T01:33:54.4953417Z Finalizing artifact upload
+2026-10-23T01:33:54.8876323Z Artifact pm-cpu-tests-pull_request.zip successfully finalized. Artifact ID 12472117387
+2026-10-23T01:33:54.8876839Z Artifact pm-cpu-tests-pull_request has been successfully uploaded! Final size is 36737 bytes. Artifact ID is 12472117387
+2026-10-23T01:33:54.8882115Z Artifact download URL: https://github.com/chensiyu7812/Metacom5_3/actions/runs/39884195447/artifacts/12472117387
+2026-10-23T01:33:54.8996317Z ##[group]Run python scripts/paper1/00_validate_integration_base.py
+2026-10-23T01:33:54.8996603Z [36;1mpython scripts/paper1/00_validate_integration_base.py[0m
+2026-10-23T01:33:54.9050254Z shell: /usr/bin/bash -e {0}
+2026-10-23T01:33:54.9050403Z env:
+2026-10-23T01:33:54.9050526Z   PYTHONNOUSERSITE: 1
+2026-10-23T01:33:54.9050698Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:54.9050948Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-23T01:33:54.9051194Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:54.9051417Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:54.9051642Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-23T01:33:54.9051880Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-23T01:33:54.9052068Z ##[endgroup]
+2026-10-23T01:33:55.2512034Z {
+2026-10-23T01:33:55.2512547Z   "protocol": "pm-paper1-integration-base-validation-v1",
+2026-10-23T01:33:55.2512881Z   "status": "PASS",
+2026-10-23T01:33:55.2513052Z   "checks": {
+2026-10-23T01:33:55.2513180Z     "outcome_lock": true,
+2026-10-23T01:33:55.2513348Z     "highest_precedence_reconciliation": true,
+2026-10-23T01:33:55.2513556Z     "latency_constrained_policy_scoped_override": true,
+2026-10-23T01:33:55.2513758Z     "binary_benefit_scope_and_api_hard_cap": true,
+2026-10-23T01:33:55.2513974Z     "effect_action_latency_contracts_present_pre_outcome": true,
+2026-10-23T01:33:55.2514205Z     "pairwise_teacher_reference_generation_ready": true,
+2026-10-23T01:33:55.2514418Z     "human_reference_v2_evidence_and_identity_bound": true,
+2026-10-23T01:33:55.2514694Z     "active_generator_selection_binding": true,
+2026-10-23T01:33:55.2514951Z     "private_ledgers_not_committed": true,
+2026-10-23T01:33:55.2515137Z     "es_memeval_artifact_hash": true,
+2026-10-23T01:33:55.2515293Z     "es_memeval_1427_identity": true,
+2026-10-23T01:33:55.2515455Z     "es_memeval_identity_is_text_free": true,
+2026-10-23T01:33:55.2515623Z     "esc_eval_overlap_identity": true,
+2026-10-23T01:33:55.2515796Z     "active_namespace_forbidden_tokens_absent": true,
+2026-10-23T01:33:55.2515996Z     "active_namespace_legacy_prompt_imports_absent": true,
+2026-10-23T01:33:55.2516185Z     "active_multi_view_ontology": true,
+2026-10-23T01:33:55.2516365Z     "active_multi_view_401_zero_outcome_preflight": true,
+2026-10-23T01:33:55.2516561Z     "active_multi_view_401_live_authorization": true,
+2026-10-23T01:33:55.2516739Z     "active_multi_view_401_closeout": true,
+2026-10-23T01:33:55.2516918Z     "multi_view_401_runtime_identity_uniformity": true,
+2026-10-23T01:33:55.2517112Z     "active_multi_view_target_candidate_census": true,
+2026-10-23T01:33:55.2517295Z     "paper1_visible_state_contract_ready": true,
+2026-10-23T01:33:55.2517880Z     "paper1_step2_delivery_contract_ready": true,
+2026-10-23T01:33:55.2518093Z     "active_multi_view_bge_packing_authority_selected": true,
+2026-10-23T01:33:55.2518302Z     "active_multi_view_bge_and_packing_surface": true,
+2026-10-23T01:33:55.2518748Z     "generator_backend_retirement_and_local_pilot": true,
+2026-10-23T01:33:55.2518944Z     "official_dg_simulator_and_cost_surface": true,
+2026-10-23T01:33:55.2519136Z     "official_dg_cost_bounded_execution_policy": true,
+2026-10-23T01:33:55.2519351Z     "official_mistral24b_local_backend_evidence": true,
+2026-10-23T01:33:55.2519539Z     "full_pipeline_latency_pilot": true,
+2026-10-23T01:33:55.2519715Z     "local_generator_termination_initial_audit": true,
+2026-10-23T01:33:55.2519907Z     "natural_turn_zero_outcome_sample_proposal": true
+2026-10-23T01:33:55.2520066Z   },
+2026-10-23T01:33:55.2520177Z   "failed_checks": [],
+2026-10-23T01:33:55.2520304Z   "outcome_calls": 0
+2026-10-23T01:33:55.2520421Z }
+2026-10-23T01:33:55.2892256Z Post job cleanup.
+2026-10-23T01:33:55.3679473Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.11.17-pip-c91dacf37b0ce9a42378841d216e86456836d296d8459cd0eeee957eb4521c95, not saving cache.
+2026-10-23T01:33:55.3680544Z (node:2315) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-23T01:33:55.3681124Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-23T01:33:55.3785110Z Post job cleanup.
+2026-10-23T01:33:55.4370228Z [command]/usr/bin/git version
+2026-10-23T01:33:55.4412590Z git version 2.55.0
+2026-10-23T01:33:55.4440523Z Temporarily overriding HOME='/home/runner/work/_temp/19ec1097-c126-41b7-99a4-6237b6f34815' before making global git config changes
+2026-10-23T01:33:55.4441311Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-23T01:33:55.4446855Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-23T01:33:55.4482409Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-23T01:33:55.4514253Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-23T01:33:55.4732016Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-23T01:33:55.4760531Z http.https://github.com/.extraheader
+2026-10-23T01:33:55.4773473Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-23T01:33:55.4811463Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-23T01:33:55.5057240Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-23T01:33:55.5092801Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-23T01:33:55.5426923Z Cleaning up orphan processes
+2026-10-23T01:33:55.5619100Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

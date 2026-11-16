@@ -1,0 +1,213 @@
+{
+  "response_sha256": "7daadbd87d5a4bb4a099755a1f54d783c0f02796c7752a6765e39b7cab3cdf2a",
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "973520d49177435dfee3b60901963f98703d9a2b72c2e3d6ffbccff4e2f206fe",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Emotional support regarding the sudden resignation of a boss and concerns about future leadership.",
+      "response_quote": "Your boss has not resigned, and you will have to keep reporting to that same boss. It makes sense to want respectful leadership after what you have been through.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+        }
+      ],
+      "reason": "The reply asserts in R001 that the user's boss 'has not resigned', which directly contradicts the user's explicit statement in C:T000 ('I just found out my boss resigned'). This material factual error undermines the coherence and validity of the support offered, creating a fundamental mismatch with the user's disclosed reality."
+    },
+    "claims": [
+      {
+        "response_quote": "Your boss has not resigned, and you will have to keep reporting to that same boss.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+          }
+        ],
+        "reason": "The unit asserts the boss did not resign, while the user explicitly reported in C:T000 that they just found out their boss resigned. This represents a substantive factual error based on the user's report."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response covers the theme of leadership transition and respect for employees. However, the factual accuracy is compromised by denying the core event reported by the user in the opening turn of the session.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your boss has not resigned, and you will have to keep reporting to that same boss. It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 161
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your boss has not resigned, and you will have to keep reporting to that same boss.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 82
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Emotional support regarding the sudden resignation of a boss and concerns about future leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply asserts in R001 that the user's boss 'has not resigned', which directly contradicts the user's explicit statement in C:T000 ('I just found out my boss resigned'). This material factual error undermines the coherence and validity of the support offered, creating a fundamental mismatch with the user's disclosed reality."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The unit asserts the boss did not resign, while the user explicitly reported in C:T000 that they just found out their boss resigned. This represents a substantive factual error based on the user's report."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response covers the theme of leadership transition and respect for employees. However, the factual accuracy is compromised by denying the core event reported by the user in the opening turn of the session.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Emotional support regarding the sudden resignation of a boss and concerns about future leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply asserts in R001 that the user's boss 'has not resigned', which directly contradicts the user's explicit statement in C:T000 ('I just found out my boss resigned'). This material factual error undermines the coherence and validity of the support offered, creating a fundamental mismatch with the user's disclosed reality."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The unit asserts the boss did not resign, while the user explicitly reported in C:T000 that they just found out their boss resigned. This represents a substantive factual error based on the user's report.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This unit offers a general reflective statement ('It makes sense to want respectful leadership...') consistent with the user's expressed concerns, without making verifiable factual claims about the user's personal history beyond validating their emotion.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response covers the theme of leadership transition and respect for employees. However, the factual accuracy is compromised by denying the core event reported by the user in the opening turn of the session.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "Emotional support regarding the sudden resignation of a boss and concerns about future leadership.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply asserts in R001 that the user's boss 'has not resigned', which directly contradicts the user's explicit statement in C:T000 ('I just found out my boss resigned'). This material factual error undermines the coherence and validity of the support offered, creating a fundamental mismatch with the user's disclosed reality."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The unit asserts the boss did not resign, while the user explicitly reported in C:T000 that they just found out their boss resigned. This represents a substantive factual error based on the user's report."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This unit offers a general reflective statement ('It makes sense to want respectful leadership...') consistent with the user's expressed concerns, without making verifiable factual claims about the user's personal history beyond validating their emotion."
+      }
+    ],
+    "coverage": "The response covers the theme of leadership transition and respect for employees. However, the factual accuracy is compromised by denying the core event reported by the user in the opening turn of the session.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": -0.75
+}

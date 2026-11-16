@@ -1,0 +1,161 @@
+{
+  "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "063c8f68905d5f871fc775ad08e5382b68e945d8bcb042d157768a0b211e7c57",
+  "raw_output_sha256": "0cfa6c82c1216ea8d6520b8ddf86d85d836ac89286e6949cd2575e7bbd291479",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the user's shift in perspective (T024) and reinforce autonomy without dismissing parental concerns.",
+      "response_quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+        },
+        {
+          "source_id": "C:T023",
+          "quote": "Parents worry about thire kids all the time. you know pedophiles, kidnappers and a a lot of other dangerous people out there. it is only natural for parents to worry"
+        },
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        }
+      ],
+      "reason": "The reply appropriately validates the user's acceptance of the parent's perspective (R001 referencing C:T023), reinforces age-appropriate autonomy (R002 referencing C:T013 age disclosure), and encourages communication (R003). It is coherent, respectful of boundaries, and fully responsive to the emotional tone of the last turn."
+    },
+    "claims": [
+      {
+        "response_quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          }
+        ],
+        "reason": "R002 states 'you are almost an adult', which is semantically consistent with the user stating 'I am 17' in C:T013."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the factual accuracy of the age claim against the user's disclosure in C:T013. Evaluated the relevance of the empowerment message against the current session context of parental conflict (C:T013, C:T019). Verified no boundary violations or identity misattributions.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 232
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T023",
+      "quote": "Parents worry about thire kids all the time. you know pedophiles, kidnappers and a a lot of other dangerous people out there. it is only natural for parents to worry",
+      "positions": [
+        {
+          "start": 0,
+          "end": 165
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the user's shift in perspective (T024) and reinforce autonomy without dismissing parental concerns.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T023",
+        "C:T024"
+      ],
+      "reason": "The reply appropriately validates the user's acceptance of the parent's perspective (R001 referencing C:T023), reinforces age-appropriate autonomy (R002 referencing C:T013 age disclosure), and encourages communication (R003). It is coherent, respectful of boundaries, and fully responsive to the emotional tone of the last turn."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "R002 states 'you are almost an adult', which is semantically consistent with the user stating 'I am 17' in C:T013."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the factual accuracy of the age claim against the user's disclosure in C:T013. Evaluated the relevance of the empowerment message against the current session context of parental conflict (C:T013, C:T019). Verified no boundary violations or identity misattributions.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

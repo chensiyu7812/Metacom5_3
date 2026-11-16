@@ -1,0 +1,150 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2943,
+      "reserved_prompt_tokens": 3071,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 653
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "b8ffcd9eb4d6c25e4645c4c5f37923d1d860c5ef8d06f214256a80078c6352ed",
+    "prior_profile_sha256": "f0de6003223c06e0467958ec3e00cd6be5ed95b271e66cc4a6810259eabfce16",
+    "request_payload_sha256": "95f53b00f33606394360d4041b3067821daa52318df2d27bc9b4fd4848237e39"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p14",
+      "s": "p14_conv_8",
+      "p": [
+        {
+          "i": "p14_p1",
+          "t": "stable_relationship_role",
+          "k": "romantic_partner_communication_difficulty",
+          "v": "experiences persistent communication breakdown and emotional disconnection when discussing serious topics like pregnancy with partner Dan, despite mutual efforts to improve connection",
+          "s": [
+            {
+              "i": "p14_conv_8:2"
+            },
+            {
+              "i": "p14_conv_8:4"
+            },
+            {
+              "i": "p14_conv_8:6"
+            },
+            {
+              "i": "p14_conv_8:8"
+            }
+          ]
+        },
+        {
+          "i": "p14_p2",
+          "t": "durable_health_constraint",
+          "k": "pregnancy_related_anxiety",
+          "v": "experiences high levels of anxiety related to fear of pregnancy complications recurring due to history of prior losses, contributing to emotional strain in relationship and daily life",
+          "s": [
+            {
+              "i": "p14_conv_8:6"
+            },
+            {
+              "i": "p14_conv_8:10"
+            }
+          ]
+        },
+        {
+          "i": "p14_p3",
+          "t": "enduring_interest",
+          "k": "coping_through_shared_positive_routines",
+          "v": "believes reconnecting through shared positive activities like cooking together may help reduce stress and rebuild emotional closeness with partner",
+          "s": [
+            {
+              "i": "p14_conv_8:16"
+            },
+            {
+              "i": "p14_conv_8:20"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p14_e1",
+          "t": "relationship_event",
+          "z": "ongoing_stage",
+          "n": "romantic relationship with Dan experiencing escalating arguments and emotional distance despite both partners attempting to support each other during high-stress pregnancy",
+          "s": [
+            {
+              "i": "p14_conv_8:2"
+            },
+            {
+              "i": "p14_conv_8:4"
+            },
+            {
+              "i": "p14_conv_8:6"
+            },
+            {
+              "i": "p14_conv_8:8"
+            }
+          ]
+        },
+        {
+          "i": "p14_e2",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "decided to try cooking dinner together as a way to reconnect with Dan and create moments of calm in the relationship",
+          "a": "decided to try cooking dinner together",
+          "o": "hopeful that it could help rebuild connection",
+          "s": [
+            {
+              "i": "p14_conv_8:16"
+            },
+            {
+              "i": "p14_conv_8:20"
+            }
+          ]
+        },
+        {
+          "i": "p14_e3",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "found comfort and emotional relief in talking through relationship struggles with supporter, feeling heard and validated",
+          "a": "talked through challenges with supporter",
+          "o": "felt comforted and supported",
+          "s": [
+            {
+              "i": "p14_conv_8:14"
+            },
+            {
+              "i": "p14_conv_8:18"
+            },
+            {
+              "i": "p14_conv_8:22"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "c219f9e296bb68421d9fca286f246bd85203a3cc3935054c3cdef87442a59ca9",
+    "usage": {
+      "prompt_tokens": 2945,
+      "completion_tokens": 804,
+      "total_tokens": 3749
+    },
+    "latency_ms": 9912.172262993408,
+    "provider_finish_reason": "stop"
+  }
+}

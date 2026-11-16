@@ -1,0 +1,409 @@
+{
+  "response_sha256": "bfc3cbc3692e807282ed1c7365e7922d1b283bd8d6d6c44bc81da9426fb3fb5a",
+  "legal_evidence_identity": "6ea81f1c5657b032d3acaf9233beaba13fb22112658e9ae7a186f2bfd6252da4",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "3357da1d63e8995d6b8b9f2d3bc215d08e5d258a32639a694fe6a8c9505c1f0a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of emotional distress regarding the mother's recent relapse and acknowledgment of compounding work stress.",
+      "response_quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+      "evidence": [
+        {
+          "source_id": "C:T003",
+          "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me."
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+        },
+        {
+          "source_id": "C:T009",
+          "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's explicit disclosure of the mother's relapse in the final turn (C:T009) and synthesizes the ongoing work difficulties mentioned earlier in the session (C:T003, C:T007) without adding unsupported details. It provides appropriate emotional containment and an open-ended invitation to elaborate, fully meeting the immediate need for empathy without violating boundaries or misrepresenting the timeline."
+    },
+    "claims": [
+      {
+        "response_quote": "I'm so sorry to hear that your mom had another relapse.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "Asserts the mother had a relapse, which is explicitly confirmed by the user in C:T009."
+      },
+      {
+        "response_quote": "It sounds like you and your family are carrying a heavy load right now.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "Reflects the user's statement that 'things have been pretty tough' for 'her and us' in C:T009."
+      },
+      {
+        "response_quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T003",
+            "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me."
+          },
+          {
+            "source_id": "C:T007",
+            "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+          },
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "Synthesizes the current relapse disclosure with previously established work arguments regarding the manager and paycheck in C:T003 and the broader work/family balance discussed in C:T007."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Empathic acknowledgment of the specific medical event reported and the cumulative workload strain described by the user.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 310
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 107
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "I'm so sorry to hear that your mom had another relapse.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 55
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It sounds like you and your family are carrying a heavy load right now.",
+      "positions": [
+        {
+          "start": 56,
+          "end": 127
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+      "positions": [
+        {
+          "start": 128,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T003",
+      "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 107
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of emotional distress regarding the mother's recent relapse and acknowledgment of compounding work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply accurately reflects the user's explicit disclosure of the mother's relapse in the final turn (C:T009) and synthesizes the ongoing work difficulties mentioned earlier in the session (C:T003, C:T007) without adding unsupported details. It provides appropriate emotional containment and an open-ended invitation to elaborate, fully meeting the immediate need for empathy without violating boundaries or misrepresenting the timeline."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Asserts the mother had a relapse, which is explicitly confirmed by the user in C:T009."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Reflects the user's statement that 'things have been pretty tough' for 'her and us' in C:T009."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T003",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Synthesizes the current relapse disclosure with previously established work arguments regarding the manager and paycheck in C:T003 and the broader work/family balance discussed in C:T007."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Empathic acknowledgment of the specific medical event reported and the cumulative workload strain described by the user.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of emotional distress regarding the mother's recent relapse and acknowledgment of compounding work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply accurately reflects the user's explicit disclosure of the mother's relapse in the final turn (C:T009) and synthesizes the ongoing work difficulties mentioned earlier in the session (C:T003, C:T007) without adding unsupported details. It provides appropriate emotional containment and an open-ended invitation to elaborate, fully meeting the immediate need for empathy without violating boundaries or misrepresenting the timeline."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Asserts the mother had a relapse, which is explicitly confirmed by the user in C:T009.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Reflects the user's statement that 'things have been pretty tough' for 'her and us' in C:T009.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T003",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Synthesizes the current relapse disclosure with previously established work arguments regarding the manager and paycheck in C:T003 and the broader work/family balance discussed in C:T007.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Poses a generic supportive question about coping without asserting specific personal facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Empathic acknowledgment of the specific medical event reported and the cumulative workload strain described by the user.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of emotional distress regarding the mother's recent relapse and acknowledgment of compounding work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply accurately reflects the user's explicit disclosure of the mother's relapse in the final turn (C:T009) and synthesizes the ongoing work difficulties mentioned earlier in the session (C:T003, C:T007) without adding unsupported details. It provides appropriate emotional containment and an open-ended invitation to elaborate, fully meeting the immediate need for empathy without violating boundaries or misrepresenting the timeline."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Asserts the mother had a relapse, which is explicitly confirmed by the user in C:T009."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Reflects the user's statement that 'things have been pretty tough' for 'her and us' in C:T009."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T003",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Synthesizes the current relapse disclosure with previously established work arguments regarding the manager and paycheck in C:T003 and the broader work/family balance discussed in C:T007."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Poses a generic supportive question about coping without asserting specific personal facts."
+      }
+    ],
+    "coverage": "Empathic acknowledgment of the specific medical event reported and the cumulative workload strain described by the user.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

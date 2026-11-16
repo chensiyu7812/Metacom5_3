@@ -1,0 +1,292 @@
+{
+  "slot_id": "2e856bba9235f9da46f10a0bcaad1e7a59a59c77f2d71481f1424112cd51f498",
+  "request_identity": "90327f64172403fa0c5fc242cc3f5776c283ac2761a242233578ea04d2dfeac9",
+  "component": "audit",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "value": {
+      "check": {
+        "status": "checked",
+        "claims": [
+          {
+            "claim_id": "C001",
+            "response_unit_id": "R001",
+            "response_quote": "I'm sorry you're carrying that weight right now.",
+            "claim_type": "general",
+            "subject": "Anna's present emotional burden",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "non_factual",
+            "evidence": [],
+            "reason": "This is empathic acknowledgment rather than a specific personal factual assertion; it does not claim a particular event or outcome."
+          },
+          {
+            "claim_id": "C002",
+            "response_unit_id": "R002",
+            "response_quote": "your friend's struggles",
+            "claim_type": "assertion",
+            "subject": "Rachel's tough experience and Anna's concern for her",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "My friend at school, Rachel, is going through something really tough."
+              }
+            ],
+            "reason": "Anna explicitly reports Rachel's difficult experience and her concern, so naming the friend's struggles as part of the current load is supported."
+          },
+          {
+            "claim_id": "C003",
+            "response_unit_id": "R002",
+            "response_quote": "your own academic stress",
+            "claim_type": "assertion",
+            "subject": "Anna's academic stress",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "my grades slipping"
+              },
+              {
+                "source_id": "C:T012",
+                "quote": "My midterms were bad, and now there's more pressure to improve."
+              }
+            ],
+            "reason": "The current prefix explicitly mentions grades slipping, bad midterms, and more pressure to improve, so the academic-stress characterization is supported."
+          },
+          {
+            "claim_id": "C004",
+            "response_unit_id": "R002",
+            "response_quote": "recent changes at home (like Lily leaving)",
+            "claim_type": "presupposition",
+            "subject": "Lily's leaving as a recent change in Anna's home or household",
+            "time": "recent/current",
+            "action_stage": "unknown",
+            "relation": "unsupported",
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "Lily leaving"
+              },
+              {
+                "source_id": "H009:T001",
+                "quote": "Finding out Lily is moving is just... too much right now."
+              }
+            ],
+            "reason": "The record supports that Lily is leaving or moving and that this distresses Anna, but no supplied turn establishes that Lily's departure is a change 'at home' or that Lily is a household member. The phrase therefore over-locates the event even though the core stressor is supported."
+          },
+          {
+            "claim_id": "C005",
+            "response_unit_id": "R003",
+            "response_quote": "Given how much is happening at once, it makes sense that you feel overwhelmed.",
+            "claim_type": "assertion",
+            "subject": "Anna's current sense of overwhelm",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "it's a lot"
+              },
+              {
+                "source_id": "C:T008",
+                "quote": "I feel like a mess"
+              },
+              {
+                "source_id": "C:T012",
+                "quote": "it just adds to the stress"
+              }
+            ],
+            "reason": "Anna describes multiple stressors as a lot, says she feels like a mess, and says the situation adds to her stress, supporting the empathic reflection of overwhelm."
+          },
+          {
+            "claim_id": "C006",
+            "response_unit_id": "R004",
+            "response_quote": "The pressure to improve your grades on top of everything else",
+            "claim_type": "assertion",
+            "subject": "Anna's current grade-improvement pressure",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T012",
+                "quote": "My midterms were bad, and now there's more pressure to improve."
+              }
+            ],
+            "reason": "This directly reflects Anna's report of bad midterms and additional pressure to improve."
+          },
+          {
+            "claim_id": "C007",
+            "response_unit_id": "R004",
+            "response_quote": "can feel suffocating",
+            "claim_type": "tentative",
+            "subject": "possible emotional effect of the grade pressure",
+            "time": "current/hypothetical",
+            "action_stage": "hypothetical",
+            "relation": "non_factual",
+            "evidence": [],
+            "reason": "The modal wording offers a possible empathic description of how pressure may feel; it does not assert that Anna is currently suffocating."
+          },
+          {
+            "claim_id": "C008",
+            "response_unit_id": "R005",
+            "response_quote": "Have you been able to take any small breaks or prioritize self-care lately, or is it feeling like you're just trying to keep up?",
+            "claim_type": "tentative",
+            "subject": "Anna's recent breaks, self-care, and current coping",
+            "time": "lately/current",
+            "action_stage": "unknown",
+            "relation": "non_factual",
+            "evidence": [],
+            "reason": "This is an open question offering alternatives; it does not assert that Anna has or has not taken breaks or that she is merely trying to keep up."
+          }
+        ],
+        "coverage": "Reviewed R001-R005 against the complete current prefix C:T000-C:T012 and all past sessions H001-H009. The claims distinguish empathic language and open questions from personal factual characterizations; the only unsupported personal characterization found is the R002 'at home' framing of Lily's leaving. No future user reaction or external facts were used.",
+        "uncertainty_reasons": []
+      },
+      "findings": [
+        {
+          "response_unit_id": "R002",
+          "response_quote": "recent changes at home (like Lily leaving)",
+          "dimension": "relation",
+          "verdict": "identified_error",
+          "readings": [
+            "The phrase treats Lily's leaving or moving as a recent change in Anna's home or household.",
+            "A looser reading treats 'at home' as Anna's general home life being affected by Lily's move, without claiming Lily lived with her."
+          ],
+          "source_evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "Lily leaving"
+            },
+            {
+              "source_id": "H009:T001",
+              "quote": "Finding out Lily is moving is just... too much right now."
+            }
+          ],
+          "criterion": "A personal factual characterization in supportive empathy should be supported by the complete legal record; unsupported is absent support in this record, not disproof in the world, and a localized unsupported detail should not be confused with a material contradiction.",
+          "consequence": "The core empathic summary and self-care question remain usable, but the phrase can misstate Lily's relationship to Anna's household. No part of the advice depends on Lily living with Anna.",
+          "reason": "The supplied record establishes that Lily is leaving or moving and that Anna is distressed by it, but it does not establish that this is a change 'at home' or that Lily is a household member. This is a localized factual imprecision rather than a supported summary."
+        }
+      ],
+      "coverage_limitations": "The audit uses only the supplied current prefix, complete legal past sessions, and exact reply units. No future reaction or external verification is available, so claims about Lily's household status cannot be resolved beyond the absence of support in this record.",
+      "score_review": {
+        "preliminary_score_sha256": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+        "findings": [
+          {
+            "finding_index": 0,
+            "disposition": "already_accounted",
+            "score_links": [
+              {
+                "path": "/assessments/2/reason",
+                "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+              },
+              {
+                "path": "/q_rationale/reason",
+                "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+              },
+              {
+                "path": "/coverage",
+                "quote": "H009:T001 confirms Lily is moving but not that this is a change 'at home.'"
+              }
+            ],
+            "reason": "The preliminary score's R002 unsupported assessment, quality rationale, and coverage description all address the same 'at home' reading and treat it as localized. The source-specific relation issue is therefore already represented in the preliminary reasoning."
+          }
+        ],
+        "checks": {
+          "quality": {
+            "status": "supported",
+            "score_links": [
+              {
+                "path": "/q_rationale/current_need",
+                "quote": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support."
+              },
+              {
+                "path": "/q_rationale/reason",
+                "quote": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+              },
+              {
+                "path": "/assessments/3/reason",
+                "quote": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+              },
+              {
+                "path": "/assessments/4/reason",
+                "quote": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+              }
+            ],
+            "criterion": "The quality rubric distinguishes a generally appropriate, coherent and responsive reply from one that fully meets every current call; a localized factual imprecision does not become an important defect solely because it is present.",
+            "reason": "The reply addresses the current seeker need with empathic acknowledgment, a supported stressor summary, validation of overwhelm, a supported grade-pressure reflection, and an open self-care question. The only defect is the localized 'at home' framing, which does not create an important missed need or constraint. The preliminary quality judgment is therefore supported."
+          },
+          "severity": {
+            "status": "supported",
+            "score_links": [
+              {
+                "path": "/assessments/2/reason",
+                "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+              },
+              {
+                "path": "/q_rationale/reason",
+                "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+              }
+            ],
+            "criterion": "The error-severity rubric distinguishes localized factual imprecision that does not change core understanding or advice from material errors such as contradiction, misattribution of another person's example, or intention treated as completed action.",
+            "reason": "The only identified personal factual issue is the R002 home-location phrase. The record supports Lily leaving or moving and Anna's distress, and no advice depends on Lily being a household member. The preliminary treatment as localized is supported; no material misuse basis appears."
+          },
+          "coverage": {
+            "status": "supported",
+            "score_links": [
+              {
+                "path": "/coverage",
+                "quote": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action."
+              }
+            ],
+            "criterion": "Coverage should address every reply unit and the complete legal source set, including factual presuppositions carried by empathy or questions.",
+            "reason": "The preliminary coverage names all five units, cites the main current-prefix support, identifies the Lily/home limitation, and distinguishes the open question. The audit found no additional material claim that requires a different coverage assessment."
+          }
+        }
+      }
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+      "adapted_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+      "interior_unchanged": true
+    },
+    "interface_version": "source-evidence-score-links-v1-20261022",
+    "reward_eligible": false,
+    "semantic_gold": false
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0237885",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 20219,
+    "completion_tokens": 14769,
+    "total_tokens": 34988,
+    "prompt_tokens_details": {
+      "cached_tokens": 768
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 11735
+    },
+    "prompt_cache_hit_tokens": 768,
+    "prompt_cache_miss_tokens": 19451
+  },
+  "elapsed_seconds": 62.88766060300986,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-score-audit-validation-v1-20261022",
+  "new_step_instruction_version": "pmrl1-score-audit-validation-v1-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

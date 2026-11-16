@@ -1,0 +1,181 @@
+{
+  "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "a36f04af4329d46d53c92192953c995f790dfd7b20b9bb4f32a164e024b33a41",
+  "raw_output_sha256": "2b73c2df80ce795f65888780e73f695eae180e4866e8dec72d0fb23968bbaf69",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker (Charles) expresses regret and guilt about past negative interactions with his late father, specifically noting he spent 'too long focusing on the bitter moments' (C:T011). He seeks validation and support in processing these feelings.",
+      "response_quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "evidence": [
+        {
+          "source_id": "C:T011",
+          "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+        }
+      ],
+      "reason": "The reply is fully responsive and appropriate. R001 mirrors the user's sentiment about dwelling on the negative. R002 validates the user's admission by reframing it as progress ('shifting focus'), which encourages continued work. R003 provides necessary emotional affirmation ('beautiful thing'). The tone is empathetic and supportive, matching the established rapport and the grieving context. It avoids unsolicited advice or toxic positivity while acknowledging the difficulty."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T011",
+            "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+          }
+        ],
+        "reason": "'Shifting focus' is inferred from the user's admission that they 'spent too long focusing,' implying a desire to change. Phrased as 'It sounds like' (hypothesis/inference), not a hard assertion."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Covered responsiveness, appropriateness, boundary adherence, factual accuracy, and chronological consistency.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 198
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+      "positions": [
+        {
+          "start": 66,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker (Charles) expresses regret and guilt about past negative interactions with his late father, specifically noting he spent 'too long focusing on the bitter moments' (C:T011). He seeks validation and support in processing these feelings.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "The reply is fully responsive and appropriate. R001 mirrors the user's sentiment about dwelling on the negative. R002 validates the user's admission by reframing it as progress ('shifting focus'), which encourages continued work. R003 provides necessary emotional affirmation ('beautiful thing'). The tone is empathetic and supportive, matching the established rapport and the grieving context. It avoids unsolicited advice or toxic positivity while acknowledging the difficulty."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "'Shifting focus' is inferred from the user's admission that they 'spent too long focusing,' implying a desire to change. Phrased as 'It sounds like' (hypothesis/inference), not a hard assertion."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Covered responsiveness, appropriateness, boundary adherence, factual accuracy, and chronological consistency.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker (Charles) expresses regret and guilt about past negative interactions with his late father, specifically noting he spent 'too long focusing on the bitter moments' (C:T011). He seeks validation and support in processing these feelings.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "The reply is fully responsive and appropriate. R001 mirrors the user's sentiment about dwelling on the negative. R002 validates the user's admission by reframing it as progress ('shifting focus'), which encourages continued work. R003 provides necessary emotional affirmation ('beautiful thing'). The tone is empathetic and supportive, matching the established rapport and the grieving context. It avoids unsolicited advice or toxic positivity while acknowledging the difficulty."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Evaluative phrase mirroring user's input, not a personal factual claim."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "personal_fact",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "'Shifting focus' is inferred from the user's admission that they 'spent too long focusing,' implying a desire to change. Phrased as 'It sounds like' (hypothesis/inference), not a hard assertion."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic phrase."
+      }
+    ],
+    "coverage": "Covered responsiveness, appropriateness, boundary adherence, factual accuracy, and chronological consistency.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

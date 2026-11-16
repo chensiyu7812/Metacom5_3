@@ -1,0 +1,51 @@
+{
+  "time_jst": "2026-10-15T15:55:02.677072+09:00",
+  "reviewer": "Codex source-bound development review; not independent human rater",
+  "request_id": "8193254d52c58a037d48083bcfa7d7f78018d82f8e5c75eaff695014ffa0f508",
+  "original_slot_request_id": "60083c64e84351806105546277df6f94231843b3cb10f483137b9e1ee75436fc",
+  "item_key": "dev04A",
+  "draw": "primary",
+  "response_sha256": "25239dbafb3c82bc6f81cd4e5ec722499edf7fd9837191f04a1cc35065add09a",
+  "raw_sha256": "9de7040d0b628210dd9a2fb591977f2473e6b22bfd1cc2af9f0343d54e57f1b4",
+  "explanation": "B/04A：q4,m0。T006/T008支持同事、经理偏爱和用户的不公平感，未混淆主体；T007历史支持者的类似经历没有被冒领。R003含Since you mentioned you cannot tolerate injustice的明确个人话语断言，却因clarifying question整句non_factual无单元来源，混合断言覆盖缺陷持续存在。该前提实际由T008支持，现有证据未证明错误人物、事实或严重度的实质结论，按原规则保留缺陷而非新增硬停。have you already discussed是在询问是否发生，不直接断言已讨论；R004一般可能益处，不保证效果。q4是否充分满足求建议缺绝对金标准。",
+  "source_checks": [
+    {
+      "source_id": "C:T001",
+      "exact_quote": "Im feeling down and need some advice as to how do I handle this situation",
+      "finding": "请求处理情境的建议"
+    },
+    {
+      "source_id": "C:T006",
+      "exact_quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+      "finding": "同事少工作却受经理青睐"
+    },
+    {
+      "source_id": "C:T007",
+      "exact_quote": "It sounds like you are unsure of how to deal with favoritism in the workplace. I have dealt with similar situations.",
+      "finding": "历史支持者经历，不属新AI"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "finding": "用户不能容忍不公的明确陈述"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "dimensions": {
+    "actor_attribution": "correct role separation",
+    "facts": "current claims supported; whether discussion occurred remains a question",
+    "citations": "R001 correctly cites006/008; mixedR003 lacks unit citation",
+    "severity": "m0 locally supportable, not material correctness proof from classification",
+    "q_anchor": "q4 is model judgment without absolute gold",
+    "mixed_assertions": "explicit personal assertion inR003 exempted as non_factual; defect persists",
+    "stability": "not yet scheduled repeat"
+  },
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "input_tokens_match_original_full_input_receipt": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED"
+}

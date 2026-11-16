@@ -1,0 +1,24 @@
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":2,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":1,"reasons":["utilization_not_zero","process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":2,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":2,"reasons":["utilization_not_zero","process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":2,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":3,"reasons":["utilization_not_zero","process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":2,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":4,"reasons":["utilization_not_zero","process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":0,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":5,"reasons":["process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":2,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":6,"reasons":["utilization_not_zero","process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+{"eligible":false,"gpu":{"free_mib":48551,"name":"NVIDIA RTX A6000","utilization_percent":0,"uuid":"GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4"},"gpu_check":7,"reasons":["process_visibility_context_unreadable"],"visibility":"queries_succeeded_no_processes_listed","visible_processes":[]}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/resume_engineering.py", line 278, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/resume_engineering.py", line 275, in main
+    result=continue_stage(plan,root,out,approval,parent,mode='live',wait_fn=lambda:checks.wait_idle(300),transport_factory=factory,static_check=static)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/resume_engineering.py", line 202, in continue_stage
+    ready=wait_fn()
+          ^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/resume_engineering.py", line 275, in <lambda>
+    result=continue_stage(plan,root,out,approval,parent,mode='live',wait_fn=lambda:checks.wait_idle(300),transport_factory=factory,static_check=static)
+                                                                                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/resume_engineering.py", line 121, in wait_idle
+    if remaining>0:time.sleep(min(10,remaining))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

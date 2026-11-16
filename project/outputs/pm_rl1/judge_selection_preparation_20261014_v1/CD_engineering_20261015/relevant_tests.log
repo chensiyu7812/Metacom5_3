@@ -1,0 +1,32 @@
+test_CD_engineering (unittest.loader._FailedTest.test_CD_engineering) ... ERROR
+test_CRLF_preserves_interior (test_outer_v1.FormatTests.test_CRLF_preserves_interior) ... ok
+test_bare_exact_bytes (test_outer_v1.FormatTests.test_bare_exact_bytes) ... ok
+test_derived_reexecution_idempotent_and_no_overwrite (test_outer_v1.FormatTests.test_derived_reexecution_idempotent_and_no_overwrite) ... ok
+test_extra_explanation_and_multiple_fences_rejected (test_outer_v1.FormatTests.test_extra_explanation_and_multiple_fences_rejected) ... ok
+test_illegal_source_and_reply_ID_fail (test_outer_v1.FormatTests.test_illegal_source_and_reply_ID_fail) ... ok
+test_invalid_JSON_not_repaired (test_outer_v1.FormatTests.test_invalid_JSON_not_repaired) ... ok
+test_json_and_unlabelled_single_fence (test_outer_v1.FormatTests.test_json_and_unlabelled_single_fence) ... ok
+test_non_natural_end_never_recovered (test_outer_v1.FormatTests.test_non_natural_end_never_recovered) ... ok
+test_rules_same_ABCD (test_outer_v1.FormatTests.test_rules_same_ABCD) ... ok
+test_schema_failure (test_outer_v1.FormatTests.test_schema_failure) ... ok
+test_strict_evidence_validator_still_runs (test_outer_v1.FormatTests.test_strict_evidence_validator_still_runs) ... ok
+test_thinking_not_extracted (test_outer_v1.FormatTests.test_thinking_not_extracted) ... ok
+test_truncated_or_unsupported_envelope_rejected (test_outer_v1.FormatTests.test_truncated_or_unsupported_envelope_rejected) ... ok
+
+======================================================================
+ERROR: test_CD_engineering (unittest.loader._FailedTest.test_CD_engineering)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_CD_engineering
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_envs/paper1-mistral-vllm-py312/lib/python3.12/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/outer_format_v1_20261015/test_CD_engineering.py", line 5, in <module>
+    import selection as s
+ModuleNotFoundError: No module named 'selection'
+
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.350s
+
+FAILED (errors=1)

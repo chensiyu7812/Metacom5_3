@@ -1,0 +1,114 @@
+{
+  "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "02f44f5b3557a77215f01ef366673788af1cb6a2ba9a8a8f6606041883aa107a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of seeker's growing understanding of parental perspective while reinforcing autonomy after grounded conflict.",
+      "response_quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I am 17"
+        },
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        }
+      ],
+      "reason": "The reply appropriately validates the seeker's concession of understanding (C:T024) and empowers them based on the disclosed age (C:T013: 17). It offers a supportive question regarding communication without violating boundaries or making unsupported factual claims."
+    },
+    "claims": [
+      {
+        "response_quote": "you are almost an adult",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I am 17"
+          }
+        ],
+        "reason": "Consistent with the legal evidence stating the seeker is 17 years old, approaching majority age (18)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Verified user identity as a 17-year-old student grounded by parents per C:T013 and C:T019. Checked consistency of the 'almost adult' statement against current session facts. Verified parental relationship context matches prior turns.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 232
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I am 17",
+      "positions": [
+        {
+          "start": 90,
+          "end": 97
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "you are almost an adult",
+      "positions": [
+        {
+          "start": 112,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I am 17",
+      "positions": [
+        {
+          "start": 90,
+          "end": 97
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

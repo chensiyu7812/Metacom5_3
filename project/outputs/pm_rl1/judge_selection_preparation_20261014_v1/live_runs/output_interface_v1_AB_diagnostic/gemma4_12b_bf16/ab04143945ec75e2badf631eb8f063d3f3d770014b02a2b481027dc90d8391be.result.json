@@ -1,0 +1,276 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+    "phase": "development",
+    "ordinal": 10,
+    "item_key": "dev07A",
+    "draw": "primary",
+    "messages_identity": "6afa9eab8e63aadf4a5773fb201e8440989a3cba87d793065208e83d602a1383",
+    "schema_identity": "a58a0cc3242919d2a2cbfc0ea167e7b4fc877a9a5407d4ab1f77fd5710773503",
+    "paired_slot": "cae125743b477e18576d6b1afd8af9ea3788699933a7ec91d9a9927b658d1568",
+    "seed": 468094897,
+    "schedule_position": 38,
+    "input_utf8_bytes": 23744,
+    "original_slot_request_id": "4646c4d94c9d36c825644e5777352cfac0ffc1d17204cced1bb75f89742842c2",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "ab04143945ec75e2badf631eb8f063d3f3d770014b02a2b481027dc90d8391be"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 10,
+    "item_key": "dev07A",
+    "draw": "primary",
+    "messages_identity": "6afa9eab8e63aadf4a5773fb201e8440989a3cba87d793065208e83d602a1383",
+    "schema_identity": "a58a0cc3242919d2a2cbfc0ea167e7b4fc877a9a5407d4ab1f77fd5710773503",
+    "paired_slot": "cae125743b477e18576d6b1afd8af9ea3788699933a7ec91d9a9927b658d1568",
+    "seed": 468094897,
+    "schedule_position": 38,
+    "input_utf8_bytes": 23744,
+    "request_id": "4646c4d94c9d36c825644e5777352cfac0ffc1d17204cced1bb75f89742842c2"
+  },
+  "protocol_identity": "6bcfd3691bd9a6be241a2c9de060b01e637462e04cf51dd35a2cc3e19bd47ff2",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "f5f533c575b97b31ad07208ad08a1750684dbb463c4ee12af4476d07a551d26d",
+      "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "ab04143945ec75e2badf631eb8f063d3f3d770014b02a2b481027dc90d8391be",
+      "raw_output_sha256": "029224ccd804a98138539bb98206bec031b55bf7da29e23a32f36ca2a4be9c9d",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing frustration and a sense of injustice regarding workplace favoritism and is looking for advice on how to handle the situation.",
+          "response_quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+          "evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+            },
+            {
+              "source_id": "C:T008",
+              "quote": "Yes, it bothers me as I cannot tolerate injustice"
+            }
+          ],
+          "reason": "The response provides a concise and appropriate empathetic validation of the user's feelings regarding injustice (R001) and offers a direct, supportive path forward by asking if the user wants to explore options (R002), which aligns with the user's initial request for advice."
+        },
+        "claims": [
+          {
+            "response_quote": "It's understandable that this feels unfair.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T008",
+                "quote": "Yes, it bothers me as I cannot tolerate injustice"
+              }
+            ],
+            "reason": "The user explicitly stated that the situation bothers them because they 'cannot tolerate injustice', making the validation of it feeling 'unfair' directly supported."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's emotional state regarding workplace favoritism and offers to provide the requested advice by exploring options.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 97
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It's understandable that this feels unfair.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 43
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing frustration and a sense of injustice regarding workplace favoritism and is looking for advice on how to handle the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The response provides a concise and appropriate empathetic validation of the user's feelings regarding injustice (R001) and offers a direct, supportive path forward by asking if the user wants to explore options (R002), which aligns with the user's initial request for advice."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly stated that the situation bothers them because they 'cannot tolerate injustice', making the validation of it feeling 'unfair' directly supported."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's emotional state regarding workplace favoritism and offers to provide the requested advice by exploring options.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing frustration and a sense of injustice regarding workplace favoritism and is looking for advice on how to handle the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The response provides a concise and appropriate empathetic validation of the user's feelings regarding injustice (R001) and offers a direct, supportive path forward by asking if the user wants to explore options (R002), which aligns with the user's initial request for advice."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly stated that the situation bothers them because they 'cannot tolerate injustice', making the validation of it feeling 'unfair' directly supported.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive question offering to explore options, which is a standard conversational move and does not assert a personal fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "The response addresses the user's emotional state regarding workplace favoritism and offers to provide the requested advice by exploring options.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing frustration and a sense of injustice regarding workplace favoritism and is looking for advice on how to handle the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The response provides a concise and appropriate empathetic validation of the user's feelings regarding injustice (R001) and offers a direct, supportive path forward by asking if the user wants to explore options (R002), which aligns with the user's initial request for advice."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly stated that the situation bothers them because they 'cannot tolerate injustice', making the validation of it feeling 'unfair' directly supported."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive question offering to explore options, which is a standard conversational move and does not assert a personal fact."
+          }
+        ],
+        "coverage": "The response addresses the user's emotional state regarding workplace favoritism and offers to provide the requested advice by exploring options.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "2a95ccb8de59f36d6d0aa7f624ec0f929fe856858a661fb9357e260c4e9bc651",
+      "adapted_final_sha256": "029224ccd804a98138539bb98206bec031b55bf7da29e23a32f36ca2a4be9c9d",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user is expressing frustration and a sense of injustice regarding workplace favoritism and is looking for advice on how to handle the situation.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T006\",\n      \"C:T008\"\n    ],\n    \"reason\": \"The response provides a concise and appropriate empathetic validation of the user's feelings regarding injustice (R001) and offers a direct, supportive path forward by asking if the user wants to explore options (R002), which aligns with the user's initial request for advice.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T008\"\n      ],\n      \"reason\": \"The user explicitly stated that the situation bothers them because they 'cannot tolerate injustice', making the validation of it feeling 'unfair' directly supported.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a supportive question offering to explore options, which is a standard conversational move and does not assert a personal fact.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's emotional state regarding workplace favoritism and offers to provide the requested advice by exploring options.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 28.723091975029092,
+  "API_usd": 0
+}

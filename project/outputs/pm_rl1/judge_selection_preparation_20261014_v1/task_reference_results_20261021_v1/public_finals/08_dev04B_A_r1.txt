@@ -1,0 +1,49 @@
+{
+  "status": "scored",
+  "q": 3,
+  "q_rationale": {
+    "current_need": "The user is expressing frustration and a strong sense of injustice about workplace favoritism and wants help deciding how to handle it.",
+    "response_unit_ids": ["R001", "R002", "R003", "R004"],
+    "source_turn_ids": ["C:T006", "C:T008"],
+    "reason": "The reply is responsive and validating: it accurately reflects the favoritism and the user's intolerance of injustice, then offers a sensible choice between addressing the manager or focusing on coping. However, the manager-discussion option introduces an unverified assumption that the favoritism is affecting the user's team morale and productivity, a localized overreach that keeps the reply from fully meeting the turn."
+  },
+  "assessments": [
+    {
+      "response_unit_id": "R001",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T006", "C:T008"],
+      "reason": "The user reports peers being favored and says the situation bothers them because they cannot tolerate injustice; the reflection of frustration and injustice is grounded in those statements."
+    },
+    {
+      "response_unit_id": "R002",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T006"],
+      "reason": "The user explicitly says the peers hardly work but are favorable to the manager because they always agree; this supports the reference to being favored for reasons that do not align with work ethic."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": ["C:T008"],
+      "reason": "The phrase 'Since you mentioned you can't tolerate injustice' accurately reflects the user's own statement in C:T008."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "unsupported",
+      "severity": 0.25,
+      "source_turn_ids": ["C:T006", "C:T008"],
+      "reason": "The suggested manager discussion presupposes that the favoritism affects 'your team's morale and productivity.' The record supports favoritism and the user's personal distress, but it does not state any team-wide morale or productivity effect. This is a localized unverified assumption rather than a core failure of the advice."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is a clarifying question offering an alternative direction; it does not assert a specific personal fact about the user."
+    }
+  ],
+  "coverage": "Checked all four reply units against the current prefix C:T000-C:T008 and the complete legal past sessions H001-H004. The only factual concern found is the localized team-morale/productivity presupposition in R003; no identity, prior-speaker attribution, or other personal-history error was found.",
+  "uncertainty_reasons": []
+}

@@ -1,0 +1,62 @@
+{
+  "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-exact-span-v1",
+  "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+  "raw_output_sha256": "5bf60037eaa2fdf6319cdbdde75db7ffb11e832fa4489ba3ee541dfd94dd4562",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses a strong need for connection and a listening ear.",
+      "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "The reply effectively matches the turn's function by validating the emotional need and inviting disclosure. It respects the immediate context without forcing assumptions about prior specific topics (e.g., Bob, Jerry, finance), allowing the user to direct the conversation. Minor grammatical slips ('is been') are noted but do not compromise coherence, safety, or responsiveness, fitting the criteria where a brief acknowledgment and question suffice for a 4."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated against full legal evidence (H001 through H007 and C:T000). Verified that no personal factual claims (identity, history, health status) were asserted by the supporter in the current reply, thus no factual contradictions or boundary violations were identified. Checked temporal alignment relative to H007 (2024-10-25) vs C:T000 (2024-11-05).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+}

@@ -1,0 +1,2138 @@
+{
+  "study": "pmrl1-score-audit-strict-delivery-v1-20261022",
+  "protocol_identity": "254155ce54f6912db25fd86d82bd7312b8f50d53098ba50fd2d43cd1c3b298ec",
+  "planned": 6,
+  "started": 3,
+  "cumulative": 307,
+  "slots": [
+    {
+      "position": 3,
+      "slot_id": "31545c6c1988ae167eb4a0b677ffd9d8781b12c633d96ea22944885feb0f604c",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V4_OFF",
+        "repetition": 1,
+        "historical_score_request": "0aaa26f44defe18c381fc4b1bc019af1f3704f2e78bf23b1104259cf306ec049"
+      },
+      "item_key": "V4_OFF",
+      "material_id": "V4_OFF",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "7ede17622a0d8c2338c809a44ed9e68570836ba98622e3a4fb91982493870923",
+      "evidence_identity": "2a6a552522073a550cda10ad2f6ffc94258181d217c1834632c1340d5ddfe700",
+      "preliminary_score_identity": "bbe294b60a0c0a3ab65ca59af572ab1097989770bcd2338adfe4ffc79ec49fe6",
+      "status": "completed",
+      "result": {
+        "slot_id": "31545c6c1988ae167eb4a0b677ffd9d8781b12c633d96ea22944885feb0f604c",
+        "request_identity": "f9325184a0da2410c030d5d2e306b1d8637de7062ad1939be7b145782d80a02e",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "That sounds completely okay.",
+                  "claim_type": "assertion",
+                  "subject": "The acceptability of the seeker's request to talk to someone",
+                  "time": "current turn (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "The unit is an evaluative reassurance answer to the seeker's explicit permission question; it does not assert a personal event, biography, or completed action. 'That' is naturally read as the request to talk rather than as a factual claim about the user's life."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "I'm here to listen.",
+                  "claim_type": "assertion",
+                  "subject": "The new AI assistant's availability to listen in this chat",
+                  "time": "current session (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "This is a present, role-bound statement of conversational availability. Under the new-AI speaker contract it is ordinary support, not an assertion that the assistant is the historical supporter, a friend, or the user, and it contains no specific historical fact."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R003",
+                  "response_quote": "What's on your mind?",
+                  "claim_type": "general",
+                  "subject": "The topic, if any, that the seeker may choose to share",
+                  "time": "current turn (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "This is an open invitation for the seeker to choose what to share. It does not assert that a particular topic, event, intention, or outcome exists; the current turn supplies only a request to talk to someone."
+                }
+              ],
+              "coverage": "Reviewed the current seeker turn C:T000, all three reply units R001-R003, and the complete legal historical sessions H001-H008. No future user reaction is available. The reply contains no personal factual assertions or user-specific identity claims.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R001",
+                "response_quote": "That sounds completely okay.",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "The phrase reassures the seeker that needing or asking to talk to someone is acceptable.",
+                  "The phrase is a general evaluative acknowledgment of the seeker's permission question, not a factual claim about the user's life."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  }
+                ],
+                "criterion": "The reply should directly address the current permission-seeking opening without inventing a personal fact; an evaluative reassurance is non_factual.",
+                "consequence": "The supportive opening remains appropriate and no core advice or understanding changes under either reading.",
+                "reason": "The immediate antecedent for 'that' is the seeker's 'Is that okay?'. The unit gives reassurance rather than asserting a specific personal event, relationship, or biography."
+              },
+              {
+                "response_unit_id": "R002",
+                "response_quote": "I'm here to listen.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "It states the new assistant's present conversational availability in this chat.",
+                  "It is an ordinary supportive formula, not a claim to be the prior human supporter or a personal friend."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  },
+                  {
+                    "source_id": "H005:T022",
+                    "quote": "You're definitely not alone, Taylor. I'm always here to listen whenever you need."
+                  }
+                ],
+                "criterion": "Availability language is non_factual under the scope clarification and new-AI contract; it becomes an identity error only if the reply claims another speaker's history, role, or personal experience.",
+                "consequence": "The offer of listening remains intact; no identity or factual misunderstanding is introduced.",
+                "reason": "A historical supporter used similar listening language in H005:T022, but that is another speaker's past support, not confirmation about the new AI. The reply's brief 'I'm here to listen' is role-appropriate availability and does not adopt that speaker's identity or biography."
+              },
+              {
+                "response_unit_id": "R003",
+                "response_quote": "What's on your mind?",
+                "dimension": "quality_basis",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "It is an open invitation for the seeker to choose what to discuss.",
+                  "It is a gentle prompt that does not require disclosure of any specific topic."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  }
+                ],
+                "criterion": "An invitation is not an instruction to act now or a factual presupposition; the current turn needs a gentle opening for the seeker to begin.",
+                "consequence": "The reply fully supports the current opening without adding a constraint or missing a stated need.",
+                "reason": "The question follows the seeker's stated need to talk and leaves the topic open. It does not assert a particular issue, event, or intention as fact."
+              }
+            ],
+            "coverage_limitations": "This audit covers only the complete supplied current prefix C:T000, reply units R001-R003, and legal historical sessions H001-H008. No future user reaction is available, so the assessment is limited to appropriateness at this cut.",
+            "score_review": {
+              "preliminary_score_sha256": "bbe294b60a0c0a3ab65ca59af572ab1097989770bcd2338adfe4ffc79ec49fe6",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already treats R001 as non-factual evaluative reassurance. That matches the finding and introduces no inconsistency in q or m."
+                },
+                {
+                  "finding_index": 1,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already identifies R002 as role-appropriate availability rather than a personal-history claim. The cited historical supporter wording does not make this a score defect."
+                },
+                {
+                  "finding_index": 2,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "This is an open invitation for the seeker to share, not a factual claim about the user or the assistant."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already characterizes R003 as an open invitation and does not treat it as a factual presupposition. No omission or inconsistency affecting q or m is present."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share."
+                    }
+                  ],
+                  "criterion": "q=4 applies when the reply fully meets what this particular current turn calls for; a brief acknowledgment or question can be sufficient, and length or extra questions are not rewarded by themselves.",
+                  "reason": "The current need is permission/reassurance plus a gentle opening. R001 gives reassurance, R002 offers listening, and R003 invites sharing. These are exactly the requested functions, with no important omission or unsupported personal claim."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+                    },
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+                    }
+                  ],
+                  "criterion": "m=0 is appropriate when no user-specific factual, temporal, identity, intention/outcome, or explicit-boundary error is found; ordinary availability language is non_factual.",
+                  "reason": "All three units are non_factual. The only first-person phrase is role-bound conversational availability, and the reply does not claim a historical supporter's experience as the new AI's own or assert a user-specific fact."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Reviewed the single current seeker turn and all three reply units."
+                    }
+                  ],
+                  "criterion": "Coverage should account for every reply unit and relevant current/historical evidence and state the scope of the check; empty uncertainty reasons are appropriate when the check is complete.",
+                  "reason": "The preliminary coverage reviews the single current turn and all three reply units and notes that no user-specific factual claims were made. The full supplied record contains no contrary current constraint."
+                }
+              }
+            }
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "argument_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "2cf51d2597d788f89f2f65ffc45b69e25dcf4a75dcf78f45d3b77c1e96ca4eb2",
+            "adapted_final_sha256": "2cf51d2597d788f89f2f65ffc45b69e25dcf4a75dcf78f45d3b77c1e96ca4eb2",
+            "interior_unchanged": true
+          },
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0180615",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 20737,
+          "completion_tokens": 9867,
+          "total_tokens": 30604,
+          "prompt_tokens_details": {
+            "cached_tokens": 1280
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 7595
+          },
+          "prompt_cache_hit_tokens": 1280,
+          "prompt_cache_miss_tokens": 19457
+        },
+        "elapsed_seconds": 44.515554646000965,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 1.0,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": false
+    },
+    {
+      "position": 4,
+      "slot_id": "a2bc57cc11385e2cf00572bf6a1e07849b8b297596f59d0335569d9cc632d19d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_ON",
+        "repetition": 1,
+        "historical_score_request": "41372225dc3a27e56ad016feebc6c82510e632458face2be4e179c4d0ada906f"
+      },
+      "item_key": "V3_ON",
+      "material_id": "V3_ON",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "1cdcdee289bcc357a20065d8ded82313e924f9d2e0c7c87b347c6f3f69600739",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "46b2014ff9902bd63fc428c682b0d85bfe8a5b825a88e3e20065bfd5b15a7ca5",
+      "status": "completed",
+      "result": {
+        "slot_id": "a2bc57cc11385e2cf00572bf6a1e07849b8b297596f59d0335569d9cc632d19d",
+        "request_identity": "76a2b01d1f9705f50007aafd8c8dc4f2adea7ae484106756caec12601de75bf5",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "I'm sorry you're carrying that weight.",
+                  "claim_type": "presupposition",
+                  "subject": "Anna's current emotional load",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "now there's more pressure to improve"
+                    }
+                  ],
+                  "reason": "The empathy presupposes Anna is under a heavy load, which she states directly in the current prefix (several simultaneous stressors, and midterms adding stress and pressure). The unit is otherwise an evaluative acknowledgment with no personal factual claim beyond that presupposition."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "It sounds like the pressure to improve your grades is piling onto the already heavy load of dealing with Rachel's situation, Lily's move, and the recent fights.",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current stressors: grade pressure, Rachel's situation, Lily's move, recent fights",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T002",
+                      "quote": "My friend at school, Rachel, is going through something really tough."
+                    },
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    },
+                    {
+                      "source_id": "H009:T001",
+                      "quote": "Finding out Lily is moving is just... too much right now."
+                    }
+                  ],
+                  "reason": "Each named stressor is traceable to Anna's own reports: Rachel in C:T002, Lily leaving and recent fights in C:T006, added grade pressure in C:T012, and the move itself named as 'moving' by Anna in H009:T001. No element is invented and the subject is Anna, not the assistant."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R003",
+                  "response_quote": "That's a lot to handle alone.",
+                  "claim_type": "presupposition",
+                  "subject": "Anna's available support while handling these stressors",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T008",
+                      "quote": "Not really. I feel like a mess and I'm scared of burdening others with my problems."
+                    },
+                    {
+                      "source_id": "C:T010",
+                      "quote": "They don't really get it."
+                    }
+                  ],
+                  "reason": "Read as an empathic reflection rather than a literal count of zero supporters, it is grounded in Anna's report of not really having talked to anyone, fearing she would burden others, and feeling her parents do not get it. Her earlier attempt to talk to her parents ended in arguing, which does not contradict the sense of being unsupported."
+                },
+                {
+                  "claim_id": "C004",
+                  "response_unit_id": "R004",
+                  "response_quote": "Since you mentioned earlier that talking to your parents about future plans doesn't feel like they \"get it,\"",
+                  "claim_type": "assertion",
+                  "subject": "What Anna said earlier about talking to her parents about future plans",
+                  "time": "earlier in the current session (C:T010), referenced in the current turn",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T010",
+                      "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                    }
+                  ],
+                  "reason": "The attribution is accurate and attributed to Anna's own prior words in this conversation; the reply does not claim those words or the experience as its own. H007:T005 contains a related report of a parental argument about future plans, which is consistent rather than contradictory."
+                },
+                {
+                  "claim_id": "C005",
+                  "response_unit_id": "R004",
+                  "response_quote": "have you considered reaching out to a school counselor or another trusted adult at school?",
+                  "claim_type": "tentative",
+                  "subject": "Anna's possible future contact with a school counselor or trusted adult",
+                  "time": "current turn, optional/forward-looking",
+                  "action_stage": "suggested",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "H009:T008",
+                      "quote": "Maybe talking to a school counselor might help you manage the stress better?"
+                    },
+                    {
+                      "source_id": "H009:T009",
+                      "quote": "I guess that's a good idea. But I'm just so tired of explaining everything over and over, you know?"
+                    }
+                  ],
+                  "reason": "This is a question-form optional invitation, not an instruction and not an assertion that Anna has never considered it. A historical supporter had already floated a school counselor in H009:T008 and Anna called it a good idea while noting fatigue about re-explaining; the reply neither claims novelty nor claims Anna acted, so it invents no personal fact, though the overlap is a mild relevance limitation rather than an error."
+                },
+                {
+                  "claim_id": "C006",
+                  "response_unit_id": "R005",
+                  "response_quote": "They might offer a different perspective or help you find ways to manage the stress without adding more pressure to your grades.",
+                  "claim_type": "tentative",
+                  "subject": "Possible benefits of a school counselor or trusted adult for Anna",
+                  "time": "hypothetical, current turn",
+                  "action_stage": "hypothetical",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T012",
+                      "quote": "now there's more pressure to improve"
+                    }
+                  ],
+                  "reason": "The modal 'might' marks the benefits as speculative rather than asserted outcomes, so no personal fact is claimed about Anna or about what a counselor would do. The embedded reference to added grade pressure reflects Anna's own report in C:T012."
+                }
+              ],
+              "coverage": "Checked all five reply units (R001-R005), including the factual presuppositions inside the empathic opener and the counselor question, against the complete current prefix C:T000-C:T012 and all past sessions H001-H009. Verified each named stressor (Rachel, Lily leaving/moving, recent fights, bad midterms and added grade pressure, parents not 'getting it') against Anna's own turns, and noted the earlier school-counselor offer in H009:T008-T009 as context rather than as an error. No personal factual claim about Anna is left unaudited.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R002",
+                "response_quote": "It sounds like the pressure to improve your grades is piling onto the already heavy load of dealing with Rachel's situation, Lily's move, and the recent fights.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "The sentence is an accurate reflecting summary of stressors Anna reported across the current session and the most recent past session",
+                  "The phrase 'Lily's move' comes from the prior session rather than the current prefix, but Anna herself names the move in H009:T001"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T002",
+                    "quote": "My friend at school, Rachel, is going through something really tough."
+                  },
+                  {
+                    "source_id": "C:T006",
+                    "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                  },
+                  {
+                    "source_id": "C:T012",
+                    "quote": "My midterms were bad, and now there's more pressure to improve."
+                  },
+                  {
+                    "source_id": "H009:T001",
+                    "quote": "Finding out Lily is moving is just... too much right now."
+                  }
+                ],
+                "criterion": "A relationship of 'supported' requires source turns that actually contain the attributed content, and a reflecting summary must not add stressors Anna never reported.",
+                "consequence": "No change to the core understanding or advice: the summary of accumulated stress stands and the empathic framing remains intact.",
+                "reason": "Every element of the summary is present in Anna's own reported turns, and the speakers of those turns are Anna rather than a historical supporter."
+              },
+              {
+                "response_unit_id": "R004",
+                "response_quote": "Since you mentioned earlier that talking to your parents about future plans doesn't feel like they \"get it,\"",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "'Earlier' refers to C:T010 within the current conversation",
+                  "It could be read as pointing to any earlier session, but C:T010 already contains the same content, so no external attribution is needed"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T010",
+                    "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                  }
+                ],
+                "criterion": "A memory reference must be traceable to the user's own words, and the assistant may recall the conversation without claiming the experience as its own.",
+                "consequence": "The reference is accurate, so the advice built on it is not misdirected.",
+                "reason": "The quoted content matches Anna's words in the current prefix; the reply attributes the content to Anna ('you mentioned'), not to itself or to a historical supporter."
+              },
+              {
+                "response_unit_id": "R004",
+                "response_quote": "have you considered reaching out to a school counselor or another trusted adult at school?",
+                "dimension": "quality_basis",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "An optional, question-form invitation to consider a support option, presented without asserting novelty",
+                  "A re-offer of an option already floated in H009:T008, without acknowledging Anna's remark there that she is tired of explaining things over and over"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "H009:T008",
+                    "quote": "Maybe talking to a school counselor might help you manage the stress better?"
+                  },
+                  {
+                    "source_id": "H009:T009",
+                    "quote": "I guess that's a good idea. But I'm just so tired of explaining everything over and over, you know?"
+                  },
+                  {
+                    "source_id": "C:T012",
+                    "quote": "now there's more pressure to improve"
+                  }
+                ],
+                "criterion": "q=4 requires the reply to meet what this turn calls for, while q=3 covers an appropriate reply with an important defect; a style or memory difference alone does not move between them.",
+                "consequence": "The reply still delivers acknowledgment plus a low-pressure coping option for the current turn; the unacknowledged prior offer is a nonblocking limitation rather than a defect that changes what Anna receives.",
+                "reason": "This turn's seeker message only adds midterm stress and grade pressure, and the reply acknowledges that without prescribing action. The counselor idea does overlap H009:T008, and Anna's fatigue about explaining is not addressed, but the current prefix contains no such constraint and the reply frames the option as a question, so the high q verdict remains defensible; the overlap is recorded as a caveat."
+              },
+              {
+                "response_unit_id": "R003",
+                "response_quote": "That's a lot to handle alone.",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "An empathic reflection of Anna's felt lack of support",
+                  "A stronger literal claim that Anna has no one, which her report of an attempted parental conversation would partly qualify"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T008",
+                    "quote": "Not really. I feel like a mess and I'm scared of burdening others with my problems."
+                  },
+                  {
+                    "source_id": "C:T010",
+                    "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                  }
+                ],
+                "criterion": "Ordinary empathic reflection is non_factual or supported when it tracks the user's reported experience, and it is not required to enumerate every available person.",
+                "consequence": "Reading it as reflection, the support offered is well targeted; even the literal reading is a minor qualification, not a change in understanding or advice.",
+                "reason": "Anna reports not really having talked to anyone and fearing she would burden others, and her one attempt with her parents ended in arguing and not feeling understood; nothing in the record shows a currently available confidant she relies on."
+              },
+              {
+                "response_unit_id": "R005",
+                "response_quote": "They might offer a different perspective or help you find ways to manage the stress without adding more pressure to your grades.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "Hedged rationale for the suggested option, asserting no outcome",
+                  "An implicit claim that grade pressure is a live concern, which Anna states in the current prefix"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T012",
+                    "quote": "now there's more pressure to improve"
+                  }
+                ],
+                "criterion": "Tentative possibilities about what a third party might do are non_factual; only embedded personal presuppositions need support.",
+                "consequence": "Treating the unit as non_factual keeps the misuse record clean while the presupposed grade pressure is independently supported.",
+                "reason": "The modal 'might' leaves the benefits open, and the only personal element ('more pressure to your grades') mirrors Anna's own statement in C:T012."
+              }
+            ],
+            "coverage_limitations": "Audit is limited to the supplied current prefix C:T000-C:T012 and past sessions H001-H009; no future reaction or external verification exists, so 'supported' means support in this record, not proof about the world. The overlap between R004's counselor suggestion and H009:T008-T009 is assessable only from those turns; whether Anna had already acted on that suggestion is not stated anywhere and was not assumed. Past-session supporter turns were treated as separate historical speakers and were not used as user confirmation.",
+            "score_review": {
+              "preliminary_score_sha256": "46b2014ff9902bd63fc428c682b0d85bfe8a5b825a88e3e20065bfd5b15a7ca5",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "It accurately summarizes the named stressors: Rachel's situation is in C:T002, Lily leaving/recent fights in C:T006, pressure to improve grades in C:T012, and Lily's move is also established in H009:T001."
+                    }
+                  ],
+                  "reason": "The same claim about R002 and the same supported relation were assessed with the specific source turns, so no score-affecting omission or inconsistency appears here."
+                },
+                {
+                  "finding_index": 1,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/3/reason",
+                      "quote": "The reference to Anna's earlier comment is accurate: C:T010 says talking to her parents about future plans leads to arguing and they do not really get it."
+                    }
+                  ],
+                  "reason": "The memory reference in R004 was checked against its actual source turn and found accurate, which is the same treatment given in this audit; the q judgement does not turn on an unexamined memory claim."
+                },
+                {
+                  "finding_index": 2,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "offers a low-pressure, optional source of support"
+                    },
+                    {
+                      "path": "/coverage",
+                      "quote": "Assessed all five reply units against the complete current prefix C:T000-C:T012 and all supplied past sessions H001-H009."
+                    }
+                  ],
+                  "reason": "The only concrete limitation is that the counselor option repeats H009:T008 while Anna's remark about being tired of explaining (H009:T009) is not addressed. That overlap is a nonblocking caveat rather than a score defect, because the current seeker turn adds only midterm and grade pressure, the reply frames the option as an open question, and nothing in the current prefix restates the fatigue constraint. The preliminary reasoning's characterization of the offer as low-pressure and optional is therefore defensible within the q=4 anchor."
+                },
+                {
+                  "finding_index": 3,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "Anna reports not really having talked to anyone, fearing burdening others, and feeling her parents do not get it, which supports the empathic reflection that this is a lot to handle without adequate support."
+                    }
+                  ],
+                  "reason": "The 'alone' reflection was examined against Anna's own reports rather than taken at face value, and the preliminary assessment cites those same turns; no claim was left unexamined that would shift severity."
+                },
+                {
+                  "finding_index": 4,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/5/reason",
+                      "quote": "This is general rationale for the suggested option, not a specific personal claim about Anna's life or actions."
+                    }
+                  ],
+                  "reason": "The hedged benefits sentence was correctly treated as non_factual, so it contributes nothing to the misuse maximum; the score's zero-severity treatment of this unit is consistent with the evidence."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "needs acknowledgment and a manageable way to cope without more pressure"
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It does not impose an action or make unsupported personal claims, so it fully meets this turn's need for empathic acknowledgment plus a concrete coping option."
+                    }
+                  ],
+                  "criterion": "q=4 requires the reply to fully meet what this particular turn calls for; q=3 requires an appropriate, coherent, responsive reply with no important defect; a missed explicit need or constraint lands at q=2.",
+                  "reason": "The final seeker turn adds bad midterms and new pressure to improve, and the reply acknowledges the accumulating load accurately and then offers one optional, non-pressuring support route without prescribing action. The only limitation, that the counselor idea was already floated in H009:T008 without addressing Anna's fatigue about re-explaining, is not restated in the current prefix and does not leave an explicit current need or constraint mishandled, so the q=4 justification survives; the limitation is recorded as nonblocking rather than as a scoring error."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an empathic acknowledgment rather than a specific personal factual assertion."
+                    },
+                    {
+                      "path": "/assessments/4/reason",
+                      "quote": "The invitation to consider a school counselor or trusted adult is a tentative suggestion, not an asserted personal fact about Anna."
+                    }
+                  ],
+                  "criterion": "m is 0 only when no user-specific factual, temporal, identity, intention/outcome or explicit-boundary error is present; tentative invitations and empathic reflections are non_factual, while a suggestion is not evidence that an action happened.",
+                  "reason": "Every personal element in the reply traces to Anna's own turns (C:T002, C:T006, C:T010, C:T012, H009:T001), and the support option is phrased as a question, so no completed action, invented history, or claimed identity is asserted. The assistant does not adopt the historical supporter's experiences or words as its own, so the zero-severity record is supported."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Checked the final turn's reported bad midterms and added grade pressure against prior mentions of Rachel, Lily, recent fights, parents, and isolation."
+                    }
+                  ],
+                  "criterion": "Coverage must account for every reply unit and the complete legal source range, and it is a description of the audit rather than proof of truth.",
+                  "reason": "The stated coverage names all five units, the full current prefix, and all past sessions, and each named stressor is in fact traceable to Anna's turns. It does not flag the H009 counselor overlap, but that omission concerns a mild relevance nuance already treated as nonblocking, so the coverage description is not materially inaccurate."
+                }
+              }
+            }
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "argument_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "553d38d3d78589084e5ec0f391ea90773746be1613640cce996184afa5c9a7aa",
+            "adapted_final_sha256": "553d38d3d78589084e5ec0f391ea90773746be1613640cce996184afa5c9a7aa",
+            "interior_unchanged": true
+          },
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.021306",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 25328,
+          "completion_tokens": 11423,
+          "total_tokens": 36751,
+          "prompt_tokens_details": {
+            "cached_tokens": 4992
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 6865
+          },
+          "prompt_cache_hit_tokens": 4992,
+          "prompt_cache_miss_tokens": 20336
+        },
+        "elapsed_seconds": 50.44796140200924,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 1.0,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": false
+    },
+    {
+      "position": 5,
+      "slot_id": "fbc195413cdf04bbc3dab81f19159add18b41081a3428898f17b20f8d3f40582",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev04B",
+        "repetition": 1,
+        "historical_score_request": "ac0983544757dd38030ecd88f7a541c6f57e01b5f680096048442318883e8c44"
+      },
+      "item_key": "dev04B",
+      "material_id": "dev04B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "421556d1c945eb13dcb68ecee793bff2d0686dc28802e561ae3a103e90fcbfcb",
+      "evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "preliminary_score_identity": "da781806684950e6ca296057e15353ed5fbc20d4da3c4330b3ecc65e8d36f65c",
+      "status": "failed",
+      "result": {
+        "slot_id": "fbc195413cdf04bbc3dab81f19159add18b41081a3428898f17b20f8d3f40582",
+        "request_identity": "c6be1e2b3a46fda004e2b18e72cb9c626661d16b7f9d00233d5caf0b2f9688f3",
+        "component": "audit",
+        "technical_valid": false,
+        "evaluation": {
+          "technical_valid": false,
+          "value": null,
+          "error_type": "JSONDecodeError",
+          "error": "Extra data: line 1 column 11152 (char 11151)",
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "reward_eligible": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0220299",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 15237,
+          "completion_tokens": 14549,
+          "total_tokens": 29786,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 11992
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 13701
+        },
+        "elapsed_seconds": 66.46574197799782,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": null,
+        "semantic_gold": false,
+        "action": "hard_stop",
+        "reasons": [
+          "technical_or_execution_failure"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": null
+    },
+    {
+      "position": 6,
+      "slot_id": "6d4d47e3fb5a1975ddd5f5e3aaeb270743ae78fb01a310dd902df273530680b9",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev35B",
+        "repetition": 1,
+        "historical_score_request": "30f5dd124fb4c3c613ae423161f9dbbef3f2ba57894bbdbf724be6e03e90bb6b"
+      },
+      "item_key": "dev35B",
+      "material_id": "dev35B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "468492c830bde740c16049f3e713a3ba24aa30e820b14bec8a5aabfa56c4ae89",
+      "evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "preliminary_score_identity": "eba867242975b810933be8378d13955aa1bbd3068da5bd0c7cf08c7c3372a6e2",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 7,
+      "slot_id": "207c0f4ce18cd4d66a0633f9427bd8a2676acb913645a8bd54fabf6e1fe0423d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev06B",
+        "repetition": 2,
+        "historical_score_request": "a9886335804e35c1edb63b44e550bf0458ea728e36fa307f6c571a0f76549cf6"
+      },
+      "item_key": "dev06B",
+      "material_id": "dev06B",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+      "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "preliminary_score_identity": "93f2af672cebb6cb96cef0d1ba5bdeb6b2f4f5c338ee96c901a4cc257445f5c8",
+      "status": "not_dispatched",
+      "result": null
+    },
+    {
+      "position": 8,
+      "slot_id": "bed7628af87811368e77c13423117284d9ff8db873e67e16c6b17c42694c0253",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_OFF",
+        "repetition": 2,
+        "historical_score_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008"
+      },
+      "item_key": "V3_OFF",
+      "material_id": "V3_OFF",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "430613c1f841505d51030a411fcdc62bc1ac301759e4d1a0cf1914ef94fc4f1d",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+      "status": "not_dispatched",
+      "result": null
+    }
+  ],
+  "technical_valid": 2,
+  "model_check_unknown": 0,
+  "model_score_review_unresolved": 0,
+  "reviewer_disputes": "separate local analysis; not inferred as model unknown",
+  "accounted_usd": "0.0613974",
+  "status": "STOPPED",
+  "old_scores_overwritten": false,
+  "same_output_trigger_comparison_not_two_model_arms": true,
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "repairs_dispatched": 0,
+  "all_original_slots": [
+    {
+      "position": 1,
+      "slot_id": "2e856bba9235f9da46f10a0bcaad1e7a59a59c77f2d71481f1424112cd51f498",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_OFF",
+        "repetition": 1,
+        "historical_score_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008"
+      },
+      "item_key": "V3_OFF",
+      "material_id": "V3_OFF",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "430613c1f841505d51030a411fcdc62bc1ac301759e4d1a0cf1914ef94fc4f1d",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+      "status": "completed",
+      "result": {
+        "slot_id": "2e856bba9235f9da46f10a0bcaad1e7a59a59c77f2d71481f1424112cd51f498",
+        "request_identity": "90327f64172403fa0c5fc242cc3f5776c283ac2761a242233578ea04d2dfeac9",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "I'm sorry you're carrying that weight right now.",
+                  "claim_type": "general",
+                  "subject": "Anna's present emotional burden",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "This is empathic acknowledgment rather than a specific personal factual assertion; it does not claim a particular event or outcome."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "your friend's struggles",
+                  "claim_type": "assertion",
+                  "subject": "Rachel's tough experience and Anna's concern for her",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T002",
+                      "quote": "My friend at school, Rachel, is going through something really tough."
+                    }
+                  ],
+                  "reason": "Anna explicitly reports Rachel's difficult experience and her concern, so naming the friend's struggles as part of the current load is supported."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R002",
+                  "response_quote": "your own academic stress",
+                  "claim_type": "assertion",
+                  "subject": "Anna's academic stress",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "my grades slipping"
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    }
+                  ],
+                  "reason": "The current prefix explicitly mentions grades slipping, bad midterms, and more pressure to improve, so the academic-stress characterization is supported."
+                },
+                {
+                  "claim_id": "C004",
+                  "response_unit_id": "R002",
+                  "response_quote": "recent changes at home (like Lily leaving)",
+                  "claim_type": "presupposition",
+                  "subject": "Lily's leaving as a recent change in Anna's home or household",
+                  "time": "recent/current",
+                  "action_stage": "unknown",
+                  "relation": "unsupported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving"
+                    },
+                    {
+                      "source_id": "H009:T001",
+                      "quote": "Finding out Lily is moving is just... too much right now."
+                    }
+                  ],
+                  "reason": "The record supports that Lily is leaving or moving and that this distresses Anna, but no supplied turn establishes that Lily's departure is a change 'at home' or that Lily is a household member. The phrase therefore over-locates the event even though the core stressor is supported."
+                },
+                {
+                  "claim_id": "C005",
+                  "response_unit_id": "R003",
+                  "response_quote": "Given how much is happening at once, it makes sense that you feel overwhelmed.",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current sense of overwhelm",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "it's a lot"
+                    },
+                    {
+                      "source_id": "C:T008",
+                      "quote": "I feel like a mess"
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "it just adds to the stress"
+                    }
+                  ],
+                  "reason": "Anna describes multiple stressors as a lot, says she feels like a mess, and says the situation adds to her stress, supporting the empathic reflection of overwhelm."
+                },
+                {
+                  "claim_id": "C006",
+                  "response_unit_id": "R004",
+                  "response_quote": "The pressure to improve your grades on top of everything else",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current grade-improvement pressure",
+                  "time": "current",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    }
+                  ],
+                  "reason": "This directly reflects Anna's report of bad midterms and additional pressure to improve."
+                },
+                {
+                  "claim_id": "C007",
+                  "response_unit_id": "R004",
+                  "response_quote": "can feel suffocating",
+                  "claim_type": "tentative",
+                  "subject": "possible emotional effect of the grade pressure",
+                  "time": "current/hypothetical",
+                  "action_stage": "hypothetical",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "The modal wording offers a possible empathic description of how pressure may feel; it does not assert that Anna is currently suffocating."
+                },
+                {
+                  "claim_id": "C008",
+                  "response_unit_id": "R005",
+                  "response_quote": "Have you been able to take any small breaks or prioritize self-care lately, or is it feeling like you're just trying to keep up?",
+                  "claim_type": "tentative",
+                  "subject": "Anna's recent breaks, self-care, and current coping",
+                  "time": "lately/current",
+                  "action_stage": "unknown",
+                  "relation": "non_factual",
+                  "evidence": [],
+                  "reason": "This is an open question offering alternatives; it does not assert that Anna has or has not taken breaks or that she is merely trying to keep up."
+                }
+              ],
+              "coverage": "Reviewed R001-R005 against the complete current prefix C:T000-C:T012 and all past sessions H001-H009. The claims distinguish empathic language and open questions from personal factual characterizations; the only unsupported personal characterization found is the R002 'at home' framing of Lily's leaving. No future user reaction or external facts were used.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R002",
+                "response_quote": "recent changes at home (like Lily leaving)",
+                "dimension": "relation",
+                "verdict": "identified_error",
+                "readings": [
+                  "The phrase treats Lily's leaving or moving as a recent change in Anna's home or household.",
+                  "A looser reading treats 'at home' as Anna's general home life being affected by Lily's move, without claiming Lily lived with her."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T006",
+                    "quote": "Lily leaving"
+                  },
+                  {
+                    "source_id": "H009:T001",
+                    "quote": "Finding out Lily is moving is just... too much right now."
+                  }
+                ],
+                "criterion": "A personal factual characterization in supportive empathy should be supported by the complete legal record; unsupported is absent support in this record, not disproof in the world, and a localized unsupported detail should not be confused with a material contradiction.",
+                "consequence": "The core empathic summary and self-care question remain usable, but the phrase can misstate Lily's relationship to Anna's household. No part of the advice depends on Lily living with Anna.",
+                "reason": "The supplied record establishes that Lily is leaving or moving and that Anna is distressed by it, but it does not establish that this is a change 'at home' or that Lily is a household member. This is a localized factual imprecision rather than a supported summary."
+              }
+            ],
+            "coverage_limitations": "The audit uses only the supplied current prefix, complete legal past sessions, and exact reply units. No future reaction or external verification is available, so claims about Lily's household status cannot be resolved beyond the absence of support in this record.",
+            "score_review": {
+              "preliminary_score_sha256": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "already_accounted",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    },
+                    {
+                      "path": "/coverage",
+                      "quote": "H009:T001 confirms Lily is moving but not that this is a change 'at home.'"
+                    }
+                  ],
+                  "reason": "The preliminary score's R002 unsupported assessment, quality rationale, and coverage description all address the same 'at home' reading and treat it as localized. The source-specific relation issue is therefore already represented in the preliminary reasoning."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    },
+                    {
+                      "path": "/assessments/3/reason",
+                      "quote": "The user says things are 'a lot' and that the added pressure increases stress, so the empathic reflection that she feels overwhelmed is supported."
+                    },
+                    {
+                      "path": "/assessments/4/reason",
+                      "quote": "This directly reflects the user's statement that her midterms were bad and that there is more pressure to improve."
+                    }
+                  ],
+                  "criterion": "The quality rubric distinguishes a generally appropriate, coherent and responsive reply from one that fully meets every current call; a localized factual imprecision does not become an important defect solely because it is present.",
+                  "reason": "The reply addresses the current seeker need with empathic acknowledgment, a supported stressor summary, validation of overwhelm, a supported grade-pressure reflection, and an open self-care question. The only defect is the localized 'at home' framing, which does not create an important missed need or constraint. The preliminary quality judgment is therefore supported."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+                    }
+                  ],
+                  "criterion": "The error-severity rubric distinguishes localized factual imprecision that does not change core understanding or advice from material errors such as contradiction, misattribution of another person's example, or intention treated as completed action.",
+                  "reason": "The only identified personal factual issue is the R002 home-location phrase. The record supports Lily leaving or moving and Anna's distress, and no advice depends on Lily being a household member. The preliminary treatment as localized is supported; no material misuse basis appears."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Reviewed all five reply units against the current prefix and complete past sessions. The main stressor summary is supported by C:T002, C:T006, and C:T012; H009:T001 confirms Lily is moving but not that this is a change 'at home.' R003 and R004 are supported empathic reflections of the user's reported stress and grade pressure. R005 is an open question with no factual presupposition of completed action."
+                    }
+                  ],
+                  "criterion": "Coverage should address every reply unit and the complete legal source set, including factual presuppositions carried by empathy or questions.",
+                  "reason": "The preliminary coverage names all five units, cites the main current-prefix support, identifies the Lily/home limitation, and distinguishes the open question. The audit found no additional material claim that requires a different coverage assessment."
+                }
+              }
+            }
+          },
+          "outer_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+            "adapted_final_sha256": "6aa76447755cdd2425ae256a427026bba38d1ca76dceafa679583ec122b2a918",
+            "interior_unchanged": true
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0237885",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 20219,
+          "completion_tokens": 14769,
+          "total_tokens": 34988,
+          "prompt_tokens_details": {
+            "cached_tokens": 768
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 11735
+          },
+          "prompt_cache_hit_tokens": 768,
+          "prompt_cache_miss_tokens": 19451
+        },
+        "elapsed_seconds": 62.88766060300986,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-validation-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-validation-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 0.5,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": true,
+      "delivery": "original_message_final"
+    },
+    {
+      "position": 2,
+      "slot_id": "e333c8e6483e14e70ed73292b06790746a84ba84cad60353ca9df936274b7df5",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev06B",
+        "repetition": 1,
+        "historical_score_request": "a9886335804e35c1edb63b44e550bf0458ea728e36fa307f6c571a0f76549cf6"
+      },
+      "item_key": "dev06B",
+      "material_id": "dev06B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+      "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "preliminary_score_identity": "93f2af672cebb6cb96cef0d1ba5bdeb6b2f4f5c338ee96c901a4cc257445f5c8",
+      "status": "failed",
+      "result": {
+        "slot_id": "e333c8e6483e14e70ed73292b06790746a84ba84cad60353ca9df936274b7df5",
+        "request_identity": "72527c8b1573b9bee108d29c51f0c170890e17bc41604b77475f67135ac57b7e",
+        "component": "audit",
+        "technical_valid": false,
+        "evaluation": {
+          "technical_valid": false,
+          "value": null,
+          "error_type": "JSONDecodeError",
+          "error": "Extra data: line 1 column 10676 (char 10675)",
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "reward_eligible": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0311112",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 10368,
+          "completion_tokens": 23334,
+          "total_tokens": 33702,
+          "prompt_tokens_details": {
+            "cached_tokens": 1280
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 20999
+          },
+          "prompt_cache_hit_tokens": 1280,
+          "prompt_cache_miss_tokens": 9088
+        },
+        "elapsed_seconds": 113.86003782399348,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-validation-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-validation-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": null,
+        "semantic_gold": false,
+        "action": "hard_stop",
+        "reasons": [
+          "technical_or_execution_failure"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": null,
+      "delivery": "original_message_final"
+    },
+    {
+      "position": 3,
+      "slot_id": "31545c6c1988ae167eb4a0b677ffd9d8781b12c633d96ea22944885feb0f604c",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V4_OFF",
+        "repetition": 1,
+        "historical_score_request": "0aaa26f44defe18c381fc4b1bc019af1f3704f2e78bf23b1104259cf306ec049"
+      },
+      "item_key": "V4_OFF",
+      "material_id": "V4_OFF",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "7ede17622a0d8c2338c809a44ed9e68570836ba98622e3a4fb91982493870923",
+      "evidence_identity": "2a6a552522073a550cda10ad2f6ffc94258181d217c1834632c1340d5ddfe700",
+      "preliminary_score_identity": "bbe294b60a0c0a3ab65ca59af572ab1097989770bcd2338adfe4ffc79ec49fe6",
+      "status": "completed",
+      "result": {
+        "slot_id": "31545c6c1988ae167eb4a0b677ffd9d8781b12c633d96ea22944885feb0f604c",
+        "request_identity": "f9325184a0da2410c030d5d2e306b1d8637de7062ad1939be7b145782d80a02e",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "That sounds completely okay.",
+                  "claim_type": "assertion",
+                  "subject": "The acceptability of the seeker's request to talk to someone",
+                  "time": "current turn (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "The unit is an evaluative reassurance answer to the seeker's explicit permission question; it does not assert a personal event, biography, or completed action. 'That' is naturally read as the request to talk rather than as a factual claim about the user's life."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "I'm here to listen.",
+                  "claim_type": "assertion",
+                  "subject": "The new AI assistant's availability to listen in this chat",
+                  "time": "current session (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "This is a present, role-bound statement of conversational availability. Under the new-AI speaker contract it is ordinary support, not an assertion that the assistant is the historical supporter, a friend, or the user, and it contains no specific historical fact."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R003",
+                  "response_quote": "What's on your mind?",
+                  "claim_type": "general",
+                  "subject": "The topic, if any, that the seeker may choose to share",
+                  "time": "current turn (2024-11-01)",
+                  "action_stage": "not_applicable",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T000",
+                      "quote": "Hey, I just need to talk to someone. Is that okay?"
+                    }
+                  ],
+                  "reason": "This is an open invitation for the seeker to choose what to share. It does not assert that a particular topic, event, intention, or outcome exists; the current turn supplies only a request to talk to someone."
+                }
+              ],
+              "coverage": "Reviewed the current seeker turn C:T000, all three reply units R001-R003, and the complete legal historical sessions H001-H008. No future user reaction is available. The reply contains no personal factual assertions or user-specific identity claims.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R001",
+                "response_quote": "That sounds completely okay.",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "The phrase reassures the seeker that needing or asking to talk to someone is acceptable.",
+                  "The phrase is a general evaluative acknowledgment of the seeker's permission question, not a factual claim about the user's life."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  }
+                ],
+                "criterion": "The reply should directly address the current permission-seeking opening without inventing a personal fact; an evaluative reassurance is non_factual.",
+                "consequence": "The supportive opening remains appropriate and no core advice or understanding changes under either reading.",
+                "reason": "The immediate antecedent for 'that' is the seeker's 'Is that okay?'. The unit gives reassurance rather than asserting a specific personal event, relationship, or biography."
+              },
+              {
+                "response_unit_id": "R002",
+                "response_quote": "I'm here to listen.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "It states the new assistant's present conversational availability in this chat.",
+                  "It is an ordinary supportive formula, not a claim to be the prior human supporter or a personal friend."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  },
+                  {
+                    "source_id": "H005:T022",
+                    "quote": "You're definitely not alone, Taylor. I'm always here to listen whenever you need."
+                  }
+                ],
+                "criterion": "Availability language is non_factual under the scope clarification and new-AI contract; it becomes an identity error only if the reply claims another speaker's history, role, or personal experience.",
+                "consequence": "The offer of listening remains intact; no identity or factual misunderstanding is introduced.",
+                "reason": "A historical supporter used similar listening language in H005:T022, but that is another speaker's past support, not confirmation about the new AI. The reply's brief 'I'm here to listen' is role-appropriate availability and does not adopt that speaker's identity or biography."
+              },
+              {
+                "response_unit_id": "R003",
+                "response_quote": "What's on your mind?",
+                "dimension": "quality_basis",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "It is an open invitation for the seeker to choose what to discuss.",
+                  "It is a gentle prompt that does not require disclosure of any specific topic."
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T000",
+                    "quote": "Hey, I just need to talk to someone. Is that okay?"
+                  }
+                ],
+                "criterion": "An invitation is not an instruction to act now or a factual presupposition; the current turn needs a gentle opening for the seeker to begin.",
+                "consequence": "The reply fully supports the current opening without adding a constraint or missing a stated need.",
+                "reason": "The question follows the seeker's stated need to talk and leaves the topic open. It does not assert a particular issue, event, or intention as fact."
+              }
+            ],
+            "coverage_limitations": "This audit covers only the complete supplied current prefix C:T000, reply units R001-R003, and legal historical sessions H001-H008. No future user reaction is available, so the assessment is limited to appropriateness at this cut.",
+            "score_review": {
+              "preliminary_score_sha256": "bbe294b60a0c0a3ab65ca59af572ab1097989770bcd2338adfe4ffc79ec49fe6",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already treats R001 as non-factual evaluative reassurance. That matches the finding and introduces no inconsistency in q or m."
+                },
+                {
+                  "finding_index": 1,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already identifies R002 as role-appropriate availability rather than a personal-history claim. The cited historical supporter wording does not make this a score defect."
+                },
+                {
+                  "finding_index": 2,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "This is an open invitation for the seeker to share, not a factual claim about the user or the assistant."
+                    }
+                  ],
+                  "reason": "The preliminary assessment already characterizes R003 as an open invitation and does not treat it as a factual presupposition. No omission or inconsistency affecting q or m is present."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin."
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share."
+                    }
+                  ],
+                  "criterion": "q=4 applies when the reply fully meets what this particular current turn calls for; a brief acknowledgment or question can be sufficient, and length or extra questions are not rewarded by themselves.",
+                  "reason": "The current need is permission/reassurance plus a gentle opening. R001 gives reassurance, R002 offers listening, and R003 invites sharing. These are exactly the requested functions, with no important omission or unsupported personal claim."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+                    },
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+                    }
+                  ],
+                  "criterion": "m=0 is appropriate when no user-specific factual, temporal, identity, intention/outcome, or explicit-boundary error is found; ordinary availability language is non_factual.",
+                  "reason": "All three units are non_factual. The only first-person phrase is role-bound conversational availability, and the reply does not claim a historical supporter's experience as the new AI's own or assert a user-specific fact."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Reviewed the single current seeker turn and all three reply units."
+                    }
+                  ],
+                  "criterion": "Coverage should account for every reply unit and relevant current/historical evidence and state the scope of the check; empty uncertainty reasons are appropriate when the check is complete.",
+                  "reason": "The preliminary coverage reviews the single current turn and all three reply units and notes that no user-specific factual claims were made. The full supplied record contains no contrary current constraint."
+                }
+              }
+            }
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "argument_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "2cf51d2597d788f89f2f65ffc45b69e25dcf4a75dcf78f45d3b77c1e96ca4eb2",
+            "adapted_final_sha256": "2cf51d2597d788f89f2f65ffc45b69e25dcf4a75dcf78f45d3b77c1e96ca4eb2",
+            "interior_unchanged": true
+          },
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0180615",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 20737,
+          "completion_tokens": 9867,
+          "total_tokens": 30604,
+          "prompt_tokens_details": {
+            "cached_tokens": 1280
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 7595
+          },
+          "prompt_cache_hit_tokens": 1280,
+          "prompt_cache_miss_tokens": 19457
+        },
+        "elapsed_seconds": 44.515554646000965,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 1.0,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": false,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    },
+    {
+      "position": 4,
+      "slot_id": "a2bc57cc11385e2cf00572bf6a1e07849b8b297596f59d0335569d9cc632d19d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_ON",
+        "repetition": 1,
+        "historical_score_request": "41372225dc3a27e56ad016feebc6c82510e632458face2be4e179c4d0ada906f"
+      },
+      "item_key": "V3_ON",
+      "material_id": "V3_ON",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "1cdcdee289bcc357a20065d8ded82313e924f9d2e0c7c87b347c6f3f69600739",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "46b2014ff9902bd63fc428c682b0d85bfe8a5b825a88e3e20065bfd5b15a7ca5",
+      "status": "completed",
+      "result": {
+        "slot_id": "a2bc57cc11385e2cf00572bf6a1e07849b8b297596f59d0335569d9cc632d19d",
+        "request_identity": "76a2b01d1f9705f50007aafd8c8dc4f2adea7ae484106756caec12601de75bf5",
+        "component": "audit",
+        "technical_valid": true,
+        "evaluation": {
+          "technical_valid": true,
+          "value": {
+            "check": {
+              "status": "checked",
+              "claims": [
+                {
+                  "claim_id": "C001",
+                  "response_unit_id": "R001",
+                  "response_quote": "I'm sorry you're carrying that weight.",
+                  "claim_type": "presupposition",
+                  "subject": "Anna's current emotional load",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "now there's more pressure to improve"
+                    }
+                  ],
+                  "reason": "The empathy presupposes Anna is under a heavy load, which she states directly in the current prefix (several simultaneous stressors, and midterms adding stress and pressure). The unit is otherwise an evaluative acknowledgment with no personal factual claim beyond that presupposition."
+                },
+                {
+                  "claim_id": "C002",
+                  "response_unit_id": "R002",
+                  "response_quote": "It sounds like the pressure to improve your grades is piling onto the already heavy load of dealing with Rachel's situation, Lily's move, and the recent fights.",
+                  "claim_type": "assertion",
+                  "subject": "Anna's current stressors: grade pressure, Rachel's situation, Lily's move, recent fights",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T002",
+                      "quote": "My friend at school, Rachel, is going through something really tough."
+                    },
+                    {
+                      "source_id": "C:T006",
+                      "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                    },
+                    {
+                      "source_id": "C:T012",
+                      "quote": "My midterms were bad, and now there's more pressure to improve."
+                    },
+                    {
+                      "source_id": "H009:T001",
+                      "quote": "Finding out Lily is moving is just... too much right now."
+                    }
+                  ],
+                  "reason": "Each named stressor is traceable to Anna's own reports: Rachel in C:T002, Lily leaving and recent fights in C:T006, added grade pressure in C:T012, and the move itself named as 'moving' by Anna in H009:T001. No element is invented and the subject is Anna, not the assistant."
+                },
+                {
+                  "claim_id": "C003",
+                  "response_unit_id": "R003",
+                  "response_quote": "That's a lot to handle alone.",
+                  "claim_type": "presupposition",
+                  "subject": "Anna's available support while handling these stressors",
+                  "time": "current session, 2024-11-12",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T008",
+                      "quote": "Not really. I feel like a mess and I'm scared of burdening others with my problems."
+                    },
+                    {
+                      "source_id": "C:T010",
+                      "quote": "They don't really get it."
+                    }
+                  ],
+                  "reason": "Read as an empathic reflection rather than a literal count of zero supporters, it is grounded in Anna's report of not really having talked to anyone, fearing she would burden others, and feeling her parents do not get it. Her earlier attempt to talk to her parents ended in arguing, which does not contradict the sense of being unsupported."
+                },
+                {
+                  "claim_id": "C004",
+                  "response_unit_id": "R004",
+                  "response_quote": "Since you mentioned earlier that talking to your parents about future plans doesn't feel like they \"get it,\"",
+                  "claim_type": "assertion",
+                  "subject": "What Anna said earlier about talking to her parents about future plans",
+                  "time": "earlier in the current session (C:T010), referenced in the current turn",
+                  "action_stage": "not_applicable",
+                  "relation": "supported",
+                  "evidence": [
+                    {
+                      "source_id": "C:T010",
+                      "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                    }
+                  ],
+                  "reason": "The attribution is accurate and attributed to Anna's own prior words in this conversation; the reply does not claim those words or the experience as its own. H007:T005 contains a related report of a parental argument about future plans, which is consistent rather than contradictory."
+                },
+                {
+                  "claim_id": "C005",
+                  "response_unit_id": "R004",
+                  "response_quote": "have you considered reaching out to a school counselor or another trusted adult at school?",
+                  "claim_type": "tentative",
+                  "subject": "Anna's possible future contact with a school counselor or trusted adult",
+                  "time": "current turn, optional/forward-looking",
+                  "action_stage": "suggested",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "H009:T008",
+                      "quote": "Maybe talking to a school counselor might help you manage the stress better?"
+                    },
+                    {
+                      "source_id": "H009:T009",
+                      "quote": "I guess that's a good idea. But I'm just so tired of explaining everything over and over, you know?"
+                    }
+                  ],
+                  "reason": "This is a question-form optional invitation, not an instruction and not an assertion that Anna has never considered it. A historical supporter had already floated a school counselor in H009:T008 and Anna called it a good idea while noting fatigue about re-explaining; the reply neither claims novelty nor claims Anna acted, so it invents no personal fact, though the overlap is a mild relevance limitation rather than an error."
+                },
+                {
+                  "claim_id": "C006",
+                  "response_unit_id": "R005",
+                  "response_quote": "They might offer a different perspective or help you find ways to manage the stress without adding more pressure to your grades.",
+                  "claim_type": "tentative",
+                  "subject": "Possible benefits of a school counselor or trusted adult for Anna",
+                  "time": "hypothetical, current turn",
+                  "action_stage": "hypothetical",
+                  "relation": "non_factual",
+                  "evidence": [
+                    {
+                      "source_id": "C:T012",
+                      "quote": "now there's more pressure to improve"
+                    }
+                  ],
+                  "reason": "The modal 'might' marks the benefits as speculative rather than asserted outcomes, so no personal fact is claimed about Anna or about what a counselor would do. The embedded reference to added grade pressure reflects Anna's own report in C:T012."
+                }
+              ],
+              "coverage": "Checked all five reply units (R001-R005), including the factual presuppositions inside the empathic opener and the counselor question, against the complete current prefix C:T000-C:T012 and all past sessions H001-H009. Verified each named stressor (Rachel, Lily leaving/moving, recent fights, bad midterms and added grade pressure, parents not 'getting it') against Anna's own turns, and noted the earlier school-counselor offer in H009:T008-T009 as context rather than as an error. No personal factual claim about Anna is left unaudited.",
+              "uncertainty_reasons": []
+            },
+            "findings": [
+              {
+                "response_unit_id": "R002",
+                "response_quote": "It sounds like the pressure to improve your grades is piling onto the already heavy load of dealing with Rachel's situation, Lily's move, and the recent fights.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "The sentence is an accurate reflecting summary of stressors Anna reported across the current session and the most recent past session",
+                  "The phrase 'Lily's move' comes from the prior session rather than the current prefix, but Anna herself names the move in H009:T001"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T002",
+                    "quote": "My friend at school, Rachel, is going through something really tough."
+                  },
+                  {
+                    "source_id": "C:T006",
+                    "quote": "Lily leaving, my grades slipping, and recent fights... it's a lot."
+                  },
+                  {
+                    "source_id": "C:T012",
+                    "quote": "My midterms were bad, and now there's more pressure to improve."
+                  },
+                  {
+                    "source_id": "H009:T001",
+                    "quote": "Finding out Lily is moving is just... too much right now."
+                  }
+                ],
+                "criterion": "A relationship of 'supported' requires source turns that actually contain the attributed content, and a reflecting summary must not add stressors Anna never reported.",
+                "consequence": "No change to the core understanding or advice: the summary of accumulated stress stands and the empathic framing remains intact.",
+                "reason": "Every element of the summary is present in Anna's own reported turns, and the speakers of those turns are Anna rather than a historical supporter."
+              },
+              {
+                "response_unit_id": "R004",
+                "response_quote": "Since you mentioned earlier that talking to your parents about future plans doesn't feel like they \"get it,\"",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "'Earlier' refers to C:T010 within the current conversation",
+                  "It could be read as pointing to any earlier session, but C:T010 already contains the same content, so no external attribution is needed"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T010",
+                    "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                  }
+                ],
+                "criterion": "A memory reference must be traceable to the user's own words, and the assistant may recall the conversation without claiming the experience as its own.",
+                "consequence": "The reference is accurate, so the advice built on it is not misdirected.",
+                "reason": "The quoted content matches Anna's words in the current prefix; the reply attributes the content to Anna ('you mentioned'), not to itself or to a historical supporter."
+              },
+              {
+                "response_unit_id": "R004",
+                "response_quote": "have you considered reaching out to a school counselor or another trusted adult at school?",
+                "dimension": "quality_basis",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "An optional, question-form invitation to consider a support option, presented without asserting novelty",
+                  "A re-offer of an option already floated in H009:T008, without acknowledging Anna's remark there that she is tired of explaining things over and over"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "H009:T008",
+                    "quote": "Maybe talking to a school counselor might help you manage the stress better?"
+                  },
+                  {
+                    "source_id": "H009:T009",
+                    "quote": "I guess that's a good idea. But I'm just so tired of explaining everything over and over, you know?"
+                  },
+                  {
+                    "source_id": "C:T012",
+                    "quote": "now there's more pressure to improve"
+                  }
+                ],
+                "criterion": "q=4 requires the reply to meet what this turn calls for, while q=3 covers an appropriate reply with an important defect; a style or memory difference alone does not move between them.",
+                "consequence": "The reply still delivers acknowledgment plus a low-pressure coping option for the current turn; the unacknowledged prior offer is a nonblocking limitation rather than a defect that changes what Anna receives.",
+                "reason": "This turn's seeker message only adds midterm stress and grade pressure, and the reply acknowledges that without prescribing action. The counselor idea does overlap H009:T008, and Anna's fatigue about explaining is not addressed, but the current prefix contains no such constraint and the reply frames the option as a question, so the high q verdict remains defensible; the overlap is recorded as a caveat."
+              },
+              {
+                "response_unit_id": "R003",
+                "response_quote": "That's a lot to handle alone.",
+                "dimension": "interpretation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "An empathic reflection of Anna's felt lack of support",
+                  "A stronger literal claim that Anna has no one, which her report of an attempted parental conversation would partly qualify"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T008",
+                    "quote": "Not really. I feel like a mess and I'm scared of burdening others with my problems."
+                  },
+                  {
+                    "source_id": "C:T010",
+                    "quote": "I tried talking to my parents, but we just end up arguing about future plans. They don't really get it."
+                  }
+                ],
+                "criterion": "Ordinary empathic reflection is non_factual or supported when it tracks the user's reported experience, and it is not required to enumerate every available person.",
+                "consequence": "Reading it as reflection, the support offered is well targeted; even the literal reading is a minor qualification, not a change in understanding or advice.",
+                "reason": "Anna reports not really having talked to anyone and fearing she would burden others, and her one attempt with her parents ended in arguing and not feeling understood; nothing in the record shows a currently available confidant she relies on."
+              },
+              {
+                "response_unit_id": "R005",
+                "response_quote": "They might offer a different perspective or help you find ways to manage the stress without adding more pressure to your grades.",
+                "dimension": "relation",
+                "verdict": "no_issue_identified",
+                "readings": [
+                  "Hedged rationale for the suggested option, asserting no outcome",
+                  "An implicit claim that grade pressure is a live concern, which Anna states in the current prefix"
+                ],
+                "source_evidence": [
+                  {
+                    "source_id": "C:T012",
+                    "quote": "now there's more pressure to improve"
+                  }
+                ],
+                "criterion": "Tentative possibilities about what a third party might do are non_factual; only embedded personal presuppositions need support.",
+                "consequence": "Treating the unit as non_factual keeps the misuse record clean while the presupposed grade pressure is independently supported.",
+                "reason": "The modal 'might' leaves the benefits open, and the only personal element ('more pressure to your grades') mirrors Anna's own statement in C:T012."
+              }
+            ],
+            "coverage_limitations": "Audit is limited to the supplied current prefix C:T000-C:T012 and past sessions H001-H009; no future reaction or external verification exists, so 'supported' means support in this record, not proof about the world. The overlap between R004's counselor suggestion and H009:T008-T009 is assessable only from those turns; whether Anna had already acted on that suggestion is not stated anywhere and was not assumed. Past-session supporter turns were treated as separate historical speakers and were not used as user confirmation.",
+            "score_review": {
+              "preliminary_score_sha256": "46b2014ff9902bd63fc428c682b0d85bfe8a5b825a88e3e20065bfd5b15a7ca5",
+              "findings": [
+                {
+                  "finding_index": 0,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/1/reason",
+                      "quote": "It accurately summarizes the named stressors: Rachel's situation is in C:T002, Lily leaving/recent fights in C:T006, pressure to improve grades in C:T012, and Lily's move is also established in H009:T001."
+                    }
+                  ],
+                  "reason": "The same claim about R002 and the same supported relation were assessed with the specific source turns, so no score-affecting omission or inconsistency appears here."
+                },
+                {
+                  "finding_index": 1,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/3/reason",
+                      "quote": "The reference to Anna's earlier comment is accurate: C:T010 says talking to her parents about future plans leads to arguing and they do not really get it."
+                    }
+                  ],
+                  "reason": "The memory reference in R004 was checked against its actual source turn and found accurate, which is the same treatment given in this audit; the q judgement does not turn on an unexamined memory claim."
+                },
+                {
+                  "finding_index": 2,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "offers a low-pressure, optional source of support"
+                    },
+                    {
+                      "path": "/coverage",
+                      "quote": "Assessed all five reply units against the complete current prefix C:T000-C:T012 and all supplied past sessions H001-H009."
+                    }
+                  ],
+                  "reason": "The only concrete limitation is that the counselor option repeats H009:T008 while Anna's remark about being tired of explaining (H009:T009) is not addressed. That overlap is a nonblocking caveat rather than a score defect, because the current seeker turn adds only midterm and grade pressure, the reply frames the option as an open question, and nothing in the current prefix restates the fatigue constraint. The preliminary reasoning's characterization of the offer as low-pressure and optional is therefore defensible within the q=4 anchor."
+                },
+                {
+                  "finding_index": 3,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/2/reason",
+                      "quote": "Anna reports not really having talked to anyone, fearing burdening others, and feeling her parents do not get it, which supports the empathic reflection that this is a lot to handle without adequate support."
+                    }
+                  ],
+                  "reason": "The 'alone' reflection was examined against Anna's own reports rather than taken at face value, and the preliminary assessment cites those same turns; no claim was left unexamined that would shift severity."
+                },
+                {
+                  "finding_index": 4,
+                  "disposition": "no_score_issue",
+                  "score_links": [
+                    {
+                      "path": "/assessments/5/reason",
+                      "quote": "This is general rationale for the suggested option, not a specific personal claim about Anna's life or actions."
+                    }
+                  ],
+                  "reason": "The hedged benefits sentence was correctly treated as non_factual, so it contributes nothing to the misuse maximum; the score's zero-severity treatment of this unit is consistent with the evidence."
+                }
+              ],
+              "checks": {
+                "quality": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/q_rationale/current_need",
+                      "quote": "needs acknowledgment and a manageable way to cope without more pressure"
+                    },
+                    {
+                      "path": "/q_rationale/reason",
+                      "quote": "It does not impose an action or make unsupported personal claims, so it fully meets this turn's need for empathic acknowledgment plus a concrete coping option."
+                    }
+                  ],
+                  "criterion": "q=4 requires the reply to fully meet what this particular turn calls for; q=3 requires an appropriate, coherent, responsive reply with no important defect; a missed explicit need or constraint lands at q=2.",
+                  "reason": "The final seeker turn adds bad midterms and new pressure to improve, and the reply acknowledges the accumulating load accurately and then offers one optional, non-pressuring support route without prescribing action. The only limitation, that the counselor idea was already floated in H009:T008 without addressing Anna's fatigue about re-explaining, is not restated in the current prefix and does not leave an explicit current need or constraint mishandled, so the q=4 justification survives; the limitation is recorded as nonblocking rather than as a scoring error."
+                },
+                "severity": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/assessments/0/reason",
+                      "quote": "This is an empathic acknowledgment rather than a specific personal factual assertion."
+                    },
+                    {
+                      "path": "/assessments/4/reason",
+                      "quote": "The invitation to consider a school counselor or trusted adult is a tentative suggestion, not an asserted personal fact about Anna."
+                    }
+                  ],
+                  "criterion": "m is 0 only when no user-specific factual, temporal, identity, intention/outcome or explicit-boundary error is present; tentative invitations and empathic reflections are non_factual, while a suggestion is not evidence that an action happened.",
+                  "reason": "Every personal element in the reply traces to Anna's own turns (C:T002, C:T006, C:T010, C:T012, H009:T001), and the support option is phrased as a question, so no completed action, invented history, or claimed identity is asserted. The assistant does not adopt the historical supporter's experiences or words as its own, so the zero-severity record is supported."
+                },
+                "coverage": {
+                  "status": "supported",
+                  "score_links": [
+                    {
+                      "path": "/coverage",
+                      "quote": "Checked the final turn's reported bad midterms and added grade pressure against prior mentions of Rachel, Lily, recent fights, parents, and isolation."
+                    }
+                  ],
+                  "criterion": "Coverage must account for every reply unit and the complete legal source range, and it is a description of the audit rather than proof of truth.",
+                  "reason": "The stated coverage names all five units, the full current prefix, and all past sessions, and each named stressor is in fact traceable to Anna's turns. It does not flag the H009 counselor overlap, but that omission concerns a mild relevance nuance already treated as nonblocking, so the coverage description is not materially inaccurate."
+                }
+              }
+            }
+          },
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "argument_adaptation": {
+            "transformation": "bare_json_unchanged",
+            "original_final_sha256": "553d38d3d78589084e5ec0f391ea90773746be1613640cce996184afa5c9a7aa",
+            "adapted_final_sha256": "553d38d3d78589084e5ec0f391ea90773746be1613640cce996184afa5c9a7aa",
+            "interior_unchanged": true
+          },
+          "reward_eligible": false,
+          "semantic_gold": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.021306",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 25328,
+          "completion_tokens": 11423,
+          "total_tokens": 36751,
+          "prompt_tokens_details": {
+            "cached_tokens": 4992
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 6865
+          },
+          "prompt_cache_hit_tokens": 4992,
+          "prompt_cache_miss_tokens": 20336
+        },
+        "elapsed_seconds": 50.44796140200924,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": 1.0,
+        "semantic_gold": false,
+        "action": "retain_numeric_candidate",
+        "reasons": [
+          "explicit_machine_score_review_only"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": false,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    },
+    {
+      "position": 5,
+      "slot_id": "fbc195413cdf04bbc3dab81f19159add18b41081a3428898f17b20f8d3f40582",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev04B",
+        "repetition": 1,
+        "historical_score_request": "ac0983544757dd38030ecd88f7a541c6f57e01b5f680096048442318883e8c44"
+      },
+      "item_key": "dev04B",
+      "material_id": "dev04B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "421556d1c945eb13dcb68ecee793bff2d0686dc28802e561ae3a103e90fcbfcb",
+      "evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "preliminary_score_identity": "da781806684950e6ca296057e15353ed5fbc20d4da3c4330b3ecc65e8d36f65c",
+      "status": "failed",
+      "result": {
+        "slot_id": "fbc195413cdf04bbc3dab81f19159add18b41081a3428898f17b20f8d3f40582",
+        "request_identity": "c6be1e2b3a46fda004e2b18e72cb9c626661d16b7f9d00233d5caf0b2f9688f3",
+        "component": "audit",
+        "technical_valid": false,
+        "evaluation": {
+          "technical_valid": false,
+          "value": null,
+          "error_type": "JSONDecodeError",
+          "error": "Extra data: line 1 column 11152 (char 11151)",
+          "interface_version": "source-evidence-score-links-v1-20261022",
+          "delivery_version": "deepseek-beta-strict-audit-arguments-v1-20261022",
+          "reward_eligible": false
+        },
+        "hard_stop": null,
+        "financial": {
+          "accounted_upper_usd": "0.0220299",
+          "settlement_confirmed": true,
+          "unsettled_reservation_usd": "0",
+          "invoice_confirmed": false
+        },
+        "usage": {
+          "prompt_tokens": 15237,
+          "completion_tokens": 14549,
+          "total_tokens": 29786,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 11992
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 13701
+        },
+        "elapsed_seconds": 66.46574197799782,
+        "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+        "workflow_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "new_step_instruction_version": "pmrl1-score-audit-strict-delivery-v1-20261022",
+        "reward_eligible": false,
+        "natural_updates": 0,
+        "semantic_review_status": "not_adjudicated"
+      },
+      "candidate_routing": {
+        "version": "pmrl1-score-aware-audit-offline-v1-20261022",
+        "execute": false,
+        "reward_eligible": false,
+        "training_ready": false,
+        "proposed_U": null,
+        "semantic_gold": false,
+        "action": "hard_stop",
+        "reasons": [
+          "technical_or_execution_failure"
+        ]
+      },
+      "old_reply_only_trigger_on_same_output": null,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    },
+    {
+      "position": 6,
+      "slot_id": "6d4d47e3fb5a1975ddd5f5e3aaeb270743ae78fb01a310dd902df273530680b9",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev35B",
+        "repetition": 1,
+        "historical_score_request": "30f5dd124fb4c3c613ae423161f9dbbef3f2ba57894bbdbf724be6e03e90bb6b"
+      },
+      "item_key": "dev35B",
+      "material_id": "dev35B",
+      "repetition": 1,
+      "component": "audit",
+      "reply_identity": "468492c830bde740c16049f3e713a3ba24aa30e820b14bec8a5aabfa56c4ae89",
+      "evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "preliminary_score_identity": "eba867242975b810933be8378d13955aa1bbd3068da5bd0c7cf08c7c3372a6e2",
+      "status": "not_dispatched",
+      "result": null,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    },
+    {
+      "position": 7,
+      "slot_id": "207c0f4ce18cd4d66a0633f9427bd8a2676acb913645a8bd54fabf6e1fe0423d",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "dev06B",
+        "repetition": 2,
+        "historical_score_request": "a9886335804e35c1edb63b44e550bf0458ea728e36fa307f6c571a0f76549cf6"
+      },
+      "item_key": "dev06B",
+      "material_id": "dev06B",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+      "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "preliminary_score_identity": "93f2af672cebb6cb96cef0d1ba5bdeb6b2f4f5c338ee96c901a4cc257445f5c8",
+      "status": "not_dispatched",
+      "result": null,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    },
+    {
+      "position": 8,
+      "slot_id": "bed7628af87811368e77c13423117284d9ff8db873e67e16c6b17c42694c0253",
+      "logical_slot": {
+        "study": "pmrl1-score-audit-validation-v1-20261022",
+        "item": "V3_OFF",
+        "repetition": 2,
+        "historical_score_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008"
+      },
+      "item_key": "V3_OFF",
+      "material_id": "V3_OFF",
+      "repetition": 2,
+      "component": "audit",
+      "reply_identity": "430613c1f841505d51030a411fcdc62bc1ac301759e4d1a0cf1914ef94fc4f1d",
+      "evidence_identity": "01b514c98aa6efd2d56c596719439078dd968e48e0eb8352e79cec85bef08993",
+      "preliminary_score_identity": "8f543080e3ac19e4c015a118e07cb1eacf33ad015ac2b0d97f053762770b3894",
+      "status": "not_dispatched",
+      "result": null,
+      "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022"
+    }
+  ],
+  "delivery": "deepseek-beta-strict-audit-arguments-v1-20261022",
+  "old_attempts": 2,
+  "full_plan": 8,
+  "earlier_valid": 1,
+  "earlier_failure": 1,
+  "old_stops_preserved": true,
+  "mixed_delivery_repeats_not_same_configuration": true
+}

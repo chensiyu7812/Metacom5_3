@@ -1,5 +1,10 @@
 # PM-RL1 scoped implementation
 
+Start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` for current work
+(V2 supersedes the 11-16 P00–P17 work packages; new code goes to `rl1v2/`).
+The user requested the new session-summary candidate; preserve MS-RAW history
+and give MS-SUM separate source, representation, renderer and result identities.
 Read `project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md` and the user-supplied
 `project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md` for this namespace
 (the byte-identical copy of the user-supplied local plan). Current progress is

@@ -1,0 +1,278 @@
+{
+  "response_sha256": "ed4ebf205821d8ac3222519d8881d5babc7c4376667b20fa285d8ba8f9baa817",
+  "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "8e6095854e30ca20f5ca58f2498f800886c1897fbb170dc557ba78ca561f87eb",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user explicitly states she has not yet discussed the new relationship with her therapist (C:T012) and later shares her coping mechanisms involving yoga and reading (C:T018).",
+      "response_quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+        },
+        {
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+        }
+      ],
+      "reason": "Unit R001 contains a material hallucination by asserting the user has 'already discussed' the relationship, directly contradicting the explicit statement in C:T012 that she has 'Not yet'. This factual error undermines the core credibility and support of the interaction."
+    },
+    "claims": [
+      {
+        "response_quote": "You have already discussed the new relationship with your therapist in your session.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+          }
+        ],
+        "reason": "The user stated in C:T012 she is 'Not yet' planning to bring up the topic, while R001 claims she 'have[d] already discussed', constituting a direct contradiction of current session facts."
+      },
+      {
+        "response_quote": "It is good that yoga and reading give you some space to unwind.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T018",
+            "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+          }
+        ],
+        "reason": "The reference to yoga and reading is consistent with the user's report in C:T018 regarding her stress relief activities."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply addresses the user's disclosure regarding her therapy communication status and her reported self-care activities.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You have already discussed the new relationship with your therapist in your session.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 85,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user explicitly states she has not yet discussed the new relationship with her therapist (C:T012) and later shares her coping mechanisms involving yoga and reading (C:T018).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "Unit R001 contains a material hallucination by asserting the user has 'already discussed' the relationship, directly contradicting the explicit statement in C:T012 that she has 'Not yet'. This factual error undermines the core credibility and support of the interaction."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "The user stated in C:T012 she is 'Not yet' planning to bring up the topic, while R001 claims she 'have[d] already discussed', constituting a direct contradiction of current session facts."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "The reference to yoga and reading is consistent with the user's report in C:T018 regarding her stress relief activities."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply addresses the user's disclosure regarding her therapy communication status and her reported self-care activities.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "The user explicitly states she has not yet discussed the new relationship with her therapist (C:T012) and later shares her coping mechanisms involving yoga and reading (C:T018).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "Unit R001 contains a material hallucination by asserting the user has 'already discussed' the relationship, directly contradicting the explicit statement in C:T012 that she has 'Not yet'. This factual error undermines the core credibility and support of the interaction."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "The user stated in C:T012 she is 'Not yet' planning to bring up the topic, while R001 claims she 'have[d] already discussed', constituting a direct contradiction of current session facts.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "The reference to yoga and reading is consistent with the user's report in C:T018 regarding her stress relief activities.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The reply addresses the user's disclosure regarding her therapy communication status and her reported self-care activities.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "q_rationale": {
+      "current_need": "The user explicitly states she has not yet discussed the new relationship with her therapist (C:T012) and later shares her coping mechanisms involving yoga and reading (C:T018).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "Unit R001 contains a material hallucination by asserting the user has 'already discussed' the relationship, directly contradicting the explicit statement in C:T012 that she has 'Not yet'. This factual error undermines the core credibility and support of the interaction."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "The user stated in C:T012 she is 'Not yet' planning to bring up the topic, while R001 claims she 'have[d] already discussed', constituting a direct contradiction of current session facts."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "The reference to yoga and reading is consistent with the user's report in C:T018 regarding her stress relief activities."
+      }
+    ],
+    "coverage": "The reply addresses the user's disclosure regarding her therapy communication status and her reported self-care activities.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": -0.75
+}

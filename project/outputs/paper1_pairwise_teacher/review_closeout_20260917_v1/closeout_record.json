@@ -1,0 +1,79 @@
+{
+  "protocol": "paper1-human-review-closeout-v1",
+  "date": "2026-09-17",
+  "status": "POSTHOC_REVIEW_RECORD_NOT_A_REPLACEMENT_RESEARCH_AUTHORITY",
+  "source_sha256": {
+    "human_A": "0272f503c61811484c9b7da2c6bb25e331538376bd0e1b683e4f2dd3c6e5a94b",
+    "exploratory_AI_B": "d956751629e08d11511dd5efa7b1060ab5957796e5f6012b214ac0e1b6ad6c92",
+    "six_case_followup": "ab20fd6c894f11fe2d3c78b7024c1e7eaed6cf63a7096704a2e9531f8132afbd"
+  },
+  "provenance": {
+    "human_A": "两名评审共同审阅，研究者报告最终判定一致；一份联合答卷，主要阅读中文。",
+    "exploratory_AI_B": "研究者报告 GPT-6 Astra（极高）独立于 A 答卷作答，未见 A 判定和理由；API snapshot 与采样参数未提供。",
+    "AI_B_role": "exploratory_comparison_not_second_human_or_frozen_teacher",
+    "six_case_followup": "后续人工复核；已见问题分析，不属于原始盲评。",
+    "latest_user_correction": "我是说这一块，按照你分析来的就好，而不是B，哎呀，我说的B指的是AI评审，因为我没关注到狗的问题。",
+    "A3_B_means": "AI 评审 B，不是候选回答 B；不得把这句话记成用户直接选择 B_better。",
+    "raw_submissions_must_remain_unchanged": true,
+    "new_human_review_requested": false
+  },
+  "cases": [
+    {
+      "item_number": 3,
+      "presentation_id": "teacher_present_75d4a21ebc37462660c2f716",
+      "accepted_finding": "英文过去会话只明确 pet、责任和工时；候选 A 指定 dog 并声称费用担忧，缺乏对应证据。中文翻译的猫也不是英文原文。",
+      "handling": "接受事实核查结论；保留原始 B_better、六题复核 equivalent 和本次澄清三层记录。",
+      "assistant_sensitivity_verdict": "B_better",
+      "assistant_verdict_basis": "按研究者委托进行后续分析：本轮明确询问过去记忆，错误指定宠物种类是具体的记忆失真；另一候选准确概括已有证据。这个方向由助手分析产生，不是把用户所说的 AI 评审 B 映射成回答 B。"
+    },
+    {
+      "item_number": 11,
+      "presentation_id": "teacher_present_661757228f45cd5b48826a97",
+      "accepted_finding": "A 已写同居和关系加强，与参考中最终分手相反；问题不只是截断。B 拒绝完成摘要。",
+      "handling": "保留六题复核 uncertain，补记事实反转原因。",
+      "assistant_sensitivity_verdict": "uncertain"
+    },
+    {
+      "item_number": 27,
+      "presentation_id": "teacher_present_f872c642a1ec8f102fe30057",
+      "accepted_finding": "B 直接回答 California，与参考一致。",
+      "handling": "采用用户六题复核 B_better 作为补充对照。",
+      "assistant_sensitivity_verdict": "B_better"
+    },
+    {
+      "item_number": 64,
+      "presentation_id": "teacher_present_74fa2fc036b6329dbe6b6127",
+      "accepted_finding": "两段回复逐字相同；同样差仍然可以 equivalent。",
+      "handling": "采用用户六题复核 equivalent 作为补充对照。",
+      "assistant_sensitivity_verdict": "equivalent"
+    },
+    {
+      "item_number": 81,
+      "presentation_id": "teacher_present_95cd8baa9b617d49cb63b085",
+      "accepted_finding": "参考为 Unknown；B 自行生成的 HR 日期和解决过程不能作为证据，继续补全不等于答对。",
+      "handling": "保留两次提交的 B_better 作为历史记录；其理由不再当作可靠事实校准方向。",
+      "assistant_sensitivity_verdict": "uncertain",
+      "assistant_verdict_basis": "保守的后续分析处理：撤回对 B 胜出的可靠支持，不据此代称用户选择了 A，也不把助手判断包装成人工金标准。"
+    },
+    {
+      "item_number": 95,
+      "presentation_id": "teacher_present_b538ad74bfce130291220af9",
+      "accepted_finding": "没有已知用户回复风格偏好，两种恰当策略可以 equivalent。",
+      "handling": "保留用户两次 equivalent。偏好意见不成为 MP 特征。",
+      "assistant_sensitivity_verdict": "equivalent"
+    }
+  ],
+  "analysis_views": {
+    "original_A": "保留完整 96 条原始判定，80 个 base 为主描述分母，16 个 reversal 单列。",
+    "human_followup": "只覆盖六题原样提交的复核；其余沿用原始 A。",
+    "assistant_fact_review_sensitivity": "仅在六题使用上述后续分析方向；它是助手辅助敏感性分析，不是另一份人评或独立盲评金标准。",
+    "training_labels_created": false
+  },
+  "execution": {
+    "additional_human_sheets": 0,
+    "candidate_teacher_calls": 0,
+    "formal_outcome_calls": 0,
+    "PM_training_runs": 0,
+    "new_API_cost_usd": "0"
+  }
+}

@@ -1,0 +1,21 @@
+范围：原题包与映射前置核查。未收到人评导出，不能复现尚不存在的人评分析。
+
+从仓库根目录运行（输出目录必须是新的，脚本拒绝覆盖）：
+python project/outputs/pm_rl1/human_acceptance_20261014_v1/audit_original_packet.py --repo /home/tokkio/Metacom5_3 --packet-zip /home/tokkio/PM_RL1_40对人工校准包_20261001.zip --out /home/tokkio/Metacom5_3/project/outputs/pm_rl1/human_acceptance_20261014_v1/preflight_rerun_001
+
+相关原有接收与资格回归（从project目录运行，报告使用新文件名）：
+PYTHONPATH=src PYTHONNOUSERSITE=1 CUDA_VISIBLE_DEVICES='' /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q tests/test_rl1_human_calibration.py tests/test_rl1_calibration_decision.py --junitxml=outputs/pm_rl1/human_acceptance_20261014_v1/checks/intake_and_gate_tests_rerun_001.xml
+
+preflight_analysis.ipynb：仅标准库运算、只读原文件；已在新命名空间按顺序执行两个代码单元。当前没有Jupyter/nbformat/nbclient/nbconvert，未做原生notebook或浏览器视觉预览。有相应环境时：
+jupyter nbconvert --execute --to notebook --output preflight_reexecuted.ipynb preflight_analysis.ipynb
+
+不要运行95/96重建题包、不要新生成密钥。99正式接收器需真实导出且严格全字段校验；本次未调用。101旧核查脚本会写既有回执，后续请使用这里独立的audit_original_packet.py。
+
+文件：
+PM_RL1_人评验收前置核查_20261014.html：中文报告，明确未完成答案验收。
+preflight/expected_40_pair_audit_private.csv：40对原题、item_id、两表A/B映射与待接收状态，不是作答结果。
+preflight/strata.csv：四组原题及已有评分覆盖。
+field_dictionary.csv：真实原量表字段和校验规则。
+qualification_checklist.csv：事前资格标准及当前证据缺口。
+minimum_followup.json：当前最小缺失材料，没有虚构12题清单。
+preflight/input_manifest.json：只读来源哈希清单，不包含私钥内容/哈希。

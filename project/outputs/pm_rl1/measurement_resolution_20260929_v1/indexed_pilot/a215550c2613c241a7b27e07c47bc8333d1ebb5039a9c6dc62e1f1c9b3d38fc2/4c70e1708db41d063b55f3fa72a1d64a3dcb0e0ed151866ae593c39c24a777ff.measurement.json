@@ -1,0 +1,188 @@
+{
+  "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "025fac7e97a69ceedc7b6cfa278d525e6746609ff507587f9d95e22891741c90",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's reported understanding of their parents' perspective and provide a path toward resolution regarding the dating restriction.",
+      "response_quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        },
+        {
+          "source_id": "C:T013",
+          "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+        }
+      ],
+      "reason": "The reply appropriately validates the user's statement in C:T024 ('understand a bit more') in R001, and correctly contextualizes the user's autonomy based on the age established in C:T013 ('I am 17') in R002, offering no boundary violations or factual contradictions."
+    },
+    "claims": [
+      {
+        "response_quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          }
+        ],
+        "reason": "R002 states the user is 'almost an adult'. C:T013 confirms the user is 17, which supports the description 'almost an adult' given the typical adult age is 18."
+      },
+      {
+        "response_quote": "It is good that you are trying to see things from their perspective.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T024",
+            "quote": "Well, I guess I understand a bit more put like that."
+          }
+        ],
+        "reason": "R001 observes the user is 'trying to see things from their perspective'. C:T024 ('understand a bit more put like that') confirms the user is processing the supporter's explanation offered in C:T023."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Verified the accuracy of age assertions against user self-declaration and verified that the supporter's assessment of user's emotional state matches the latest turn content.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 232
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It is good that you are trying to see things from their perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's reported understanding of their parents' perspective and provide a path toward resolution regarding the dating restriction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T024",
+        "C:T013"
+      ],
+      "reason": "The reply appropriately validates the user's statement in C:T024 ('understand a bit more') in R001, and correctly contextualizes the user's autonomy based on the age established in C:T013 ('I am 17') in R002, offering no boundary violations or factual contradictions."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "R002 states the user is 'almost an adult'. C:T013 confirms the user is 17, which supports the description 'almost an adult' given the typical adult age is 18."
+      },
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T024"
+        ],
+        "reason": "R001 observes the user is 'trying to see things from their perspective'. C:T024 ('understand a bit more put like that') confirms the user is processing the supporter's explanation offered in C:T023."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Verified the accuracy of age assertions against user self-declaration and verified that the supporter's assessment of user's emotional state matches the latest turn content.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

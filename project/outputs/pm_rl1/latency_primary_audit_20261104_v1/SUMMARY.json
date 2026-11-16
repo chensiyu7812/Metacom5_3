@@ -1,0 +1,44 @@
+{
+  "generation_records": 431,
+  "G_component_timed_records": 431,
+  "deployment_client_TTFT_records": 0,
+  "deployment_client_completion_records": 0,
+  "complete_PM_acquisition_G_client_traces": 0,
+  "fields_found": [
+    "generation_seconds"
+  ],
+  "G_timing_scope": "Timer starts after chat tokenization/device transfer and ends after generation, synchronization and decoding.",
+  "missing": [
+    "client send/receive/display events",
+    "initial PM encoding and planning",
+    "sequential retrieval and encoding",
+    "queue/network time",
+    "first visible content event",
+    "matched interleaved repetitions"
+  ],
+  "group_diagnostics": {
+    "historical_OFF_reuse": {
+      "calls": 24,
+      "min_seconds": 0.42870311602018774,
+      "median_seconds": 2.1461130605312064,
+      "max_seconds": 3.762693967903033,
+      "scope": "archived G component durations, not client latency"
+    },
+    "new_generation": {
+      "calls": 407,
+      "min_seconds": 0.5439386530779302,
+      "median_seconds": 2.917106971144676,
+      "max_seconds": 10.09723713900894,
+      "scope": "archived G component durations, not client latency"
+    }
+  },
+  "token_to_latency_conversion_performed": false,
+  "previous_token_break_even_is_not_deployment_value": true,
+  "deployment_latency_claim_supported": false,
+  "new_model_calls": 0,
+  "new_provider_calls": 0,
+  "new_cost_usd": 0,
+  "natural_training_updates": 0,
+  "frozen_historical_files_verified": 453,
+  "raw_and_seal_files_verified": 814
+}

@@ -1,0 +1,205 @@
+{
+  "response_sha256": "5e9bdb1153a68819ada0bbfa942b35ccac625593753b42992a804379ef7d9301",
+  "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "838d03fcaef88d5efa051c405902587d62241da24826b63529d718924cabe9b9",
+  "raw_output_sha256": "1960a9f88b03ac2f73ed791e8fcb280071a25660bebf957ed4c890c4abe1b079",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the meaningful nature of the sibling conversation and validate the sensitive topics (parental conflict, academic direction) disclosed in C:T004.",
+      "response_quote": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+        }
+      ],
+      "reason": "The reply directly addresses the user's statement in C:T004 regarding their conversation with siblings about family conflict and academic pressure. It provides empathetic validation consistent with the supportive style seen in previous sessions and offers a clear, relevant follow-up question to explore the outcome of the sibling interaction."
+    },
+    "claims": [
+      {
+        "response_quote": "It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T004",
+            "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me."
+          }
+        ],
+        "reason": "R003 explicitly mentions the 'argument between your parents', which corresponds directly to the user's disclosure in C:T004 ('how the argument between Mom and Dad affected me')."
+      },
+      {
+        "response_quote": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T002",
+            "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them."
+          }
+        ],
+        "reason": "R001 references sharing 'those kinds of feelings and concerns', aligning with the user's description in C:T002 of feeling overwhelmed and needing support."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked all personal factual claims against current session turns (C:T000-C:T004). Verified that references to sibling conversations, parental arguments, and feelings of concern are grounded in user-provided evidence.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings. It's great that you felt comfortable enough to open up to them. It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate. Did your siblings offer any words of encouragement or advice that stood out to you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 379
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I talked to my siblings today, and it felt really different, but in a good way.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's also understandable that the argument between your parents would be weighing on you - family dynamics can be really tough to navigate.",
+      "positions": [
+        {
+          "start": 156,
+          "end": 295
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T004",
+      "quote": "We talked about all the pressures I've been feeling with my studies and how I've been questioning my direction. I also brought up how the argument between Mom and Dad affected me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It takes a lot of courage to share those kinds of feelings and concerns with your siblings.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 91
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T002",
+      "quote": "I guess I was feeling overwhelmed with everything—school, writing, just life—and I needed someone to turn to. They've been really supportive lately, and I felt I could open up to them.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 184
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the meaningful nature of the sibling conversation and validate the sensitive topics (parental conflict, academic direction) disclosed in C:T004.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T004"
+      ],
+      "reason": "The reply directly addresses the user's statement in C:T004 regarding their conversation with siblings about family conflict and academic pressure. It provides empathetic validation consistent with the supportive style seen in previous sessions and offers a clear, relevant follow-up question to explore the outcome of the sibling interaction."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "R003 explicitly mentions the 'argument between your parents', which corresponds directly to the user's disclosure in C:T004 ('how the argument between Mom and Dad affected me')."
+      },
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "R001 references sharing 'those kinds of feelings and concerns', aligning with the user's description in C:T002 of feeling overwhelmed and needing support."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked all personal factual claims against current session turns (C:T000-C:T004). Verified that references to sibling conversations, parental arguments, and feelings of concern are grounded in user-provided evidence.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

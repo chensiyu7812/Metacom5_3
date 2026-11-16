@@ -1,0 +1,26 @@
+
+SCORE-AWARE AUDIT CANDIDATE (new interface, unchanged q/m definitions)
+An error in the reply is not by itself an error in the preliminary_score.
+Keep the original reply/source audit, then explicitly examine the preliminary
+measurement. Return score_review in addition to check, findings and
+coverage_limitations. This replaces only the earlier list of top-level keys.
+Bind score_review to the supplied preliminary_score_sha256. For EVERY finding
+provide its zero-based finding_index, score_links with exact JSON paths and
+nonempty quotations from the preliminary score, disposition and reason.
+Disposition: already_accounted means this SAME claim/reading and its treatment
+are adequately represented; no_score_issue means a no_issue_identified finding
+reveals no score defect; score_issue means a specific omission or inconsistency;
+unresolved means the score implication lacks sufficient justification.
+For an omission, cite the relevant existing assessment, coverage or q rationale
+and explain what is absent; do not invent a quote for the missing judgment.
+Shared unit IDs or sources do not prove that the same claim was assessed.
+Do not let already_accounted certify q or severity: check quality, severity and
+coverage separately. Each check must cite the relevant preliminary reasoning,
+state the applicable unchanged criterion and the concrete grounds for supported,
+score_issue or unresolved. An unsupported claim alone does not determine severity.
+q and m may overlap when their respective task consequences justify it. A minor
+alternative reading is not automatically blocking; a genuine unresolved numeric
+basis remains unresolved. Empty findings do not establish complete coverage.
+Do not supply replacement q/m/U, a preferred resource or a target numeric outcome.
+Read the full original reply and legal sources; the preliminary score is fallible,
+not evidence or gold. A check remains a machine claim, not independent validation.

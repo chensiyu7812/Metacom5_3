@@ -1,0 +1,147 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2251,
+      "reserved_prompt_tokens": 2379,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 0
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "ca396859e114947fff1dd98155ef7e7a527029775d00dfa230946372f95d3892",
+    "prior_profile_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "request_payload_sha256": "6cc480ac772cd2fbadefefc00f65584f3aab127da266e0621bff6430354e366d"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p16",
+      "s": "esc915",
+      "p": [
+        {
+          "i": "ppu-001",
+          "t": "durable_health_constraint",
+          "k": "emotional_response_to_loss",
+          "v": "experiencing prolonged sadness following death of a close relative",
+          "s": [
+            {
+              "i": "esc915:3"
+            },
+            {
+              "i": "esc915:4"
+            }
+          ]
+        },
+        {
+          "i": "ppu-002",
+          "t": "location",
+          "k": "residence",
+          "v": "lives alone",
+          "s": [
+            {
+              "i": "esc915:8"
+            }
+          ]
+        },
+        {
+          "i": "ppu-003",
+          "t": "stable_relationship_role",
+          "k": "family_residence",
+          "v": "family resides in another state",
+          "s": [
+            {
+              "i": "esc915:8"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "peu-001",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "death of aunt",
+          "s": [
+            {
+              "i": "esc915:3"
+            }
+          ]
+        },
+        {
+          "i": "peu-002",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "onset of persistent sadness following aunt's death",
+          "s": [
+            {
+              "i": "esc915:3"
+            },
+            {
+              "i": "esc915:4"
+            }
+          ]
+        },
+        {
+          "i": "peu-003",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received emotional support through chat conversation about grief",
+          "s": [
+            {
+              "i": "esc915:22"
+            },
+            {
+              "i": "esc915:23"
+            }
+          ]
+        },
+        {
+          "i": "peu-004",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "planning to increase communication with family as a way to cope with grief",
+          "s": [
+            {
+              "i": "esc915:26"
+            }
+          ]
+        },
+        {
+          "i": "peu-005",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considering journaling or staying busy to manage sadness",
+          "s": [
+            {
+              "i": "esc915:19"
+            },
+            {
+              "i": "esc915:25"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "94b1e9f5ac4fe7d116ce83cb62a47ee75b0067a61d8a228797e2c36b210e6e36",
+    "usage": {
+      "prompt_tokens": 2253,
+      "completion_tokens": 680,
+      "total_tokens": 2933
+    },
+    "latency_ms": 7383.553743013181,
+    "provider_finish_reason": "stop"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2550,
+      "reserved_prompt_tokens": 2678,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 213
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "610ded3f2ff1aa5c6e1da3b67f892c030da3f111b68eccce86ebe298d1ad58cf",
+    "prior_profile_sha256": "ce6c547723560aefb84bbdb6d2ffbe212a33622713b796bd2358fae6555b9bbc",
+    "request_payload_sha256": "cb56ce2b70345bda0992e18b95082133524fbc0a59090cf554057591acae55a0"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p6",
+      "s": "p6_conv_15",
+      "p": [
+        {
+          "i": "p6p1",
+          "t": "occupation",
+          "k": "occupation_status",
+          "v": "working at a job for about 4 months with recent performance concerns and missed overseas promotion",
+          "s": [
+            {
+              "i": "p6_conv_15:3"
+            },
+            {
+              "i": "p6_conv_15:5"
+            },
+            {
+              "i": "p6_conv_15:11"
+            }
+          ]
+        },
+        {
+          "i": "p6p2",
+          "t": "stable_relationship_role",
+          "k": "sibling_relationship_status",
+          "v": "has reconciled with sister Eliza after a conflict related to her wedding planning and currently plans to talk through work issues with her",
+          "s": [
+            {
+              "i": "p6_conv_15:12"
+            },
+            {
+              "i": "p6_conv_15:19"
+            },
+            {
+              "i": "p6_conv_15:20"
+            }
+          ]
+        },
+        {
+          "i": "p6p3",
+          "t": "enduring_interest",
+          "k": "journaling_practice",
+          "v": "uses journaling as a tool to track feelings and worries, finding it therapeutic",
+          "s": [
+            {
+              "i": "p6_conv_15:15"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p6e1",
+          "t": "career_event",
+          "z": "occurred",
+          "n": "missed overseas promotion due to being passed over without formal notification",
+          "s": [
+            {
+              "i": "p6_conv_15:3"
+            },
+            {
+              "i": "p6_conv_15:5"
+            }
+          ],
+          "a": "awaited decision on overseas promotion",
+          "o": "promotion was filled by someone else without direct communication"
+        },
+        {
+          "i": "p6e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "uses journaling to process emotions and manage work-related stress",
+          "s": [
+            {
+              "i": "p6_conv_15:15"
+            }
+          ]
+        },
+        {
+          "i": "p6e3",
+          "t": "relationship_event",
+          "z": "ongoing_stage",
+          "n": "plans to discuss job disappointment and uncertainty with sister Eliza",
+          "s": [
+            {
+              "i": "p6_conv_15:19"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "0de86e50723d2254eba5aa7a8cffa439cf7aedc7ce5039e470c6ef546b855de9",
+    "usage": {
+      "prompt_tokens": 2552,
+      "completion_tokens": 617,
+      "total_tokens": 3169
+    },
+    "latency_ms": 7632.691136008361,
+    "provider_finish_reason": "stop"
+  }
+}

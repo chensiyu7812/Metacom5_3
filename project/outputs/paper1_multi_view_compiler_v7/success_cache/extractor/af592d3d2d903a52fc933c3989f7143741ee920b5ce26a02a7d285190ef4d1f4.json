@@ -1,0 +1,196 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2244,
+      "reserved_prompt_tokens": 2372,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 56
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "cddcada4be0007d2e68000e8e1d0b906cbef6365d90c531fa640d746f36e0663",
+    "prior_profile_sha256": "ba95538b1a4a642b4daa3ff1249b717487dbfc38de4e753025cfee6492500c9c",
+    "request_payload_sha256": "04f68f44c0a512072244a33dd226c69f0771c394076f400b06df5c7d08889cd9"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p3",
+      "s": "p3_conv_3",
+      "p": [
+        {
+          "i": "p3p1",
+          "t": "education",
+          "k": "current_education_level",
+          "v": "college student",
+          "s": [
+            {
+              "i": "p3_conv_3:5"
+            }
+          ]
+        },
+        {
+          "i": "p3p2",
+          "t": "stable_relationship_role",
+          "k": "friend_with_henry",
+          "v": "Henry is a long-term friend",
+          "s": [
+            {
+              "i": "p3_conv_3:16"
+            }
+          ]
+        },
+        {
+          "i": "p3p3",
+          "t": "enduring_interest",
+          "k": "past_academic_interest",
+          "v": "physics",
+          "s": [
+            {
+              "i": "p3_conv_3:11"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p3e1",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feeling overwhelmed with academic workload",
+          "s": [
+            {
+              "i": "p3_conv_3:1"
+            },
+            {
+              "i": "p3_conv_3:3"
+            },
+            {
+              "i": "p3_conv_3:5"
+            }
+          ]
+        },
+        {
+          "i": "p3e2",
+          "t": "durable_health_constraint",
+          "z": "occurred",
+          "n": "experiencing exhaustion due to academic stress",
+          "s": [
+            {
+              "i": "p3_conv_3:9"
+            }
+          ]
+        },
+        {
+          "i": "p3e3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considering dropping physics course to manage stress",
+          "s": [
+            {
+              "i": "p3_conv_3:7"
+            }
+          ]
+        },
+        {
+          "i": "p3e4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considering seeking outside resources or talking to a different professor",
+          "s": [
+            {
+              "i": "p3_conv_3:13"
+            }
+          ]
+        },
+        {
+          "i": "p3e5",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "reminiscing about past reconciliation with Henry as a source of hope",
+          "s": [
+            {
+              "i": "p3_conv_3:16"
+            },
+            {
+              "i": "p3_conv_3:17"
+            }
+          ]
+        },
+        {
+          "i": "p3e6",
+          "t": "support_experience",
+          "z": "ongoing_stage",
+          "n": "receiving emotional support and encouragement during conversation",
+          "s": [
+            {
+              "i": "p3_conv_3:2"
+            },
+            {
+              "i": "p3_conv_3:4"
+            },
+            {
+              "i": "p3_conv_3:6"
+            },
+            {
+              "i": "p3_conv_3:8"
+            },
+            {
+              "i": "p3_conv_3:10"
+            },
+            {
+              "i": "p3_conv_3:12"
+            },
+            {
+              "i": "p3_conv_3:14"
+            },
+            {
+              "i": "p3_conv_3:16"
+            },
+            {
+              "i": "p3_conv_3:18"
+            },
+            {
+              "i": "p3_conv_3:20"
+            },
+            {
+              "i": "p3_conv_3:22"
+            }
+          ]
+        },
+        {
+          "i": "p3e7",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "shift from feeling stressed to feeling lighter after discussing concerns",
+          "s": [
+            {
+              "i": "p3_conv_3:21"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "155b0bca2d021693fe6da53fe5eec23d9ec53c89916528a9489ed935d398673f",
+    "usage": {
+      "prompt_tokens": 2246,
+      "completion_tokens": 972,
+      "total_tokens": 3218
+    },
+    "latency_ms": 11770.356069988338,
+    "provider_finish_reason": "stop"
+  }
+}

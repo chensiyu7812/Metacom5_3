@@ -1,0 +1,272 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "803805f89e22f10639a92c49c69aa207dce5454e4d3ecf1170ad7129c28e6d9e",
+    "phase": "development",
+    "ordinal": 4,
+    "item_key": "dev03A",
+    "draw": "primary",
+    "messages_identity": "05e985825ee643ad5edfd26978792e2095b119ecf615654e6d7680f8f7f2130b",
+    "schema_identity": "87fee154a9090c4ea28ef43708086bb5e985b45594e4c9912d9eeb9894ead975",
+    "paired_slot": "6d1e95c2e28a3da10bfa60531afc90e3b3335a702d90246f553beba17a31f855",
+    "seed": 2451983645,
+    "schedule_position": 13,
+    "input_utf8_bytes": 16120,
+    "original_slot_request_id": "600b0117ed6edb0691fe2061aeda17ced18a6b7122f0a7f047d024b4cef460e9",
+    "original_configuration_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "ced4a4f08475c96a37286520a7e7a44ffcbc219c4597a22f9ffb8552d55e2409"
+  },
+  "original_request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "phase": "development",
+    "ordinal": 4,
+    "item_key": "dev03A",
+    "draw": "primary",
+    "messages_identity": "05e985825ee643ad5edfd26978792e2095b119ecf615654e6d7680f8f7f2130b",
+    "schema_identity": "87fee154a9090c4ea28ef43708086bb5e985b45594e4c9912d9eeb9894ead975",
+    "paired_slot": "6d1e95c2e28a3da10bfa60531afc90e3b3335a702d90246f553beba17a31f855",
+    "seed": 2451983645,
+    "schedule_position": 13,
+    "input_utf8_bytes": 16120,
+    "request_id": "600b0117ed6edb0691fe2061aeda17ced18a6b7122f0a7f047d024b4cef460e9"
+  },
+  "protocol_identity": "5590e55a636d882157fd8339409acd7ac5d20c8a3d430784e86390ab4819568b",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "0f1093a45cfa84744121ab4f0f2ea1f05128981a20c4c6ac3a6175ff955680c8",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "803805f89e22f10639a92c49c69aa207dce5454e4d3ecf1170ad7129c28e6d9e",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "ced4a4f08475c96a37286520a7e7a44ffcbc219c4597a22f9ffb8552d55e2409",
+      "raw_output_sha256": "74feecd221eb73935f15520455b1695bce7655b5cf0b409c084d71b8db9c6325",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "After the user says things have been tough lately, the immediate need is a brief acknowledgment and an invitation to say more, without premature advice or assumptions.",
+          "response_quote": "I'm here to listen. What has been weighing on you lately?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The reply meets this turn's modest demand: it signals availability and asks an open question that follows directly from the user's vague disclosure of recent difficulty. It does not overreach, diagnose, give unsolicited advice, or assert facts about the user's past."
+        },
+        "claims": [
+          {
+            "response_quote": "What has been weighing on you lately?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The question presupposes that something has been weighing on the user. The user's preceding statement, C:T002, says things have been a bit tough lately, which supports that presupposition without treating it as more specific than the user reported."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T002 and all legal past sessions H001-H002. The only reply units are R001 and R002. Past sessions contain no constraint or correction that this reply violates, and the reply does not make specific factual claims requiring those sessions. No other units were supplied for evaluation.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm here to listen. What has been weighing on you lately?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 57
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "What has been weighing on you lately?",
+          "positions": [
+            {
+              "start": 20,
+              "end": 57
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "After the user says things have been tough lately, the immediate need is a brief acknowledgment and an invitation to say more, without premature advice or assumptions.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply meets this turn's modest demand: it signals availability and asks an open question that follows directly from the user's vague disclosure of recent difficulty. It does not overreach, diagnose, give unsolicited advice, or assert facts about the user's past."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something has been weighing on the user. The user's preceding statement, C:T002, says things have been a bit tough lately, which supports that presupposition without treating it as more specific than the user reported."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T002 and all legal past sessions H001-H002. The only reply units are R001 and R002. Past sessions contain no constraint or correction that this reply violates, and the reply does not make specific factual claims requiring those sessions. No other units were supplied for evaluation.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "After the user says things have been tough lately, the immediate need is a brief acknowledgment and an invitation to say more, without premature advice or assumptions.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply meets this turn's modest demand: it signals availability and asks an open question that follows directly from the user's vague disclosure of recent difficulty. It does not overreach, diagnose, give unsolicited advice, or assert facts about the user's past."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic statement of the assistant's availability to listen; it asserts no specific personal fact about the user or their history.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something has been weighing on the user. The user's preceding statement, C:T002, says things have been a bit tough lately, which supports that presupposition without treating it as more specific than the user reported.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T002 and all legal past sessions H001-H002. The only reply units are R001 and R002. Past sessions contain no constraint or correction that this reply violates, and the reply does not make specific factual claims requiring those sessions. No other units were supplied for evaluation.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "After the user says things have been tough lately, the immediate need is a brief acknowledgment and an invitation to say more, without premature advice or assumptions.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply meets this turn's modest demand: it signals availability and asks an open question that follows directly from the user's vague disclosure of recent difficulty. It does not overreach, diagnose, give unsolicited advice, or assert facts about the user's past."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic statement of the assistant's availability to listen; it asserts no specific personal fact about the user or their history."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something has been weighing on the user. The user's preceding statement, C:T002, says things have been a bit tough lately, which supports that presupposition without treating it as more specific than the user reported."
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T002 and all legal past sessions H001-H002. The only reply units are R001 and R002. Past sessions contain no constraint or correction that this reply violates, and the reply does not make specific factual claims requiring those sessions. No other units were supplied for evaluation.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "74feecd221eb73935f15520455b1695bce7655b5cf0b409c084d71b8db9c6325",
+      "adapted_final_sha256": "74feecd221eb73935f15520455b1695bce7655b5cf0b409c084d71b8db9c6325",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"After the user says things have been tough lately, the immediate need is a brief acknowledgment and an invitation to say more, without premature advice or assumptions.\",\n    \"response_unit_ids\": [\"R001\", \"R002\"],\n    \"source_turn_ids\": [\"C:T002\"],\n    \"reason\": \"The reply meets this turn's modest demand: it signals availability and asks an open question that follows directly from the user's vague disclosure of recent difficulty. It does not overreach, diagnose, give unsolicited advice, or assert facts about the user's past.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"A generic statement of the assistant's availability to listen; it asserts no specific personal fact about the user or their history.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\"C:T002\"],\n      \"reason\": \"The question presupposes that something has been weighing on the user. The user's preceding statement, C:T002, says things have been a bit tough lately, which supports that presupposition without treating it as more specific than the user reported.\"\n    }\n  ],\n  \"coverage\": \"Reviewed the complete current prefix C:T000-C:T002 and all legal past sessions H001-H002. The only reply units are R001 and R002. Past sessions contain no constraint or correction that this reply violates, and the reply does not make specific factual claims requiring those sessions. No other units were supplied for evaluation.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 15.375674509967212,
+  "API_usd": "0.00169881",
+  "financial_accounting": {
+    "accounted_upper_nanodollars": 3962100,
+    "accounted_upper_usd": "0.0039621",
+    "usage_price_estimate_usd": "0.00169881",
+    "cache_split_complete": true,
+    "usage_price_estimate_cny": "0.0113254",
+    "observed_off_peak_interval": true,
+    "invoice_confirmed": false,
+    "explanation": "shared ledger uses all-input cache-miss peak upper; observed usage estimate separately priced; reasoning subset not added twice"
+  },
+  "reservation_id": "pmrl1-D-development:ced4a4f08475c96a37286520a7e7a44ffcbc219c4597a22f9ffb8552d55e2409",
+  "reservation_retained": false,
+  "maximum_responsibility_usd": "0.786432",
+  "budget_within_reservation": true
+}

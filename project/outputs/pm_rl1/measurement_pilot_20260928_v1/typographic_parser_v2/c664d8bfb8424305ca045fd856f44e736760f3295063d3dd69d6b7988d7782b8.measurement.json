@@ -1,0 +1,94 @@
+{
+  "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "04733e2fe4bf677fe0197595334b95e35d3a89caa2ecf739d0e05bad57dbcad1",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expressed hesitation about approaching her supervisor to discuss workload adjustments despite considering it (C:T015).",
+      "response_quote": "What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply fully acknowledges the emotional state ('uncertain') and directly engages with the user's specific intent regarding the 'workload adjustments' mentioned in the previous turn. It respects boundaries by asking open-ended questions rather than giving unsolicited advice, thereby empowering the user to clarify their thoughts. No mismatches or errors found."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated all explicit personal information referenced in the reply (supervisor interaction, workload adjustments) against the legal evidence. Checked for temporal consistency with prior promotions and supervisor interactions documented in the current session and past sessions (H012, H018).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "positions": [
+        {
+          "start": 62,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "parse_or_evidence_failure",
+  "quote_transformations": [
+    {
+      "part": 0,
+      "field": "evidence[0].quote",
+      "source_id": "C:T015",
+      "provided": "I've been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they'll react.",
+      "matched_original": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+    }
+  ],
+  "normalized_final_json": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expressed hesitation about approaching her supervisor to discuss workload adjustments despite considering it (C:T015).",
+      "response_quote": "What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply fully acknowledges the emotional state ('uncertain') and directly engages with the user's specific intent regarding the 'workload adjustments' mentioned in the previous turn. It respects boundaries by asking open-ended questions rather than giving unsolicited advice, thereby empowering the user to clarify their thoughts. No mismatches or errors found."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated all explicit personal information referenced in the reply (supervisor interaction, workload adjustments) against the legal evidence. Checked for temporal consistency with prior promotions and supervisor interactions documented in the current session and past sessions (H012, H018).",
+    "uncertainty_reasons": []
+  },
+  "normalization_scope": "only whitespace and straight/curly quote glyphs; no word or source-ID changes",
+  "original_format_transformations": [
+    "remove_closed_thinking_prefix"
+  ]
+}

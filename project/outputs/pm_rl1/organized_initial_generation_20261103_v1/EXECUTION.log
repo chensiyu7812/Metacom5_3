@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/143_generate_organized_initial.py", line 98, in <module>
+    else:execute(a.output,a.approval)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/143_generate_organized_initial.py", line 74, in execute
+    result=worker.step()
+           ^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/generation_worker.py", line 56, in step
+    self.backend.prepare()
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_backend.py", line 136, in prepare
+    with torch.random.fork_rng(devices=[]):self._ensure()
+                                           ^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_backend.py", line 113, in _ensure
+    self.gpu_guard.check()
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py", line 114, in check
+    if not result['eligible']:raise RuntimeError('designated GPU unavailable; no waiting, termination or fallback')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: designated GPU unavailable; no waiting, termination or fallback

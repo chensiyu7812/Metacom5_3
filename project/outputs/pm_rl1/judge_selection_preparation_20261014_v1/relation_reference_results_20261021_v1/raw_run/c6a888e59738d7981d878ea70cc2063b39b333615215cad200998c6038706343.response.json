@@ -1,0 +1,36 @@
+{
+  "transport": "deepseek",
+  "request_identity": "30f5dd124fb4c3c613ae423161f9dbbef3f2ba57894bbdbf724be6e03e90bb6b",
+  "native_thinking": "enabled",
+  "request_started_unix": 1792577637.6098766,
+  "response_headers": {
+    "Date": "Wed, 21 Oct 2026 10:13:57 GMT"
+  },
+  "id": "e730da63-a56f-44aa-a4fc-d95c3c7c65b9",
+  "model": "deepseek-flash",
+  "created": 1792577637,
+  "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "usage": {
+    "prompt_tokens": 4197,
+    "completion_tokens": 1021,
+    "total_tokens": 5218,
+    "prompt_tokens_details": {
+      "cached_tokens": 3968
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 455
+    },
+    "prompt_cache_hit_tokens": 3968,
+    "prompt_cache_miss_tokens": 229
+  },
+  "choices": [
+    {
+      "message": {
+        "content": "{\"status\": \"scored\", \"q\": 2, \"q_rationale\": {\"current_need\": \"The user has just disclosed, without detail, that things have been tough lately; the appropriate response is warm acknowledgment and an open invitation to say more, without presuming the cause.\", \"response_unit_ids\": [\"R001\", \"R002\", \"R003\"], \"source_turn_ids\": [\"C:T002\", \"H002:T003\", \"H001:T003\"], \"reason\": \"The warmth and the open question fit the vague disclosure, but the reply inserts an unmentioned, specific cause ('job hunting') as the user's difficulty, which mischaracterizes what little the user said and risks making the user feel misunderstood; that fabricated circumstance is the decisive defect keeping this below an appropriate-and-coherent 3.\"}, \"assessments\": [{\"response_unit_id\": \"R001\", \"relation\": \"non_factual\", \"severity\": 0, \"source_turn_ids\": [], \"reason\": \"Ordinary empathic acknowledgment of the user's stated difficulty; asserts no specific personal fact.\"}, {\"response_unit_id\": \"R002\", \"relation\": \"supported\", \"severity\": 0, \"source_turn_ids\": [\"C:T002\"], \"reason\": \"The user's own words ('things have been a bit tough lately') directly support describing the current period as a challenging time.\"}, {\"response_unit_id\": \"R002\", \"relation\": \"unsupported\", \"severity\": 1, \"source_turn_ids\": [\"C:T002\", \"H002:T003\", \"H001:T003\"], \"reason\": \"The reply asserts that the difficulty is 'especially' about job hunting; the complete record (this prefix and both past sessions, whose issues were sleep and drinking/marriage) contains no mention of employment or job hunting, so this is a substantive invented personal circumstance attributed to the user.\"}, {\"response_unit_id\": \"R003\", \"relation\": \"non_factual\", \"severity\": 0, \"source_turn_ids\": [], \"reason\": \"An open, tentative invitation to say more; it proposes no action and asserts no personal fact about the user.\"}], \"coverage\": \"Reviewed the full current prefix (C:T000–C:T002) and both legal past sessions (H001 sleep difficulties and yoga; H002 drinking affecting marriage). Neither the current prefix nor either past session mentions job hunting, employment or work stress; the only user disclosure in the current turn is a general 'things have been a bit tough lately'. Empathic framing and the opening question were checked as non-factual support rather than as personal claims.\", \"uncertainty_reasons\": []}",
+        "reasoning_content": "The reply unit R002 asserts \"especially when it comes to job hunting.\" The user never mentioned job hunting in the entire record. This is an invented personal fact — material? It's a specific personal circumstance invented. User said \"things have been a bit tough lately\" with no detail. The reply invents job hunting as the source of difficulty. That's a material factual error — could change the core understanding/advice. Severity: I'd say 1 or 0.25. It's a fabricated personal circumstance that misattributes a cause; the user would likely feel misunderstood. Does it change core understanding/advice? The question \"what's specifically making things difficult right now\" is generic; but the invented job hunting is a substantive invented personal history. I'd lean severity 1? The anchor: \"1 for a material error (e.g. another person's example treated as the user's life, contradicted current constraints, intention promoted to completed/effective action, or substantive invented personal history).\" Inventing job hunting as the user's issue is substantive invented personal history. So m=1.\n\nq: The reply is empathic and invites exploration, but it wrongly inserts a fabricated issue (job hunting), which is a mismatch/error undermining the support. A dominant error? It's one phrase among empathic reflection plus appropriate open question. I'd say q=2: basically responds but an important defect — the invented concern. Actually anchor for 2: \"basically responds, but an important explicit need/constraint is missed or mishandled.\" The fabrication is a factual error rather than a missed need; but it does misdirect. I'd give q=2.\n\nLet me write assessments.\n\nR001: non_factual (empathic reflection) severity 0.\nR002: split — \"going through a challenging time\" is supported (C:T002 \"things have been a bit tough\"). \"especially when it comes to job hunting\" unsupported severity 1. Use two assessments with same reply-unit ID.\nR003: non_factual — an open question; severity 0.\n\nCoverage: checked complete evidence H001, H002, current prefix C:T000-T002; no mention of job hunting."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "total_seconds": 5.5096389329992235
+}

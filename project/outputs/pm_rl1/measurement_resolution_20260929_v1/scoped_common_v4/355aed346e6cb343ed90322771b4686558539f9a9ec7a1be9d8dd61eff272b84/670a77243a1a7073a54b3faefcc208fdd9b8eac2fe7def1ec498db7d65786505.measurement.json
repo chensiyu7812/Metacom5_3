@@ -1,0 +1,270 @@
+{
+  "response_sha256": "df8943d719de61e20d396cfd58b952b67c9f29a7a81b1fbb3e15397393167e9a",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "93f28b6dbed843a1c336111dea7e6bfdd85cf72e35de6ff4cae0dbccbb6aa4c3",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of trust issues and encouragement regarding asking for help.",
+      "response_quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "The reply fully addresses the user's stated difficulty in asking for help due to past trust issues (referencing 'hurt before'). It reframes the action as a strength and offers a concrete, low-pressure suggestion ('small step', 'friend or family') that aligns with the seeker's expressed desire to avoid overwhelming others (implied by the James reference) while encouraging connection."
+    },
+    "claims": [
+      {
+        "response_quote": "It's tough to put yourself out there when you've been hurt before.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+          }
+        ],
+        "reason": "Validates the user's feeling of hesitation linked to past hurt."
+      },
+      {
+        "response_quote": "Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T011",
+            "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?"
+          }
+        ],
+        "reason": "Continues the topic of seeking support initiated in the previous turn without asserting specific unavailable facts."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The entire current turn C:T012 is addressed. The suggestion R003 relates directly to the inquiry C:T011/T012.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 266
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "positions": [
+        {
+          "start": 139,
+          "end": 266
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T011",
+      "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 168
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of trust issues and encouragement regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply fully addresses the user's stated difficulty in asking for help due to past trust issues (referencing 'hurt before'). It reframes the action as a strength and offers a concrete, low-pressure suggestion ('small step', 'friend or family') that aligns with the seeker's expressed desire to avoid overwhelming others (implied by the James reference) while encouraging connection."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Validates the user's feeling of hesitation linked to past hurt."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Continues the topic of seeking support initiated in the previous turn without asserting specific unavailable facts."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The entire current turn C:T012 is addressed. The suggestion R003 relates directly to the inquiry C:T011/T012.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of trust issues and encouragement regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply fully addresses the user's stated difficulty in asking for help due to past trust issues (referencing 'hurt before'). It reframes the action as a strength and offers a concrete, low-pressure suggestion ('small step', 'friend or family') that aligns with the seeker's expressed desire to avoid overwhelming others (implied by the James reference) while encouraging connection."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Validates the user's feeling of hesitation linked to past hurt.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General psychological insight/strength framing, not a specific claim about the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Continues the topic of seeking support initiated in the previous turn without asserting specific unavailable facts.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The entire current turn C:T012 is addressed. The suggestion R003 relates directly to the inquiry C:T011/T012.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of trust issues and encouragement regarding asking for help.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply fully addresses the user's stated difficulty in asking for help due to past trust issues (referencing 'hurt before'). It reframes the action as a strength and offers a concrete, low-pressure suggestion ('small step', 'friend or family') that aligns with the seeker's expressed desire to avoid overwhelming others (implied by the James reference) while encouraging connection."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Validates the user's feeling of hesitation linked to past hurt."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General psychological insight/strength framing, not a specific claim about the user."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Continues the topic of seeking support initiated in the previous turn without asserting specific unavailable facts."
+      }
+    ],
+    "coverage": "The entire current turn C:T012 is addressed. The suggestion R003 relates directly to the inquiry C:T011/T012.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

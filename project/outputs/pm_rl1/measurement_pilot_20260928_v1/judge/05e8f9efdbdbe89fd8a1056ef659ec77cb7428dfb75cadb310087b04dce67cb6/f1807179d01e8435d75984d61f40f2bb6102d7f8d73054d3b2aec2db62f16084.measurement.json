@@ -1,0 +1,62 @@
+{
+  "response_sha256": "7ab1d45d12e2b7a5836f2f74396b5b051046b2ba84646435f78748e3660aa77a",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-exact-span-v1",
+  "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+  "raw_output_sha256": "87095a624fb60923b0c5bd356ab6bf2ced028d5ad2be39576f95b9757ce89497",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker initiates contact stating a need for emotional support and conversation.",
+      "response_quote": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "The response directly validates the seeker's expressed need for connection, normalizes their feelings, and offers a non-judgmental space to elaborate. It respects boundaries by avoiding specific assumptions about the user's problems not yet stated in the current session while remaining fully responsive to the request for talk."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated current session turn C:T000 against prior history (H001-H007). Checked for identity continuity (name 'Emily' established in H005-H007 but not used in reply, deemed appropriate/neutral), and verified no conflicting personal facts or constraints were violated in the reply text.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 219
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+}

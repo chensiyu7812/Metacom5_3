@@ -1,0 +1,342 @@
+{
+  "response_sha256": "a0eb1bc59572fb32e6a0e64ae63628882676d58d064d01f4bb195edae7222789",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "3925fea11dc0b46c223f5b6040f7a017c5eb9c44e7efe46db5c9cf5b69ab3490",
+  "raw_output_sha256": "9fb8eb4e7e47c22e34af7b95e0a733138223d3f8e44830cde7d9b38ac727b9d5",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Amanda) explicitly states in C:T015 that she is thinking about discussing workload adjustments with her supervisor but is uncertain about the reaction.",
+      "response_quote": "You're considering asking your supervisor to adjust your workload, and you're unsure how they'll respond. With everything else you're carrying, that uncertainty sounds difficult. Would it help to think through what you want to ask for?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's stated intention ('considering asking') and feeling ('unsure how they'll respond') from the immediately preceding turn without inventing details or violating boundaries. It validates the emotional weight ('uncertainty sounds difficult') and offers a gentle, low-pressure prompt to explore next steps ('think through what you want to ask for'), which respects the user's hesitation while encouraging agency. This fully meets the current turn's call for empathetic validation and supportive presence without unnecessary advice or information overload. Stylistically, while the session often uses 'Amanda,' pronoun use is consistent within the immediate context and does not constitute a defect."
+    },
+    "claims": [
+      {
+        "response_quote": "You're considering asking your supervisor to adjust your workload, and you're unsure how they'll respond.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Paraphrases the user's explicit statement about discussing workload adjustments."
+      },
+      {
+        "response_quote": "With everything else you're carrying, that uncertainty sounds difficult.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hi Amanda! I just wanted to check in and see how you’re doing lately."
+          },
+          {
+            "source_id": "C:T002",
+            "quote": "I’m sorry to hear that. It sounds like a lot is going on right now. Would you like to talk about what’s been happening?"
+          },
+          {
+            "source_id": "C:T003",
+            "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought."
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now."
+          },
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "References the 'everything else' context visible in the full prefix (family illness, work stress, etc.)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply fully covers the user's expressed intention and emotional barrier regarding the upcoming conversation with the supervisor.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You're considering asking your supervisor to adjust your workload, and you're unsure how they'll respond. With everything else you're carrying, that uncertainty sounds difficult. Would it help to think through what you want to ask for?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 235
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You're considering asking your supervisor to adjust your workload, and you're unsure how they'll respond.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 105
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "With everything else you're carrying, that uncertainty sounds difficult.",
+      "positions": [
+        {
+          "start": 106,
+          "end": 178
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T000",
+      "quote": "Hi Amanda! I just wanted to check in and see how you’re doing lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T002",
+      "quote": "I’m sorry to hear that. It sounds like a lot is going on right now. Would you like to talk about what’s been happening?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T003",
+      "quote": "Yeah, it's just everything piling up. I recently found out that my family member’s illness is much more serious than we thought.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 128
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T013",
+      "quote": "Work has been demanding too. I'm worried about the new promotion. It's great, but the responsibility is daunting, especially now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 129
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user (Amanda) explicitly states in C:T015 that she is thinking about discussing workload adjustments with her supervisor but is uncertain about the reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply accurately reflects the user's stated intention ('considering asking') and feeling ('unsure how they'll respond') from the immediately preceding turn without inventing details or violating boundaries. It validates the emotional weight ('uncertainty sounds difficult') and offers a gentle, low-pressure prompt to explore next steps ('think through what you want to ask for'), which respects the user's hesitation while encouraging agency. This fully meets the current turn's call for empathetic validation and supportive presence without unnecessary advice or information overload. Stylistically, while the session often uses 'Amanda,' pronoun use is consistent within the immediate context and does not constitute a defect."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Paraphrases the user's explicit statement about discussing workload adjustments."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002",
+          "C:T003",
+          "C:T013",
+          "C:T015"
+        ],
+        "reason": "References the 'everything else' context visible in the full prefix (family illness, work stress, etc.)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply fully covers the user's expressed intention and emotional barrier regarding the upcoming conversation with the supervisor.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Amanda) explicitly states in C:T015 that she is thinking about discussing workload adjustments with her supervisor but is uncertain about the reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply accurately reflects the user's stated intention ('considering asking') and feeling ('unsure how they'll respond') from the immediately preceding turn without inventing details or violating boundaries. It validates the emotional weight ('uncertainty sounds difficult') and offers a gentle, low-pressure prompt to explore next steps ('think through what you want to ask for'), which respects the user's hesitation while encouraging agency. This fully meets the current turn's call for empathetic validation and supportive presence without unnecessary advice or information overload. Stylistically, while the session often uses 'Amanda,' pronoun use is consistent within the immediate context and does not constitute a defect."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Paraphrases the user's explicit statement about discussing workload adjustments.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002",
+          "C:T003",
+          "C:T013",
+          "C:T015"
+        ],
+        "reason": "References the 'everything else' context visible in the full prefix (family illness, work stress, etc.).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "A rhetorical/therapeutic question offering a perspective shift, not a factual claim.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The reply fully covers the user's expressed intention and emotional barrier regarding the upcoming conversation with the supervisor.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user (Amanda) explicitly states in C:T015 that she is thinking about discussing workload adjustments with her supervisor but is uncertain about the reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply accurately reflects the user's stated intention ('considering asking') and feeling ('unsure how they'll respond') from the immediately preceding turn without inventing details or violating boundaries. It validates the emotional weight ('uncertainty sounds difficult') and offers a gentle, low-pressure prompt to explore next steps ('think through what you want to ask for'), which respects the user's hesitation while encouraging agency. This fully meets the current turn's call for empathetic validation and supportive presence without unnecessary advice or information overload. Stylistically, while the session often uses 'Amanda,' pronoun use is consistent within the immediate context and does not constitute a defect."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Paraphrases the user's explicit statement about discussing workload adjustments."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002",
+          "C:T003",
+          "C:T013",
+          "C:T015"
+        ],
+        "reason": "References the 'everything else' context visible in the full prefix (family illness, work stress, etc.)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "A rhetorical/therapeutic question offering a perspective shift, not a factual claim."
+      }
+    ],
+    "coverage": "The reply fully covers the user's expressed intention and emotional barrier regarding the upcoming conversation with the supervisor.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

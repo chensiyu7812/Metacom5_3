@@ -1,0 +1,51 @@
+{
+  "time_jst": "2026-10-15T22:18:56.657295+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "7ea5f906a8d7f220b8068fbd909859895d272b537a4bf24e929dd50f17945a79",
+  "original_slot_request_id": "9795a764f11945e00ba4fce0eed235d68ae1a5dbb1621848e73dd96bf9a08cdf",
+  "item_key": "dev04A",
+  "draw": "primary",
+  "response_sha256": "128c9ccfe2dff19a0fa4694393d0f326a82dc413fddb9b79058202021f6f6d70",
+  "raw_sha256": "8424db7491abb01a9efd0e64527dc5520ddabbda845c0ae561565535879d9367",
+  "explanation": "R003拆分Since价值前提与是否沟通的询问，T008支持前者，后者未断言已沟通。R001T006/008匹配。q3理由以T001持续求建议而回应仍探索为局限；与q4边界可讨论，但不是来源证明的实质错分，不追加硬停止。",
+  "source_checks": [
+    {
+      "source_id": "C:T001",
+      "exact_quote": "Im feeling down and need some advice as to how do I handle this situation",
+      "finding": "明确求如何处理的建议"
+    },
+    {
+      "source_id": "C:T006",
+      "exact_quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+      "finding": "少工作同事获经理青睐"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "finding": "用户无法容忍不公"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "actor": "用户/经理/同事无混同",
+    "citation": "R001及R003事实前提匹配",
+    "severity": "m0没有已证明错误",
+    "quality": "q3与4相邻锚点边界，未定唯一正确值",
+    "mixed_assertion": "R003分项，事实部分与询问部分独立核查"
+  },
+  "issues": [
+    "q3实用性局限是否足以扣一档尚无绝对金标准；不作为critical_unknown"
+  ],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

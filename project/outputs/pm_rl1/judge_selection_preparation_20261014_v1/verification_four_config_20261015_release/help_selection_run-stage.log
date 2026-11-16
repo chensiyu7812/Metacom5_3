@@ -1,0 +1,13 @@
+usage: selection.py run-stage [-h] --phase
+                              {engineering,development,diagnostics}
+                              [--candidates {gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high} [{gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high} ...]]
+                              [--out OUT] [--approval APPROVAL]
+                              [--execute-live]
+
+options:
+  -h, --help            show this help message and exit
+  --phase {engineering,development,diagnostics}
+  --candidates {gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high} [{gemma4_12b_bf16,gemma4_12b_bf16_thinking,deepseek_flash_off,deepseek_flash_high} ...]
+  --out OUT             mock output directory; forbidden for live
+  --approval APPROVAL
+  --execute-live

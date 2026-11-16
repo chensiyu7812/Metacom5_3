@@ -1,0 +1,71 @@
+{
+  "qa": [
+    {
+      "role": "system",
+      "parts": [
+        {
+          "literal": "You are a strict evaluator."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "parts": [
+        {
+          "literal": "You are an impartial evaluator. \nYour task is to score a model's answer to a given question against a gold (reference) answer. \n\nScoring criteria:\n- 0: Completely wrong or irrelevant\n- 1: Partially correct but incomplete, vague, or missing key information\n- 2: Completely correct and contextually accurate\n\nQuestion: "
+        },
+        {
+          "slot": "question"
+        },
+        {
+          "literal": "\nGold Answer: "
+        },
+        {
+          "slot": "gold"
+        },
+        {
+          "literal": "\nModel Answer: "
+        },
+        {
+          "slot": "prediction"
+        },
+        {
+          "literal": "\n\n## Output Instructions\n- Output only one line. \n- The line must be in the exact format: \"Score: X\" where X is 0, 1, or 2. \n- Do not generate explanations or additional text.\n\n## Output Format\nScore: 1"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "role": "system",
+      "parts": [
+        {
+          "literal": "## Task Description\nYou are tasked with evaluating a model-generated summary against a human-written reference summary \nin the context of long-term emotional support dialogues. \nThe evaluation should focus on:\n1. Identifying distinct events in both summaries.\n2. Determining how many reference events are correctly recalled in the generated summary.\n3. Detecting hallucinations (events mentioned in the generated summary but not in the reference).\n4. Assessing whether recalled events are consistent with the reference in temporal order, causal logic, and emotional meaning.\n\n## Event Definition\n- An **event** is a distinct state change, emotional shift, or decision explicitly mentioned in the summary. \n- Examples: \"lost motivation due to poor teaching quality\", \"considered quitting a job\", \"reconciled with a friend\".\n- Explanations, adjectives, or background details are NOT counted as separate events unless they describe a clear action or state transition.\n\n## Additional Requirements\n- First extract **reference_events**: the list of distinct events from the reference summary.  \n- Then extract **generated_events**: the list of distinct events from the generated summary.  \n- Then identify **recalled_events**: the subset of generated_events that also appear in reference_events (semantic overlap allowed).  \n- Use these lists to compute the following counts:\n- **num_events_reference** = length of reference_events  \n- **num_events_generated** = length of generated_events  \n- **num_events_recalled** = length of recalled_events  \n- Mark **hallucination = true** if generated_events contain unsupported events not present in reference_events; false otherwise.  \n\n## Scoring Rubric (0–5 scale)\n- 5 = Perfect: no hallucinations; all reference events recalled; consistent reasoning.  \n- 4 = Strong: no hallucinations; most reference events (>75%) recalled; reasoning mostly consistent.  \n- 3 = Fair: some omissions (~50% recalled) or minor inconsistencies; hallucinations absent or minimal.  \n- 2 = Weak: major omissions (<50% recalled) or inconsistent reasoning; hallucinations present.  \n- 1 = Poor: severe omissions (<25% recalled), multiple hallucinations, or strong inconsistencies.  \n- 0 = Invalid: irrelevant or dominated by hallucinations.  \n\n## Output Format (JSON)\n{\n  \"score\": <0–5>,\n  \"reference_events\": [ ... ],\n  \"generated_events\": [ ... ],\n  \"recalled_events\": [ ... ],\n  \"num_events_reference\": <int>,\n  \"num_events_generated\": <int>,\n  \"num_events_recalled\": <int>,\n  \"hallucination\": true | false,\n  \"justification\": \"Brief explanation: which events were recalled, omitted, hallucinated, and how consistent the reasoning is.\"\n}"
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "parts": [
+        {
+          "literal": "Question: "
+        },
+        {
+          "slot": "question"
+        },
+        {
+          "literal": "\nReference Summary: "
+        },
+        {
+          "slot": "gold"
+        },
+        {
+          "literal": "\nGenerated Summary: "
+        },
+        {
+          "slot": "prediction"
+        }
+      ]
+    }
+  ]
+}

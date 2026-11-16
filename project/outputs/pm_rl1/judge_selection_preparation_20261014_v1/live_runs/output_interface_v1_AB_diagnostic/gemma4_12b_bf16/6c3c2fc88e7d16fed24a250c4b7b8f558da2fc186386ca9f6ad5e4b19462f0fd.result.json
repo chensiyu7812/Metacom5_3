@@ -1,0 +1,341 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+    "phase": "development",
+    "ordinal": 12,
+    "item_key": "dev10A",
+    "draw": "primary",
+    "messages_identity": "b1047387eed199095ea129cf744468a9d44d8becb0b7d76f9d150ad0ea578195",
+    "schema_identity": "0db479ab526a6df1a2d8f7ea135026ca68609426131054d9e24226b8c6705ffa",
+    "paired_slot": "0b1217265deb7a5479642c72bf1b4729b06c3b009bf46c7cb84379c94b0ad225",
+    "seed": 3438554330,
+    "schedule_position": 48,
+    "input_utf8_bytes": 49058,
+    "original_slot_request_id": "d182d575ed9a8ddf41cf4ae1906f76045b76a13d86825497118a509ca5a81792",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "6c3c2fc88e7d16fed24a250c4b7b8f558da2fc186386ca9f6ad5e4b19462f0fd"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 12,
+    "item_key": "dev10A",
+    "draw": "primary",
+    "messages_identity": "b1047387eed199095ea129cf744468a9d44d8becb0b7d76f9d150ad0ea578195",
+    "schema_identity": "0db479ab526a6df1a2d8f7ea135026ca68609426131054d9e24226b8c6705ffa",
+    "paired_slot": "0b1217265deb7a5479642c72bf1b4729b06c3b009bf46c7cb84379c94b0ad225",
+    "seed": 3438554330,
+    "schedule_position": 48,
+    "input_utf8_bytes": 49058,
+    "request_id": "d182d575ed9a8ddf41cf4ae1906f76045b76a13d86825497118a509ca5a81792"
+  },
+  "protocol_identity": "6bcfd3691bd9a6be241a2c9de060b01e637462e04cf51dd35a2cc3e19bd47ff2",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "de741887422cae7624b182dc50ef1ea8a4ce16f50c6a66765f38443366d3b9aa",
+      "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "6c3c2fc88e7d16fed24a250c4b7b8f558da2fc186386ca9f6ad5e4b19462f0fd",
+      "raw_output_sha256": "261a5c66ffb8d4735b4a01b0139ec4c567bbb9ca6c275b4fc14d423407957828",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing anxiety about a leadership transition at work, specifically worrying that a new boss might repeat past issues or lack respect for employees.",
+          "response_quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+            }
+          ],
+          "reason": "The response accurately reflects the user's current concern about the leadership transition and validates their desire for a respectful boss, which is a logical consequence of the workplace issues (harassment and a problematic boss) described in the history."
+        },
+        "claims": [
+          {
+            "response_quote": "Your boss has resigned, and you are worried about who will take over.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T008",
+                "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+              }
+            ],
+            "reason": "The user explicitly states they are worried about who is going to take over and hope for someone who respects employees."
+          },
+          {
+            "response_quote": "It makes sense to want respectful leadership after what you have been through.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "H005:T004",
+                "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it."
+              },
+              {
+                "source_id": "H006:T008",
+                "quote": "I keep thinking about the harassment at work. Ignoring it for so long just made me feel so powerless."
+              },
+              {
+                "source_id": "H002:T001",
+                "quote": "I'm doing fine. My problem is that my boss keeps hitting on a co-worker, who really doesn't like the guy. What can I do to make it stop?"
+              }
+            ],
+            "reason": "The user has a history of workplace issues including harassment (H005) and a boss who hit on a co-worker (H002), supporting the context that they have 'been through' significant workplace difficulties."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's immediate concern about the boss's resignation and the anxiety regarding the successor, while acknowledging the context of their past workplace experiences.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 148
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 144
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Your boss has resigned, and you are worried about who will take over.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 69
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T008",
+          "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 144
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It makes sense to want respectful leadership after what you have been through.",
+          "positions": [
+            {
+              "start": 70,
+              "end": 148
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "H005:T004",
+          "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 114
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "H006:T008",
+          "quote": "I keep thinking about the harassment at work. Ignoring it for so long just made me feel so powerless.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "H002:T001",
+          "quote": "I'm doing fine. My problem is that my boss keeps hitting on a co-worker, who really doesn't like the guy. What can I do to make it stop?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 136
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is expressing anxiety about a leadership transition at work, specifically worrying that a new boss might repeat past issues or lack respect for employees.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008"
+          ],
+          "reason": "The response accurately reflects the user's current concern about the leadership transition and validates their desire for a respectful boss, which is a logical consequence of the workplace issues (harassment and a problematic boss) described in the history."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly states they are worried about who is going to take over and hope for someone who respects employees."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "H005:T004",
+              "H006:T008",
+              "H002:T001"
+            ],
+            "reason": "The user has a history of workplace issues including harassment (H005) and a boss who hit on a co-worker (H002), supporting the context that they have 'been through' significant workplace difficulties."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's immediate concern about the boss's resignation and the anxiety regarding the successor, while acknowledging the context of their past workplace experiences.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing anxiety about a leadership transition at work, specifically worrying that a new boss might repeat past issues or lack respect for employees.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008"
+          ],
+          "reason": "The response accurately reflects the user's current concern about the leadership transition and validates their desire for a respectful boss, which is a logical consequence of the workplace issues (harassment and a problematic boss) described in the history."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly states they are worried about who is going to take over and hope for someone who respects employees.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "H005:T004",
+              "H006:T008",
+              "H002:T001"
+            ],
+            "reason": "The user has a history of workplace issues including harassment (H005) and a boss who hit on a co-worker (H002), supporting the context that they have 'been through' significant workplace difficulties.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "The response addresses the user's immediate concern about the boss's resignation and the anxiety regarding the successor, while acknowledging the context of their past workplace experiences.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is expressing anxiety about a leadership transition at work, specifically worrying that a new boss might repeat past issues or lack respect for employees.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008"
+          ],
+          "reason": "The response accurately reflects the user's current concern about the leadership transition and validates their desire for a respectful boss, which is a logical consequence of the workplace issues (harassment and a problematic boss) described in the history."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The user explicitly states they are worried about who is going to take over and hope for someone who respects employees."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "H005:T004",
+              "H006:T008",
+              "H002:T001"
+            ],
+            "reason": "The user has a history of workplace issues including harassment (H005) and a boss who hit on a co-worker (H002), supporting the context that they have 'been through' significant workplace difficulties."
+          }
+        ],
+        "coverage": "The response addresses the user's immediate concern about the boss's resignation and the anxiety regarding the successor, while acknowledging the context of their past workplace experiences.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "e6da6ef4f1ec19daa905dee83c0825b4e5c8f9e187c81999ca796fceee5c307c",
+      "adapted_final_sha256": "261a5c66ffb8d4735b4a01b0139ec4c567bbb9ca6c275b4fc14d423407957828",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user is expressing anxiety about a leadership transition at work, specifically worrying that a new boss might repeat past issues or lack respect for employees.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T008\"\n    ],\n    \"reason\": \"The response accurately reflects the user's current concern about the leadership transition and validates their desire for a respectful boss, which is a logical consequence of the workplace issues (harassment and a problematic boss) described in the history.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T008\"\n      ],\n      \"reason\": \"The user explicitly states they are worried about who is going to take over and hope for someone who respects employees.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"H005:T004\",\n        \"H006:T008\",\n        \"H002:T001\"\n      ],\n      \"reason\": \"The user has a history of workplace issues including harassment (H005) and a boss who hit on a co-worker (H002), supporting the context that they have 'been through' significant workplace difficulties.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's immediate concern about the boss's resignation and the anxiety regarding the successor, while acknowledging the context of their past workplace experiences.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 42.69655769498786,
+  "API_usd": 0
+}

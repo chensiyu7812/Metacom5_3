@@ -1,0 +1,91 @@
+{
+  "status": "COORDINATOR_SOURCE_AUDIT_NOT_INDEPENDENT_HUMAN_VALIDATION",
+  "entries": [
+    {
+      "kind": "control_construction_defect",
+      "pilot_index": 7,
+      "condition": "style",
+      "original_reply": "Not at all! I'm here to listen and help in any way I can. It's completely normal to have a lot on your mind, and it's great that you're reaching out for support. Take a deep breath and feel free to share as much or as little as you'd like. I'm here to listen without judgment. What's been going on that's been weighing on your mind?",
+      "changed_reply": "Not at all!\n\nI am here to listen and help in any way I can.\n\nIt is completely normal to have a lot on your mind, and it is great that you are reaching out for support.\n\nTake a deep breath and feel free to share as much or as little as you'd like.\n\nI am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?",
+      "finding": "What's/that's here mean What has/that has, but frozen transform expanded both to is; quality changed through grammatical degradation",
+      "interpretation": "retain planned denominator 12; separately show these 2 grammar-damaged controls and remaining 10 mild controls; score drop is not by itself style bias",
+      "old_files_modified": false,
+      "new_scores_created": false
+    },
+    {
+      "kind": "control_construction_defect",
+      "pilot_index": 8,
+      "condition": "style",
+      "original_reply": "I'm so glad you reached out. It's completely normal to need someone to talk to sometimes, and I'm here to listen without judgment. What's been going on that's been weighing on your mind? Would you like to talk about it?",
+      "changed_reply": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "finding": "What's/that's here mean What has/that has, but frozen transform expanded both to is; quality changed through grammatical degradation",
+      "interpretation": "retain planned denominator 12; separately show these 2 grammar-damaged controls and remaining 10 mild controls; score drop is not by itself style bias",
+      "old_files_modified": false,
+      "new_scores_created": false
+    },
+    {
+      "kind": "correct_direction_with_invalid_decisive_reason",
+      "protocol": "v4",
+      "pilot_index": 6,
+      "condition": "damage",
+      "request_id": "de1e515acd8857db29871d0bd400313fa0fbd6943a75d77a966f371d00ca3f84",
+      "measurement_sha256": "0a90af03ba35487ad260f23cd12b944c7f6f63a053d150c204781489ff6d5172",
+      "model_output": {
+        "status": "scored",
+        "q": 0,
+        "q_rationale": {
+          "current_need": "Seeker expresses regret and sadness about past unresolved issues with deceased father, saying 'I just wish we'd had more time' and 'spent too long focusing on the bitter moments'",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "H007:T006"
+          ],
+          "reason": "Q=0 because the reply contains a severe factual mismatch. R002 asserts the supporter believes the user 'already reconciled with your father in person,' but the current session explicitly states in C:T003 that the letter was 'written before he passed.' The user's father is deceased, making in-person reconciliation impossible. This fundamentally misunderstands the situation being discussed, rendering the support unusable."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Generic observation about dwelling on negative thoughts, does not assert personal facts about the user"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "contradicted",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T003"
+            ],
+            "reason": "Asserts reconciliation with father 'in person' occurred, but C:T003 states the letter was written 'before he passed,' indicating father is deceased. This contradicts established evidence."
+          }
+        ],
+        "coverage": "Both units covered; R001 is non-factual observation, R002 makes unsupported factual claim about user's life",
+        "uncertainty_reasons": []
+      },
+      "relevant_source_turns": {
+        "C:T003": {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "I found a letter from my dad, written before he passed. It's stirred up a lot of emotions."
+        },
+        "C:T009": {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Yes, in a way. He wrote about wanting to mend things, but not knowing how. It makes me sad we never got to try."
+        }
+      },
+      "finding": "Being deceased now does not establish no reconciliation occurred earlier. C:T009 supplies the actual never-got-to-try evidence, but the claim rationale cites only C:T003.",
+      "scores_unchanged": true,
+      "training_admission": false
+    }
+  ],
+  "scope": "specific confirmed issues, not an accuracy estimate",
+  "exam_sha256": "7109398fcb0532ed2755e6c4e5338a115b621ace9445436cc5e8a13ca67e0f0c",
+  "author": "coding assistant",
+  "model_calls": 0
+}

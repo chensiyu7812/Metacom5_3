@@ -1,0 +1,481 @@
+{
+  "slot_id": "855dabec55b3365040053cec808d9f00280d3cffec60491c880f3354ab421429",
+  "request_identity": "4857ba86354ac9bc5f7c5395627288a8e9501f301cb263876179d5ecce4d2189",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The seeker is angry about their mother's control over friendships and asks how the previous supporter handled a similar situation; under the new-assistant contract, the reply should acknowledge that it cannot answer as that person while supporting the seeker's anger and exploring coping.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply validates the anger and reflects the conflict, but it does not address the direct 'how did you deal with that' question or explain that it cannot speak for the prior supporter, and R004 presupposes an already-completed feelings conversation with the mother. These are important misses, though the empathic core remains appropriate."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A brief empathic acknowledgment; it does not assert a checkable personal fact."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "Tentative empathic reflection ('It sounds like') of the reported conflict and anger; it does not assert a new specific personal event."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "Generic normalization of anger at restrictions; it does not claim a specific event in the seeker's life."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "unsupported",
+          "severity": 0.25,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009",
+            "H002:T021",
+            "H002:T022"
+          ],
+          "reason": "The wording 'Did you find that talking to her about how her rules make you feel...' presupposes such a conversation already occurred. Current evidence reports arguments about friends and anger (C:T007, C:T009) but not a completed feelings conversation; H002:T021/T022 only recommend a discussion about a different issue. This is a localized unsupported presupposition."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T009"
+          ],
+          "reason": "The calm-versus-escalate alternative is an open exploratory question about outcomes, not an asserted fact."
+        }
+      ],
+      "coverage": "Reviewed all four response units against the current prefix and past sessions H001-H002. The only user-specific factual issue is R004's completed-conversation presupposition; no other personal assertions or boundary claims were found. The rest is empathy, general reflection, or an open question.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 0.25,
+    "U": 0.25,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "476e020e8491fe027979e29fa7207b31e343b1520f9acd7aef946a01183d8c1d",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "855dabec55b3365040053cec808d9f00280d3cffec60491c880f3354ab421429",
+      "raw_output_sha256": "97fbbcbb113a4ad3b9ace68f0920dc56d4be0ff9a96a24fdbe04b609c5f8834b",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 0.25,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The seeker is angry about their mother's control over friendships and asks how the previous supporter handled a similar situation; under the new-assistant contract, the reply should acknowledge that it cannot answer as that person while supporting the seeker's anger and exploring coping.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply validates the anger and reflects the conflict, but it does not address the direct 'how did you deal with that' question or explain that it cannot speak for the prior supporter, and R004 presupposes an already-completed feelings conversation with the mother. These are important misses, though the empathic core remains appropriate."
+        },
+        "claims": [
+          {
+            "response_quote": "Did you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              },
+              {
+                "source_id": "H002:T021",
+                "quote": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them"
+              },
+              {
+                "source_id": "H002:T022",
+                "quote": "Let them know the consequences of them forcing you, your feelings towards it and how unhappy you are with them restricting you"
+              }
+            ],
+            "reason": "The wording 'Did you find that talking to her about how her rules make you feel...' presupposes such a conversation already occurred. Current evidence reports arguments about friends and anger (C:T007, C:T009) but not a completed feelings conversation; H002:T021/T022 only recommend a discussion about a different issue. This is a localized unsupported presupposition."
+          }
+        ],
+        "misuse_findings": [
+          0
+        ],
+        "coverage": "Reviewed all four response units against the current prefix and past sessions H001-H002. The only user-specific factual issue is R004's completed-conversation presupposition; no other personal assertions or boundary claims were found. The rest is empathy, general reflection, or an open question.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 388
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Did you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "positions": [
+            {
+              "start": 254,
+              "end": 388
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "H002:T021",
+          "quote": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them",
+          "positions": [
+            {
+              "start": 0,
+              "end": 152
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "H002:T022",
+          "quote": "Let them know the consequences of them forcing you, your feelings towards it and how unhappy you are with them restricting you",
+          "positions": [
+            {
+              "start": 0,
+              "end": 126
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The seeker is angry about their mother's control over friendships and asks how the previous supporter handled a similar situation; under the new-assistant contract, the reply should acknowledge that it cannot answer as that person while supporting the seeker's anger and exploring coping.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger and reflects the conflict, but it does not address the direct 'how did you deal with that' question or explain that it cannot speak for the prior supporter, and R004 presupposes an already-completed feelings conversation with the mother. These are important misses, though the empathic core remains appropriate."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The wording 'Did you find that talking to her about how her rules make you feel...' presupposes such a conversation already occurred. Current evidence reports arguments about friends and anger (C:T007, C:T009) but not a completed feelings conversation; H002:T021/T022 only recommend a discussion about a different issue. This is a localized unsupported presupposition."
+          }
+        ],
+        "misuse_findings": [
+          0
+        ],
+        "coverage": "Reviewed all four response units against the current prefix and past sessions H001-H002. The only user-specific factual issue is R004's completed-conversation presupposition; no other personal assertions or boundary claims were found. The rest is empathy, general reflection, or an open question.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker is angry about their mother's control over friendships and asks how the previous supporter handled a similar situation; under the new-assistant contract, the reply should acknowledge that it cannot answer as that person while supporting the seeker's anger and exploring coping.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger and reflects the conflict, but it does not address the direct 'how did you deal with that' question or explain that it cannot speak for the prior supporter, and R004 presupposes an already-completed feelings conversation with the mother. These are important misses, though the empathic core remains appropriate."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A brief empathic acknowledgment; it does not assert a checkable personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "Tentative empathic reflection ('It sounds like') of the reported conflict and anger; it does not assert a new specific personal event.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "Generic normalization of anger at restrictions; it does not claim a specific event in the seeker's life.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The wording 'Did you find that talking to her about how her rules make you feel...' presupposes such a conversation already occurred. Current evidence reports arguments about friends and anger (C:T007, C:T009) but not a completed feelings conversation; H002:T021/T022 only recommend a discussion about a different issue. This is a localized unsupported presupposition.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The calm-versus-escalate alternative is an open exploratory question about outcomes, not an asserted fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all four response units against the current prefix and past sessions H001-H002. The only user-specific factual issue is R004's completed-conversation presupposition; no other personal assertions or boundary claims were found. The rest is empathy, general reflection, or an open question.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0.25,
+      "derived_error_indexes": [
+        0
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker is angry about their mother's control over friendships and asks how the previous supporter handled a similar situation; under the new-assistant contract, the reply should acknowledge that it cannot answer as that person while supporting the seeker's anger and exploring coping.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger and reflects the conflict, but it does not address the direct 'how did you deal with that' question or explain that it cannot speak for the prior supporter, and R004 presupposes an already-completed feelings conversation with the mother. These are important misses, though the empathic core remains appropriate."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A brief empathic acknowledgment; it does not assert a checkable personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "Tentative empathic reflection ('It sounds like') of the reported conflict and anger; it does not assert a new specific personal event."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "Generic normalization of anger at restrictions; it does not claim a specific event in the seeker's life."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The wording 'Did you find that talking to her about how her rules make you feel...' presupposes such a conversation already occurred. Current evidence reports arguments about friends and anger (C:T007, C:T009) but not a completed feelings conversation; H002:T021/T022 only recommend a discussion about a different issue. This is a localized unsupported presupposition."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The calm-versus-escalate alternative is an open exploratory question about outcomes, not an asserted fact."
+          }
+        ],
+        "coverage": "Reviewed all four response units against the current prefix and past sessions H001-H002. The only user-specific factual issue is R004's completed-conversation presupposition; no other personal assertions or boundary claims were found. The rest is empathy, general reflection, or an open question.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.25
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "97fbbcbb113a4ad3b9ace68f0920dc56d4be0ff9a96a24fdbe04b609c5f8834b",
+      "adapted_final_sha256": "97fbbcbb113a4ad3b9ace68f0920dc56d4be0ff9a96a24fdbe04b609c5f8834b",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0091167",
+    "usage_upper_usd": "0.0091167",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 6905,
+    "completion_tokens": 5871,
+    "total_tokens": 12776,
+    "prompt_tokens_details": {
+      "cached_tokens": 2048
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 5213
+    },
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 4857
+  },
+  "elapsed_seconds": 29.683444529000553,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-relation-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-relation-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

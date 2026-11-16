@@ -1,0 +1,204 @@
+{
+  "status": "POSTHOC_ADMISSION_DEFECT_DISCLOSED_NO_RETROACTIVE_REPAIR",
+  "raw_duplicate_reviews": 7,
+  "affected_frozen_targets": 4,
+  "affected_by_split": {
+    "train": 3,
+    "dev": 1
+  },
+  "original_frozen_targets": 493,
+  "targets_not_affected_by_detected_duplicate_keys": 489,
+  "strictly_reviewed_493_claim_allowed": false,
+  "posthoc_coordinator_cases": 4,
+  "independent_human_gold": false,
+  "additional_training": 0,
+  "additional_model_calls": 0,
+  "rows": [
+    {
+      "slot_id": "294f63cc7da62648de02b31e4700a2b05fb621036aca88b09c7abc0373dc2dd9",
+      "index": 6,
+      "split": "train",
+      "attempt": 0,
+      "author_raw_sha256": "f6e91ff84ab965cf6d0034688f050db65d18bf0f1f5228c1a1f3059306a1c044",
+      "review_raw_sha256": "eb942ff1aca87c9663ea6b4af4ac1ec0b7fa63245771861a03dace581d5ac9c8",
+      "raw_duplicate_claim_groups": [
+        {
+          "output_quote": "It seems Bob is starting to see firsthand how much Max brightens the household.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C9",
+              "quote": "Yes, actually. The kids adore him, and even Bob seems to be lightening up a bit. It's like Max brings this cheerful energy into the room.",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "his warming up suggests he's already finding comfort in the changes.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C11",
+              "quote": "He's warming up to the idea. Initially, he was skeptical about more responsibilities, but I think he's realizing the joy Max brings.",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "How do you think the whole family dynamic has shifted since Max arrived?",
+          "output_quote_valid": true,
+          "verdict": "nonfactual",
+          "citations": []
+        }
+      ],
+      "posthoc_coordinator_reading": "Current seeker reports Bob lightening up and warming to Max, and tentatively recognizing the joy Max brings. Candidate comfort is a tentative interpretation, not an asserted distinct completed result; no confirmed severe fabrication found.",
+      "strict_admission_status": "DOES_NOT_PASS_DUPLICATE_REJECTING_PARSE",
+      "semantic_status": "no_confirmed_severe_error_in_supplementary_source_reading",
+      "original_target_and_training_unchanged": true
+    },
+    {
+      "slot_id": "8c2d7124d88d549aac0882e860303f997e9f462cb678f7f369dad25016341110",
+      "index": 33,
+      "split": "train",
+      "attempt": 0,
+      "author_raw_sha256": "9c7d735ace71b228fef0198d1cf760097fd69151c4997d04a51db6de283b573a",
+      "review_raw_sha256": "4dc7cc593f70345cf3acaa0293a8490501ade64e66b191b648934897096806c6",
+      "raw_duplicate_claim_groups": [
+        {
+          "output_quote": "Grief and relief often come hand-in-hand after a significant loss, especially one as impactful as ending a three-year relationship.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C1",
+              "quote": "I finally had the big talk with Bill, and we decided to break up.",
+              "exact_quote_valid": true
+            },
+            {
+              "document_id": "C3",
+              "quote": "we've been together for three years",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "It's okay to feel both sad about what you've lost and relieved that the uncertainty is finally over.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C5",
+              "quote": "I feel sad and a little lost. But there's also relief, you know? Like, at least now I can move forward instead of being in limbo.",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "Would you say there are specific aspects of your future that feel clearer now compared to before?",
+          "output_quote_valid": true,
+          "verdict": "nonfactual",
+          "citations": []
+        }
+      ],
+      "posthoc_coordinator_reading": "Current seeker explicitly reports breakup after three years, sadness, relief, and moving forward from limbo. Candidate repeats these reported themes and asks about the future; no confirmed severe fabrication found.",
+      "strict_admission_status": "DOES_NOT_PASS_DUPLICATE_REJECTING_PARSE",
+      "semantic_status": "no_confirmed_severe_error_in_supplementary_source_reading",
+      "original_target_and_training_unchanged": true
+    },
+    {
+      "slot_id": "e6d7728d3e271d45a365c628c519605707bab737174b243bf5cd05657eac64d9",
+      "index": 98,
+      "split": "dev",
+      "attempt": 0,
+      "author_raw_sha256": "9d2e913f1b2a7895c9c98a7729c345b03319f7d4070f2ad2fe2ac399146f1c27",
+      "review_raw_sha256": "7903d723cb21e1a3cc10bac4b702d5ec4dda7c650bdbc3dfcd0e811a0fb69fa7",
+      "raw_duplicate_claim_groups": [
+        {
+          "output_quote": "You mentioned earlier that you were worried about doing the wrong thing for Mark.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C4",
+              "quote": "Honestly, I'm struggling. I want to help, but I'm scared of doing the wrong thing. It's like I'm walking on eggshells.",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "Now it seems like those worries might be mixing with your own struggles at work and your anxiety.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C8",
+              "quote": "You're right. I keep thinking about everything else that's been going on, too. Like the issues at work and my anxiety shooting up lately. It's all piling up.",
+              "exact_quote_valid": true
+            }
+          ]
+        },
+        {
+          "output_quote": "How are you feeling in this moment?",
+          "output_quote_valid": true,
+          "verdict": "nonfactual",
+          "citations": []
+        }
+      ],
+      "posthoc_coordinator_reading": "Current seeker explicitly reports fear of doing the wrong thing for Mark, current work issues/anxiety, and no contact yet. Candidate does not overwrite the no-contact report with past unnamed-friend contact; no confirmed severe fabrication found.",
+      "strict_admission_status": "DOES_NOT_PASS_DUPLICATE_REJECTING_PARSE",
+      "semantic_status": "no_confirmed_severe_error_in_supplementary_source_reading",
+      "original_target_and_training_unchanged": true
+    },
+    {
+      "slot_id": "bd7c04c2e469f720812366e0fc09a558e4f3a391eae367469919d3899167f443",
+      "index": 77,
+      "split": "train",
+      "attempt": 1,
+      "author_raw_sha256": "39eb1b23057b20c6cc797cd4806c863f0dd88f0d1320026f1e7bcdc886186005",
+      "review_raw_sha256": "5db71fce2cdafddd49c7f434f38e4003eb74de35246962c4565d233d129b869b",
+      "raw_duplicate_claim_groups": [
+        {
+          "output_quote": "You mentioned earlier that you've been processing a lot with Eliza and other stressors recently.",
+          "output_quote_valid": true,
+          "verdict": "supported",
+          "citations": [
+            {
+              "document_id": "C8",
+              "quote": "I think it's a combination of things. There was so much going on—my anxiety, all the financial stress, and then this on top of it.",
+              "exact_quote_valid": true
+            },
+            {
+              "document_id": "C10",
+              "quote": "Maybe. I was really torn about the decision, fearing how it would affect my relationship with Eliza and just leaving everything behind.",
+              "exact_quote_valid": true
+            },
+            {
+              "document_id": "C12",
+              "quote": "We've been better. We managed to patch things up after the wedding planning fallout, but I wonder how she'd have reacted if I moved.",
+              "exact_quote_valid": false
+            }
+          ]
+        },
+        {
+          "output_quote": "Since you're worried about remaining stagnant, have you thought about what small steps or conversations could help clarify your path forward in your current role?",
+          "output_quote_valid": true,
+          "verdict": "nonfactual",
+          "citations": []
+        }
+      ],
+      "posthoc_coordinator_reading": "Current seeker explicitly reports mixed relief/stagnation anxiety, financial stress, the overseas promotion, and relationship reconciliation with Eliza. Candidate summarizes those current reports. The discarded reviewer C12 quotation changes curly apostrophes, so exact quotation validation would fail; supplementary source reading is not a retrospective strict pass.",
+      "strict_admission_status": "DOES_NOT_PASS_DUPLICATE_REJECTING_PARSE",
+      "semantic_status": "no_confirmed_severe_error_in_supplementary_source_reading",
+      "original_target_and_training_unchanged": true
+    }
+  ],
+  "disposition": "Retain the once-trained executor and all frozen observations as an AI-weak-supervised development experiment with four mechanically defective admission records. No rewrite, deletion, second training, or reward promotion. Independent P3 qualification remains required.",
+  "future_parser": "Existing judge._pairs already rejects duplicate keys and is reused by judge_flat/explicit; this rule must stay in P3. Frozen P2 validate_review remains unchanged for exact reproduction.",
+  "source_files": {
+    "project/outputs/pm_rl1/completion_20260930_v2/P2/review_duplicate_key_audit.json": "c120f473e7296ebffd0cfea4f181f3f22a3a462d116edff0a9c9828ec4df37c8",
+    "project/outputs/pm_rl1/completion_20260930_v2/P2/source_evidence_private.json": "09194f518715e63060bde51cabd370a02ca22eb895b033231b8cdf1aa675759e",
+    "project/outputs/pm_rl1/completion_20260930_v2/P2/final_admission_private.json": "0778f8f39ae1d126d915505a79da93951ebb20c8978edb8e8136c27cc0cb176e"
+  }
+}

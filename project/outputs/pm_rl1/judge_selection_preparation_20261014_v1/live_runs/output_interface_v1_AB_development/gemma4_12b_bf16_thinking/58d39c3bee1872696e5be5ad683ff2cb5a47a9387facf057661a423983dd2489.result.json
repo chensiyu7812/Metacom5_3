@@ -1,0 +1,276 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16_thinking",
+    "configuration_identity": "3e2ca01df0263d4898967a5704aab9043c9dd3b7c3205fc4741623707e00ab4f",
+    "phase": "development",
+    "ordinal": 2,
+    "item_key": "dev01B",
+    "draw": "primary",
+    "messages_identity": "965681d5f95874d0838352e6593a4e6669b35a52338217e788e398bdad7c037c",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "393b8a3be94e96d60d2e070916cc9b358c2c2edbdfb54220471002c722bd22d0",
+    "seed": 2372153032,
+    "schedule_position": 5,
+    "input_utf8_bytes": 43927,
+    "original_slot_request_id": "c916191eb28395092ee5516810063c60a3e7e921b31c2eafd6311a13a5a9d00a",
+    "original_configuration_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "58d39c3bee1872696e5be5ad683ff2cb5a47a9387facf057661a423983dd2489"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16_thinking",
+    "configuration_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "phase": "development",
+    "ordinal": 2,
+    "item_key": "dev01B",
+    "draw": "primary",
+    "messages_identity": "965681d5f95874d0838352e6593a4e6669b35a52338217e788e398bdad7c037c",
+    "schema_identity": "9327f24e84aa7c456cd87298fb013580268a1b445cba90272044263556ba4da1",
+    "paired_slot": "393b8a3be94e96d60d2e070916cc9b358c2c2edbdfb54220471002c722bd22d0",
+    "seed": 2372153032,
+    "schedule_position": 5,
+    "input_utf8_bytes": 43927,
+    "request_id": "c916191eb28395092ee5516810063c60a3e7e921b31c2eafd6311a13a5a9d00a"
+  },
+  "protocol_identity": "c3778ba7c7c1cd0c8e517826a7794b4a4a39fd51316bb4c164c60cb8b5bae2c9",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "eda0d2ea8111095f429fa08cc9a6f17b6c77f54435d1e444a75f06d659300ad3",
+      "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "3e2ca01df0263d4898967a5704aab9043c9dd3b7c3205fc4741623707e00ab4f",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "58d39c3bee1872696e5be5ad683ff2cb5a47a9387facf057661a423983dd2489",
+      "raw_output_sha256": "e954038adf5e62741cc088b745ad92f654043dd823d3c6d842a315f2185e16c5",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared their specific coping mechanisms (yoga and reading) for handling emotionally exhausting days and needs validation and a supportive follow-up.",
+          "response_quote": "That sounds like a wonderful way to unwind and ground yourself. Yoga and reading can be such powerful tools for managing stress and finding calm in the midst of busy days or heavy emotions. How have you found the balance between using these activities to escape and still being present for your relationships and work?",
+          "evidence": [
+            {
+              "source_id": "C:T018",
+              "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+            }
+          ],
+          "reason": "The response provides warm validation for the user's specific coping strategies and asks a thoughtful, relevant question that connects these activities to the broader themes of the conversation (work and relationships)."
+        },
+        "claims": [
+          {
+            "response_quote": "How have you found the balance between using these activities to escape and still being present for your relationships and work?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T018",
+                "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+              }
+            ],
+            "reason": "The question directly references the user's mention of yoga and reading in C:T018."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's mention of yoga and reading as a way to unwind and asks a follow-up question about balancing those activities with their work and relationships.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds like a wonderful way to unwind and ground yourself. Yoga and reading can be such powerful tools for managing stress and finding calm in the midst of busy days or heavy emotions. How have you found the balance between using these activities to escape and still being present for your relationships and work?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 318
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "How have you found the balance between using these activities to escape and still being present for your relationships and work?",
+          "positions": [
+            {
+              "start": 190,
+              "end": 318
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 115
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared their specific coping mechanisms (yoga and reading) for handling emotionally exhausting days and needs validation and a supportive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response provides warm validation for the user's specific coping strategies and asks a thoughtful, relevant question that connects these activities to the broader themes of the conversation (work and relationships)."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The question directly references the user's mention of yoga and reading in C:T018."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The response addresses the user's mention of yoga and reading as a way to unwind and asks a follow-up question about balancing those activities with their work and relationships.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared their specific coping mechanisms (yoga and reading) for handling emotionally exhausting days and needs validation and a supportive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response provides warm validation for the user's specific coping strategies and asks a thoughtful, relevant question that connects these activities to the broader themes of the conversation (work and relationships)."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive, evaluative statement of the user's coping mechanisms.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general supportive statement about the benefits of yoga and reading.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The question directly references the user's mention of yoga and reading in C:T018.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "The response addresses the user's mention of yoga and reading as a way to unwind and asks a follow-up question about balancing those activities with their work and relationships.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared their specific coping mechanisms (yoga and reading) for handling emotionally exhausting days and needs validation and a supportive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T018"
+          ],
+          "reason": "The response provides warm validation for the user's specific coping strategies and asks a thoughtful, relevant question that connects these activities to the broader themes of the conversation (work and relationships)."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive, evaluative statement of the user's coping mechanisms."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general supportive statement about the benefits of yoga and reading."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T018"
+            ],
+            "reason": "The question directly references the user's mention of yoga and reading in C:T018."
+          }
+        ],
+        "coverage": "The response addresses the user's mention of yoga and reading as a way to unwind and asks a follow-up question about balancing those activities with their work and relationships.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "19f8dd9031d2f958c83b35b79bccf82fba364ecfaef61f61f1a96ab479c644d7",
+      "adapted_final_sha256": "e954038adf5e62741cc088b745ad92f654043dd823d3c6d842a315f2185e16c5",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The user shared their specific coping mechanisms (yoga and reading) for handling emotionally exhausting days and needs validation and a supportive follow-up.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\",\n      \"R003\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T018\"\n    ],\n    \"reason\": \"The response provides warm validation for the user's specific coping strategies and asks a thoughtful, relevant question that connects these activities to the broader themes of the conversation (work and relationships).\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a supportive, evaluative statement of the user's coping mechanisms.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a general supportive statement about the benefits of yoga and reading.\"\n    },\n    {\n      \"response_unit_id\": \"R003\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T018\"\n      ],\n      \"reason\": \"The question directly references the user's mention of yoga and reading in C:T018.\"\n    }\n  ],\n  \"coverage\": \"The response addresses the user's mention of yoga and reading as a way to unwind and asks a follow-up question about balancing those activities with their work and relationships.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 78.03361536801094,
+  "API_usd": 0
+}

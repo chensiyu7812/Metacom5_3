@@ -1,0 +1,115 @@
+{
+  "response_sha256": "7f61a7f8729dfd7231ede0ba9843209d71c74441073e24a83cd44d3c9217ace6",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+  "raw_output_sha256": "feb5804de59adff24058717b52748af29418a32147f82fd4264f69325f5a6c55",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "This appears to be a closing turn seeking affirmation/validation after sharing progress in emotional work (addressing dwelling on negativity, therapy engagement). The current_prefix shows the seeker reflected on spending too much time on bitter moments (C:T011).",
+      "response_quote": "It is amazing how much time and energy we can spend dwelling on the negative.\n\nIt sounds like you are making a conscious effort to shift your focus now, and that is a really brave and healthy step.",
+      "evidence": [
+        {
+          "source_id": "C:T011",
+          "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+        },
+        {
+          "source_id": "H010:T004",
+          "quote": "Yeah, it really is. We hadn't spoken in a while, and now I can't get that time back."
+        },
+        {
+          "source_id": "H012:T006",
+          "quote": "It was difficult at first, but slowly I'm learning to process the regret without letting it consume me."
+        }
+      ],
+      "reason": "R001 semantically connects to C:T011's acknowledgment of dwelling on bitter/regretful moments. R002 aligns with the therapeutic process discussed in H012 (processing guilt/regret about father). This is appropriate for a closing affirmation turn."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked: R001 relates to seeker's stated pattern of dwelling on negative/bitter moments (C:T011). R002 references effort to shift focus and brave step, consistent with therapy progress noted in prior sessions (H012,H013). No personal factual claims requiring verification.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is amazing how much time and energy we can spend dwelling on the negative.\n\nIt sounds like you are making a conscious effort to shift your focus now, and that is a really brave and healthy step.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H010:T004",
+      "quote": "Yeah, it really is. We hadn't spoken in a while, and now I can't get that time back.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H012:T006",
+      "quote": "It was difficult at first, but slowly I'm learning to process the regret without letting it consume me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 103
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "This appears to be a closing turn seeking affirmation/validation after sharing progress in emotional work (addressing dwelling on negativity, therapy engagement). The current_prefix shows the seeker reflected on spending too much time on bitter moments (C:T011).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T011",
+        "H010:T004",
+        "H012:T006"
+      ],
+      "reason": "R001 semantically connects to C:T011's acknowledgment of dwelling on bitter/regretful moments. R002 aligns with the therapeutic process discussed in H012 (processing guilt/regret about father). This is appropriate for a closing affirmation turn."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked: R001 relates to seeker's stated pattern of dwelling on negative/bitter moments (C:T011). R002 references effort to shift focus and brave step, consistent with therapy progress noted in prior sessions (H012,H013). No personal factual claims requiring verification.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

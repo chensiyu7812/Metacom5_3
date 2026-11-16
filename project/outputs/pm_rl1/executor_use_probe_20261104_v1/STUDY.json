@@ -1,0 +1,27 @@
+{
+  "scope": "EXPLORATORY_CURRENT_NEED_INSTRUCTION_ABLATION",
+  "selection": "Same fixed 8 exposed train contexts as prior resource probe; no winner selection.",
+  "intervention": "Prioritize the user's present concern and explicitly expressed preferences. Use an optional record only when it helps you choose a more relevant response now, for example by respecting a constraint, avoiding an already-tried suggestion, or building on what the user has said they need. A true historical detail is not, by itself, a reason to mention it. Do not move to another problem merely because a record discusses it. Do not infer a stable preference for advice or reflection from a past activity. When the benefit is unclear, a focused reflection or question is appropriate. Do not require advice, a memory mention, or a longer reply. Give the reply directly, without an evidence checklist or analysis.",
+  "instruction_version": "pmrl1-current-need-executor-probe-v1",
+  "hypotheses": [
+    "More current-need relevance may help use or ignore resources appropriately.",
+    "Prompt may improve OFF alone, do nothing, or harm; changed text is not benefit."
+  ],
+  "paired_design": "original versus one revised instruction, each OFF and full ON; original replies cached",
+  "source_organization_unchanged": true,
+  "adapter_unchanged": true,
+  "no_private_fact_or_target_answer_in_prompt": true,
+  "input_identity": "2d5d088a488360b83d64d0bb77147e10a0a67d9c818a3df89abdbde25a4067e6",
+  "cards_identity": "871ab03ea578fdf6dca9031828c6e591e46a5849ef92f3c58eafbab2fbe499f4",
+  "originals_identity": "66f3e28553486d4ec8c52f7eb0b0b24b32f429fc32dda3322124104187219434",
+  "G_protocol": "72cb3365bb2b7e18dd5d9ef47e70ef461bdb68431e719e061913724da9933820",
+  "max_new_G_calls": 18,
+  "max_loads": 1,
+  "API_calls": 0,
+  "training_updates": 0,
+  "offline_targeted_ON_not_PM_action": true,
+  "scalar_rewards": 0,
+  "repeat_tolerance": "report exact text/token equality; do not discard original or retry differences",
+  "next_step": "Inspect all outputs with sources before any adoption; do not rewrite weak targets from unvalidated new generations.",
+  "identity": "819360a7bd89ccad66c3593c5c2a5f1fffed2a56254b8a5ee10e2a8b303e3615"
+}

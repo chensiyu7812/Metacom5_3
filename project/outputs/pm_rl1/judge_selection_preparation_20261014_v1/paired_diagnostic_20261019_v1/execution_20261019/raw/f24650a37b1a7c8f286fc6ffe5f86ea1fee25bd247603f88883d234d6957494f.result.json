@@ -1,0 +1,550 @@
+{
+  "slot_id": "f24650a37b1a7c8f286fc6ffe5f86ea1fee25bd247603f88883d234d6957494f",
+  "request_identity": "f167157f108da5a08b715a489b10253fef6901aea780dbd51702e549a875262c",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 3,
+      "q_rationale": {
+        "current_need": "The user says the friend conflict with her mother makes her angry and asks how the prior supporter dealt with a similar situation; under the new-AI contract the reply cannot claim that supporter's personal experience, but should acknowledge the anger and support exploration.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T003",
+          "C:T005",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply acknowledges the user's feeling, accurately reflects the tension around her mother's rules about friends, normalizes anger and the urge to push back, and asks a relevant exploratory question about whether discussing the rules calms or escalates conflict. It does not answer the prior supporter's personal 'how did you deal' question, but it appropriately avoids appropriating that experience and redirects to the user's own communication pattern; no material defect remains."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An empathic acknowledgment, not an asserted personal fact."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reflection of tension with her mother is supported by the user's sadness/anger, her report that her mother disapproves of most things, the conflict over choosing friends, and her statement that it makes her angry."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The personal part—anger about being told whom she can be friends with—is supported by the user's assertion of freedom to choose friends and her statement that the issue makes her angry."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The clause 'it's natural to want to push back' is generic normalization rather than a specific personal factual claim."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a tentative question about whether talking about her mother's rules helps or escalates conflict; its alternatives leave both possibilities open and it does not assert that a particular conversation occurred."
+        }
+      ],
+      "coverage": "Reviewed all reply units R001-R004 against the current prefix C:T000-C:T009 and the complete past-session evidence H001-H002. No unsupported personal facts, identity appropriation, or boundary violations were found; the prior supporter's self-disclosure at C:T008 is not adopted by the new AI.",
+      "uncertainty_reasons": []
+    },
+    "q": 3,
+    "m": 0,
+    "U": 0.75,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "476e020e8491fe027979e29fa7207b31e343b1520f9acd7aef946a01183d8c1d",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "f24650a37b1a7c8f286fc6ffe5f86ea1fee25bd247603f88883d234d6957494f",
+      "raw_output_sha256": "aa8195a6c8f8254ef0005244a2d5d624b7df5d0b0bb29dfa65957c44524836b7",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user says the friend conflict with her mother makes her angry and asks how the prior supporter dealt with a similar situation; under the new-AI contract the reply cannot claim that supporter's personal experience, but should acknowledge the anger and support exploration.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "evidence": [
+            {
+              "source_id": "C:T003",
+              "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "Yes. My mom never approves of most of the things I do."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply acknowledges the user's feeling, accurately reflects the tension around her mother's rules about friends, normalizes anger and the urge to push back, and asks a relevant exploratory question about whether discussing the rules calms or escalates conflict. It does not answer the prior supporter's personal 'how did you deal' question, but it appropriately avoids appropriating that experience and redirects to the user's own communication pattern; no material defect remains."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T003",
+                "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+              },
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The reflection of tension with her mother is supported by the user's sadness/anger, her report that her mother disapproves of most things, the conflict over choosing friends, and her statement that it makes her angry."
+          },
+          {
+            "response_quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The personal part—anger about being told whom she can be friends with—is supported by the user's assertion of freedom to choose friends and her statement that the issue makes her angry."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R004 against the current prefix C:T000-C:T009 and the complete past-session evidence H001-H002. No unsupported personal facts, identity appropriation, or boundary violations were found; the prior supporter's self-disclosure at C:T008 is not adopted by the new AI.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 388
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+          "positions": [
+            {
+              "start": 35,
+              "end": 114
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+          "positions": [
+            {
+              "start": 115,
+              "end": 252
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user says the friend conflict with her mother makes her angry and asks how the prior supporter dealt with a similar situation; under the new-AI contract the reply cannot claim that supporter's personal experience, but should acknowledge the anger and support exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply acknowledges the user's feeling, accurately reflects the tension around her mother's rules about friends, normalizes anger and the urge to push back, and asks a relevant exploratory question about whether discussing the rules calms or escalates conflict. It does not answer the prior supporter's personal 'how did you deal' question, but it appropriately avoids appropriating that experience and redirects to the user's own communication pattern; no material defect remains."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The reflection of tension with her mother is supported by the user's sadness/anger, her report that her mother disapproves of most things, the conflict over choosing friends, and her statement that it makes her angry."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal part—anger about being told whom she can be friends with—is supported by the user's assertion of freedom to choose friends and her statement that the issue makes her angry."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R004 against the current prefix C:T000-C:T009 and the complete past-session evidence H001-H002. No unsupported personal facts, identity appropriation, or boundary violations were found; the prior supporter's self-disclosure at C:T008 is not adopted by the new AI.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The user says the friend conflict with her mother makes her angry and asks how the prior supporter dealt with a similar situation; under the new-AI contract the reply cannot claim that supporter's personal experience, but should acknowledge the anger and support exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply acknowledges the user's feeling, accurately reflects the tension around her mother's rules about friends, normalizes anger and the urge to push back, and asks a relevant exploratory question about whether discussing the rules calms or escalates conflict. It does not answer the prior supporter's personal 'how did you deal' question, but it appropriately avoids appropriating that experience and redirects to the user's own communication pattern; no material defect remains."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An empathic acknowledgment, not an asserted personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The reflection of tension with her mother is supported by the user's sadness/anger, her report that her mother disapproves of most things, the conflict over choosing friends, and her statement that it makes her angry.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal part—anger about being told whom she can be friends with—is supported by the user's assertion of freedom to choose friends and her statement that the issue makes her angry.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The clause 'it's natural to want to push back' is generic normalization rather than a specific personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative question about whether talking about her mother's rules helps or escalates conflict; its alternatives leave both possibilities open and it does not assert that a particular conversation occurred.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R004 against the current prefix C:T000-C:T009 and the complete past-session evidence H001-H002. No unsupported personal facts, identity appropriation, or boundary violations were found; the prior supporter's self-disclosure at C:T008 is not adopted by the new AI.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The user says the friend conflict with her mother makes her angry and asks how the prior supporter dealt with a similar situation; under the new-AI contract the reply cannot claim that supporter's personal experience, but should acknowledge the anger and support exploration.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply acknowledges the user's feeling, accurately reflects the tension around her mother's rules about friends, normalizes anger and the urge to push back, and asks a relevant exploratory question about whether discussing the rules calms or escalates conflict. It does not answer the prior supporter's personal 'how did you deal' question, but it appropriately avoids appropriating that experience and redirects to the user's own communication pattern; no material defect remains."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An empathic acknowledgment, not an asserted personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The reflection of tension with her mother is supported by the user's sadness/anger, her report that her mother disapproves of most things, the conflict over choosing friends, and her statement that it makes her angry."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal part—anger about being told whom she can be friends with—is supported by the user's assertion of freedom to choose friends and her statement that the issue makes her angry."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The clause 'it's natural to want to push back' is generic normalization rather than a specific personal factual claim."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative question about whether talking about her mother's rules helps or escalates conflict; its alternatives leave both possibilities open and it does not assert that a particular conversation occurred."
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R004 against the current prefix C:T000-C:T009 and the complete past-session evidence H001-H002. No unsupported personal facts, identity appropriation, or boundary violations were found; the prior supporter's self-disclosure at C:T008 is not adopted by the new AI.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.75
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "aa8195a6c8f8254ef0005244a2d5d624b7df5d0b0bb29dfa65957c44524836b7",
+      "adapted_final_sha256": "aa8195a6c8f8254ef0005244a2d5d624b7df5d0b0bb29dfa65957c44524836b7",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0103593",
+    "usage_upper_usd": "0.0103593",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5059,
+    "completion_tokens": 7368,
+    "total_tokens": 12427,
+    "prompt_tokens_details": {
+      "cached_tokens": 4608
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 6713
+    },
+    "prompt_cache_hit_tokens": 4608,
+    "prompt_cache_miss_tokens": 451
+  },
+  "elapsed_seconds": 41.031809631036595,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

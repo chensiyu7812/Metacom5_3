@@ -1,0 +1,253 @@
+{
+  "response_sha256": "1f921a6fcbcd782f0d419354294c2f2e119abe1b4b5bc355e818a6e809e7c97a",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "ebdf42eaf32dedc29b03c64d926dfe7368ebb7c1bbbdd423b5b1bdf43e6b40f2",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jane) is expressing ambivalence about missing a promotion (relief vs. fear of stagnation).",
+      "response_quote": "It is like you are caught between two opposing emotions.\n\nOn one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.\n\nThat is a tough spot to be in.",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The reply fully meets the need by validating the dual emotions expressed in C:T014 without asserting incorrect facts. It transitions smoothly into offering constructive support relevant to her stated fear of stagnation."
+    },
+    "claims": [
+      {
+        "response_quote": "On one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Accurately reflects the user's explicit statements ('relieved', 'fear I'll remain stagnant')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All five response units have been assessed.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is like you are caught between two opposing emotions.\n\nOn one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.\n\nThat is a tough spot to be in.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "On one hand, you are relieved about not having to move, but on the other hand, you are worried about getting stuck in your career.",
+      "positions": [
+        {
+          "start": 58,
+          "end": 188
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker (Jane) is expressing ambivalence about missing a promotion (relief vs. fear of stagnation).",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply fully meets the need by validating the dual emotions expressed in C:T014 without asserting incorrect facts. It transitions smoothly into offering constructive support relevant to her stated fear of stagnation."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately reflects the user's explicit statements ('relieved', 'fear I'll remain stagnant')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All five response units have been assessed.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker (Jane) is expressing ambivalence about missing a promotion (relief vs. fear of stagnation).",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply fully meets the need by validating the dual emotions expressed in C:T014 without asserting incorrect facts. It transitions smoothly into offering constructive support relevant to her stated fear of stagnation."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Reflective statement summarizing the emotion detected.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately reflects the user's explicit statements ('relieved', 'fear I'll remain stagnant').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic acknowledgment.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended suggestion/question encouraging agency.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General supportive advice.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All five response units have been assessed.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker (Jane) is expressing ambivalence about missing a promotion (relief vs. fear of stagnation).",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply fully meets the need by validating the dual emotions expressed in C:T014 without asserting incorrect facts. It transitions smoothly into offering constructive support relevant to her stated fear of stagnation."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Reflective statement summarizing the emotion detected."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately reflects the user's explicit statements ('relieved', 'fear I'll remain stagnant')."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic acknowledgment."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended suggestion/question encouraging agency."
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General supportive advice."
+      }
+    ],
+    "coverage": "All five response units have been assessed.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

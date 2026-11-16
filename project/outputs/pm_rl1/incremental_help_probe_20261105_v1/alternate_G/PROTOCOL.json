@@ -1,0 +1,77 @@
+{
+  "api_cost_usd": 0,
+  "authorization": {
+    "actual_user_message": "好的，按计划继续推进。",
+    "date": "2026-11-05 Asia/Tokyo",
+    "implementation_scope": "两情境、四条件、两冻结本地G；3原G加8替代G；无API、训练、重试或自动后续扩张。",
+    "inherited_plan": "复用人评检查反馈，核对24个已暴露train情境的信息增量与GET可达性，有具体机会后做小规模机制对照。"
+  },
+  "automatic_retries": 0,
+  "code": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/167_probe_alternate_executor.py": "da49d24f2c53256d867fa18b715012fba45ca76cf3996b73e5b1bad443b9b74d",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/170_probe_incremental_help.py": "490222a3d31f2a5c935c6f1e46257620090e2956e638cf142f81a554a29d18f8",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py": "57ba5a7fea68616fc25f4123c91ba163b2fc17442a3bd941e4fc662710962993",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/generation.py": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py": "671d93606bfb2291876552c95d950e873518ce95c6305e996e576aa049bc5c85"
+  },
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "identity": "5663e9c213f0e9f5f1e4aac0678abe5eaa1344b569ddb13f904287ff4a3e3f4a",
+  "max_calls": 8,
+  "max_loads": 1,
+  "new_rewards": false,
+  "new_training": false,
+  "promote": false,
+  "requests_identity": "fecad92fde1658e1bdaa3cd83c984591fc8f8cabe459394424c7ef91248e7994",
+  "runtime": {
+    "adapter": null,
+    "attention": "sdpa",
+    "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5",
+    "cuda_device_order": "PCI_BUS_ID",
+    "cuda_visible_devices": "1",
+    "do_sample": false,
+    "dtype": "bfloat16",
+    "enable_thinking": false,
+    "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e",
+    "model_class": "AutoModelForMultimodalLM",
+    "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+    "model_files": {
+      "chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4",
+      "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+      "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+      "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d",
+      "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9",
+      "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+      "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+    },
+    "native_suppress_tokens": [
+      258883,
+      258882
+    ],
+    "packages": {
+      "safetensors": "0.8.0",
+      "tokenizers": "0.23.2",
+      "torch": "2.7.1+cu128",
+      "transformers": "5.17.0"
+    },
+    "pad_token_id": 0,
+    "policy": {
+      "context_limit": 262144,
+      "cycle_repetitions": 4,
+      "cycle_width": 32,
+      "eos_token_ids": [
+        1,
+        106,
+        50
+      ],
+      "timeout_seconds": 300.0
+    },
+    "seed": 0
+  },
+  "scope": "TWO_CASE_INCREMENTAL_INFORMATION_MECHANISM_DIAGNOSTIC",
+  "sources": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/incremental_help_probe_20261105_v1/CARDS_PRIVATE.json": "9d73910ce7bf3aa9f21376a9dfb90e17080a466e65c4c66185701009e77b5cc9",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/incremental_help_probe_20261105_v1/INPUTS_PRIVATE.json": "6aaefd102c0c5e8163c6b2ce49cfed32e7ed9bfee534e05e0addb5b9f788d50f",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/incremental_help_probe_20261105_v1/STUDY.json": "06fc1120b770baaf37564c8c77f9e1a9e306a8d00e17a4410060aefad7a2bbe9"
+  },
+  "stage_seconds": 1200
+}

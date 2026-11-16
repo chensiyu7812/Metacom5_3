@@ -1,0 +1,623 @@
+{
+  "version": "pmrl1-master-work-packages-20261116-v1",
+  "main_plan": "../../PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md",
+  "task_count": 18,
+  "states": [
+    "pending",
+    "ready",
+    "in_progress",
+    "completed",
+    "blocked_external",
+    "not_run_with_reason"
+  ],
+  "dependency_resolution": "completed; not_run_with_reason only for an explicitly conditional task with missing-claim propagation; never infer the original research goal is met",
+  "local_readiness_vs_claim_readiness": "A source or protocol task can complete its development artifact while reporting external confirmation limitations; downstream claim gates remain explicit.",
+  "tasks": [
+    {
+      "id": "P00",
+      "title_zh": "版本与旧资产绑定",
+      "depends_on": [],
+      "inputs": [
+        "39项来源指纹及当前HEAD",
+        "旧回复/人评复用规则"
+      ],
+      "actions": [
+        "建立run_id和父版本依赖",
+        "核验现有实物并登记用途，不重跑全仓审计"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P00/version_dependency.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P00/asset_registry.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P00/reuse_join_status.json"
+      ],
+      "acceptance_checks": [
+        "所有复用主张有精确身份条件",
+        "旧结果保持原样；未连接数量不伪报"
+      ],
+      "failure_branch": "身份冲突仅阻断该项复用；保留历史诊断并准备新请求",
+      "implementation_annex_sections": [
+        "I0"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P01",
+      "title_zh": "来源家族与确认材料",
+      "depends_on": [
+        "P00"
+      ],
+      "inputs": [
+        "合法train/dev导出",
+        "RS来源与旧曝光metadata"
+      ],
+      "actions": [
+        "登记source/owner/session/video/种子/派生家族",
+        "按development/repair_check/final_confirmation分用途",
+        "整理专业源审核和独立英语来源的实际就绪清单"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P01/source_registry.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P01/family_map.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P01/exposure_registry.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P01/confirmation_readiness.json"
+      ],
+      "acceptance_checks": [
+        "开发源可物化且严格过去",
+        "确认缺口真实列出，开发与确认就绪状态分开"
+      ],
+      "failure_branch": "允许用开发源继续；确认不足限制P14/P15相应主张，不把未知当独立",
+      "implementation_annex_sections": [
+        "I0"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P02",
+      "title_zh": "评价协议与反馈资源",
+      "depends_on": [
+        "P00"
+      ],
+      "inputs": [
+        "旧异质人评及错误实例",
+        "本主方案第6节"
+      ],
+      "actions": [
+        "制作有意义更好/更差/相当/不确定盲评界面",
+        "固定主要比较、复核一次规则、分组与统计方案",
+        "登记真实评审供给、专业范围和直接OFF训练反馈合同"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P02/feedback_protocol.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P02/reviewer_capacity.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P02/rubric_anchors.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P02/analysis_plan_development.json"
+      ],
+      "acceptance_checks": [
+        "旧q/m不冒充新资格",
+        "pending_score与completed_uncertain分开",
+        "实际人力不足和可开展范围明确"
+      ],
+      "failure_branch": "单人仅作开发；无可靠新终点反馈则完整域PPO保持未完成",
+      "implementation_annex_sections": [
+        "I2",
+        "I3",
+        "I6"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P03",
+      "title_zh": "四资源与会话摘要编译",
+      "depends_on": [
+        "P01"
+      ],
+      "inputs": [
+        "RESOURCE_SPEC_ZH.md",
+        "resource_schemas.json",
+        "24完整源会话及3候选修复",
+        "12RS案例和方法草稿"
+      ],
+      "actions": [
+        "实现来源/视图/provenance统一编译接口",
+        "RAW保留，SUM每会话独立写入且不看未来目标",
+        "MP/ME从原文支持并重建时点",
+        "冻结RS方法/案例打包规则"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P03/bank_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P03/schema_report.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P03/source_report.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P03/semantic_review.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P03/resource_examples.jsonl"
+      ],
+      "acceptance_checks": [
+        "schema及精确跨度/角色/hash通过",
+        "同会话摘要禁止中途读取",
+        "坏条目有处置且不静默改成空值"
+      ],
+      "failure_branch": "修写入器/表示；仍失真保留RAW与明确不可用SUM，不删除不利资料",
+      "implementation_annex_sections": [
+        "I1"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P04",
+      "title_zh": "共同读取检索反馈成本接口",
+      "depends_on": [
+        "P03",
+        "P02"
+      ],
+      "inputs": [
+        "现有organized模块",
+        "新资源合同和评价协议"
+      ],
+      "actions": [
+        "适配existing_item/directory/match_session",
+        "接共享BGE与明确query更新",
+        "新增秒数终值及新反馈适配",
+        "参数化训练规模和只读evaluation用途",
+        "实现共同显式容量/耗尽STOP保护层并保留旧raise接口"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P04/interface_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P04/retrieval_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P04/feedback_cost_adapter_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P04/cpu_validation.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P04/evaluation_access_tests.json"
+      ],
+      "acceptance_checks": [
+        "actor/critic只见Observation",
+        "GET不调用G/J/writer",
+        "保护层不跳资源，失败不补零",
+        "新heldout用途不进入训练",
+        "成本含G且无双扣"
+      ],
+      "failure_branch": "接口不通过只修该层，不进入新生成/训练；旧回归继续保留",
+      "implementation_annex_sections": [
+        "I5",
+        "I6"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P05",
+      "title_zh": "前缀载荷与运行冻结",
+      "depends_on": [
+        "P04",
+        "P02"
+      ],
+      "inputs": [
+        "合法源目录",
+        "12开发/24诊断候选",
+        "统一G/runtime"
+      ],
+      "actions": [
+        "按结果前线索选择普通/方法/历史/组合情境",
+        "逐项绑定source-family排除和实际payload",
+        "冻结模型、评价、成本、请求、seed和预算"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P05/prefix_manifest.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P05/comparison_manifest.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P05/run_freeze.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P05/preflight_report.json"
+      ],
+      "acceptance_checks": [
+        "来源/身份/实际token/容量预检",
+        "不足36如实补源或报数量",
+        "无未解析必填项即可执行，不机械重新问方向"
+      ],
+      "failure_branch": "缺合法前缀先补源；缺具体反馈资源保留prepared，不用不适用假数据填满",
+      "implementation_annex_sections": [
+        "I2"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P06",
+      "title_zh": "MS表示开发比较",
+      "depends_on": [
+        "P05"
+      ],
+      "inputs": [
+        "相同源会话及固定排序",
+        "冻结OFF/RAW/SUM请求"
+      ],
+      "actions": [
+        "执行最多12×3位置并精确去重",
+        "同步评来源保真、误用、帮助性和在线/写入成本",
+        "在开发确定表示或保持RAW主/SUM候选"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P06/summary_comparison_results.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P06/summary_representation_decision.json"
+      ],
+      "acceptance_checks": [
+        "不让SUM额外读取会话",
+        "共同可行集与容量覆盖分开",
+        "词数下降不冒充时间/质量"
+      ],
+      "failure_branch": "有证据修一次摘要；未知保留候选，RAW路径继续",
+      "implementation_annex_sections": [
+        "I2"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P07",
+      "title_zh": "RS与记忆机制实验",
+      "depends_on": [
+        "P06"
+      ],
+      "inputs": [
+        "12开发/24冻结诊断",
+        "B/F/R/M/MF/MR/D_R/D_M"
+      ],
+      "actions": [
+        "冻结诊断前确认最终条件payload",
+        "最多288位置并保留全部合法语义结果",
+        "执行七项预定配对和分层分析"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P07/mechanism_outputs.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P07/paired_judgments.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P07/mechanism_analysis.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P07/failure_attribution.jsonl"
+      ],
+      "acceptance_checks": [
+        "直接提供不称自动检索",
+        "采用/充分性/帮助性分别记录",
+        "技术失败与有效负结果分开"
+      ],
+      "failure_branch": "进入P08已定位修复；内容无增量不得用PPO掩盖",
+      "implementation_annex_sections": [
+        "I2",
+        "I3"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P08",
+      "title_zh": "针对性修复与修复检查",
+      "depends_on": [
+        "P07"
+      ],
+      "inputs": [
+        "具体失效机制",
+        "未用于训练的repair_check材料"
+      ],
+      "actions": [
+        "选择资料/表示/执行/评价的一项主要修复",
+        "必要时相关/无/无关成组SFT",
+        "比较G0/G1各自ON-OFF和无资源退化",
+        "repair_check不回收为final_confirmation"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P08/repair_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P08/repair_check_results.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P08/generator_decision.json"
+      ],
+      "acceptance_checks": [
+        "修改与效应可归因",
+        "OFF目标不泄漏隐藏事实",
+        "新版本保留旧失败及结论范围"
+      ],
+      "failure_branch": "无可靠改进保留G0/RAW或已有简单资源；对应正目标仍未达，不无限重训",
+      "implementation_annex_sections": [
+        "I4"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P09",
+      "title_zh": "实际检索与可选原文回查",
+      "depends_on": [
+        "P08"
+      ],
+      "inputs": [
+        "可用资源及已知直接提供结果",
+        "共享BGE/词重合"
+      ],
+      "actions": [
+        "测召回与帮助性保留及时间",
+        "按证据修检索",
+        "必要时实现EXPAND_MS(j)独立混合域及共同基线"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P09/retrieval_results.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P09/retrieval_decision.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P09/hybrid_interface_status.json"
+      ],
+      "acceptance_checks": [
+        "未知祖先不放行",
+        "原文回查真实计时",
+        "无回查实现不得宣称混合系统已运行"
+      ],
+      "failure_branch": "检索失效先修；混合无收益保留单表示，单列未运行理由",
+      "implementation_annex_sections": [
+        "I5"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P10",
+      "title_zh": "训练前缀与终点反馈建设",
+      "depends_on": [
+        "P09",
+        "P02"
+      ],
+      "inputs": [
+        "新训练分组与资源版本",
+        "可靠人评或已核验代理的实际容量"
+      ],
+      "actions": [
+        "机制集与训练/最终确认用途分开",
+        "建立共同终点/回复/直接OFF比较和成本池",
+        "新终点pending→评审→completed或completed_uncertain",
+        "建立固定策略批次等待及恢复"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P10/training_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P10/terminal_pool.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P10/feedback_coverage.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P10/budget_and_collection_schedule.json"
+      ],
+      "acceptance_checks": [
+        "不是把36机制样本当完整训练集",
+        "未知不补0/不暗mask",
+        "不可辨情境及未覆盖域有报告"
+      ],
+      "failure_branch": "先做已测有限集合选择；无可靠持续反馈时完整域PPO未完成",
+      "implementation_annex_sections": [
+        "I3",
+        "I6",
+        "I7"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P11",
+      "title_zh": "强简单基线OneShot与BC",
+      "depends_on": [
+        "P10"
+      ],
+      "inputs": [
+        "共同训练反馈",
+        "参数化新manifest"
+      ],
+      "actions": [
+        "训练Fixed/规则/OneShot-Guarded/BC-init及BC-union",
+        "Random在开发实测成本上校准后冻结",
+        "冻结搜索预算及加倍敏感性",
+        "记录预承诺与实际机械停止"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P11/baseline_freeze.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P11/baseline_results.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P11/oneshot_search_budget.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P11/random_development_calibration.json"
+      ],
+      "acceptance_checks": [
+        "OneShot没有未来信息oracle",
+        "基线共用成本/检索/反馈",
+        "可行率和保护层触发完整报告"
+      ],
+      "failure_branch": "基线明显不足先修基线，不先宣布PPO优势",
+      "implementation_annex_sections": [
+        "I7"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P12",
+      "title_zh": "顺序正文价值与PPO",
+      "depends_on": [
+        "P11"
+      ],
+      "inputs": [
+        "可靠反馈覆盖",
+        "同域基线与版本化策略快照"
+      ],
+      "actions": [
+        "比较正文可见/NoText/固定查询",
+        "比较BC-init/BC-union/PPO",
+        "冻结每批policy snapshot与log-prob，反馈就绪再按PPO规则更新",
+        "正式种子17/29/43"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P12/sequential_training_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P12/policy_checkpoints.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P12/learning_curves.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P12/sequential_comparison.json"
+      ],
+      "acceptance_checks": [
+        "反馈等待不把旧轨迹当新on-policy",
+        "有限域与完整域结果分开",
+        "耗尽预算不填未知零"
+      ],
+      "failure_branch": "无可靠完整域反馈不得运行冒名实验；无RL优势保留BC并记目标未支持",
+      "implementation_annex_sections": [
+        "I8"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P13",
+      "title_zh": "G与PM原配交叉比较",
+      "depends_on": [
+        "P12"
+      ],
+      "inputs": [
+        "实际保留G1及各自可用反馈",
+        "同目标前缀"
+      ],
+      "actions": [
+        "训练或复用正确版本PM0/PM1",
+        "比较G0/1×PM0/1四格及两G简单基线"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P13/generator_policy_cross_results.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P13/rq_sx_scope.json"
+      ],
+      "acceptance_checks": [
+        "跨G不搬奖励",
+        "预算公平",
+        "没有G1明确not_run_with_reason"
+      ],
+      "failure_branch": "没有G1则RQ-SX未回答；不妨碍其他已完成模块外评",
+      "implementation_annex_sections": [
+        "I9"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P14",
+      "title_zh": "最终系统和确认冻结",
+      "depends_on": [
+        "P13"
+      ],
+      "inputs": [
+        "已选择系统与所有未完成主张",
+        "独立final_confirmation材料",
+        "正式预算和统计模拟"
+      ],
+      "actions": [
+        "冻结模型/资源/检索/反馈/动作/成本操作点",
+        "计算分组功效/精度及实际独立量",
+        "冻结主要比较/多重处理/追加规则",
+        "启用只读evaluation用途"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P14/final_system_freeze.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P14/final_confirmation_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P14/analysis_plan_final.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P14/power_and_precision_scenarios.json"
+      ],
+      "acceptance_checks": [
+        "repair_check未当final_confirmation",
+        "无测试选模型",
+        "未完成目标不被状态覆盖"
+      ],
+      "failure_branch": "来源/人力不足可做限定评估但独立确认目标未完成，正式主张不能偷降级",
+      "implementation_annex_sections": [
+        "I10"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P15",
+      "title_zh": "官方与独立支持外评",
+      "depends_on": [
+        "P14"
+      ],
+      "inputs": [
+        "同一最终栈",
+        "官方来源与冻结人评清单"
+      ],
+      "actions": [
+        "运行官方ESC-Eval七维",
+        "运行适用ES-MemEval任务原协议",
+        "执行独立自然支持盲评和组件分析"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P15/official_results.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P15/support_confirmation_results.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P15/generalization_limits.json"
+      ],
+      "acceptance_checks": [
+        "模拟角色秘密不进G/PM",
+        "官方DG与自然支持效用分开",
+        "所有条件/失败/来源重叠报告"
+      ],
+      "failure_branch": "评分失败修接口；确认负结果保留，不能换测试集直到赢",
+      "implementation_annex_sections": [
+        "I10"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P16",
+      "title_zh": "客户端及Tokkio部署",
+      "depends_on": [
+        "P14"
+      ],
+      "inputs": [
+        "最终系统与指定硬件",
+        "实际语音服务接入信息"
+      ],
+      "actions": [
+        "先验收参考客户端完整计时",
+        "桥接真实语音事件并冻结负载缓存",
+        "交错测首个有效内容与完成p50/p95"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P16/deployment_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P16/client_traces.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P16/voice_traces.jsonl",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P16/quality_latency_frontier.json"
+      ],
+      "acceptance_checks": [
+        "G/检索/编码/PM/排队完整",
+        "语音端点真实，不用token估计代替",
+        "不停止其他项目任务"
+      ],
+      "failure_branch": "缺端点仅完成文本参考；语音部署目标保持未完成",
+      "implementation_annex_sections": [
+        "I11"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    },
+    {
+      "id": "P17",
+      "title_zh": "论文复现与目标收口",
+      "depends_on": [
+        "P15",
+        "P16"
+      ],
+      "inputs": [
+        "全部结果与失败",
+        "最终复现manifest"
+      ],
+      "actions": [
+        "形成结果表、失败分析、复现包和论文",
+        "逐目标标支持/未支持/未测试",
+        "按授权与来源条件准备公开材料"
+      ],
+      "expected_outputs": [
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P17/research_closeout.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P17/reproduction_manifest.json",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P17/paper_draft.md",
+        "project/outputs/pm_rl1/master_20261116_v1/<run_id>/P17/remaining_objectives.json"
+      ],
+      "acceptance_checks": [
+        "实现/证据完成/预期正目标分开",
+        "没有未测填零/泄漏/跨栈标签",
+        "所有未执行比较有理由"
+      ],
+      "failure_branch": "证据或部署未齐则交阶段报告，不能标完整正目标达成",
+      "implementation_annex_sections": [
+        "I11"
+      ],
+      "production_execution_status": "not_started",
+      "output_paths_are_contracts_not_existing_files": true
+    }
+  ]
+}

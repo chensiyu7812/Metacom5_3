@@ -1,0 +1,193 @@
+{
+  "slot_id": "d61163bc70938a995cc4e7009278f15ef5ceb3a834e52fc91a88a07a304a3ab8",
+  "request_identity": "e9370a9c30b4b3db8d8d388bfb8b224a084061a149ef8e757d5d9b1010f5ca4f",
+  "component": "audit",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "value": {
+      "check": {
+        "status": "checked",
+        "claims": [
+          {
+            "claim_id": "C001",
+            "response_unit_id": "R001",
+            "response_quote": "you're carrying a heavy load right now",
+            "claim_type": "assertion",
+            "subject": "Jane's current emotional burden",
+            "time": "current, as of the reply",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "I've been feeling really overwhelmed lately."
+              },
+              {
+                "source_id": "C:T004",
+                "quote": "It’s just a combination of things."
+              }
+            ],
+            "reason": "Jane explicitly reports feeling overwhelmed and describes a combination of stressors, so the metaphor of a current heavy load is directly supported by the current prefix."
+          },
+          {
+            "claim_id": "C002",
+            "response_unit_id": "R001",
+            "response_quote": "constant pressure at work",
+            "claim_type": "assertion",
+            "subject": "work pressure experienced by Jane",
+            "time": "current/ongoing",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T004",
+                "quote": "The pressure at work never seems to end"
+              }
+            ],
+            "reason": "Jane directly states that the pressure at work never seems to end."
+          },
+          {
+            "claim_id": "C003",
+            "response_unit_id": "R001",
+            "response_quote": "lingering doubts after that performance review",
+            "claim_type": "assertion",
+            "subject": "Jane's self-doubt following the November performance review",
+            "time": "since November 2024, continuing at current date",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T004",
+                "quote": "after the performance review last November, I’ve been second-guessing myself a lot"
+              }
+            ],
+            "reason": "Jane links her ongoing second-guessing to the performance review last November."
+          },
+          {
+            "claim_id": "C004",
+            "response_unit_id": "R002",
+            "response_quote": "It's completely understandable to feel uncertain about your own abilities when you're facing that kind of stress.",
+            "claim_type": "general",
+            "subject": "validation of feeling uncertain under stress",
+            "time": "current general context",
+            "action_stage": "not_applicable",
+            "relation": "non_factual",
+            "evidence": [],
+            "reason": "This is general empathic validation rather than a new factual assertion about Jane; it does not require source evidence and is consistent with the supported self-doubt in C:T004."
+          },
+          {
+            "claim_id": "C005",
+            "response_unit_id": "R003",
+            "response_quote": "those doubts",
+            "claim_type": "presupposition",
+            "subject": "Jane's doubts referenced in the question",
+            "time": "current/recent",
+            "action_stage": "not_applicable",
+            "relation": "supported",
+            "evidence": [
+              {
+                "source_id": "C:T004",
+                "quote": "I’ve been second-guessing myself a lot"
+              }
+            ],
+            "reason": "The question's phrase 'those doubts' presupposes the doubts already discussed; C:T004 directly reports second-guessing."
+          },
+          {
+            "claim_id": "C006",
+            "response_unit_id": "R003",
+            "response_quote": "How have those doubts been affecting your daily routine or interactions with colleagues?",
+            "claim_type": "general",
+            "subject": "invitation to explore impact of doubts on daily routine and colleague interactions",
+            "time": "current",
+            "action_stage": "not_applicable",
+            "relation": "non_factual",
+            "evidence": [],
+            "reason": "This is an open exploratory question/invitation, not an assertion that Jane's routine or colleague interactions have been affected. It does not instruct action or claim an observed outcome."
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix C:T000–C:T004, all supplied past sessions H001–H011, and all three reply units R001–R003. The reply's current-state claims map to C:T004, with C:T002 supporting the overwhelm description; it does not adopt past-session supporter speech as Jane's biography or as current fact.",
+        "uncertainty_reasons": []
+      },
+      "findings": [
+        {
+          "response_unit_id": "R001",
+          "response_quote": "It sounds like you're carrying a heavy load right now",
+          "dimension": "relation",
+          "verdict": "no_issue_identified",
+          "readings": [
+            "The reply accurately reflects Jane's current report of work pressure and post-review self-doubt as a heavy load."
+          ],
+          "criterion": "A factual reflection should be supported by the seeker's current statements and should not import past-session claims.",
+          "consequence": "No change to the core understanding or supportive response; the acknowledgment remains accurate.",
+          "reason": "C:T004 directly supplies both elements named in the reflected statement, and C:T002 supports the sense of current overwhelm. No past-session supporter speech is needed or used.",
+          "source_evidence": [
+            {
+              "source_id": "C:T004",
+              "quote": "The pressure at work never seems to end"
+            },
+            {
+              "source_id": "C:T004",
+              "quote": "after the performance review last November, I’ve been second-guessing myself a lot"
+            }
+          ]
+        },
+        {
+          "response_unit_id": "R003",
+          "response_quote": "How have those doubts been affecting your daily routine or interactions with colleagues?",
+          "dimension": "interpretation",
+          "verdict": "no_issue_identified",
+          "readings": [
+            "The question is an invitation to explore possible effects, not an assertion that those effects exist."
+          ],
+          "criterion": "Questions should be treated as invitations unless they presuppose unsupported facts.",
+          "consequence": "No change; the question remains open and non-prescriptive.",
+          "reason": "The wording asks for Jane's experience and does not assert actual routine or colleague effects. The only factual presupposition, 'those doubts,' is supported by C:T004.",
+          "source_evidence": [
+            {
+              "source_id": "C:T004",
+              "quote": "I’ve been second-guessing myself a lot"
+            }
+          ]
+        }
+      ],
+      "coverage_limitations": "Coverage is limited to the supplied current prefix C:T000–C:T004 and past sessions H001–H011; no future reaction is available, and the transcript is accepted as the evidence record rather than independently verified real-world fact."
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "9a9d05bfd9cce1678b169b5cc26fcb597353eedca61ac8d0cac1b767b980fd17",
+      "adapted_final_sha256": "9a9d05bfd9cce1678b169b5cc26fcb597353eedca61ac8d0cac1b767b980fd17",
+      "interior_unchanged": true
+    },
+    "interface_version": "audit-findings-source-evidence-v2-20261022",
+    "reward_eligible": false,
+    "semantic_gold": false
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0133845",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 16507,
+    "completion_tokens": 7027,
+    "total_tokens": 23534,
+    "prompt_tokens_details": {
+      "cached_tokens": 768
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 5825
+    },
+    "prompt_cache_hit_tokens": 768,
+    "prompt_cache_miss_tokens": 15739
+  },
+  "elapsed_seconds": 34.05151379201561,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

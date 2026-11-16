@@ -1,0 +1,562 @@
+﻿2026-10-22T10:38:21.1610731Z Current runner version: '2.338.0'
+2026-10-22T10:38:21.1624741Z ##[group]Runner Image Provisioner
+2026-10-22T10:38:21.1625276Z Hosted Compute Agent
+2026-10-22T10:38:21.1625610Z Version: 20261015.610
+2026-10-22T10:38:21.1626027Z Commit: 267fdb4e8bbec4ab5ea31367f3a00d5c480c7656
+2026-10-22T10:38:21.1626579Z Build Date: 2026-10-14T17:06:54Z
+2026-10-22T10:38:21.1627028Z Worker ID: {0531bd7e-875f-49f5-97d3-bbd2e3dfa34e}
+2026-10-22T10:38:21.1627445Z Region: centralus
+2026-10-22T10:38:21.1627772Z Cloud: Azure
+2026-10-22T10:38:21.1628128Z ##[endgroup]
+2026-10-22T10:38:21.1628854Z ##[group]Operating System
+2026-10-22T10:38:21.1629295Z Ubuntu
+2026-10-22T10:38:21.1629615Z 24.04.5
+2026-10-22T10:38:21.1629922Z LTS
+2026-10-22T10:38:21.1630259Z ##[endgroup]
+2026-10-22T10:38:21.1630582Z ##[group]Runner Image
+2026-10-22T10:38:21.1630945Z Image: ubuntu-24.04
+2026-10-22T10:38:21.1631318Z Version: 20261018.339.1
+2026-10-22T10:38:21.1632029Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261018.339/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-22T10:38:21.1632909Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261018.339
+2026-10-22T10:38:21.1633467Z ##[endgroup]
+2026-10-22T10:38:21.1634196Z ##[group]GITHUB_TOKEN Permissions
+2026-10-22T10:38:21.1635263Z Contents: read
+2026-10-22T10:38:21.1635656Z Metadata: read
+2026-10-22T10:38:21.1636016Z Packages: read
+2026-10-22T10:38:21.1636479Z ##[endgroup]
+2026-10-22T10:38:21.1637688Z Secret source: Actions
+2026-10-22T10:38:21.1638232Z Cache mode: write
+2026-10-22T10:38:21.1638636Z Prepare workflow directory
+2026-10-22T10:38:21.3438014Z Prepare all required actions
+2026-10-22T10:38:21.3468528Z Getting action download info
+2026-10-22T10:38:21.5692423Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-22T10:38:21.7837662Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-10-22T10:38:22.1850453Z Complete job name: pytest
+2026-10-22T10:38:22.4718352Z ##[group]Run actions/checkout@v4
+2026-10-22T10:38:22.4719166Z with:
+2026-10-22T10:38:22.4719724Z   repository: chensiyu7812/Metacom5_3
+2026-10-22T10:38:22.4725851Z   token: ***
+2026-10-22T10:38:22.4726498Z   ssh-strict: true
+2026-10-22T10:38:22.4727069Z   ssh-user: git
+2026-10-22T10:38:22.4727658Z   persist-credentials: true
+2026-10-22T10:38:22.4728306Z   clean: true
+2026-10-22T10:38:22.4728898Z   sparse-checkout-cone-mode: true
+2026-10-22T10:38:22.4729593Z   fetch-depth: 1
+2026-10-22T10:38:22.4730153Z   fetch-tags: false
+2026-10-22T10:38:22.4730745Z   show-progress: true
+2026-10-22T10:38:22.4731328Z   lfs: false
+2026-10-22T10:38:22.4731861Z   submodules: false
+2026-10-22T10:38:22.4732426Z   set-safe-directory: true
+2026-10-22T10:38:22.4733051Z   allow-unsafe-pr-checkout: false
+2026-10-22T10:38:22.4733764Z env:
+2026-10-22T10:38:22.4738462Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:38:22.4739017Z ##[endgroup]
+2026-10-22T10:38:22.5416740Z Syncing repository: chensiyu7812/Metacom5_3
+2026-10-22T10:38:22.5419039Z ##[group]Getting Git version info
+2026-10-22T10:38:22.5420231Z Working directory is '/home/runner/work/Metacom5_3/Metacom5_3'
+2026-10-22T10:38:22.5421994Z [command]/usr/bin/git version
+2026-10-22T10:38:22.5452994Z git version 2.55.0
+2026-10-22T10:38:22.5465972Z ##[endgroup]
+2026-10-22T10:38:22.5476400Z Temporarily overriding HOME='/home/runner/work/_temp/b5450849-f825-4bb1-af08-f4f84f393414' before making global git config changes
+2026-10-22T10:38:22.5478583Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-22T10:38:22.5480611Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-22T10:38:22.5652993Z Deleting the contents of '/home/runner/work/Metacom5_3/Metacom5_3'
+2026-10-22T10:38:22.5656305Z ##[group]Initializing the repository
+2026-10-22T10:38:22.5659818Z [command]/usr/bin/git init /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-22T10:38:22.6455858Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-22T10:38:22.6457817Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-22T10:38:22.6459504Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-22T10:38:22.6460807Z hint: call:
+2026-10-22T10:38:22.6461407Z hint:
+2026-10-22T10:38:22.6462257Z hint: 	git config --global init.defaultBranch <name>
+2026-10-22T10:38:22.6463286Z hint:
+2026-10-22T10:38:22.6464229Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-22T10:38:22.6465850Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-22T10:38:22.6467284Z hint:
+2026-10-22T10:38:22.6467965Z hint: 	git branch -m <name>
+2026-10-22T10:38:22.6468699Z hint:
+2026-10-22T10:38:22.6469715Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-22T10:38:22.6471497Z Initialized empty Git repository in /home/runner/work/Metacom5_3/Metacom5_3/.git/
+2026-10-22T10:38:22.6474589Z [command]/usr/bin/git remote add origin https://github.com/chensiyu7812/Metacom5_3
+2026-10-22T10:38:22.6845745Z ##[endgroup]
+2026-10-22T10:38:22.6848632Z ##[group]Disabling automatic garbage collection
+2026-10-22T10:38:22.6849761Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-22T10:38:22.7250897Z ##[endgroup]
+2026-10-22T10:38:22.7252078Z ##[group]Setting up auth
+2026-10-22T10:38:22.7253245Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-22T10:38:22.7284823Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-22T10:38:22.7707878Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-22T10:38:22.7744083Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-22T10:38:22.7929059Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-22T10:38:22.7964458Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-22T10:38:22.8157110Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-22T10:38:22.8741695Z ##[endgroup]
+2026-10-22T10:38:22.8743191Z ##[group]Fetching the repository
+2026-10-22T10:38:22.8749249Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +0cf26ae49acfda3299a1a2ff60941d971ac2cbcd:refs/remotes/pull/3/merge
+2026-10-22T10:38:31.7119593Z From https://github.com/chensiyu7812/Metacom5_3
+2026-10-22T10:38:31.7120204Z  * [new ref]         0cf26ae49acfda3299a1a2ff60941d971ac2cbcd -> pull/3/merge
+2026-10-22T10:38:31.7122468Z ##[endgroup]
+2026-10-22T10:38:31.7122878Z ##[group]Determining the checkout info
+2026-10-22T10:38:31.7124441Z ##[endgroup]
+2026-10-22T10:38:31.7135151Z [command]/usr/bin/git sparse-checkout disable
+2026-10-22T10:38:31.7181985Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-22T10:38:31.7212730Z ##[group]Checking out the ref
+2026-10-22T10:38:31.7215180Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+2026-10-22T10:38:32.7406787Z Updating files:  45% (1425/3156)
+2026-10-22T10:38:32.7452290Z Updating files:  46% (1452/3156)
+2026-10-22T10:38:32.7477533Z Updating files:  47% (1484/3156)
+2026-10-22T10:38:32.8032204Z Updating files:  48% (1515/3156)
+2026-10-22T10:38:32.8052993Z Updating files:  49% (1547/3156)
+2026-10-22T10:38:32.8065524Z Updating files:  50% (1578/3156)
+2026-10-22T10:38:32.8081882Z Updating files:  51% (1610/3156)
+2026-10-22T10:38:32.8100233Z Updating files:  52% (1642/3156)
+2026-10-22T10:38:32.8119911Z Updating files:  53% (1673/3156)
+2026-10-22T10:38:32.8139149Z Updating files:  54% (1705/3156)
+2026-10-22T10:38:32.8157451Z Updating files:  55% (1736/3156)
+2026-10-22T10:38:32.8175737Z Updating files:  56% (1768/3156)
+2026-10-22T10:38:32.8190930Z Updating files:  57% (1799/3156)
+2026-10-22T10:38:32.8209543Z Updating files:  58% (1831/3156)
+2026-10-22T10:38:32.8226312Z Updating files:  59% (1863/3156)
+2026-10-22T10:38:32.8247385Z Updating files:  60% (1894/3156)
+2026-10-22T10:38:32.8264103Z Updating files:  61% (1926/3156)
+2026-10-22T10:38:32.8280235Z Updating files:  62% (1957/3156)
+2026-10-22T10:38:32.8300464Z Updating files:  63% (1989/3156)
+2026-10-22T10:38:32.8323652Z Updating files:  64% (2020/3156)
+2026-10-22T10:38:32.8342876Z Updating files:  65% (2052/3156)
+2026-10-22T10:38:32.8362507Z Updating files:  66% (2083/3156)
+2026-10-22T10:38:32.8381995Z Updating files:  67% (2115/3156)
+2026-10-22T10:38:32.8398827Z Updating files:  68% (2147/3156)
+2026-10-22T10:38:32.8417533Z Updating files:  69% (2178/3156)
+2026-10-22T10:38:32.8439261Z Updating files:  70% (2210/3156)
+2026-10-22T10:38:32.8457383Z Updating files:  71% (2241/3156)
+2026-10-22T10:38:32.8474536Z Updating files:  72% (2273/3156)
+2026-10-22T10:38:32.8495702Z Updating files:  73% (2304/3156)
+2026-10-22T10:38:32.8519086Z Updating files:  74% (2336/3156)
+2026-10-22T10:38:32.8535486Z Updating files:  75% (2367/3156)
+2026-10-22T10:38:32.8551930Z Updating files:  76% (2399/3156)
+2026-10-22T10:38:32.8567219Z Updating files:  77% (2431/3156)
+2026-10-22T10:38:32.8581351Z Updating files:  78% (2462/3156)
+2026-10-22T10:38:32.8619229Z Updating files:  79% (2494/3156)
+2026-10-22T10:38:32.8636420Z Updating files:  80% (2525/3156)
+2026-10-22T10:38:32.8651268Z Updating files:  81% (2557/3156)
+2026-10-22T10:38:32.8670832Z Updating files:  82% (2588/3156)
+2026-10-22T10:38:32.8694781Z Updating files:  83% (2620/3156)
+2026-10-22T10:38:32.8721578Z Updating files:  84% (2652/3156)
+2026-10-22T10:38:32.8745130Z Updating files:  85% (2683/3156)
+2026-10-22T10:38:32.8758260Z Updating files:  86% (2715/3156)
+2026-10-22T10:38:32.8770806Z Updating files:  87% (2746/3156)
+2026-10-22T10:38:32.8783400Z Updating files:  88% (2778/3156)
+2026-10-22T10:38:32.8797088Z Updating files:  89% (2809/3156)
+2026-10-22T10:38:32.8815707Z Updating files:  90% (2841/3156)
+2026-10-22T10:38:32.8831964Z Updating files:  91% (2872/3156)
+2026-10-22T10:38:32.8845697Z Updating files:  92% (2904/3156)
+2026-10-22T10:38:32.8859712Z Updating files:  93% (2936/3156)
+2026-10-22T10:38:32.8874221Z Updating files:  94% (2967/3156)
+2026-10-22T10:38:32.8886867Z Updating files:  95% (2999/3156)
+2026-10-22T10:38:32.8899402Z Updating files:  96% (3030/3156)
+2026-10-22T10:38:32.8911237Z Updating files:  97% (3062/3156)
+2026-10-22T10:38:32.8922317Z Updating files:  98% (3093/3156)
+2026-10-22T10:38:32.8936004Z Updating files:  99% (3125/3156)
+2026-10-22T10:38:32.8936370Z Updating files: 100% (3156/3156)
+2026-10-22T10:38:32.8936588Z Updating files: 100% (3156/3156), done.
+2026-10-22T10:38:32.9186347Z Note: switching to 'refs/remotes/pull/3/merge'.
+2026-10-22T10:38:32.9186546Z 
+2026-10-22T10:38:32.9186727Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-22T10:38:32.9187147Z changes and commit them, and you can discard any commits you make in this
+2026-10-22T10:38:32.9187531Z state without impacting any branches by switching back to a branch.
+2026-10-22T10:38:32.9187760Z 
+2026-10-22T10:38:32.9187912Z If you want to create a new branch to retain commits you create, you may
+2026-10-22T10:38:32.9188277Z do so (now or later) by using -c with the switch command. Example:
+2026-10-22T10:38:32.9188488Z 
+2026-10-22T10:38:32.9188647Z   git switch -c <new-branch-name>
+2026-10-22T10:38:32.9188782Z 
+2026-10-22T10:38:32.9188843Z Or undo this operation with:
+2026-10-22T10:38:32.9188928Z 
+2026-10-22T10:38:32.9188977Z   git switch -
+2026-10-22T10:38:32.9189041Z 
+2026-10-22T10:38:32.9189156Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-22T10:38:32.9189316Z 
+2026-10-22T10:38:32.9189499Z HEAD is now at 0cf26ae Merge f59e570e14343e2573445271c6b9926d92040f00 into 3c7e416a55aaca265fef63a39d9f101cde787f5b
+2026-10-22T10:38:32.9270750Z ##[endgroup]
+2026-10-22T10:38:32.9316861Z [command]/usr/bin/git log -1 --format=%H
+2026-10-22T10:38:32.9344321Z 0cf26ae49acfda3299a1a2ff60941d971ac2cbcd
+2026-10-22T10:38:33.0855514Z ##[group]Run actions/setup-python@v5
+2026-10-22T10:38:33.0855685Z with:
+2026-10-22T10:38:33.0855795Z   python-version: 3.11
+2026-10-22T10:38:33.0855909Z   cache: pip
+2026-10-22T10:38:33.0856192Z   cache-dependency-path: project/pyproject.toml
+2026-10-22T10:38:33.0856356Z   check-latest: false
+2026-10-22T10:38:33.0857702Z   token: ***
+2026-10-22T10:38:33.0857809Z   update-environment: true
+2026-10-22T10:38:33.0857937Z   allow-prereleases: false
+2026-10-22T10:38:33.0858056Z   freethreaded: false
+2026-10-22T10:38:33.0858162Z env:
+2026-10-22T10:38:33.0858260Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:38:33.0858373Z ##[endgroup]
+2026-10-22T10:38:33.1642518Z ##[group]Installed versions
+2026-10-22T10:38:33.1725541Z (node:2083) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-22T10:38:33.1726227Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-22T10:38:33.1726613Z Successfully set up CPython (3.11.17)
+2026-10-22T10:38:33.1726975Z ##[endgroup]
+2026-10-22T10:38:33.1930510Z [command]/opt/hostedtoolcache/Python/3.11.17/x64/bin/pip cache dir
+2026-10-22T10:38:33.3985946Z /home/runner/.cache/pip
+2026-10-22T10:38:33.5429382Z pip cache is not found
+2026-10-22T10:38:33.5652912Z ##[group]Run python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.3.1+cpu"
+2026-10-22T10:38:33.5653345Z [36;1mpython -m pip install --index-url https://download.pytorch.org/whl/cpu "torch==2.3.1+cpu"[0m
+2026-10-22T10:38:33.5866334Z shell: /usr/bin/bash -e {0}
+2026-10-22T10:38:33.5866477Z env:
+2026-10-22T10:38:33.5866583Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:38:33.5866740Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:33.5866976Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-22T10:38:33.5867209Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:33.5867404Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:33.5867597Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:33.5867795Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-22T10:38:33.5867961Z ##[endgroup]
+2026-10-22T10:38:34.1452019Z Looking in indexes: https://download.pytorch.org/whl/cpu
+2026-10-22T10:38:34.2916529Z Collecting torch==2.3.1+cpu
+2026-10-22T10:38:34.4537985Z   Downloading torch-2.3.1%2Bcpu-cp311-cp311-linux_x86_64.whl (190.4 MB)
+2026-10-22T10:38:38.0617252Z      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 190.4/190.4 MB 52.9 MB/s  0:00:03
+2026-10-22T10:38:38.2773600Z Collecting filelock (from torch==2.3.1+cpu)
+2026-10-22T10:38:38.3477585Z   Downloading filelock-3.32.3-py3-none-any.whl.metadata (2.0 kB)
+2026-10-22T10:38:38.7441837Z Collecting typing-extensions>=4.8.0 (from torch==2.3.1+cpu)
+2026-10-22T10:38:38.7596459Z   Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-10-22T10:38:39.0433835Z Collecting sympy (from torch==2.3.1+cpu)
+2026-10-22T10:38:39.0587877Z   Downloading sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+2026-10-22T10:38:39.1527723Z Collecting networkx (from torch==2.3.1+cpu)
+2026-10-22T10:38:39.1678963Z   Downloading networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+2026-10-22T10:38:39.1872637Z Collecting jinja2 (from torch==2.3.1+cpu)
+2026-10-22T10:38:39.2002895Z   Downloading jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+2026-10-22T10:38:39.2234822Z Collecting fsspec (from torch==2.3.1+cpu)
+2026-10-22T10:38:39.2388617Z   Downloading fsspec-2026.7.0-py3-none-any.whl.metadata (10 kB)
+2026-10-22T10:38:39.2683093Z Collecting MarkupSafe>=2.0 (from jinja2->torch==2.3.1+cpu)
+2026-10-22T10:38:39.2813055Z   Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+2026-10-22T10:38:39.3000933Z Collecting mpmath<1.4,>=1.1.0 (from sympy->torch==2.3.1+cpu)
+2026-10-22T10:38:39.3152513Z   Downloading mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+2026-10-22T10:38:39.3339418Z Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-10-22T10:38:39.3640053Z Downloading filelock-3.32.3-py3-none-any.whl (98 kB)
+2026-10-22T10:38:39.3943910Z Downloading fsspec-2026.7.0-py3-none-any.whl (206 kB)
+2026-10-22T10:38:39.4226970Z Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+2026-10-22T10:38:39.4424152Z Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+2026-10-22T10:38:39.4588656Z Downloading networkx-3.6.1-py3-none-any.whl (2.1 MB)
+2026-10-22T10:38:39.5234301Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.1/2.1 MB 30.4 MB/s  0:00:00
+2026-10-22T10:38:39.5385556Z Downloading sympy-1.14.0-py3-none-any.whl (6.3 MB)
+2026-10-22T10:38:39.5934383Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.3/6.3 MB 113.4 MB/s  0:00:00
+2026-10-22T10:38:39.6086573Z Downloading mpmath-1.3.0-py3-none-any.whl (536 kB)
+2026-10-22T10:38:39.6119707Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 536.2/536.2 kB 133.3 MB/s  0:00:00
+2026-10-22T10:38:39.6920544Z Installing collected packages: mpmath, typing-extensions, sympy, networkx, MarkupSafe, fsspec, filelock, jinja2, torch
+2026-10-22T10:38:48.8098384Z 
+2026-10-22T10:38:48.8105213Z Successfully installed MarkupSafe-3.0.3 filelock-3.32.3 fsspec-2026.7.0 jinja2-3.1.6 mpmath-1.3.0 networkx-3.6.1 sympy-1.14.0 torch-2.3.1+cpu typing-extensions-4.16.0
+2026-10-22T10:38:48.8685965Z ##[group]Run python -m pip install -e ".[dev]"
+2026-10-22T10:38:48.8686326Z [36;1mpython -m pip install -e ".[dev]"[0m
+2026-10-22T10:38:48.8727272Z shell: /usr/bin/bash -e {0}
+2026-10-22T10:38:48.8727405Z env:
+2026-10-22T10:38:48.8727512Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:38:48.8727664Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:48.8727885Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-22T10:38:48.8728122Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:48.8728318Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:48.8728513Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:38:48.8728711Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-22T10:38:48.8728880Z ##[endgroup]
+2026-10-22T10:38:49.1665433Z Obtaining file:///home/runner/work/Metacom5_3/Metacom5_3/project
+2026-10-22T10:38:49.1675184Z   Installing build dependencies: started
+2026-10-22T10:38:50.0430482Z   Installing build dependencies: finished with status 'done'
+2026-10-22T10:38:50.0434299Z   Checking if build backend supports build_editable: started
+2026-10-22T10:38:50.2194170Z   Checking if build backend supports build_editable: finished with status 'done'
+2026-10-22T10:38:50.2199883Z   Getting requirements to build editable: started
+2026-10-22T10:38:50.4064816Z   Getting requirements to build editable: finished with status 'done'
+2026-10-22T10:38:50.4070901Z   Preparing editable metadata (pyproject.toml): started
+2026-10-22T10:38:50.5183161Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+2026-10-22T10:38:50.6091543Z Collecting httpx<1,>=0.27 (from metacom-pm==4.0.0)
+2026-10-22T10:38:50.6703581Z   Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+2026-10-22T10:38:50.8200864Z Collecting numpy<3,>=1.26 (from metacom-pm==4.0.0)
+2026-10-22T10:38:50.8326663Z   Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+2026-10-22T10:38:50.8974574Z Collecting pandas<3,>=2.2 (from metacom-pm==4.0.0)
+2026-10-22T10:38:50.9098328Z   Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (91 kB)
+2026-10-22T10:38:50.9947516Z Collecting pydantic<3,>=2.8 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.0071033Z   Downloading pydantic-2.14.1-py3-none-any.whl.metadata (133 kB)
+2026-10-22T10:38:51.0421023Z Collecting PyYAML<7,>=6 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.0544591Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-10-22T10:38:51.1108714Z Collecting scikit-learn<2,>=1.5 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.1233386Z   Downloading scikit_learn-1.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.3 kB)
+2026-10-22T10:38:51.1890618Z Collecting scipy<2,>=1.13 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.2014736Z   Downloading scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+2026-10-22T10:38:51.2516489Z Collecting tiktoken<0.13,>=0.12 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.2639719Z   Downloading tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (6.7 kB)
+2026-10-22T10:38:51.2663103Z Requirement already satisfied: torch<3,>=2.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from metacom-pm==4.0.0) (2.3.1+cpu)
+2026-10-22T10:38:51.2923053Z Collecting transformers<5,>=4.44 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.3047553Z   Downloading transformers-4.57.6-py3-none-any.whl.metadata (43 kB)
+2026-10-22T10:38:51.3828979Z Collecting huggingface-hub<1,>=0.24 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.3952645Z   Downloading huggingface_hub-0.36.2-py3-none-any.whl.metadata (15 kB)
+2026-10-22T10:38:51.4039870Z Requirement already satisfied: networkx<4,>=3.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from metacom-pm==4.0.0) (3.6.1)
+2026-10-22T10:38:51.4283926Z Collecting json-repair==0.52.4 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.4418810Z   Downloading json_repair-0.52.4-py3-none-any.whl.metadata (11 kB)
+2026-10-22T10:38:51.4645995Z Collecting jsonschema<5,>=4.18 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.4769293Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-22T10:38:51.5037532Z Collecting pytest<9,>=8 (from metacom-pm==4.0.0)
+2026-10-22T10:38:51.5160994Z   Downloading pytest-8.4.2-py3-none-any.whl.metadata (7.7 kB)
+2026-10-22T10:38:51.5386444Z Collecting anyio (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-22T10:38:51.5510326Z   Downloading anyio-4.15.1-py3-none-any.whl.metadata (4.7 kB)
+2026-10-22T10:38:51.5747846Z Collecting certifi (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-22T10:38:51.5870564Z   Downloading certifi-2026.10.19-py3-none-any.whl.metadata (2.5 kB)
+2026-10-22T10:38:51.6074535Z Collecting httpcore==1.* (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-22T10:38:51.6198107Z   Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+2026-10-22T10:38:51.6403203Z Collecting idna (from httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-22T10:38:51.6526185Z   Downloading idna-3.20-py3-none-any.whl.metadata (7.2 kB)
+2026-10-22T10:38:51.6717991Z Collecting h11>=0.16 (from httpcore==1.*->httpx<1,>=0.27->metacom-pm==4.0.0)
+2026-10-22T10:38:51.6840980Z   Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+2026-10-22T10:38:51.6864436Z Requirement already satisfied: filelock in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (3.32.3)
+2026-10-22T10:38:51.6866735Z Requirement already satisfied: fsspec>=2023.5.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (2026.7.0)
+2026-10-22T10:38:51.7319994Z Collecting hf-xet<2.0.0,>=1.1.3 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:51.7444133Z   Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+2026-10-22T10:38:51.7498680Z Collecting packaging>=20.9 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:51.7507114Z   Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-10-22T10:38:51.7736379Z Collecting requests (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:51.7859438Z   Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-10-22T10:38:51.8112900Z Collecting tqdm>=4.42.1 (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:51.8236469Z   Downloading tqdm-4.70.1-py3-none-any.whl.metadata (57 kB)
+2026-10-22T10:38:51.8281182Z Requirement already satisfied: typing-extensions>=3.7.4.3 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from huggingface-hub<1,>=0.24->metacom-pm==4.0.0) (4.16.0)
+2026-10-22T10:38:51.8466969Z Collecting attrs>=22.2.0 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-22T10:38:51.8590225Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-22T10:38:51.8783093Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-22T10:38:51.8906317Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-22T10:38:51.9131978Z Collecting referencing>=0.28.4 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-22T10:38:51.9254938Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-22T10:38:52.0568125Z Collecting rpds-py>=0.25.0 (from jsonschema<5,>=4.18->metacom-pm==4.0.0)
+2026-10-22T10:38:52.0693755Z   Downloading rpds_py-2026.9.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-22T10:38:52.0923033Z Collecting python-dateutil>=2.8.2 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-22T10:38:52.1046487Z   Downloading python_dateutil-3.0.0-py2.py3-none-any.whl.metadata (8.2 kB)
+2026-10-22T10:38:52.1344440Z Collecting pytz>=2020.1 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-22T10:38:52.1468520Z   Downloading pytz-2026.5-py2.py3-none-any.whl.metadata (22 kB)
+2026-10-22T10:38:52.1675383Z Collecting tzdata>=2022.7 (from pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-22T10:38:52.1799579Z   Downloading tzdata-2026.5-py2.py3-none-any.whl.metadata (1.4 kB)
+2026-10-22T10:38:52.2174627Z Collecting annotated-types>=0.6.0 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.2297867Z   Downloading annotated_types-0.8.0-py3-none-any.whl.metadata (15 kB)
+2026-10-22T10:38:52.5957300Z Collecting pydantic-core==2.50.1 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.6084630Z   Downloading pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.5 kB)
+2026-10-22T10:38:52.6328483Z Collecting typing-inspection>=0.4.4 (from pydantic<3,>=2.8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.6453888Z   Downloading typing_inspection-0.4.4-py3-none-any.whl.metadata (2.6 kB)
+2026-10-22T10:38:52.6645151Z Collecting iniconfig>=1 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.6768282Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+2026-10-22T10:38:52.6965255Z Collecting pluggy<2,>=1.5 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.7090388Z   Downloading pluggy-1.7.0-py3-none-any.whl.metadata (5.0 kB)
+2026-10-22T10:38:52.7304043Z Collecting pygments>=2.7.2 (from pytest<9,>=8->metacom-pm==4.0.0)
+2026-10-22T10:38:52.7427331Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+2026-10-22T10:38:52.7671958Z Collecting joblib>=1.4.0 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-22T10:38:52.7795259Z   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+2026-10-22T10:38:52.8075457Z Collecting narwhals>=2.0.1 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-22T10:38:52.8198944Z   Downloading narwhals-2.27.1-py3-none-any.whl.metadata (15 kB)
+2026-10-22T10:38:52.8591297Z Collecting threadpoolctl>=3.5.0 (from scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-22T10:38:52.8713641Z   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+2026-10-22T10:38:53.0839460Z Collecting regex>=2022.1.18 (from tiktoken<0.13,>=0.12->metacom-pm==4.0.0)
+2026-10-22T10:38:53.0967364Z   Downloading regex-2026.9.29-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+2026-10-22T10:38:53.1013744Z Requirement already satisfied: sympy in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from torch<3,>=2.3->metacom-pm==4.0.0) (1.14.0)
+2026-10-22T10:38:53.1016022Z Requirement already satisfied: jinja2 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from torch<3,>=2.3->metacom-pm==4.0.0) (3.1.6)
+2026-10-22T10:38:53.1748619Z Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers<5,>=4.44->metacom-pm==4.0.0)
+2026-10-22T10:38:53.1872744Z   Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+2026-10-22T10:38:53.2806941Z Collecting safetensors>=0.4.3 (from transformers<5,>=4.44->metacom-pm==4.0.0)
+2026-10-22T10:38:53.2938064Z   Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+2026-10-22T10:38:53.3239833Z Collecting cloudpickle>=3.0 (from joblib>=1.4.0->scikit-learn<2,>=1.5->metacom-pm==4.0.0)
+2026-10-22T10:38:53.3362113Z   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+2026-10-22T10:38:53.3582870Z Collecting six>=1.6 (from python-dateutil>=2.8.2->pandas<3,>=2.2->metacom-pm==4.0.0)
+2026-10-22T10:38:53.3705111Z   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+2026-10-22T10:38:53.4380937Z Collecting charset_normalizer<4,>=2 (from requests->huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:53.4505157Z   Downloading charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (46 kB)
+2026-10-22T10:38:53.4755549Z Collecting urllib3<3,>=1.26 (from requests->huggingface-hub<1,>=0.24->metacom-pm==4.0.0)
+2026-10-22T10:38:53.4880839Z   Downloading urllib3-2.8.0-py3-none-any.whl.metadata (7.4 kB)
+2026-10-22T10:38:53.4965617Z Requirement already satisfied: MarkupSafe>=2.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from jinja2->torch<3,>=2.3->metacom-pm==4.0.0) (3.0.3)
+2026-10-22T10:38:53.4976011Z Requirement already satisfied: mpmath<1.4,>=1.1.0 in /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages (from sympy->torch<3,>=2.3->metacom-pm==4.0.0) (1.3.0)
+2026-10-22T10:38:53.5145894Z Downloading json_repair-0.52.4-py3-none-any.whl (26 kB)
+2026-10-22T10:38:53.5281439Z Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+2026-10-22T10:38:53.5424266Z Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+2026-10-22T10:38:53.5567542Z Downloading huggingface_hub-0.36.2-py3-none-any.whl (566 kB)
+2026-10-22T10:38:53.5745331Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 566.4/566.4 kB 57.9 MB/s  0:00:00
+2026-10-22T10:38:53.5868320Z Downloading hf_xet-1.7.0-cp38-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+2026-10-22T10:38:53.6520135Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.2/4.2 MB 63.0 MB/s  0:00:00
+2026-10-22T10:38:53.6643172Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-22T10:38:53.6781238Z Downloading numpy-2.4.6-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+2026-10-22T10:38:53.7936753Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.9/16.9 MB 145.8 MB/s  0:00:00
+2026-10-22T10:38:53.8062197Z Downloading pandas-2.3.3-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.8 MB)
+2026-10-22T10:38:53.9195103Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.8/12.8 MB 112.2 MB/s  0:00:00
+2026-10-22T10:38:53.9321793Z Downloading pydantic-2.14.1-py3-none-any.whl (488 kB)
+2026-10-22T10:38:53.9465702Z Downloading pydantic_core-2.50.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.2 MB)
+2026-10-22T10:38:53.9596790Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.2/2.2 MB 159.7 MB/s  0:00:00
+2026-10-22T10:38:53.9719625Z Downloading pytest-8.4.2-py3-none-any.whl (365 kB)
+2026-10-22T10:38:53.9860590Z Downloading pluggy-1.7.0-py3-none-any.whl (27 kB)
+2026-10-22T10:38:54.0004365Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2026-10-22T10:38:54.0038157Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 247.5 MB/s  0:00:00
+2026-10-22T10:38:54.0161578Z Downloading scikit_learn-1.9.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.3 MB)
+2026-10-22T10:38:54.0900059Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.3/9.3 MB 124.8 MB/s  0:00:00
+2026-10-22T10:38:54.1024356Z Downloading scipy-1.17.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+2026-10-22T10:38:54.3623495Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 135.8 MB/s  0:00:00
+2026-10-22T10:38:54.3749170Z Downloading tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl (1.2 MB)
+2026-10-22T10:38:54.3789315Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 316.9 MB/s  0:00:00
+2026-10-22T10:38:54.3912979Z Downloading transformers-4.57.6-py3-none-any.whl (12.0 MB)
+2026-10-22T10:38:54.4759149Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.0/12.0 MB 140.8 MB/s  0:00:00
+2026-10-22T10:38:54.4882713Z Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+2026-10-22T10:38:54.5049904Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.3/3.3 MB 194.3 MB/s  0:00:00
+2026-10-22T10:38:54.5173230Z Downloading annotated_types-0.8.0-py3-none-any.whl (13 kB)
+2026-10-22T10:38:54.5308680Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-22T10:38:54.5445715Z Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+2026-10-22T10:38:54.5696003Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+2026-10-22T10:38:54.5830300Z Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+2026-10-22T10:38:54.5969960Z Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+2026-10-22T10:38:54.6104645Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-22T10:38:54.6241124Z Downloading narwhals-2.27.1-py3-none-any.whl (483 kB)
+2026-10-22T10:38:54.6269694Z Using cached packaging-26.3-py3-none-any.whl (129 kB)
+2026-10-22T10:38:54.6392476Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+2026-10-22T10:38:54.6435925Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 321.3 MB/s  0:00:00
+2026-10-22T10:38:54.6560476Z Downloading python_dateutil-3.0.0-py2.py3-none-any.whl (94 kB)
+2026-10-22T10:38:54.6699791Z Downloading pytz-2026.5-py2.py3-none-any.whl (506 kB)
+2026-10-22T10:38:54.6843045Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-22T10:38:54.6978723Z Downloading regex-2026.9.29-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (804 kB)
+2026-10-22T10:38:54.7013411Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 805.0/805.0 kB 258.0 MB/s  0:00:00
+2026-10-22T10:38:54.7136626Z Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+2026-10-22T10:38:54.7274129Z Downloading charset_normalizer-3.5.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (269 kB)
+2026-10-22T10:38:54.7411618Z Downloading idna-3.20-py3-none-any.whl (69 kB)
+2026-10-22T10:38:54.7692566Z Downloading urllib3-2.8.0-py3-none-any.whl (135 kB)
+2026-10-22T10:38:54.7828734Z Downloading certifi-2026.10.19-py3-none-any.whl (136 kB)
+2026-10-22T10:38:54.7965128Z Downloading rpds_py-2026.9.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (375 kB)
+2026-10-22T10:38:54.8107894Z Downloading safetensors-0.8.0-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (516 kB)
+2026-10-22T10:38:54.8250082Z Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+2026-10-22T10:38:54.8384413Z Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+2026-10-22T10:38:54.8518800Z Downloading tqdm-4.70.1-py3-none-any.whl (80 kB)
+2026-10-22T10:38:54.8653781Z Downloading typing_inspection-0.4.4-py3-none-any.whl (14 kB)
+2026-10-22T10:38:54.8788342Z Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+2026-10-22T10:38:54.8928298Z Downloading anyio-4.15.1-py3-none-any.whl (132 kB)
+2026-10-22T10:38:55.0385234Z Building wheels for collected packages: metacom-pm
+2026-10-22T10:38:55.0390567Z   Building editable for metacom-pm (pyproject.toml): started
+2026-10-22T10:38:55.1722130Z   Building editable for metacom-pm (pyproject.toml): finished with status 'done'
+2026-10-22T10:38:55.1725893Z   Created wheel for metacom-pm: filename=metacom_pm-4.0.0-0.editable-py3-none-any.whl size=1611 sha256=9098edda02208185c3a7c3b49c2d5ffa4d2f8ac2a9e2153b2e8555b2c780b3d6
+2026-10-22T10:38:55.1727089Z   Stored in directory: /tmp/pip-ephem-wheel-cache-z0uc9xrn/wheels/1e/db/48/50e91fb647de66ece34589fef8920d01f616b9079151904eda
+2026-10-22T10:38:55.1735860Z Successfully built metacom-pm
+2026-10-22T10:38:55.2464446Z Installing collected packages: pytz, urllib3, tzdata, typing-inspection, tqdm, threadpoolctl, six, safetensors, rpds-py, regex, PyYAML, pygments, pydantic-core, pluggy, packaging, numpy, narwhals, json-repair, iniconfig, idna, hf-xet, h11, cloudpickle, charset_normalizer, certifi, attrs, annotated-types, scipy, requests, referencing, python-dateutil, pytest, pydantic, joblib, httpcore, anyio, tiktoken, scikit-learn, pandas, jsonschema-specifications, huggingface-hub, httpx, tokenizers, jsonschema, transformers, metacom-pm
+2026-10-22T10:39:07.7199813Z 
+2026-10-22T10:39:07.7215346Z Successfully installed PyYAML-6.0.3 annotated-types-0.8.0 anyio-4.15.1 attrs-26.1.0 certifi-2026.10.19 charset_normalizer-3.5.2 cloudpickle-3.1.2 h11-0.16.0 hf-xet-1.7.0 httpcore-1.0.9 httpx-0.28.1 huggingface-hub-0.36.2 idna-3.20 iniconfig-2.3.1 joblib-1.6.0 json-repair-0.52.4 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 metacom-pm-4.0.0 narwhals-2.27.1 numpy-2.4.6 packaging-26.3 pandas-2.3.3 pluggy-1.7.0 pydantic-2.14.1 pydantic-core-2.50.1 pygments-2.21.0 pytest-8.4.2 python-dateutil-3.0.0 pytz-2026.5 referencing-0.37.0 regex-2026.9.29 requests-2.34.2 rpds-py-2026.9.1 safetensors-0.8.0 scikit-learn-1.9.1 scipy-1.17.1 six-1.17.0 threadpoolctl-3.7.0 tiktoken-0.12.0 tokenizers-0.22.2 tqdm-4.70.1 transformers-4.57.6 typing-inspection-0.4.4 tzdata-2026.5 urllib3-2.8.0
+2026-10-22T10:39:07.7222489Z 
+2026-10-22T10:39:07.7222715Z [notice] A new release of pip is available: 26.2.1 -> 26.2.2
+2026-10-22T10:39:07.7222942Z [notice] To update, run: pip install --upgrade pip
+2026-10-22T10:39:07.8831200Z ##[group]Run python -m compileall -q src scripts tests
+2026-10-22T10:39:07.8831456Z [36;1mpython -m compileall -q src scripts tests[0m
+2026-10-22T10:39:07.8871814Z shell: /usr/bin/bash -e {0}
+2026-10-22T10:39:07.8871940Z env:
+2026-10-22T10:39:07.8872049Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:39:07.8872206Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:07.8872426Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-22T10:39:07.8872645Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:07.8872841Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:07.8873035Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:07.8873233Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-22T10:39:07.8873401Z ##[endgroup]
+2026-10-22T10:39:09.5861398Z ##[group]Run pytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py
+2026-10-22T10:39:09.5861698Z [36;1mpytest -q -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py[0m
+2026-10-22T10:39:09.5902846Z shell: /usr/bin/bash -e {0}
+2026-10-22T10:39:09.5903129Z env:
+2026-10-22T10:39:09.5903238Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:39:09.5903392Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:09.5903614Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-22T10:39:09.5903833Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:09.5904027Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:09.5904220Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:39:09.5904416Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-22T10:39:09.5904582Z ##[endgroup]
+2026-10-22T10:39:44.2009581Z ........................................................................ [  4%]
+2026-10-22T10:39:44.2528079Z ........................................................................ [  9%]
+2026-10-22T10:40:52.2907860Z ........................................................................ [ 13%]
+2026-10-22T10:40:52.7103840Z ........................................................................ [ 18%]
+2026-10-22T10:41:08.2641212Z ........................................................................ [ 23%]
+2026-10-22T10:41:34.8435613Z ........................................................................ [ 27%]
+2026-10-22T10:41:34.8873768Z ........................................................................ [ 32%]
+2026-10-22T10:41:45.8815927Z ...........................................s............................ [ 36%]
+2026-10-22T10:41:45.9321547Z ........................................................................ [ 41%]
+2026-10-22T10:41:48.8512480Z ........................................................................ [ 46%]
+2026-10-22T10:42:13.9456292Z ........................................................................ [ 50%]
+2026-10-22T10:42:15.8553663Z ........................................................................ [ 55%]
+2026-10-22T10:42:15.9351460Z ........................................................................ [ 60%]
+2026-10-22T10:42:16.0716242Z ........................................................................ [ 64%]
+2026-10-22T10:42:21.5561545Z ................................ssss.................................... [ 69%]
+2026-10-22T10:42:22.8394112Z ........................................................................ [ 73%]
+2026-10-22T10:42:22.8739213Z .....................sssssssssssssssss...sssssssssssssssssssssssss...... [ 78%]
+2026-10-22T10:42:23.3773035Z ........................................................................ [ 83%]
+2026-10-22T10:42:33.0621914Z ........................................................................ [ 87%]
+2026-10-22T10:42:33.0998710Z .................ssssssssssssssssssssssssssssssss....................... [ 92%]
+2026-10-22T10:42:33.6352661Z ...................................sssssssssss.......................... [ 97%]
+2026-10-22T10:42:35.2629353Z ssssssssssss......ssssssssssssssssssssssssssss                           [100%]
+2026-10-22T10:42:35.8094769Z ##[group]Run python scripts/paper1/00_validate_integration_base.py
+2026-10-22T10:42:35.8095048Z [36;1mpython scripts/paper1/00_validate_integration_base.py[0m
+2026-10-22T10:42:35.8137433Z shell: /usr/bin/bash -e {0}
+2026-10-22T10:42:35.8137563Z env:
+2026-10-22T10:42:35.8137674Z   PYTHONNOUSERSITE: 1
+2026-10-22T10:42:35.8137831Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:42:35.8138055Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+2026-10-22T10:42:35.8138275Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:42:35.8138472Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:42:35.8138667Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+2026-10-22T10:42:35.8138869Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+2026-10-22T10:42:35.8139041Z ##[endgroup]
+2026-10-22T10:42:36.1337702Z {
+2026-10-22T10:42:36.1338182Z   "protocol": "pm-paper1-integration-base-validation-v1",
+2026-10-22T10:42:36.1338919Z   "status": "PASS",
+2026-10-22T10:42:36.1339093Z   "checks": {
+2026-10-22T10:42:36.1339261Z     "outcome_lock": true,
+2026-10-22T10:42:36.1339484Z     "highest_precedence_reconciliation": true,
+2026-10-22T10:42:36.1339764Z     "latency_constrained_policy_scoped_override": true,
+2026-10-22T10:42:36.1340046Z     "binary_benefit_scope_and_api_hard_cap": true,
+2026-10-22T10:42:36.1340355Z     "effect_action_latency_contracts_present_pre_outcome": true,
+2026-10-22T10:42:36.1340687Z     "pairwise_teacher_reference_generation_ready": true,
+2026-10-22T10:42:36.1340999Z     "human_reference_v2_evidence_and_identity_bound": true,
+2026-10-22T10:42:36.1341289Z     "active_generator_selection_binding": true,
+2026-10-22T10:42:36.1341543Z     "private_ledgers_not_committed": true,
+2026-10-22T10:42:36.1341776Z     "es_memeval_artifact_hash": true,
+2026-10-22T10:42:36.1341999Z     "es_memeval_1427_identity": true,
+2026-10-22T10:42:36.1342231Z     "es_memeval_identity_is_text_free": true,
+2026-10-22T10:42:36.1342474Z     "esc_eval_overlap_identity": true,
+2026-10-22T10:42:36.1342726Z     "active_namespace_forbidden_tokens_absent": true,
+2026-10-22T10:42:36.1343025Z     "active_namespace_legacy_prompt_imports_absent": true,
+2026-10-22T10:42:36.1343303Z     "active_multi_view_ontology": true,
+2026-10-22T10:42:36.1343561Z     "active_multi_view_401_zero_outcome_preflight": true,
+2026-10-22T10:42:36.1343841Z     "active_multi_view_401_live_authorization": true,
+2026-10-22T10:42:36.1344092Z     "active_multi_view_401_closeout": true,
+2026-10-22T10:42:36.1344348Z     "multi_view_401_runtime_identity_uniformity": true,
+2026-10-22T10:42:36.1344625Z     "active_multi_view_target_candidate_census": true,
+2026-10-22T10:42:36.1344890Z     "paper1_visible_state_contract_ready": true,
+2026-10-22T10:42:36.1345157Z     "paper1_step2_delivery_contract_ready": true,
+2026-10-22T10:42:36.1345457Z     "active_multi_view_bge_packing_authority_selected": true,
+2026-10-22T10:42:36.1345762Z     "active_multi_view_bge_and_packing_surface": true,
+2026-10-22T10:42:36.1346218Z     "generator_backend_retirement_and_local_pilot": true,
+2026-10-22T10:42:36.1346495Z     "official_dg_simulator_and_cost_surface": true,
+2026-10-22T10:42:36.1346764Z     "official_dg_cost_bounded_execution_policy": true,
+2026-10-22T10:42:36.1347042Z     "official_mistral24b_local_backend_evidence": true,
+2026-10-22T10:42:36.1347301Z     "full_pipeline_latency_pilot": true,
+2026-10-22T10:42:36.1347557Z     "local_generator_termination_initial_audit": true,
+2026-10-22T10:42:36.1347846Z     "natural_turn_zero_outcome_sample_proposal": true
+2026-10-22T10:42:36.1348085Z   },
+2026-10-22T10:42:36.1348235Z   "failed_checks": [],
+2026-10-22T10:42:36.1348408Z   "outcome_calls": 0
+2026-10-22T10:42:36.1348573Z }
+2026-10-22T10:42:36.1909954Z Post job cleanup.
+2026-10-22T10:42:36.2639702Z (node:2359) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-22T10:42:36.2640269Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-22T10:42:36.2756479Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/Metacom5_3/Metacom5_3 --files-from manifest.txt --use-compress-program zstdmt
+2026-10-22T10:42:36.7172657Z (node:2359) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-22T10:42:37.7092294Z Sent 38026961 of 306462417 (12.4%), 36.2 MBs/sec
+2026-10-22T10:42:37.9439558Z Sent 306462417 of 306462417 (100.0%), 236.7 MBs/sec
+2026-10-22T10:42:38.1673524Z Cache saved with the key: setup-python-Linux-x64-24.04-Ubuntu-python-3.11.17-pip-c91dacf37b0ce9a42378841d216e86456836d296d8459cd0eeee957eb4521c95
+2026-10-22T10:42:38.2233639Z Post job cleanup.
+2026-10-22T10:42:38.2777915Z [command]/usr/bin/git version
+2026-10-22T10:42:38.2810353Z git version 2.55.0
+2026-10-22T10:42:38.2834319Z Temporarily overriding HOME='/home/runner/work/_temp/59949cea-fa9e-4906-bc69-fafe3015a4fa' before making global git config changes
+2026-10-22T10:42:38.2835182Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-22T10:42:38.2838141Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Metacom5_3/Metacom5_3
+2026-10-22T10:42:38.2868978Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-22T10:42:38.2895615Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-22T10:42:38.3094288Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-22T10:42:38.3120348Z http.https://github.com/.extraheader
+2026-10-22T10:42:38.3131570Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-22T10:42:38.3162729Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-22T10:42:38.3364281Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-22T10:42:38.3399929Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-22T10:42:38.3701168Z Cleaning up orphan processes
+2026-10-22T10:42:38.3907340Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+

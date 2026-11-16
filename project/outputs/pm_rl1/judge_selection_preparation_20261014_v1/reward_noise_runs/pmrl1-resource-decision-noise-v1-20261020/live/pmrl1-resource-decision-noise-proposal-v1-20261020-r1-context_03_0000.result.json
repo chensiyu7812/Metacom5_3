@@ -1,0 +1,522 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r1-context_03_0000",
+  "request_identity": "1502c601f17146877f9fb3ecb5540c41175fd8e5058ae370b3873857004414e9",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The seeker has just shared that chatting with an old college friend gave her a helpful different perspective on her thesis; this turn calls for acknowledgment and a relevant, non-intrusive follow-up.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T013",
+          "C:T009",
+          "C:T005",
+          "C:T003"
+        ],
+        "reason": "The reply appropriately acknowledges the reported help, reflects the friend's supportive role without taking over the friend's identity, and asks a specific but open question that connects the fresh perspective to the thesis context. It does not assert a completed outcome or invent personal experience."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an evaluative acknowledgment of the seeker's report, not a personal factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T005",
+            "C:T009",
+            "C:T013"
+          ],
+          "reason": "The seeker described an old college friend who reminded her of her work and capability and helped her see the thesis from a different perspective. The reflective statement is thus grounded, with 'entire outlook' functioning as a general/rhetorical phrase rather than a claimed completed outcome."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T003",
+            "C:T009",
+            "C:T013",
+            "H009:T004"
+          ],
+          "reason": "The question's presuppositions—that the friend offered insights and that the advisor had raised concerns—are supported by the seeker's current report and earlier session details. The question remains tentative and does not assert that the friend's insights resolved those concerns."
+        }
+      ],
+      "coverage": "Checked all three reply units against the full current prefix C:T000–C:T013 and complete legal past sessions H001–H012. No future user reaction was used.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "bd93fb68aa9d99e99f8e932c8ffddfc70d66919ee26d20efc368a347836b6ea3",
+      "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r1-context_03_0000",
+      "raw_output_sha256": "cd765ca3b699096c4b144354408de2340132d64bee458dcc8c53af818078e06c",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker has just shared that chatting with an old college friend gave her a helpful different perspective on her thesis; this turn calls for acknowledgment and a relevant, non-intrusive follow-up.",
+          "response_quote": "That sounds incredibly helpful. It's amazing how a fresh perspective from someone who knows you well can shift your entire outlook on a challenging situation like your thesis. Did you find that their insights specifically addressed any of the concerns your advisor raised, or was it more about how you were approaching the work?",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+            },
+            {
+              "source_id": "C:T003",
+              "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+            }
+          ],
+          "reason": "The reply appropriately acknowledges the reported help, reflects the friend's supportive role without taking over the friend's identity, and asks a specific but open question that connects the fresh perspective to the thesis context. It does not assert a completed outcome or invent personal experience."
+        },
+        "claims": [
+          {
+            "response_quote": "It's amazing how a fresh perspective from someone who knows you well can shift your entire outlook on a challenging situation like your thesis.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T005",
+                "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+              },
+              {
+                "source_id": "C:T013",
+                "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+              }
+            ],
+            "reason": "The seeker described an old college friend who reminded her of her work and capability and helped her see the thesis from a different perspective. The reflective statement is thus grounded, with 'entire outlook' functioning as a general/rhetorical phrase rather than a claimed completed outcome."
+          },
+          {
+            "response_quote": "Did you find that their insights specifically addressed any of the concerns your advisor raised, or was it more about how you were approaching the work?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T003",
+                "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+              },
+              {
+                "source_id": "C:T013",
+                "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+              },
+              {
+                "source_id": "H009:T004",
+                "quote": "He said that my arguments weren't strong enough and that my writing style was too simplistic. It made me feel like I'm not cut out for this."
+              }
+            ],
+            "reason": "The question's presuppositions—that the friend offered insights and that the advisor had raised concerns—are supported by the seeker's current report and earlier session details. The question remains tentative and does not assert that the friend's insights resolved those concerns."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all three reply units against the full current prefix C:T000–C:T013 and complete legal past sessions H001–H012. No future user reaction was used.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds incredibly helpful. It's amazing how a fresh perspective from someone who knows you well can shift your entire outlook on a challenging situation like your thesis. Did you find that their insights specifically addressed any of the concerns your advisor raised, or was it more about how you were approaching the work?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 328
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 151
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T003",
+          "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 137
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It's amazing how a fresh perspective from someone who knows you well can shift your entire outlook on a challenging situation like your thesis.",
+          "positions": [
+            {
+              "start": 32,
+              "end": 175
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 151
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "Did you find that their insights specifically addressed any of the concerns your advisor raised, or was it more about how you were approaching the work?",
+          "positions": [
+            {
+              "start": 176,
+              "end": 328
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T003",
+          "quote": "Sure. You remember how I was stressed about my thesis? Well, my advisor's feedback was tough, but I actually got some unexpected support.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 137
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 151
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "H009:T004",
+          "quote": "He said that my arguments weren't strong enough and that my writing style was too simplistic. It made me feel like I'm not cut out for this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 140
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker has just shared that chatting with an old college friend gave her a helpful different perspective on her thesis; this turn calls for acknowledgment and a relevant, non-intrusive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T009",
+            "C:T005",
+            "C:T003"
+          ],
+          "reason": "The reply appropriately acknowledges the reported help, reflects the friend's supportive role without taking over the friend's identity, and asks a specific but open question that connects the fresh perspective to the thesis context. It does not assert a completed outcome or invent personal experience."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T009",
+              "C:T013"
+            ],
+            "reason": "The seeker described an old college friend who reminded her of her work and capability and helped her see the thesis from a different perspective. The reflective statement is thus grounded, with 'entire outlook' functioning as a general/rhetorical phrase rather than a claimed completed outcome."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T009",
+              "C:T013",
+              "H009:T004"
+            ],
+            "reason": "The question's presuppositions—that the friend offered insights and that the advisor had raised concerns—are supported by the seeker's current report and earlier session details. The question remains tentative and does not assert that the friend's insights resolved those concerns."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all three reply units against the full current prefix C:T000–C:T013 and complete legal past sessions H001–H012. No future user reaction was used.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker has just shared that chatting with an old college friend gave her a helpful different perspective on her thesis; this turn calls for acknowledgment and a relevant, non-intrusive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T009",
+            "C:T005",
+            "C:T003"
+          ],
+          "reason": "The reply appropriately acknowledges the reported help, reflects the friend's supportive role without taking over the friend's identity, and asks a specific but open question that connects the fresh perspective to the thesis context. It does not assert a completed outcome or invent personal experience."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an evaluative acknowledgment of the seeker's report, not a personal factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T009",
+              "C:T013"
+            ],
+            "reason": "The seeker described an old college friend who reminded her of her work and capability and helped her see the thesis from a different perspective. The reflective statement is thus grounded, with 'entire outlook' functioning as a general/rhetorical phrase rather than a claimed completed outcome.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T009",
+              "C:T013",
+              "H009:T004"
+            ],
+            "reason": "The question's presuppositions—that the friend offered insights and that the advisor had raised concerns—are supported by the seeker's current report and earlier session details. The question remains tentative and does not assert that the friend's insights resolved those concerns.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "Checked all three reply units against the full current prefix C:T000–C:T013 and complete legal past sessions H001–H012. No future user reaction was used.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker has just shared that chatting with an old college friend gave her a helpful different perspective on her thesis; this turn calls for acknowledgment and a relevant, non-intrusive follow-up.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T009",
+            "C:T005",
+            "C:T003"
+          ],
+          "reason": "The reply appropriately acknowledges the reported help, reflects the friend's supportive role without taking over the friend's identity, and asks a specific but open question that connects the fresh perspective to the thesis context. It does not assert a completed outcome or invent personal experience."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an evaluative acknowledgment of the seeker's report, not a personal factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T009",
+              "C:T013"
+            ],
+            "reason": "The seeker described an old college friend who reminded her of her work and capability and helped her see the thesis from a different perspective. The reflective statement is thus grounded, with 'entire outlook' functioning as a general/rhetorical phrase rather than a claimed completed outcome."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T003",
+              "C:T009",
+              "C:T013",
+              "H009:T004"
+            ],
+            "reason": "The question's presuppositions—that the friend offered insights and that the advisor had raised concerns—are supported by the seeker's current report and earlier session details. The question remains tentative and does not assert that the friend's insights resolved those concerns."
+          }
+        ],
+        "coverage": "Checked all three reply units against the full current prefix C:T000–C:T013 and complete legal past sessions H001–H012. No future user reaction was used.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "cd765ca3b699096c4b144354408de2340132d64bee458dcc8c53af818078e06c",
+      "adapted_final_sha256": "cd765ca3b699096c4b144354408de2340132d64bee458dcc8c53af818078e06c",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0093741",
+    "usage_upper_usd": "0.0093741",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 15755,
+    "completion_tokens": 3873,
+    "total_tokens": 19628,
+    "prompt_tokens_details": {
+      "cached_tokens": 15360
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3433
+    },
+    "prompt_cache_hit_tokens": 15360,
+    "prompt_cache_miss_tokens": 395
+  },
+  "elapsed_seconds": 20.0555465619982,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

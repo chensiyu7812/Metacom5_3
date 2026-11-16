@@ -1,0 +1,326 @@
+{
+  "response_sha256": "e09b8910635664c9371671e432d0b535f465aab30489d226ee61363a708964cd",
+  "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "26f01e4e87cad9b5fbee59c189c1392ef2250a4bea48802db924da88f6d677d5",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Respond to the seeker's report of new coping strategies (yoga and reading) following a discussion about workplace stress, relationship anxiety, and caring for a struggling friend.",
+      "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+      "evidence": [
+        {
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+        },
+        {
+          "source_id": "C:T004",
+          "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work."
+        },
+        {
+          "source_id": "C:T014",
+          "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping."
+        }
+      ],
+      "reason": "The reply fully validates the user's coping methods and coherently links them to the salient stressors identified in the current session (new relationship, friend's struggle). It respects boundaries, avoids factual errors, and provides a thoughtful closing question that deepens the reflection without imposing extra tasks."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T018",
+            "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+          }
+        ],
+        "reason": "Accurately reflects the user's disclosure in C:T018 regarding yoga and reading as ways to unwind and manage stress."
+      },
+      {
+        "response_quote": "How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T004",
+            "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work."
+          },
+          {
+            "source_id": "C:T014",
+            "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping."
+          }
+        ],
+        "reason": "The question correctly references the active topics of stress stemming from the new relationship (C:T004) and the friend's struggles (C:T014) established in the session history."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the user's specific coping mechanisms and integrates them with the broader emotional context of the session (relationship anxiety and friend's well-being).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you've found some healthy ways to manage stress and unwind. Yoga and reading can be great tools for calming the mind and finding some peace. How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 280
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 147
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 120
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you've found some healthy ways to manage stress and unwind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 74
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "How do you think these activities have helped you cope with the stress of your new relationship and your friend's struggles?",
+      "positions": [
+        {
+          "start": 156,
+          "end": 280
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T004",
+      "quote": "I'm feeling a mix of excitement and worry. It's great to be with someone I connect with, but I'm also scared about how things might change at work.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 147
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T014",
+      "quote": "My friend is still struggling, which has been hard to watch. I've been trying to be there for them without overstepping.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 120
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Respond to the seeker's report of new coping strategies (yoga and reading) following a discussion about workplace stress, relationship anxiety, and caring for a struggling friend.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T018",
+        "C:T004",
+        "C:T014"
+      ],
+      "reason": "The reply fully validates the user's coping methods and coherently links them to the salient stressors identified in the current session (new relationship, friend's struggle). It respects boundaries, avoids factual errors, and provides a thoughtful closing question that deepens the reflection without imposing extra tasks."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Accurately reflects the user's disclosure in C:T018 regarding yoga and reading as ways to unwind and manage stress."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004",
+          "C:T014"
+        ],
+        "reason": "The question correctly references the active topics of stress stemming from the new relationship (C:T004) and the friend's struggles (C:T014) established in the session history."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the user's specific coping mechanisms and integrates them with the broader emotional context of the session (relationship anxiety and friend's well-being).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Respond to the seeker's report of new coping strategies (yoga and reading) following a discussion about workplace stress, relationship anxiety, and caring for a struggling friend.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T018",
+        "C:T004",
+        "C:T014"
+      ],
+      "reason": "The reply fully validates the user's coping methods and coherently links them to the salient stressors identified in the current session (new relationship, friend's struggle). It respects boundaries, avoids factual errors, and provides a thoughtful closing question that deepens the reflection without imposing extra tasks."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Accurately reflects the user's disclosure in C:T018 regarding yoga and reading as ways to unwind and manage stress.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic affirmation of the benefits of yoga and reading, which is appropriate and does not constitute a factual claim requiring verification.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004",
+          "C:T014"
+        ],
+        "reason": "The question correctly references the active topics of stress stemming from the new relationship (C:T004) and the friend's struggles (C:T014) established in the session history.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the user's specific coping mechanisms and integrates them with the broader emotional context of the session (relationship anxiety and friend's well-being).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Respond to the seeker's report of new coping strategies (yoga and reading) following a discussion about workplace stress, relationship anxiety, and caring for a struggling friend.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T018",
+        "C:T004",
+        "C:T014"
+      ],
+      "reason": "The reply fully validates the user's coping methods and coherently links them to the salient stressors identified in the current session (new relationship, friend's struggle). It respects boundaries, avoids factual errors, and provides a thoughtful closing question that deepens the reflection without imposing extra tasks."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "Accurately reflects the user's disclosure in C:T018 regarding yoga and reading as ways to unwind and manage stress."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic affirmation of the benefits of yoga and reading, which is appropriate and does not constitute a factual claim requiring verification."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004",
+          "C:T014"
+        ],
+        "reason": "The question correctly references the active topics of stress stemming from the new relationship (C:T004) and the friend's struggles (C:T014) established in the session history."
+      }
+    ],
+    "coverage": "Addresses the user's specific coping mechanisms and integrates them with the broader emotional context of the session (relationship anxiety and friend's well-being).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

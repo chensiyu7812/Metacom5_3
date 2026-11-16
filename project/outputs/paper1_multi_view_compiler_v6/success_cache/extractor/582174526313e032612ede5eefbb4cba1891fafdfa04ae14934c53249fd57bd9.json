@@ -1,0 +1,231 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v6",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 5760,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2869,
+      "reserved_prompt_tokens": 2997,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 638
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "f5fcfddc52371ba5117238e7a9115bbcb94027f3ffd266185a3b304dae01a209",
+    "prior_profile_sha256": "f537a98d83556aa9aee88b4164f88e4b64de77cee74f2c489d32d2b835416772",
+    "request_payload_sha256": "28199c702cf03f96f2c5a90328353fe30c441ec0c8f723a088764c1de1e4180c"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p1",
+      "s": "p1_conv_12",
+      "p": [
+        {
+          "i": "p1_p_001",
+          "k": "emotionally_significant_person_hospitalization_status",
+          "t": "durable_health_constraint",
+          "v": "Mark hospitalized due to mental health crisis",
+          "s": [
+            {
+              "i": "p1_conv_12:3"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_002",
+          "k": "seeker_emotional_state_regarding_friend_crisis",
+          "t": "enduring_preference",
+          "v": "feels helpless and worried about Mark",
+          "s": [
+            {
+              "i": "p1_conv_12:3"
+            },
+            {
+              "i": "p1_conv_12:5"
+            },
+            {
+              "i": "p1_conv_12:17"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_003",
+          "k": "friend_hospitalization_communication_avoidance_reason",
+          "t": "enduring_preference",
+          "v": "afraid of overwhelming or upsetting Mark by talking",
+          "s": [
+            {
+              "i": "p1_conv_12:7"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_004",
+          "k": "current_stress_accumulation_perception",
+          "t": "transient_state",
+          "v": "multiple stressors piling up including work issues and anxiety increase",
+          "s": [
+            {
+              "i": "p1_conv_12:9"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_005",
+          "k": "painting_hobby_usage_frequency",
+          "t": "enduring_interest",
+          "v": "using painting as coping strategy, provides temporary relief",
+          "s": [
+            {
+              "i": "p1_conv_12:11"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_006",
+          "k": "support_boundary_concern_in_friend_care",
+          "t": "enduring_preference",
+          "v": "wants to support Mark without losing oneself in the process",
+          "s": [
+            {
+              "i": "p1_conv_12:13"
+            }
+          ]
+        },
+        {
+          "i": "p1_p_007",
+          "k": "planned_action_toward_friend_communication",
+          "t": "durable_boundary",
+          "v": "plans to reach out to Mark to check on him and discuss sustainable contact",
+          "s": [
+            {
+              "i": "p1_conv_12:15"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p1_e_001",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "Mark was hospitalized due to a mental health crisis",
+          "s": [
+            {
+              "i": "p1_conv_12:3"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_002",
+          "t": "meaningful_experience",
+          "z": "ongoing_stage",
+          "n": "seeker feels overwhelmed by accumulating stress from friend's hospitalization, work issues, and rising anxiety",
+          "s": [
+            {
+              "i": "p1_conv_12:9"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_003",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "seeker uses painting as a therapeutic outlet based on therapist's suggestion",
+          "s": [
+            {
+              "i": "p1_conv_12:11"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_004",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "seeker delayed communication with hospitalized friend due to fear of causing emotional burden",
+          "s": [
+            {
+              "i": "p1_conv_12:7"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_005",
+          "t": "coping_attempt",
+          "z": "planned",
+          "n": "seeker plans to initiate contact with Mark to assess his state and establish balanced communication",
+          "s": [
+            {
+              "i": "p1_conv_12:15"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_006",
+          "t": "support_experience",
+          "z": "ongoing_stage",
+          "n": "seeker receives emotional validation and encouragement from supporter during distress",
+          "s": [
+            {
+              "i": "p1_conv_12:4"
+            },
+            {
+              "i": "p1_conv_12:6"
+            },
+            {
+              "i": "p1_conv_12:8"
+            },
+            {
+              "i": "p1_conv_12:10"
+            },
+            {
+              "i": "p1_conv_12:12"
+            },
+            {
+              "i": "p1_conv_12:14"
+            },
+            {
+              "i": "p1_conv_12:16"
+            },
+            {
+              "i": "p1_conv_12:18"
+            },
+            {
+              "i": "p1_conv_12:20"
+            }
+          ]
+        },
+        {
+          "i": "p1_e_007",
+          "t": "meaningful_experience",
+          "z": "ongoing_stage",
+          "n": "seeker struggles with feeling powerless while a loved one is suffering emotionally and physically",
+          "s": [
+            {
+              "i": "p1_conv_12:17"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "fba54e9b967e0fcd410f8649cab12488fa294fd523393a96568af4c1950ab7d9",
+    "usage": {
+      "prompt_tokens": 2871,
+      "completion_tokens": 1366,
+      "total_tokens": 4237
+    },
+    "latency_ms": 15473.597699980019,
+    "provider_finish_reason": "stop"
+  }
+}

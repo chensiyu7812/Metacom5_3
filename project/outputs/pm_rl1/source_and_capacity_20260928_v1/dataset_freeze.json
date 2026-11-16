@@ -1,0 +1,59 @@
+{
+  "protocol": "pm-rl1-source-grouped-benchmark-freeze-v1",
+  "status": "FROZEN_FOR_NEW_PARAMETER_EXPERIMENTS_WITH_PRIOR_EXPOSURE_DISCLOSED",
+  "split_counts": {
+    "dev": 18,
+    "train": 96,
+    "test": 48
+  },
+  "per_owner": {
+    "train": 8,
+    "dev": 6,
+    "test": 16
+  },
+  "owner_split_changed": false,
+  "artifacts": {
+    "prefixes_private.json": "d2dbfb018af3e41dabdeee5da22d4d72bddd83c28e886db0c8dbe3b28ebe2fd2",
+    "source_exposure_v2.json": "4ead10896bd4eee8d946da31988cf2644449b8e2ef1435a28f1254c9b050494a",
+    "capacity_probe.json": "685e0499875f46e10c8a606d754d0a48c59c1b4b403ff0cb3e86df64e8d18b7d",
+    "retrieval_manifest.json": "ac7d4317b819eb204481f998e633431a0cd6308b80894bfeb9cc20a1df9eddd7",
+    "additional_source_family_checks.json": "08add0f8110553ae22cb2d25764cd420a724e82f945c7d69b3e1f6d03da40732"
+  },
+  "resource_budget": 2048,
+  "decision": "retain original plan B; no outcome-based budget selection",
+  "capacity": {
+    "1024": {
+      "prefixes": 162,
+      "min": 16,
+      "median": 55.0,
+      "max": 65,
+      "total_feasible_plans": 8574,
+      "all_70_feasible": 0
+    },
+    "2048": {
+      "prefixes": 162,
+      "min": 16,
+      "median": 69.0,
+      "max": 70,
+      "total_feasible_plans": 10665,
+      "all_70_feasible": 2
+    },
+    "4096": {
+      "prefixes": 162,
+      "min": 16,
+      "median": 70.0,
+      "max": 70,
+      "total_feasible_plans": 11008,
+      "all_70_feasible": 138
+    }
+  },
+  "pilot_train_roster_contained": true,
+  "source_family_scope": "shared source session IDs, exact/whitespace-normalized complete transcripts and all later prefixes depending on them are grouped/quarantined; no claim of omniscient semantic-paraphrase detection",
+  "exposure_interpretation": "test denotes held out from new SFT/PM parameter fitting; 32/48 complete current sessions already appeared in old full-history reviews, others may have narrower fact exposure",
+  "do_not_claim": [
+    "sealed research-unseen test",
+    "new independent human confirmation already obtained",
+    "generalization to independent real users"
+  ],
+  "new_parameter_training_still_requires": "current-turn measurement contract readiness and executor-first phase order"
+}

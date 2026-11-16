@@ -1,0 +1,177 @@
+{
+  "response_sha256": "df8943d719de61e20d396cfd58b952b67c9f29a7a81b1fbb3e15397393167e9a",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "52d5133bb51c3c2b96f06bd620806b46f7a5f95c47581831417079fb134e43d5",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of hesitation to ask for help due to past trust issues and a suggestion to take a small step.",
+      "response_quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "evidence": [
+        {
+          "source_id": "C:T008",
+          "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too."
+        },
+        {
+          "source_id": "C:T010",
+          "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress."
+        },
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "The reply appropriately validates the user's expressed difficulty trusting others (C:T012) by acknowledging past hurt rooted in the colleague James situation (C:T008, C:T010). It offers perspective (strength vs weakness) and a low-pressure invitation (small step), matching the seeker's need for safety and support without crossing boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "It's tough to put yourself out there when you've been hurt before.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too."
+          },
+          {
+            "source_id": "C:T010",
+            "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress."
+          }
+        ],
+        "reason": "Asserts user has been 'hurt before', which is supported by the description of the falling out with colleague James (C:T008) and the sentiment of relying on someone who became a source of stress (C:T010)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the claim in R001 regarding prior interpersonal hurt against the narrative of the failing colleague relationship in C:T008 and C:T010. Verified that R002 and R003 remain within general supportive guidance without making unsupported factual assertions.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 266
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T010",
+      "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 95
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I’ve thought about maybe borrowing some money to fix it, but it adds stress. I just keep thinking about our colleague, James, and how the situation with them went sour too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T010",
+      "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 95
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of hesitation to ask for help due to past trust issues and a suggestion to take a small step.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T008",
+        "C:T010",
+        "C:T012"
+      ],
+      "reason": "The reply appropriately validates the user's expressed difficulty trusting others (C:T012) by acknowledging past hurt rooted in the colleague James situation (C:T008, C:T010). It offers perspective (strength vs weakness) and a low-pressure invitation (small step), matching the seeker's need for safety and support without crossing boundaries."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "C:T010"
+        ],
+        "reason": "Asserts user has been 'hurt before', which is supported by the description of the falling out with colleague James (C:T008) and the sentiment of relying on someone who became a source of stress (C:T010)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the claim in R001 regarding prior interpersonal hurt against the narrative of the failing colleague relationship in C:T008 and C:T010. Verified that R002 and R003 remain within general supportive guidance without making unsupported factual assertions.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

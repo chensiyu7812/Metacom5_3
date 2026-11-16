@@ -1,0 +1,120 @@
+{
+  "slot_id": "c5221eac89dc7fbb7ca3b350709fb43089d4141caa13d00bb03e6be2d743cae6",
+  "request_identity": "c54bcdd881e3776881f56dce8edb5a69c1fa3a0d0a933651a76340f14e576dbb",
+  "component": "extract",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "checked",
+      "claims": [
+        {
+          "claim_id": "C001",
+          "response_unit_id": "R001",
+          "response_quote": "things have been tough for you lately",
+          "claim_type": "assertion",
+          "subject": "seeker's recent experience",
+          "time": "lately",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The seeker explicitly says in the current prefix that things have been a bit tough lately."
+        },
+        {
+          "claim_id": "C002",
+          "response_unit_id": "R002",
+          "response_quote": "It sounds like you're going through a challenging time",
+          "claim_type": "tentative",
+          "subject": "seeker's current experience",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "This is a tentative paraphrase of the seeker's current report that things have been tough lately."
+        },
+        {
+          "claim_id": "C003",
+          "response_unit_id": "R002",
+          "response_quote": "especially when it comes to job hunting",
+          "claim_type": "presupposition",
+          "subject": "seeker's current difficulty as involving job hunting",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "unsupported",
+          "evidence": [],
+          "reason": "The full record contains no mention of job hunting. The current prefix only says things have been tough lately, and the legal past sessions mention sleeping problems and alcohol-related marital strain, not job hunting. This is absent support, not a disproof."
+        },
+        {
+          "claim_id": "C004",
+          "response_unit_id": "R003",
+          "response_quote": "what's specifically making things difficult right now",
+          "claim_type": "presupposition",
+          "subject": "seeker's current difficulty",
+          "time": "right now",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The seeker's current message supports that things are difficult now. The question invites elaboration about specifics rather than asserting a particular cause."
+        }
+      ],
+      "coverage": "Checked R001-R003. R001's empathy tracks the seeker's current report in C:T002. R002's general challenging-time inference is supported, but its job-hunting element has no support in the current prefix or legal past sessions. R003 is an invitation to talk, not an instruction to act; its presupposition of current difficulty is covered as supported.",
+      "uncertainty_reasons": []
+    },
+    "q": null,
+    "m": null,
+    "U": null,
+    "reward_eligible": false,
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "e0923b3701ab7660bf8996291f4fb0147c668d56bdb7c7597704f41006073539",
+      "adapted_final_sha256": "e0923b3701ab7660bf8996291f4fb0147c668d56bdb7c7597704f41006073539",
+      "interior_unchanged": true
+    }
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0059589",
+    "usage_upper_usd": "0.0059589",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 2523,
+    "completion_tokens": 4335,
+    "total_tokens": 6858,
+    "prompt_tokens_details": {
+      "cached_tokens": 384
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3797
+    },
+    "prompt_cache_hit_tokens": 384,
+    "prompt_cache_miss_tokens": 2139
+  },
+  "elapsed_seconds": 22.160895469947718,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "paired-source-check-v1-20261019",
+  "semantic_review_status": "pending_offline_source_review"
+}

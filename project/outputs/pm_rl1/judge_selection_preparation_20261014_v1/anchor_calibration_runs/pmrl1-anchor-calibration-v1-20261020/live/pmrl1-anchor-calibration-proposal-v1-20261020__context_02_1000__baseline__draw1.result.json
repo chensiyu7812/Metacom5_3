@@ -1,0 +1,423 @@
+{
+  "slot_id": "pmrl1-anchor-calibration-proposal-v1-20261020__context_02_1000__baseline__draw1",
+  "request_identity": "6504041b9887568ccd7ef53113a76bcf6f6a0772c79fe311bec8ac7ce335a04f",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The user asks how the previous supporter dealt with a similar situation, while expressing anger about their mother's disapproval of their friends.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T009",
+          "C:T007",
+          "C:T005"
+        ],
+        "reason": "The reply accurately reflects the conflict and anger and offers a relevant exploratory question about social support, but it does not address or even acknowledge the user's explicit question about how the previous supporter handled the same issue. A brief clarification that the assistant cannot speak for the prior supporter, plus an invitation to explore coping strategies, would have met the turn more fully; the pivot to asking about friends leaves an important explicit need unanswered."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "Empathic acknowledgment only; it makes no specific personal factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "Ordinary empathic reflection of the user's anger and frustration; 'choosing your own friends' reflects C:T007, but the sentence is framed as supportive understanding rather than a new personal fact."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The question's presuppositions that the user has friends and that the mother disapproves of their friend choices are supported by C:T007 ('kind of friends I should have' and 'freedom to choose my friends not her') and C:T005 ('never approves of most of the things I do'); the anger is explicitly stated in C:T009. The question itself does not assert a completed action."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "General supportive advice about sharing feelings with people who care; it asserts no user-specific fact."
+        }
+      ],
+      "coverage": "Reviewed all four reply units. The response contains no claim to have been the prior supporter or to have personally experienced the earlier supporter's situation. The main quality limitation is that R003 and the overall reply pivot to asking about friends rather than engaging with the user's direct question in C:T009 about how the prior supporter dealt with a similar conflict.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 0,
+    "U": 0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "614bf9883a6e2ecd503692fd7e390350663388a0a7a53af55f1b54dea8c9aafd",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-anchor-calibration-proposal-v1-20261020__context_02_1000__baseline__draw1",
+      "raw_output_sha256": "e370baec4b67af144f34a0af30e6bf01b81cf615c70c477480e69802bbc4c055",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user asks how the previous supporter dealt with a similar situation, while expressing anger about their mother's disapproval of their friends.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.\n\nSince you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them? Sometimes sharing those feelings with people who care about you can help lighten the load.",
+          "evidence": [
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "Yes. My mom never approves of most of the things I do."
+            }
+          ],
+          "reason": "The reply accurately reflects the conflict and anger and offers a relevant exploratory question about social support, but it does not address or even acknowledge the user's explicit question about how the previous supporter handled the same issue. A brief clarification that the assistant cannot speak for the prior supporter, plus an invitation to explore coping strategies, would have met the turn more fully; the pivot to asking about friends leaves an important explicit need unanswered."
+        },
+        "claims": [
+          {
+            "response_quote": "Since you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The question's presuppositions that the user has friends and that the mother disapproves of their friend choices are supported by C:T007 ('kind of friends I should have' and 'freedom to choose my friends not her') and C:T005 ('never approves of most of the things I do'); the anger is explicitly stated in C:T009. The question itself does not assert a completed action."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all four reply units. The response contains no claim to have been the prior supporter or to have personally experienced the earlier supporter's situation. The main quality limitation is that R003 and the overall reply pivot to asking about friends rather than engaging with the user's direct question in C:T009 about how the prior supporter dealt with a similar conflict.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.\n\nSince you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them? Sometimes sharing those feelings with people who care about you can help lighten the load.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 429
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "Since you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them?",
+          "positions": [
+            {
+              "start": 191,
+              "end": 338
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user asks how the previous supporter dealt with a similar situation, while expressing anger about their mother's disapproval of their friends.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T009",
+            "C:T007",
+            "C:T005"
+          ],
+          "reason": "The reply accurately reflects the conflict and anger and offers a relevant exploratory question about social support, but it does not address or even acknowledge the user's explicit question about how the previous supporter handled the same issue. A brief clarification that the assistant cannot speak for the prior supporter, plus an invitation to explore coping strategies, would have met the turn more fully; the pivot to asking about friends leaves an important explicit need unanswered."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The question's presuppositions that the user has friends and that the mother disapproves of their friend choices are supported by C:T007 ('kind of friends I should have' and 'freedom to choose my friends not her') and C:T005 ('never approves of most of the things I do'); the anger is explicitly stated in C:T009. The question itself does not assert a completed action."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all four reply units. The response contains no claim to have been the prior supporter or to have personally experienced the earlier supporter's situation. The main quality limitation is that R003 and the overall reply pivot to asking about friends rather than engaging with the user's direct question in C:T009 about how the prior supporter dealt with a similar conflict.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The user asks how the previous supporter dealt with a similar situation, while expressing anger about their mother's disapproval of their friends.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T009",
+            "C:T007",
+            "C:T005"
+          ],
+          "reason": "The reply accurately reflects the conflict and anger and offers a relevant exploratory question about social support, but it does not address or even acknowledge the user's explicit question about how the previous supporter handled the same issue. A brief clarification that the assistant cannot speak for the prior supporter, plus an invitation to explore coping strategies, would have met the turn more fully; the pivot to asking about friends leaves an important explicit need unanswered."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Empathic acknowledgment only; it makes no specific personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Ordinary empathic reflection of the user's anger and frustration; 'choosing your own friends' reflects C:T007, but the sentence is framed as supportive understanding rather than a new personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The question's presuppositions that the user has friends and that the mother disapproves of their friend choices are supported by C:T007 ('kind of friends I should have' and 'freedom to choose my friends not her') and C:T005 ('never approves of most of the things I do'); the anger is explicitly stated in C:T009. The question itself does not assert a completed action.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "General supportive advice about sharing feelings with people who care; it asserts no user-specific fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all four reply units. The response contains no claim to have been the prior supporter or to have personally experienced the earlier supporter's situation. The main quality limitation is that R003 and the overall reply pivot to asking about friends rather than engaging with the user's direct question in C:T009 about how the prior supporter dealt with a similar conflict.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The user asks how the previous supporter dealt with a similar situation, while expressing anger about their mother's disapproval of their friends.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T009",
+            "C:T007",
+            "C:T005"
+          ],
+          "reason": "The reply accurately reflects the conflict and anger and offers a relevant exploratory question about social support, but it does not address or even acknowledge the user's explicit question about how the previous supporter handled the same issue. A brief clarification that the assistant cannot speak for the prior supporter, plus an invitation to explore coping strategies, would have met the turn more fully; the pivot to asking about friends leaves an important explicit need unanswered."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Empathic acknowledgment only; it makes no specific personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "Ordinary empathic reflection of the user's anger and frustration; 'choosing your own friends' reflects C:T007, but the sentence is framed as supportive understanding rather than a new personal fact."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The question's presuppositions that the user has friends and that the mother disapproves of their friend choices are supported by C:T007 ('kind of friends I should have' and 'freedom to choose my friends not her') and C:T005 ('never approves of most of the things I do'); the anger is explicitly stated in C:T009. The question itself does not assert a completed action."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "General supportive advice about sharing feelings with people who care; it asserts no user-specific fact."
+          }
+        ],
+        "coverage": "Reviewed all four reply units. The response contains no claim to have been the prior supporter or to have personally experienced the earlier supporter's situation. The main quality limitation is that R003 and the overall reply pivot to asking about friends rather than engaging with the user's direct question in C:T009 about how the prior supporter dealt with a similar conflict.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "e370baec4b67af144f34a0af30e6bf01b81cf615c70c477480e69802bbc4c055",
+      "adapted_final_sha256": "e370baec4b67af144f34a0af30e6bf01b81cf615c70c477480e69802bbc4c055",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0089535",
+    "usage_upper_usd": "0.0089535",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5241,
+    "completion_tokens": 6151,
+    "total_tokens": 11392,
+    "prompt_tokens_details": {
+      "cached_tokens": 4992
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 5620
+    },
+    "prompt_cache_hit_tokens": 4992,
+    "prompt_cache_miss_tokens": 249
+  },
+  "elapsed_seconds": 32.07395776300109,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-anchor-calibration-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

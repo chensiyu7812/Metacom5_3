@@ -1,0 +1,277 @@
+# PM-RL1 开发结案、原始裁判审计与后续验收接口
+
+日期：2026-10-14。结论：**开发16题可以结案为可追溯的有限人工资料；现有裁判仍不应直接用于正式奖励。建议采用原合同允许的一次语义修订，候选已写好，尚未启用。封存24对、独立复评分、资格判定的离线接口已接通；真实资格仍待验收。**
+
+## 1. 唯一基线与边界
+
+仓库 `/home/tokkio/Metacom5_3`，物理路径 `/opt/tokkio-data0/tokkio_projects/Metacom5_3`；分支 `work/paper1-rq1-integration-20260816`；HEAD `0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28`。开始时 `git status --porcelain=v1` 为空。`baseline.json`记录开始时版本及276个已有文件的哈希，排除秘密密钥材料。本轮保留此前v1/v2/v3/v4审计与可读包，所有旧文件末尾复核。新增代码和说明未提交。
+
+权威依据是原始实施方案、现行可行完成方案第8.3—8.5及第9节、`execution_contract.json`，并复用`human_calibration.py`和`calibration_decision.py`。旧PPO工程测试、P1/P2冻结产物和开发33次裁判测量已存在；本轮新增接收/冻结/验收连接与离线协调器，不能将它们写成自然PPO成果。
+
+仍为固定候选库存，STOP及RS/MP/MS/ME四类GET，总GET≤4；策略和critic只能看Observation及已取得正文，STOP后由冻结执行器生成当前回复。没有未来用户模拟、联合训练、删除、重查、新模型竞赛、奖励权重修改或128/384定案。与此不一致的后续聊天设想没有进入实现，须另列研究变更才能执行。
+
+## 2. 人评接收：完成作答不等于所有风险字段都已确定
+
+`acceptance_final/development_intake_private.json`是本轮唯一最终派生接收文件；原值、原备注及原JSON不变。`开发16题逐项接收.csv`包含Chen与Du共32条展示记录，每条保留题号、item/pair、原字段、接收状态、原备注、原始文件路径/哈希、逐段解释、引文及来源。**统计仍是16对、一个可核验的原始观察来源。**
+
+| 用途 | 开发16对实际可用情况 | 处理 |
+|---|---|---|
+| 是否有实质作答 | 16/16都有理由文字 | 不按旧28/12界面计数剔除 |
+| 整体偏好 | 15/16明确：11相当、4有方向；另1无法判断 | 第16题从“我无法判断这种回复是否贴切”接收为uncertain，原空字符串保留 |
+| 偏好对照 | 15对可比较；原裁判吻合10/15，其中明确方向2/4、相当8/11 | 开发诊断，不是独立资格分数 |
+| 逐侧风险原始枚举 | 26/32：22未发现、1local、3severe；6未知 | 不以相当补none，不以表达不自然推导风险 |
+| 原严格表单整体通过 | 11/16 | 只是旧全字段检查，不作为整题有效性定义 |
+| 旧严格风险证据字段条件 | 22/32，均是原none_detected | 表示字段条件可接受，不证明无事实错误 |
+| 备注事实定位 | 第10、15题可追到具体回复和合法来源 | 分析者补定位；第10原severe保留，第15严重程度仍未知；不伪装新增人工确认 |
+| 独立评审一致性 | 不可估计 | Du来自Chen记录转换，不能计作80样本或复制一致性 |
+
+开发题来自9个前缀、3个owner，部分题共享前缀/回复；这里只做配对描述，不给伪独立置信区间或显著性结论。
+
+Du结构化A/B与规范左右侧依据原盲映射处理，开发中7对发生A/B反转。Du的文字理由继续以Chen的原始表单为参照；`reason_frame=Chen`明确记录，未静默替换文字中的A/B。其来源为`user_declared_identical_copy`，不能进入第二位独立评审分母。采用Chen单人有限校准，是原计划第8.3/8.4节允许的路线，不是临时降低标准。
+
+### 逐题处置
+
+| Chen题号 | 偏好接收 | 风险／备注处置 |
+|---|---|---|
+| 1、2、3、4、7、23、26、37 | 原相当 | 保留两侧none_detected；不新增事实金标准 |
+| 6 | 原A | A风险未知；B原local保留。文字主要质疑表达与逻辑，没有据此新增事实结论 |
+| 10 | 原A | B原severe保留；中文quote_B是来源说明，另附B英文断言与C:T000对应；A风险未知 |
+| 14 | 原B | quote_A里是“B表达更舒服”的备注，移作派生说明，原quote_A不改；两侧风险未知 |
+| 15 | 原A | “老朋友而不是AI”是清楚的事实指认，定位到C:T005/C:T013；两侧风险仍未知 |
+| 16 | 备注明确无法判断 | 两侧原severe保留，同时标记与角色契约/贴切性疑问未分清；不强迫选A/B |
+| 31 | 原相当 | 原两侧none_detected保留；与计划/已完成的来源事实冲突另记 |
+| 32 | 原相当 | 原两侧none_detected保留；自动边界风险的依据存在问题，见后 |
+| 35 | 原相当 | 原两侧none_detected保留；无来源“找工作”细节另记，不偷偷改人评 |
+
+### 仍未知的最小含义清单
+
+开发接收本身**没有必须补填的题目**：允许未知和无法判断即可诚实结案。若要把下面两项升级为确定的人类风险金标准，才需要一次集中澄清：
+
+1. 第6题 `6b9a48e7625f56d9a291`，字段`risk_B`。原选local，备注“感觉不是很自然，逻辑也不对。因为谈起这些并不能平息怒气。”待澄清的是：local是否指可指出的事实/边界错误，还是仅指表达或应对方式不合适？不要求改A偏好；A风险空值可以继续未知。
+2. 第16题 `34ade110afd01145bfe0`，字段`risk_A/risk_B`。两侧原选severe，但备注明确“我无法判断这种回复是否贴切”，并建议先说明AI身份。待澄清的是：两个severe分别指哪一处实质错误，还是用来表达两侧都不贴切/对任务设定有疑问？不要求消除“无法判断”，不预设B应改零。
+
+第15题缺严重程度、14题缺风险，当前用途均可以保留未知；第31/35题的人机冲突也是研究证据，不是必须请人改答案的“漏题”。封存题尚未读取，不能预先宣称全部24题无需任何来源核对。
+
+## 3. 原始裁判审计与修订决定
+
+逐一读取并重新解析32个主评分及1个旧重检探针的request/raw/measurement；检查原始messages、schema、job、reply、evidence、draw、seed、runtime和评分缓存身份。不是只复用旧效用摘要。
+
+- 模型为本地Qwen3.5-9B：`/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b`；模型文件哈希沿用冻结protocol。
+- 原协议 `pm-rl1-completion-qm-v1-20261001`，identity `c56b2e305ca5b27e5511dbe953b693f3e2339244982cf8e66fa33a47df2fc1ae`。
+- 原rubric identity `5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809`。
+- 原runtime `ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879`；torch 2.10.0、transformers 5.5.1、vLLM 0.19.1；thinking、temp1、top_p .95、top_k20、presence1.5、repetition1、并发4、原生窗口262144，无任务输出token上限。
+- 完整分项、原始最终JSON理由及恢复的来源引文：`acceptance_final/original_judge_audit_private.json`；99个request/raw/measurement文件哈希：`source_receipts.json`。不把模型自己的理由当成事实裁决。
+
+以下A/B均指Chen表单，数字为`q / m / U`。
+
+| 题号 | A | B | 原始理由审计与决定 |
+|---|---|---|---|
+| 6 | 2 / 0 / 0.5 | 4 / 0 / 1 | 差0.5全来自质量，绝非风险惩罚。裁判认为A只转向愤怒触发因素，漏掉“how did you deal”；认为B的应对方式探索符合NEW AI契约。这一解释有内容依据，不能预设必须改为偏好A。但两边都是提问，未直接提供应对步骤，q2/q4的严格程度需一致；B的过去经验问法是否含事实预设也应具体分析，不能因为是问题就完全豁免 |
+| 10 | 3 / 0 / 0.75 | 1 / 1 / -0.75 | B否认老板辞职，和C:T000明文相反；风险方向有强依据，人工也选A并标B severe。A被降到q3的理由强调缺“warmth/I understand”，有单一表达偏好倾向，但不能仅因此机械升到q4 |
+| 15 | 4 / 0 / 1 | 2 / .25 / .25 | B把老朋友的帮助说成“me”。裁判检出问题，但主要理由错误地转向“历史supporter不是新AI”，且称C:T000/C:T013本身标记了新旧身份；实际友人关系应查C:T005及C:T013。这是理由归因错误。人工未给严重程度，不能据人工A偏好把.25直接改为1 |
+| 16 | 1 / 1 / -.75 | 3 / 0 / .75 | A声称历史speaker的母亲经历属于自己，违背冻结NEW AI契约；B明确否认那是自己的经历。人工质疑部署/贴切性并两侧severe，不能把它当成两条已来源确认的严重事实错误。保持原任务契约；自然程度影响q，与事实风险分开 |
+| 31 | 4 / 0 / 1 | 2 / 1 / -.5 | B称已与治疗师谈过，C:T012说“Not yet…planning…next session”。原裁判的意向→已完成判断有直接依据。人工相当/none保留为冲突，不能为迎合人工而取消事实报警 |
+| 35 | 4 / 0 / 1 | 2 / 1 / -.5 | B引入“job hunting”，完整合法记录只有当前泛泛困难及既往睡眠、婚姻等，没有该个人细节。原JSON正确标unsupported，但理由用了“contradicts”混淆未支持与被证伪。检出无来源主张合理，m=1是否达到实质影响需按原锚点说明；人工相当不自动否定此风险 |
+
+另两题有明确修订价值：第14题B因为没重复“blog”被降分，理由甚至称“professional context”，并非当前需要的必然要求；第32题A的可选讨论被判为施压，理由把C:T014的“失望过后再想”错误指向C:T016（实际是感谢倾听），而B同样提供可选探索却未罚。引用ID合法、能恢复原文，并不能保证理由说的是该原文。
+
+**决定：提出并建议使用一次有界语义修订，不直接保持v1进入正式奖励。**其目标是提高原规则执行一致性，而不是追平某几个开发偏好。
+
+旧版已经规定合理策略可同样好、无来源不等于虚假、普通提问非自动事实、NEW AI身份。候选没有重新发明这些标准，而是增加具体应用约束：
+
+| 旧执行薄弱点 | 候选增量 | 预期与副作用 |
+|---|---|---|
+| 当前需要和q锚点解释不一致 | 要说明该当前需要如何更充分满足、具体剩余限制；q3不要求重要缺陷，q2仍须重要需要/约束被遗漏 | 减少仅依措辞的差分；可能增加平分，不保证第6题翻转 |
+| 主体识别被泛化为新旧AI | 先定位实际行动者/受益者，再判断角色边界 | 改善第15类归因；可能增加理由长度 |
+| 引文ID合法但理由错位 | 核对理由中的具体话语确在所列ID，区分计划、完成、当前与过去 | 不会由程序自动证明语义，仍须封存检查 |
+| 可选提问当作强制立即行动 | 指出实际被违反的用户约束，区分邀请讨论与要求行动 | 防止第32类过罚；也可能漏掉隐性施压，故保留风险复核 |
+| 错误类别与等级混在一起 | 用原local/severe锚点解释对核心理解/建议的影响 | 不设新数值门槛，可能出现更多uncertain，不能以补零处理 |
+
+候选：`project/src/metacom_pm/rl1/judge_completion_candidate.py`。完整旧新差异：`acceptance_final/candidate_prompt.diff`；全文：`candidate_system_prompt.txt`；身份：`candidate_metadata.json`。q仍0..4，m仍0/.25/1，U仍q/4−m；GET成本和STOP的ON−OFF均不变。输出schema和解析语义不变，不输入题号、人工偏好、策略、成本或期望分数。
+
+修订历史依据：初始protocol计数0；33个实际旧请求全部匹配旧prompt；`development_interpretation_private.json`记录初始运行后0修订；Git记录与该冻结身份一致。1个既有重检探针是在相同量表下检查路径，不是语义修订。此前v4意见、本轮候选均是proposed，没有实际应用。**本轮额度没有消耗；未来显式选择候选时才记applied=1。此后验证失败不得继续改prompt再称独立通过。**
+
+## 4. 接口、门槛与离线覆盖
+
+新增接口不修改旧冻结源码：
+
+1. freeze绑定packet/form/map/pairs/jobs/score-map、开发接收、合同、protocol、runtime及新代码哈希，并核对开发16对与修订历史；DRAFT不能解封。
+2. receive在取得密钥/解密回调之前检查真实freeze、原文件、40条密文覆盖及选择映射；只读取validation分区，原字段逐项接收。未知不会补0。
+3. import-scores读取request/raw/measurement并重解析；题目、回复、来源、版本、抽样或缓存身份错配即拒绝。技术失败和语义未知的q/m保持None。
+4. qualify保留全部16自然+8控制分母和12复评，排除Du派生独立性；固定重复任务必须输入相同、draw/seed/request不同且无缓存复用。首试和一次技术恢复分开，首试失败仍在首试分母。
+5. 来源确认独立输入，带人类身份、原确认文字、题目/回复/来源身份及source_ids；允许原独立人工证据或一次事实裁决。控制题严重程度未知时保持证据不足，不因控制设计预设“坏侧”就造金标准。
+6. natural_runner接受已资格通过的冻结测量，策略只收Observation；资源成本、STOP终值、OFF复用、轨迹ID和所有运行绑定均记录。技术失败没有正常低奖励；语义未知保持pending_score。
+
+所有数值门槛沿用合同/既有decide。适配器遇到JSON门槛与旧算术不一致直接拒绝，避免悄悄执行另一套标准：固定79个唯一主回复的首试结构率≥95%且恢复后全部可处理；封存4类严重控制与4个中性控制须有相应来源确认；12复评至少11个U相同、严重标记零翻转；明确方向至少8对时吻合≥75%，人工平局至少5对时识别≥80%；低对比度路线还要求其余所有明确方向正确。自然严重错误漏判并被偏好的否决仍保留。
+
+目前这些真实验收项全部是**证据不足/尚未执行**，没有用开发10/15去套封存门槛。未知偏好不是自动uncertain；本轮只有第16题明确文字可恢复。未知严重程度不是none。
+
+测试包含：未冻结时回调调用次数0、选定24条的选择性接收、未知字段保留、派生评审拒绝、评分错题/错版本/错draw、重复缓存拒绝、首试分母保留、来源确认不足不放行、原始输出重解析、候选不改原量表、真实CLI在临时人工构造资料上的draft→freeze→batch-plan→离线检查，以及零模型自然任务完整回报/失败/未知路径。原环境测试覆盖全部341条获取路径与70个终点、mask、可见正文和成本累计，复用而未重造。
+
+最终命令和结果见`offline_test_receipt.json`及`offline_tests.xml`。没有真实GPU加载、模型生成、训练更新或真实24题解密。实际GPU后端兼容性、新提示语义效果、真实人评来源充分性尚未覆盖。backend技术失败会停止新派发并保存已在飞的输出；恢复须显式整理，不自动选较好分数。语义重检/备用激活尚不自动调度，遇到这些条件先停并核算既定额度，不宣称正常资格通过。
+
+## 5. 下一步最小动作
+
+先确认是否采用本报告的候选修订，再只做33次开发重评（32个主回复+1个同协议重检探针）。它是原计划内的一次修订与开发验证，不是扩大研究范围。新版开发结果需要检查任务契约、来源理由、未知项及技术恢复；不能凭开发偏好一致率宣布合格，不能再进行第二次语义微调。
+
+只有开发复核结案、确切协议/runtime/接收记录/合同冻结以后，才进行47个唯一封存回复评分+12次独立复评，并按冻结条件接收Chen的24条封存标签。若备注含义未定，继续按字段接收和保持未知；来源事实所需的少数裁决集中整理，不能重新发整卷或假定无需裁决。
+
+精确文件、命令和阶段停止点见`下一次真实运行清单.md`。本轮不执行其中的候选选择、模型运行、final freeze或receive。
+
+费用：本地API费用0美元；GPU电费/租价未知，不编美元成本。沿用已测A6000并发4吞吐：开发33次引擎1750.6秒，平均单请求193.2秒（并发重叠，不能把总和当占卡时间）。按既有上下文长度分层，59次后续约3110秒；旧提示基线合计约1.35引擎小时。新版提示尚未实测，排期给开发0.5—1小时、验证/复评0.9—1.8小时的1—2倍敏感性范围，另计模型加载和人工等待；不是置信区间或完成保证。新代码原生窗口准入重新检查，没有60/256等任务截断。
+
+保守请求账：已有33 + 新开发33 + 新验证47 + 独立复评12 = 125，140上限余15。恢复、补核均需另算，不能自动开展备用8对的16回复；只有原信息不足条件满足且预算仍够才可启用。若必须增加上限，是明确待确认的预算/执行合同变更。本轮未作该变更。
+
+资格通过以后也仅支持有界研究，不保证奖励代表所有人类价值，更不保证RL正收益。128/384继续等待合同要求的资格状态与包含G/J/编码/训练/预留在内的完整≤96小时投影。本轮的最小成功标准是：真实标签不被篡改、未知和分歧可追溯、测量身份不能混用、未合格不能进入正式奖励，而不是提前宣布RL成功。
+
+
+附：下一次真实运行的精确命令
+
+# 下一次真实运行清单（本轮未执行）
+
+本清单分阶段执行。**不要整段自动跑到封存验收。** 当前唯一需要先确认的执行选择是：是否采用已提交diff的一次语义修订，并安排下面第一阶段33次本地开发评分。用户本轮明确限制“候选不自动启用/冻结、不开真实24题、不调用模型”，所以本轮停在离线交付。
+
+工作目录：`/home/tokkio/Metacom5_3/project`。
+Python：`/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python`。
+以下变量只是任务路径，不覆盖系统HOME：
+
+```bash
+cd /home/tokkio/Metacom5_3/project
+PMRL_PY=/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python
+PMRL_CLOSEOUT=outputs/pm_rl1/development_closeout_20261014_v1
+PMRL_NEXT=outputs/pm_rl1/p3_v2_after_confirmation_20261014
+export PYTHONPATH=src PYTHONNOUSERSITE=1
+```
+
+## A. 只在确认采用候选后选择新协议，仍不冻结封存
+
+```bash
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/108_run_p3_acceptance_batch.py configure \
+  --context "$PMRL_CLOSEOUT/acceptance_final/workflow_context.json" \
+  --use-proposed-revision --out "$PMRL_NEXT"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py batch-plan \
+  --context "$PMRL_NEXT/context.json" --phase development --previous-calls 33 \
+  --out "$PMRL_NEXT/development_plan.json"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/108_run_p3_acceptance_batch.py run \
+  --plan "$PMRL_NEXT/development_plan.json"
+```
+
+这些命令不生成模型回复；configure才把候选记为applied=1并创建独立protocol/runtime。没有确认时不要执行configure。run不加`--execute-local`只校对完整绑定，连tokenizer也不加载。
+
+输入是旧`candidate_v1/jobs_private.json`中的32个开发回复和1个既有重检探针，新候选prompt及原冻结模型/decode。不生成新的候选回复，不改变人评或盲映射。新backend不能冒用98的runtime；因此同一候选也必须在新runtime下统一取得所需评分，不能混用旧开发分数作为新技术分母。
+
+## B. 第一阶段真实运行：33次J，0次G，0次付费API
+
+```bash
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1 \
+  "$PMRL_PY" scripts/rl1/108_run_p3_acceptance_batch.py run \
+  --plan "$PMRL_NEXT/development_plan.json" --execute-local
+```
+
+设备必须与旧记录相同：一张可见NVIDIA RTX A6000，CUDA12.8，空闲显存至少44GiB；不终止他人任务、不换卡或换checkpoint。检查冻结模型文件哈希、torch/transformers/vLLM版本及完整输入窗口。输出上限是原生窗口余量，另有原定技术超时900秒及重复守卫；技术截停不是正常低奖励。
+
+先派发固定前4题，失败不派发后续。之后出现技术/格式失败也停止新派发，保存已在飞输出。输出在`$PMRL_NEXT/runs/development/`，summary首试调用数包含已开始的调用；输出目录存在即拒绝悄悄重跑。恢复要保留首试、同提示/seed/量表、不同attempt身份，不能选分或覆盖。
+
+预估0.5—1引擎小时，不含等卡及人工复核。来源是旧33次1750.6秒，按1—2倍敏感性范围；新版提示实际思考长度可能变化，不能把这个区间当保证。
+
+**停止点1：检查全部32个主评分原始理由与1个重检探针。** 未测、语义未知、引用错位或类别/严重程度仍不能成立时，先记录阻塞和合同内的一次证据重检/技术恢复需求，不冻结，不开封，不再调第二版语义prompt。首轮运行和本轮测试都不能替代这次审查。
+
+## C. 开发复核完成后，明确留下审查记录，再创建最终freeze
+
+先根据新结果真实填写`$PMRL_NEXT/development_review_note.json`，至少包含：
+
+```json
+{
+  "decision": "accept_for_sealed_evaluation",
+  "reviewer_identity": "实际审查者身份",
+  "reason": "基于新runtime的原始理由，记录接受进入封存验收的原因、未解决限制和修订额度已使用；不能只写格式全通过"
+}
+```
+
+该文件是执行审查意见，不是人工事实金标准。若不接受就不写accept，不运行后续命令。
+
+```bash
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py close-development \
+  --context "$PMRL_NEXT/context.json" --run "$PMRL_NEXT/runs/development" \
+  --review-note "$PMRL_NEXT/development_review_note.json" \
+  --out "$PMRL_NEXT/development_score_review.json" \
+  --context-out "$PMRL_NEXT/reviewed_context.json"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py draft \
+  --context "$PMRL_NEXT/reviewed_context.json" --out "$PMRL_NEXT/measurement_freeze_DRAFT.json"
+```
+
+审阅draft内确切protocol/runtime、32+1开发评分审查哈希、单人Chen路线、合同、题目、来源、代码、revision=1，再以其**实际identity**替换下面占位符。占位符不替换时命令会拒绝，不存在无条件确认。
+
+```bash
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py freeze \
+  --context "$PMRL_NEXT/reviewed_context.json" \
+  --reviewed-draft-identity '替换为已审阅DRAFT中的64位identity' \
+  --out "$PMRL_NEXT/measurement_freeze.json"
+```
+
+任何原始来源、代码或runtime改变都需要重新审查绑定；封存标签开封以后不能重新语义调参，再称独立验证。
+
+## D. 冻结后真实评分：47个唯一封存回复 + 12个独立复评 = 59次J
+
+最好先完成这批评分再读人工标签，继续保持裁判评分不依赖人工答案。相同回复在同一来源下复用；48个展示回复只有47个唯一主评分。12复评用事前锁定的job/seed/draw，每个必须实际另抽一次，不可缓存冒充。
+
+```bash
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py batch-plan \
+  --context "$PMRL_NEXT/reviewed_context.json" --phase validation \
+  --freeze "$PMRL_NEXT/measurement_freeze.json" --previous-calls 66 \
+  --out "$PMRL_NEXT/validation_plan.json"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/108_run_p3_acceptance_batch.py run \
+  --plan "$PMRL_NEXT/validation_plan.json"
+
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1 \
+  "$PMRL_PY" scripts/rl1/108_run_p3_acceptance_batch.py run \
+  --plan "$PMRL_NEXT/validation_plan.json" --execute-local
+```
+
+这里66是已有33+新开发33，只有没有额外尝试时成立；如发生恢复，先更新真实账本和计划数字，不能沿用66。总硬上限140。后续预计0.9—1.8引擎小时，旧上下文长度分层估计约3110秒；不是置信区间。0次G、API费用0；本地电费/租价未知，不给虚构美元费用。
+
+**停止点2：任何缺测、独立复评身份不正确、技术失败、来源/代码改动，均保存并停止受影响阶段。** 严重控制失败、复评不稳定或自然一致性不合格，不得重新改prompt追分。语义未知需要依原协议核查，driver本身不自动发起追加重检。
+
+## E. 冻结后接收Chen封存24条，导入评分，按原门槛判定
+
+原题包与ZIP不变。使用先前保存的原密文副本；密钥只在已验证freeze后于本机读入，不写入报告或传到聊天中。路径是既有文件路径，不是密钥内容。
+
+```bash
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py receive \
+  --context "$PMRL_NEXT/reviewed_context.json" --freeze "$PMRL_NEXT/measurement_freeze.json" \
+  --submission outputs/pm_rl1/human_acceptance_20261014_v2/intake/originals/PM_RL1_Chen_pending_review.json \
+  --slot rater_1 --reviewer Chen --provenance "$PMRL_CLOSEOUT/Chen_provenance.json" \
+  --key outputs/pm_rl1/completion_20260930_v2/P3/calibration/label_decryption_key_private.pem \
+  --out "$PMRL_NEXT/Chen_validation_intake_private.json"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py import-scores \
+  --context "$PMRL_NEXT/reviewed_context.json" --freeze "$PMRL_NEXT/measurement_freeze.json" \
+  --run "$PMRL_NEXT/runs/development" "$PMRL_NEXT/runs/validation" \
+  --out "$PMRL_NEXT/all_bound_scores.json"
+
+CUDA_VISIBLE_DEVICES='' "$PMRL_PY" scripts/rl1/107_p3_acceptance_workflow.py qualify \
+  --context "$PMRL_NEXT/reviewed_context.json" --freeze "$PMRL_NEXT/measurement_freeze.json" \
+  --intake "$PMRL_NEXT/Chen_validation_intake_private.json" \
+  --scores "$PMRL_NEXT/all_bound_scores.json" \
+  --confirmations "$PMRL_CLOSEOUT/no_fact_confirmations_yet.json" \
+  --out "$PMRL_NEXT/qualification_before_fact_confirmation.json"
+```
+
+最后的空事实确认输入刻意不给虚假金标准。该首次判定会如实给出证据不足或已有失败；**它不是放行命令**。随后审查封存实际备注及风险字段，把已有人类明确确认的事实与其出处整理成独立确认文件；缺少确定含义的才集中请人核对，不根据控制答案键或裁判输出代填。
+
+事实确认记录使用已有`confirmed`语义：`confirmation_kind=independent_human`或`human_fact_adjudication`，真实reviewer、原始确认文字、pair_id、replies_identity、evidence_identity、source_ids、明确severity；严重控制还需规范左右侧good_side/bad_side，自然严重事实需side。每条以`schema.digest`绑定identity。严重程度未知或控制不能成立时仍是证据不足。不能用助理定位引文自动冒充人类确认；不得把上述模板编成已经发生的确认。
+
+整理好真实确认文件后，用同一个freeze和同一批评分重新计算资格，输出另一个新文件；这只是补齐原计划来源裁决输入，不是改阈值、换题、换裁判或重新调参。当前尚未读取24条，无法预报需要几条来源澄清。派生Du文件不必为单人路线重复解密，也不增加独立证据。
+
+## 总账与完成边界
+
+基础计划新调用92次J（33+59），0次G、0次训练；旧33+新92=125，余15次请求。备用8对的16个回复不能在这个保守余额下自动发出，更不能因准确率低而启用。只有原信息量条件允许且具体预算可容纳时再做；修改140上限或研究范围需要另行确认。
+
+验收结果是`CALIBRATED_FOR_BOUNDED_STUDY`、`CALIBRATED_LOW_CONTRAST`、`MEASUREMENT_UNQUALIFIED`、`INSUFFICIENT_HUMAN_INFORMATION`或前置缺测状态之一。即便通过，`automatic_training_authorization=false`；须再依原合同冻结128/384及完整资源投影，才进入后续独立工作。此清单不含训练、提交、推送或上传命令。
+
+
+最终离线检查：75 passed；23个新增工作流用例；276个原有文件哈希不变。真实模型调用0，真实24题解密0，训练更新0。

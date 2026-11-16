@@ -1,0 +1,135 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2228,
+      "reserved_prompt_tokens": 2356,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 56
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "a015f128bc59b9a538a87d853247517d6746fb4453803cb9d565dd874b52fae3",
+    "prior_profile_sha256": "58d71ab5ee770492bc81a12252de2ac4e980597a323d48e6a9934d5943af44e4",
+    "request_payload_sha256": "1b9c961f9f7940bccc1812cdd715852e10b17b469dfdff4f4991579bbe8965a5"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p3",
+      "s": "p3_conv_6",
+      "p": [
+        {
+          "i": "p3p1",
+          "t": "education",
+          "k": "current_education_level",
+          "v": "college student",
+          "s": [
+            {
+              "i": "p3_conv_6:3"
+            }
+          ]
+        },
+        {
+          "i": "p3p2",
+          "t": "enduring_interest",
+          "k": "past_academic_interest",
+          "v": "physics",
+          "s": [
+            {
+              "i": "p3_conv_6:3"
+            }
+          ]
+        },
+        {
+          "i": "p3p3",
+          "t": "enduring_interest",
+          "k": "current_academic_interest",
+          "v": "psychology",
+          "s": [
+            {
+              "i": "p3_conv_6:9"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p3e1",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "decided to switch major from physics to psychology",
+          "s": [
+            {
+              "i": "p3_conv_6:3"
+            }
+          ]
+        },
+        {
+          "i": "p3e2",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "felt relieved and anxious after deciding to switch major",
+          "s": [
+            {
+              "i": "p3_conv_6:5"
+            }
+          ]
+        },
+        {
+          "i": "p3e3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "talked to professor about academic struggles",
+          "s": [
+            {
+              "i": "p3_conv_6:7"
+            }
+          ]
+        },
+        {
+          "i": "p3e4",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received understanding and support from family about major change",
+          "s": [
+            {
+              "i": "p3_conv_6:11"
+            }
+          ]
+        },
+        {
+          "i": "p3e5",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "feeling nervous about telling classmates and best friend about major change",
+          "s": [
+            {
+              "i": "p3_conv_6:13"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "d30f8670debd2330506d20de4dc19356a81642db35804a1dfa4569de1a882277",
+    "usage": {
+      "prompt_tokens": 2230,
+      "completion_tokens": 592,
+      "total_tokens": 2822
+    },
+    "latency_ms": 6465.313955995953,
+    "provider_finish_reason": "stop"
+  }
+}

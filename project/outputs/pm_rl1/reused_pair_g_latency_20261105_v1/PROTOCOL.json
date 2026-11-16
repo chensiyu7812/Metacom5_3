@@ -1,0 +1,89 @@
+{
+  "admission_idle_utilization_limit_percent": 5,
+  "api_cost_usd": 0,
+  "authorization": "2026-11-05 current user 好的 继续推进; follow the accepted latency objective after exact G01 reuse. Free bounded timing; no new human or paid calls.",
+  "automatic_retries": 0,
+  "code": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/167_probe_alternate_executor.py": "da49d24f2c53256d867fa18b715012fba45ca76cf3996b73e5b1bad443b9b74d",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/172_resume_slight_path_preload.py": "863d3a9d10fcc0cf1d6689e09ceccce2c1e62f6805e0b700100be7eff7eab4cd",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/174_measure_reused_pair_g_latency.py": "49b1ac78a37ce6cead86f9f679459b79a4cc29f9d9471ce8282daafdb2cf5c12",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py": "57ba5a7fea68616fc25f4123c91ba163b2fc17442a3bd941e4fc662710962993",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/generation.py": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py": "671d93606bfb2291876552c95d950e873518ce95c6305e996e576aa049bc5c85"
+  },
+  "expected_output_match_required_for_human_label_reuse": true,
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "identity": "e9c5197cc61964043e2909e5ff6750e001013349fd0a0e696cbbb5d459dbd192",
+  "max_calls": 10,
+  "max_loads": 1,
+  "measured_pairs": 4,
+  "new_rewards": false,
+  "new_training": false,
+  "objective": "Quantify only G first-token/completion components for exact already-judged replies; no 3-second deployment decision.",
+  "omitted_components": [
+    "online BGE query/indexing",
+    "PM encoding and decision",
+    "network/queue",
+    "ASR",
+    "TTS",
+    "audible response"
+  ],
+  "promote": false,
+  "requests_identity": "8f70e7b15e530d80ac7dbc2053a21daa2fbc07cbea4639728b665c27c07fcbe0",
+  "runtime": {
+    "adapter": null,
+    "attention": "sdpa",
+    "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5",
+    "cuda_device_order": "PCI_BUS_ID",
+    "cuda_visible_devices": "1",
+    "do_sample": false,
+    "dtype": "bfloat16",
+    "enable_thinking": false,
+    "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e",
+    "model_class": "AutoModelForMultimodalLM",
+    "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+    "model_files": {
+      "chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4",
+      "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+      "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+      "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d",
+      "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9",
+      "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+      "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+    },
+    "native_suppress_tokens": [
+      258883,
+      258882
+    ],
+    "packages": {
+      "safetensors": "0.8.0",
+      "tokenizers": "0.23.2",
+      "torch": "2.7.1+cu128",
+      "transformers": "5.17.0"
+    },
+    "pad_token_id": 0,
+    "policy": {
+      "context_limit": 262144,
+      "cycle_repetitions": 4,
+      "cycle_width": 32,
+      "eos_token_ids": [
+        1,
+        106,
+        50
+      ],
+      "timeout_seconds": 300.0
+    },
+    "seed": 0
+  },
+  "scope": "EXACT_HUMAN_PAIR_RESIDENT_G_COMPONENT_TIMING_NOT_DEPLOYMENT",
+  "sources": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/reused_pair_g_latency_20261105_v1/EXPECTED_PRIVATE.json": "3173e50ab9d388ad746840a33e89afc2300d2f90b4d20c19923c19a213a4f375",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/reused_pair_g_latency_20261105_v1/SCHEDULE.json": "2092178520b615c11970199b1595bc8b0265c30c97512b942b24b835ee17e42b",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/FROZEN_LOCATOR_REPLAY_PRIVATE.json": "a57d20927a34dc94b28aedbe503289e1edeeef5f2ea7c0251acece79865b26aa",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/OLD_HUMAN_REFERENCE_PRIVATE.json": "1a20c5bba5c269334a95a4e81088eae1da3d824af184925956401c3197c603e9",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/REUSED_PRIVATE.json": "edcce7a4cc457cfe7a26126ee51c9380f234e5df31f525920afc58087625c227",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/slight_positive_path_20261105_v1/alternate_G_resume/PROTOCOL.json": "5294e88586a7e79ed7241ebfe69bfabdc8fa47a32f550b9e5a66c08c2bad19f0"
+  },
+  "stage_seconds": 1200,
+  "warmups": 2
+}

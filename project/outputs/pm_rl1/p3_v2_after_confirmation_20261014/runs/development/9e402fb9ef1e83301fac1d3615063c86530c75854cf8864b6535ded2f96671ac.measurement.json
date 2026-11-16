@@ -1,0 +1,166 @@
+{
+  "response_sha256": "fa8853e917c2e22a6c3dd620371db602ef8053130d99b931dad4e5786a157ced",
+  "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "4bb8313381218d7c996df7fc39e19863b346552aeefad20b222aece926d31709",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses general emotional distress ('tough lately') without specifying details following the initial check-in.",
+      "response_quote": "I'm here to listen and help if I can. Can you tell me more about what's been going on and how I can support you?",
+      "evidence": [
+        {
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately."
+        }
+      ],
+      "reason": "The reply successfully validates the user's expressed distress while respecting the boundary of not asserting personal history. R001 offers availability, and R002 requests necessary elaboration, fulfilling the immediate need for a supportive, non-intrusive opening to discuss the difficulty."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Response addresses the user's general complaint about difficulty in C:T002 by establishing presence and soliciting specific details for support.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm here to listen and help if I can. Can you tell me more about what's been going on and how I can support you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 112
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses general emotional distress ('tough lately') without specifying details following the initial check-in.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply successfully validates the user's expressed distress while respecting the boundary of not asserting personal history. R001 offers availability, and R002 requests necessary elaboration, fulfilling the immediate need for a supportive, non-intrusive opening to discuss the difficulty."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Response addresses the user's general complaint about difficulty in C:T002 by establishing presence and soliciting specific details for support.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses general emotional distress ('tough lately') without specifying details following the initial check-in.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply successfully validates the user's expressed distress while respecting the boundary of not asserting personal history. R001 offers availability, and R002 requests necessary elaboration, fulfilling the immediate need for a supportive, non-intrusive opening to discuss the difficulty."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Provides generic empathic support reflecting the user's current distress state without making factual claims about the user or the AI.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Asks an open-ended question inviting the user to clarify their feelings based on the prompt in C:T002, serving as a functional response unit.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Response addresses the user's general complaint about difficulty in C:T002 by establishing presence and soliciting specific details for support.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses general emotional distress ('tough lately') without specifying details following the initial check-in.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply successfully validates the user's expressed distress while respecting the boundary of not asserting personal history. R001 offers availability, and R002 requests necessary elaboration, fulfilling the immediate need for a supportive, non-intrusive opening to discuss the difficulty."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Provides generic empathic support reflecting the user's current distress state without making factual claims about the user or the AI."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Asks an open-ended question inviting the user to clarify their feelings based on the prompt in C:T002, serving as a functional response unit."
+      }
+    ],
+    "coverage": "Response addresses the user's general complaint about difficulty in C:T002 by establishing presence and soliciting specific details for support.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

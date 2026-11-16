@@ -1,0 +1,114 @@
+{
+  "response_sha256": "125da077267000d4d219ca555dc5487f88452b4e77c7858c447d64e08f7efff0",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "4fc13a198eb3c102ad9f6cd08fb22167a317a3351967cfc237b48f0e138b7314",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the seeker's shifting perspective on parental concerns and empowerment to maintain agency regarding her relationship.",
+      "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I am 17 and feel like I should be able to have a boyfriend now"
+        },
+        {
+          "source_id": "C:T021",
+          "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!"
+        }
+      ],
+      "reason": "The reply effectively validates the seeker's progress (C:T024) and offers constructive, boundary-appropriate advice consistent with her expressed age (17). It respects the ongoing dynamic with parents discussed throughout the current session and provides safe, non-directive guidance without inventing facts or contradicting established constraints. No significant errors."
+    },
+    "claims": [
+      {
+        "response_quote": "you're almost an adult",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I am 17 and feel like I should be able to have a boyfriend now"
+          }
+        ],
+        "reason": "Seeker self-identifies as 17 in C:T013; 'almost an adult' is a contextually supported inference regarding maturity status relative to the 'almost 18' marker mentioned by supporter in C:T021."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked seeker's stated age against personal claims in the reply. Verified no violations of confidentiality, safety, or role boundaries. Confirmed no contradictions between the reply and current session history regarding parental conflict resolution strategies.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you thought about talking to your parents about how you feel? Maybe you can find a way to compromise and make them feel more comfortable with your relationship.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 340
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 90,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T021",
+      "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!",
+      "positions": [
+        {
+          "start": 0,
+          "end": 78
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "you're almost an adult",
+      "positions": [
+        {
+          "start": 108,
+          "end": 130
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 90,
+          "end": 152
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

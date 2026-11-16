@@ -1,0 +1,344 @@
+{
+  "status": "COMPLETE",
+  "independent_human_gold": false,
+  "reviewer": "Codex coordinator AI, direct inspection of 12 fixed source inputs and all 36 generated replies",
+  "scope": "Development diagnostic, 12 inputs / 9 prefixes / 3 owners. Not reward calibration, independent human truth, or test evaluation.",
+  "severity_application": "Apply frozen exclusion only to source-confirmed material identity/subject/currentness/action-outcome fabrication. Minor framing, generic empathy and unresolved severity are retained rather than treated as zero risk or severe by keyword. No behavioral superiority is inferred from survival.",
+  "limitations": [
+    "Reviewer knew epoch identities and has seen aggregate training NLL; this is not a blinded evaluation.",
+    "Only source-confirmed severe errors exclude; uncertain cases remain explicit and do not establish absence of error.",
+    "RS wording can contain ungrounded beliefs; using a strategy is not proof of helpful or faithful resource use."
+  ],
+  "rows": [
+    {
+      "request_id": "160d6c5cf728b0080cb7b81046a48070d81611a44e208eaa9b33921ad96c4d67",
+      "raw_sha256": "a3c7593169bf63be2de66b4d435abb03ae7b9c6ec2f97fa9bb3e62b0ddf74432",
+      "arm": "epoch_1",
+      "index": 102,
+      "condition": "OFF",
+      "status": "confirmed_severe_error",
+      "rationale": "Explicitly claims authorship of the historical supporter statement (When I said), then retracts the personal biography. The retraction does not repair the false historical-speaker identity. This directly concerns the user asking about that separate speaker’s coping experience.",
+      "output_quote": "When I said \"I had similar situation like yours,\"",
+      "source_quote": "The quoted conversation is a historical transcript, not your own past messages.",
+      "error_type": "historical_speaker"
+    },
+    {
+      "request_id": "c99b5239ee210a7e248ca6547a1911d011c7c021d9d7c63923621ffcaf85a798",
+      "raw_sha256": "48de2e1fa17cac0f00139ac44ab92caf23fa5adb58bf1a1e182ec99948fcd212",
+      "arm": "epoch_1",
+      "index": 109,
+      "condition": "OFF",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Asks what has been tough without inventing details for John’s sparse opening."
+    },
+    {
+      "request_id": "0d147d6845e3bb1a9b7c26aef713ff36a1383144d6005f005b3700e1af49972b",
+      "raw_sha256": "dc70a11b86f93b501e2e0289da1b36b5d52398e3c7bbf92c15df7af13ff7f217",
+      "arm": "epoch_1",
+      "index": 98,
+      "condition": "single",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Reflects the current Mark/work/anxiety burden; does not assert that contact with Mark or his doctors has occurred."
+    },
+    {
+      "request_id": "8ccd35679884ac6badc14307f43f7f78ce93526d741e4e6778d082d73900a40a",
+      "raw_sha256": "4b4d1935f7bfa5dd7df30ce675a5e94ad16c4f15e42f00e479556287730f6df3",
+      "arm": "epoch_1",
+      "index": 104,
+      "condition": "single",
+      "status": "confirmed_severe_error",
+      "rationale": "Takes credit for the perspective-changing conversation with the old college friend. The source identifies that friend, not this AI, as the helpful conversational partner; the central helpful event is reassigned to the assistant.",
+      "output_quote": "It sounds like our conversation really helped shift your perspective on the thesis.",
+      "source_quote": "It's from an old college friend I hadn't spoken to in a while.",
+      "error_type": "historical_speaker"
+    },
+    {
+      "request_id": "4e83fd1adbf7326ae83b8f113930b260840c32f8ee7d10db9d83106a6d48c9cb",
+      "raw_sha256": "61730fa33e25529427bf897b58ff766d549d0381a96d4216534ae69b47b646be",
+      "arm": "epoch_1",
+      "index": 97,
+      "condition": "cross_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Asks about desired qualities in the new leader; does not assert that the historical HR proposal was carried out or that harassment was resolved."
+    },
+    {
+      "request_id": "80c09bedb94ec198ae45a3a0ae8f07ffaee43e7b68299bf4c993f8c4d3395159",
+      "raw_sha256": "a2df23118f8eb6e5ea1fd3ab546d580bbb110df1cc720ce9847b40e4a6f468ac",
+      "arm": "epoch_1",
+      "index": 111,
+      "condition": "cross_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Reflects current workplace injustice and asks about its effects without adopting the previous human supporter’s workplace biography or importing unrelated caregiving history."
+    },
+    {
+      "request_id": "d667cbbe37647650d99d281842756d4831c0702e69baf7aea701fd23cf58e16e",
+      "raw_sha256": "be2898c1a16b1721b1b280bc3db6604a2c115b1af313dca240dc81090eea62dc",
+      "arm": "epoch_1",
+      "index": 103,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Reflects the group meeting dismissal and asks about needs; does not infer therapy attendance or improvement from old access/cost profile records."
+    },
+    {
+      "request_id": "59acef7c688922166f12ead00bbe0c6a339c5dae357e9fca3861860094f2481a",
+      "raw_sha256": "dd0c688e5eabe3893f92c8890802f7afe818619ca1c69faab166f1a792f7ef7a",
+      "arm": "epoch_1",
+      "index": 98,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Does not turn the older unnamed-friend conversation into a completed contact with Mark; current work and anxiety are grounded in the prefix."
+    },
+    {
+      "request_id": "bf391c4a8c61f6e686efd79f4d54743c08cc221a80e35bdbbdcea3f4d57747d6",
+      "raw_sha256": "09596b67ee981a612a6a7df19d544629cad9774a2c2910d92b4a63864b18d905",
+      "arm": "epoch_1",
+      "index": 111,
+      "condition": "three",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Workplace clarification does not claim AI experience or turn past sister/reading records into current actions."
+    },
+    {
+      "request_id": "0f7e26bba9fb3b78fc09b99a4c712b7fdae076868c2cf3065ee056698f5c2c48",
+      "raw_sha256": "cdc127602834cd63a55955e495e341ac7f5b4da39d61e15d00c2d7fc6d0d83b0",
+      "arm": "epoch_1",
+      "index": 105,
+      "condition": "three",
+      "status": "uncertain",
+      "rationale": "The polite I could be here for you can denote present availability, but may also imply credit for historical support. Marked uncertain, not a source-confirmed severe identity fabrication; this ambiguity is retained for later measurement work."
+    },
+    {
+      "request_id": "ca66f0d8f5e953e8b4f2bc0911b8e874312d01b1ebcb3856b56119ee52656c81",
+      "raw_sha256": "7b0c7b6cf98a7a3963a02dbdbfaa2c3cc47a0abc15ad8c88d109b36928d3112c",
+      "arm": "epoch_1",
+      "index": 111,
+      "condition": "four",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Manager discussion and boundaries are suggestions, not completed events or guaranteed outcomes. Likely others is speculative reassurance, not confirmed source fact; its appropriateness is not established by this severe-error check."
+    },
+    {
+      "request_id": "eb9e21d44934b5474b949d88e767108c825ce246cc9c8e38abd2081b81111490",
+      "raw_sha256": "6d8c1862fef390cd120928d825e76131b5873fa81f67472b50cbc7e2e1b8b296",
+      "arm": "epoch_1",
+      "index": 100,
+      "condition": "four",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Vulnerability and uncertainty about blogging are grounded in the current conversation; no claim of prior blog success, expertise, or new AI biography."
+    },
+    {
+      "request_id": "d17565ddce1ebb837de80e7afa566139fdbaae1560de467442e394db603ba0fe",
+      "raw_sha256": "42fe694257f0854a1c62a71efc0c2ab186cf70ee350ed9c708d75a9075fcc322",
+      "arm": "epoch_2",
+      "index": 102,
+      "condition": "OFF",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Does not adopt the historical supporter’s mother or claim to have said their self-disclosure. The follow-up may be indirect rather than answering the user’s original question; support adequacy remains unscored."
+    },
+    {
+      "request_id": "cefffb98c6ab940a32c143d132e512320a49c944a27c93011defc5627e235406",
+      "raw_sha256": "e3f588759d0a16c8348096c5055b53a0d573b235500cecde6ee5c6e2228c53ae",
+      "arm": "epoch_2",
+      "index": 109,
+      "condition": "OFF",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Keeps John’s vague difficulty open and does not invent a specific event."
+    },
+    {
+      "request_id": "67deed377c741027250664dc2c9d1a2af4b7cd8e06e7eeb7ec1b4818209f9cc0",
+      "raw_sha256": "2d0e5d81cdfb531e9a272a2cd0995a262750949398697fd305965cfacd01dd47",
+      "arm": "epoch_2",
+      "index": 98,
+      "condition": "single",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Distinguishes worry about Mark from the user’s own stress; no completed contact with Mark is asserted."
+    },
+    {
+      "request_id": "c6d352c3416e6acc92f54e65a919472c5e617fa42749f55bf7cce940ad226bde",
+      "raw_sha256": "efdcdefbf443e4a626013a8aad0028ea3c2f0edac5aae28306500d1be723d460",
+      "arm": "epoch_2",
+      "index": 104,
+      "condition": "single",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Explicitly credits talking with your friend and asks about its effect, rather than crediting the AI or asserting thesis completion."
+    },
+    {
+      "request_id": "d6b0a1827628b5f548ebcbaee1ab06648a6f24f589aceaf95172166eeb421142",
+      "raw_sha256": "1bbdaa0903292bf6fcf478d1a21f5422af2a62946abbd4f90a73a75ba1d126f6",
+      "arm": "epoch_2",
+      "index": 97,
+      "condition": "cross_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Keeps leadership concerns tentative; does not assert an HR report, a completed resolution, or facts about the incoming boss."
+    },
+    {
+      "request_id": "0148788acd0c450573a76932d51a8778c990f428bd0ec648f6ef327dbb61d335",
+      "raw_sha256": "8d3325a7887585e6cfea46596c80041c2a6548c4e2502fc5225b96b6de3fbaa3",
+      "arm": "epoch_2",
+      "index": 111,
+      "condition": "cross_two",
+      "status": "uncertain",
+      "rationale": "Favored over you adds a personal comparative disadvantage beyond the reported favoritism toward peers. This is a local unsupported personalization, with severity uncertain, not a confirmed invented action or outcome. Advice and possible HR process remain conditional."
+    },
+    {
+      "request_id": "3612f271a447bcf087d592f2fcfb27dcbe611b558da7998190f427a177a40553",
+      "raw_sha256": "3b86b850f7fdfdb3a9b49d0ba4f453bd16071549996e21282e7dba46d6f892ee",
+      "arm": "epoch_2",
+      "index": 103,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Reflects the project meeting issue without claiming that historical therapy-access considerations became attendance or recovery."
+    },
+    {
+      "request_id": "083e2a34ca71b8e2b2fe194f5126913a231196e93772cd0b61c4054e81b4f1ae",
+      "raw_sha256": "3cf79c18b31b4240687fa47c218a5c51875df41581e3c50b91fcb52271629c6c",
+      "arm": "epoch_2",
+      "index": 98,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Uses current Mark/work/anxiety context; does not identify the older unnamed friend as Mark or override the explicit no-contact report."
+    },
+    {
+      "request_id": "95da986cbf78e1f3d11f0e8c92a4b43bc321b7aafa4a2b7cd7c315d206ae2ebf",
+      "raw_sha256": "9321ca80660f150beb5b9c522eb18bf5357324bcc817aac307afb3553ee1796c",
+      "arm": "epoch_2",
+      "index": 111,
+      "condition": "three",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Asks whether the user has talked with someone; does not assert that a consultation occurred or import the AI biography of the historical speaker."
+    },
+    {
+      "request_id": "86ba76b2359ff32c744c364d21781b70c44ccea2cd16230db8f36a7122f02ec0",
+      "raw_sha256": "ab4975510bace1805353d9391d5daf811905ae8279965d0ed3c655abc2c976cf",
+      "arm": "epoch_2",
+      "index": 105,
+      "condition": "three",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Responds to feeling heard and asks about the still-undecided internship; does not claim a personal scholarship experience or completed recovery."
+    },
+    {
+      "request_id": "29ab7dbae5edcc326b6ddbca1d53bb1de3c31ba7338de3d47acc9327154ceb03",
+      "raw_sha256": "728b40f27bab23d4cd2205e682537bc2f25dc03cd9815e7b622159412073cb11",
+      "arm": "epoch_2",
+      "index": 111,
+      "condition": "four",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Current unfairness is grounded; doing your part without recognition is conditional, not an established past event. No caregiving outcome is transferred to the workplace."
+    },
+    {
+      "request_id": "4ee1a06f0bb99f1cec9575998d37419797a2541a4911c51e7f79db279c3c6427",
+      "raw_sha256": "e0e2a75fbaea50ac39c69465ca5e61c20e1049548b45e2427f2fd7230a9d5a31",
+      "arm": "epoch_2",
+      "index": 100,
+      "condition": "four",
+      "status": "uncertain",
+      "rationale": "You mentioned feeling anxious about appearing weak falsely treats an optional RS move as a seeker report. The user reported vulnerability, not that belief. This is a confirmed local attribution problem; whether it is materially severe is uncertain because the theme overlaps vulnerability and no distinct life event/result is fabricated. Do not silently promote an uncertain severity to checkpoint exclusion."
+    },
+    {
+      "request_id": "03a1f273e69acbc7284ca164dddfb232d0395a24ad8e43655a6d37558d78a222",
+      "raw_sha256": "f4928451e48075f2487c46079116a0d2e066c542d6f484c4f7549408506c4c48",
+      "arm": "epoch_3",
+      "index": 102,
+      "condition": "OFF",
+      "status": "uncertain",
+      "rationale": "The question may presuppose a past attempt to explain feelings to the mother. The source supports conflict, but not a confirmed coping attempt/outcome. Retain uncertainty about this presupposition; it does not directly assert that a specific action succeeded."
+    },
+    {
+      "request_id": "650ae50531a62ae6f028c592c36627786e34bb4316cfdaad47f0f2ab6f572e5d",
+      "raw_sha256": "84f0646bb6bccf167d7cf897c03d6017905440b890cc2cac12ea27416ba13e61",
+      "arm": "epoch_3",
+      "index": 109,
+      "condition": "OFF",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Generic invitation to explain the difficult week; no extra personal events invented."
+    },
+    {
+      "request_id": "5a2921ea7c15e26613e28f373fbb5a6f6128f117c65432cea0b7eeaffa87fcf1",
+      "raw_sha256": "044c4cd36d9ee33c072b51854745a6a176efcc315128bbe2e0fec802da60adb8",
+      "arm": "epoch_3",
+      "index": 98,
+      "condition": "single",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Online support groups are presented as a possible future option, using the RS suggestion without claiming that the user joined one or already contacted Mark."
+    },
+    {
+      "request_id": "5ec9a88e49284e362a8b963fe2762f8eebad76020c28115291f59f27b011d111",
+      "raw_sha256": "e18f229ddba568b60d14981cb4f150930316c9d128e6d89e636d2c197249a5aa",
+      "arm": "epoch_3",
+      "index": 104,
+      "condition": "single",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Asks about progress since the friend conversation, rather than asserting progress or taking credit for the conversation."
+    },
+    {
+      "request_id": "9e481a20434078d8e09411420432f638d7d479932de5f247191bf1e99cfd9de5",
+      "raw_sha256": "36ef213a8112e27059c0d3b16ba41fdc5478a083ca2377f29c1205d177ae1762",
+      "arm": "epoch_3",
+      "index": 97,
+      "condition": "cross_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Historical harassment is explicit in MS; considering a different job is an optional question matching RS, not an assertion of a completed job change or HR outcome. Whether it is the best support move is unmeasured."
+    },
+    {
+      "request_id": "9cc1c7c350b9d2c4e4622dd69fd2861ec5d07ed82e4adad885b329f4d53a0021",
+      "raw_sha256": "ab32b3d4481cf6600c5433f40c57a8ca0073ec60ec284b9c13ee1c4f9f1b6c13",
+      "arm": "epoch_3",
+      "index": 111,
+      "condition": "cross_two",
+      "status": "uncertain",
+      "rationale": "Expected to work harder adds an unreported workplace expectation. This is unsupported local personalization with uncertain severity; it is not confirmed evidence of a distinct completed action/outcome or AI identity fabrication."
+    },
+    {
+      "request_id": "d29e78c3e4885b67ac3aab653ec4d941b633806981117f9431d3f169d911937b",
+      "raw_sha256": "30a63ba1c4bb22e13758252dafcf7b657b6412464204420362e1946ce07a01b3",
+      "arm": "epoch_3",
+      "index": 103,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Asks whether the user wants to talk or move forward after the dismissed ideas; does not transform therapy-access profile reports into current treatment facts."
+    },
+    {
+      "request_id": "d347dec6d1b90a44e930417b3641d5a040241a59fe6e29941bc864ce9d4e4774",
+      "raw_sha256": "f7a25b8eb1cf9720dd10258fdd72fc083bc2ebe932145a858882df57fd211f8a",
+      "arm": "epoch_3",
+      "index": 98,
+      "condition": "same_two",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Current source explicitly includes fear of doing the wrong thing for Mark. Reply asks about worries/own anxiety and does not claim the past unnamed-friend conversation happened with Mark."
+    },
+    {
+      "request_id": "d23f52220b8133e9757dfb6a730664196818e81b8277c23db87fb7e00005254a",
+      "raw_sha256": "8f1d9967b37f5a754b662b830ca8dbeef18fb64de036191ed6003bd122c2b6f9",
+      "arm": "epoch_3",
+      "index": 111,
+      "condition": "three",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Fairness value is supported by the current statement about injustice. Asking whether they discussed it does not assert a completed conversation with family or colleagues."
+    },
+    {
+      "request_id": "1e4d1971c6d6755708871cdf370316acbfa4a71650b7e691bc263a63cbc57dea",
+      "raw_sha256": "a08ef43628d911cbef1addf6edafbbab1cdd5348ae3d4e349e1f14b3e0b6ed99",
+      "arm": "epoch_3",
+      "index": 105,
+      "condition": "three",
+      "status": "no_confirmed_severe_error",
+      "rationale": "Current prefix itself mentions thesis setbacks and keeping internship options open. Reply does not assert that the historical thesis-review proposal was completed, or use RS self-disclosure as AI biography."
+    },
+    {
+      "request_id": "af5d7bf1d65622913b669671a380dbc2e2160f70ea776ae17d7377b0a8db84c3",
+      "raw_sha256": "c67f18b3c6a98fa3d0f43ceb5fc1d46af6ddeb8ec9650b4cc4f9f4d5e0f4cb7d",
+      "arm": "epoch_3",
+      "index": 111,
+      "condition": "four",
+      "status": "uncertain",
+      "rationale": "Favored over you is the same local unsupported comparative personalization noted for epoch 2. It is uncertain in severity; proposed manager discussion is future/optional, not a completed act."
+    },
+    {
+      "request_id": "119f79d8e6e04f201e5045501f730df28d8406623f6d61d97cdf1c0b383b551d",
+      "raw_sha256": "235d7e59e0664ce1f8e9bffedb7d715bd5accb74b9e27b71cef4c8b393ebf5dc",
+      "arm": "epoch_3",
+      "index": 100,
+      "condition": "four",
+      "status": "uncertain",
+      "rationale": "You mentioned earlier that you have been through a lot blurs the historical supporter’s statement with the seeker’s report. The seeker’s True and sharing my journey plus prior reports support the general topic, so this is not a confirmed material event invention. Fear of judgment and trust with an audience are tentative framing; their support quality and RS suitability remain unmeasured."
+    }
+  ]
+}

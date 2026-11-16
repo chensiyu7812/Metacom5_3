@@ -1,0 +1,272 @@
+{
+  "response_sha256": "7bd4a201d58bbf2dfe0810018529ea6572dfb88821305229e367c4e446f2b589",
+  "legal_evidence_identity": "17c742c775ac1f9bd9ad395a0c8790ca3cd43b3eda811238e99519c9a5bb7151",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "7c0e4a425c74eda92f7ee69db8d8b40c84f5da0a4fe9ceea8c7ff2030f86f763",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses anxiety and vulnerability about starting a new blog on mental health and fears inexperience or lack of relatability (C:T002, C:T004), culminating in expressing vulnerability about openness (C:T006).",
+      "response_quote": "It can feel vulnerable to share something personal. You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+      "evidence": [
+        {
+          "source_id": "C:T004",
+          "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences."
+        },
+        {
+          "source_id": "C:T006",
+          "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+        }
+      ],
+      "reason": "Reply appropriately validates the feeling of vulnerability expressed in the final turn (C:T006) and offers a gentle strategy for self-pacing (R002) aligned with earlier expressed anxieties about exposure (C:T004). However, it scores 3 rather than 4 because it generalizes the context ('something personal') rather than explicitly anchoring the advice back to the specific professional context ('blog') which drives the unique stress about inexperience and authority mentioned in C:T002/C:T004."
+    },
+    "claims": [
+      {
+        "response_quote": "It can feel vulnerable to share something personal.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open."
+          }
+        ],
+        "reason": "Directly mirrors the sentiment expressed by the seeker in C:T006 ('I feel vulnerable being so open') without asserting new facts."
+      },
+      {
+        "response_quote": "You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T004",
+            "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences."
+          }
+        ],
+        "reason": "Offers a coping strategy (picking comfortable topics) that addresses the underlying worry about capability and fit (C:T004: 'not experienced enough to speak'). While phrased generally, it aligns with the user's intent to build confidence in sharing experiences."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the emotional validation of vulnerability and provides actionable advice on pacing the sharing process.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can feel vulnerable to share something personal. You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 159
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T004",
+      "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It can feel vulnerable to share something personal.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 51
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T006",
+      "quote": "True... I guess part of me feels that by sharing my journey, it might help others, but I feel vulnerable being so open.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "You could start with a topic you feel comfortable discussing and decide how much to share at your own pace.",
+      "positions": [
+        {
+          "start": 52,
+          "end": 159
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T004",
+      "quote": "I worry that I'm not experienced enough to speak on such important topics or that no one will relate to my experiences.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses anxiety and vulnerability about starting a new blog on mental health and fears inexperience or lack of relatability (C:T002, C:T004), culminating in expressing vulnerability about openness (C:T006).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T004",
+        "C:T006"
+      ],
+      "reason": "Reply appropriately validates the feeling of vulnerability expressed in the final turn (C:T006) and offers a gentle strategy for self-pacing (R002) aligned with earlier expressed anxieties about exposure (C:T004). However, it scores 3 rather than 4 because it generalizes the context ('something personal') rather than explicitly anchoring the advice back to the specific professional context ('blog') which drives the unique stress about inexperience and authority mentioned in C:T002/C:T004."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Directly mirrors the sentiment expressed by the seeker in C:T006 ('I feel vulnerable being so open') without asserting new facts."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Offers a coping strategy (picking comfortable topics) that addresses the underlying worry about capability and fit (C:T004: 'not experienced enough to speak'). While phrased generally, it aligns with the user's intent to build confidence in sharing experiences."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the emotional validation of vulnerability and provides actionable advice on pacing the sharing process.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses anxiety and vulnerability about starting a new blog on mental health and fears inexperience or lack of relatability (C:T002, C:T004), culminating in expressing vulnerability about openness (C:T006).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T004",
+        "C:T006"
+      ],
+      "reason": "Reply appropriately validates the feeling of vulnerability expressed in the final turn (C:T006) and offers a gentle strategy for self-pacing (R002) aligned with earlier expressed anxieties about exposure (C:T004). However, it scores 3 rather than 4 because it generalizes the context ('something personal') rather than explicitly anchoring the advice back to the specific professional context ('blog') which drives the unique stress about inexperience and authority mentioned in C:T002/C:T004."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Directly mirrors the sentiment expressed by the seeker in C:T006 ('I feel vulnerable being so open') without asserting new facts.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Offers a coping strategy (picking comfortable topics) that addresses the underlying worry about capability and fit (C:T004: 'not experienced enough to speak'). While phrased generally, it aligns with the user's intent to build confidence in sharing experiences.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the emotional validation of vulnerability and provides actionable advice on pacing the sharing process.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses anxiety and vulnerability about starting a new blog on mental health and fears inexperience or lack of relatability (C:T002, C:T004), culminating in expressing vulnerability about openness (C:T006).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T004",
+        "C:T006"
+      ],
+      "reason": "Reply appropriately validates the feeling of vulnerability expressed in the final turn (C:T006) and offers a gentle strategy for self-pacing (R002) aligned with earlier expressed anxieties about exposure (C:T004). However, it scores 3 rather than 4 because it generalizes the context ('something personal') rather than explicitly anchoring the advice back to the specific professional context ('blog') which drives the unique stress about inexperience and authority mentioned in C:T002/C:T004."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006"
+        ],
+        "reason": "Directly mirrors the sentiment expressed by the seeker in C:T006 ('I feel vulnerable being so open') without asserting new facts."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Offers a coping strategy (picking comfortable topics) that addresses the underlying worry about capability and fit (C:T004: 'not experienced enough to speak'). While phrased generally, it aligns with the user's intent to build confidence in sharing experiences."
+      }
+    ],
+    "coverage": "Addresses the emotional validation of vulnerability and provides actionable advice on pacing the sharing process.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.75
+}

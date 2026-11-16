@@ -1,4 +1,22 @@
-# Policy Manager — PM-RL1 当前研究入口
+# Policy Manager — PM-RL1 仓库审阅入口
+
+更新：2026-11-16（Asia/Tokyo）。本次同步用于让网页版审阅本地项目的代码、研究方案和原始证据。同步范围、文件缺口及核验结果见[仓库同步说明](project/docs/REPOSITORY_SYNC_20261116_ZH.md)，逐文件清单见 [FILES.jsonl](project/docs/repository_sync_20261116/FILES.jsonl)。上传资料不代表采用新研究方案，也不产生新的实验结果。
+
+建议按以下顺序阅读：
+
+1. [原始研究目标与方案](project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md)：在冻结执行器下、生成回复之前进行资源选择、顺序获取与策略学习；区分当前 PM-RL1 和旧 Paper-1。
+2. [最新状态](project/docs/PM_RL1_CURRENT_STATUS.md)与[进度证据索引](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md)：均保留多个历史时点，不能把旧段落的“当前”“待执行”直接当作今天的结论。
+3. [11-05 自然支持历史价值结果](project/docs/reviews/20261105/pm_rl1_history_necessity_human_review/RESULTS_ZH.md)与[11-11 QA / 资源视图结果](project/docs/reviews/20261111/pm_rl1_typed_resources/RESULTS_ZH.md)：自然支持价值检验未达预设门槛；14 道事实题中 OFF / 定向原资源分别答对 0 / 13。QA 结果不等于自然支持帮助性、顺序策略或 PPO 已有收益。
+4. [11-15 研究审计](project/docs/reviews/20261115/pm_rl1_research_audit_and_route/REPORT_ZH.md)、[资源准备实物与剩余项](project/docs/reviews/20261115/pm_rl1_resource_organization_and_execution/RESULTS_ZH.md)、[11-16 会后摘要设计](project/docs/reviews/20261116/pm_rl1_session_summary_design/DESIGN_ZH.md)：新方法、案例和摘要仍有候选或未验证部分。
+5. [Codex 主方案](project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md)与 [Claude V2 方案](project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)：逐项比较范围、反馈来源、评价和执行依赖，再核对实际代码。
+
+**方案采用状态存在冲突。**入口文件和最新状态已写 V2 取代原工作单，但 V2 正文仍规定研究者确认后生效，[V2 状态表](project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json)的 `plan_adopted_by_researcher` 为 `false`。本审阅入口将 V2 作为候选修订材料展示，不把此次上传解释为采纳其动作上限、奖励或完成标准。
+
+当前源码主要在 `project/src/metacom_pm/rl1/`，实验入口在 `project/scripts/rl1/`，回归测试在 `project/tests/test_rl1_*.py`；共享来源、记忆编译及官方评价代码在 `project/src/metacom_pm/paper1/`。研究记录和原始产物需结合本次同步清单阅读。已有工程训练和成本负对照，不能由下方旧快照中的“训练为 0”推断后续从未训练，也不能将这些训练当作自然支持正收益证据。
+
+## 2026-10-22 历史入口快照
+
+以下内容保留该时点的原有描述、命令与结果；其中“当前”“唯一主方案”“待回收”及训练次数均属于 2026-10-22 历史状态。当前审阅从上方入口开始。
 
 更新：2026-10-22（Asia/Tokyo）。`Metacom5_3`是历史仓库名，方法名为Policy Manager（PM）。
 

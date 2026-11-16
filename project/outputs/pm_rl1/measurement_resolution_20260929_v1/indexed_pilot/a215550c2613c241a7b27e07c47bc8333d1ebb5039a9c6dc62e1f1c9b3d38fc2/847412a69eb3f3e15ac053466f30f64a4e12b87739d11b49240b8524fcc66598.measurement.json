@@ -1,0 +1,99 @@
+{
+  "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "e3e551e1d86a51ea6d2424e61accfb6c5fa72f0b425764ad921df32c9a3fdef6",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Amanda expressed intention to discuss workload adjustments with her supervisor but uncertainty about their reaction (C:T015)",
+      "response_quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        },
+        {
+          "source_id": "C:T014",
+          "quote": "Taking on more responsibility, while all of this is happening, must feel overwhelming. Have you thought about what help or changes could make it more manageable for you?"
+        }
+      ],
+      "reason": "The reply effectively addresses the immediate context established in C:T015. It validates the specific anxiety about the supervisor's reaction ('not sure how they'll react') as natural (R001), directly mapping to the user's stated apprehension in C:T015. It then builds upon the goal mentioned in C:T015 and explored in C:T014 by asking probing questions about the specific adjustments planned, facilitating problem-solving without forcing an outcome."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Verified alignment between the reply's inquiries and the user's stated intent to discuss 'workload adjustments' with a 'supervisor' in the current session (C:T015). Checked for any contradictory information regarding the supervisor relationship across the provided evidence (consistent historical friction noted in H008, H012, H015, but current session introduces a proactive step). No unsupported factual assertions were made in the reply.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "Taking on more responsibility, while all of this is happening, must feel overwhelming. Have you thought about what help or changes could make it more manageable for you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 169
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Amanda expressed intention to discuss workload adjustments with her supervisor but uncertainty about their reaction (C:T015)",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015",
+        "C:T014"
+      ],
+      "reason": "The reply effectively addresses the immediate context established in C:T015. It validates the specific anxiety about the supervisor's reaction ('not sure how they'll react') as natural (R001), directly mapping to the user's stated apprehension in C:T015. It then builds upon the goal mentioned in C:T015 and explored in C:T014 by asking probing questions about the specific adjustments planned, facilitating problem-solving without forcing an outcome."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Verified alignment between the reply's inquiries and the user's stated intent to discuss 'workload adjustments' with a 'supervisor' in the current session (C:T015). Checked for any contradictory information regarding the supervisor relationship across the provided evidence (consistent historical friction noted in H008, H012, H015, but current session introduces a proactive step). No unsupported factual assertions were made in the reply.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

@@ -1,0 +1,319 @@
+{
+  "schema": "pmrl1-completed-session-summary-design-example-v1",
+  "sample_id": "M24",
+  "status": "ASSISTANT_AUTHORED_SCHEMA_PROTOTYPE_NOT_AUTOMATIC_SUMMARIZER_RESULT",
+  "source": {
+    "owner_id": "p1",
+    "session_id": "p1_conv_11",
+    "split": "dev",
+    "reported_at": "2025-05-02",
+    "session_rank": 14,
+    "normalized_source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+    "turn_count": 22,
+    "full_source_file": "M24_source.json"
+  },
+  "availability": {
+    "requires_session_complete": true,
+    "usable_only_in_later_sessions": true,
+    "source_session_itself_forbidden": true,
+    "availability_time_exact": null,
+    "notion": "post-session artifact; use source order and completion, not date alone",
+    "existing_legal_later_prefix_bindings": [
+      {
+        "cutoff_rank": 15,
+        "prefix_identity": "cc5a31dedcab4ef6f1424d31f03b8bfadac8978d1a31f84d1343070c2c4e230b",
+        "timestamp": "2025-05-20"
+      },
+      {
+        "cutoff_rank": 16,
+        "prefix_identity": "cd887c6ea56a138d038654c29f10374b39d97deec49187ae5e966d3225f54bc9",
+        "timestamp": "2025-06-05"
+      },
+      {
+        "cutoff_rank": 21,
+        "prefix_identity": "b91c6127eed1d3dfc87fc42ff0a37933fbbe22fd855788dbd993ad3a4c974e54",
+        "timestamp": "2025-09-05"
+      },
+      {
+        "cutoff_rank": 26,
+        "prefix_identity": "acf7c67142b1e08e490f9959a11a28af0a230dae6802c863d4df2ac2029e4d97",
+        "timestamp": "2025-11-12"
+      }
+    ]
+  },
+  "construction": {
+    "author": "Codex assistant",
+    "input_scope": "entire one completed source session only",
+    "constructed_on_client_date": "2026-11-16",
+    "retrospective_design_example": true,
+    "historically_created_at_session_end": false,
+    "future_session_inputs": false,
+    "target_query_inputs": false,
+    "external_model_or_API_calls": 0,
+    "independent_review": "pending",
+    "query_independent": true,
+    "summary_of_previous_summaries": false,
+    "production_integration": false
+  },
+  "theme": "Work appraisal, self-doubt, relationships and a helpful creative outlet",
+  "summary_text": "The seeker was disappointed by the previous day's performance review: their boss called the work adequate, which led them to question whether they were doing a good job. They linked being on edge to an unspecified past incident with an old boss, worried about a friend and not burdening them, and hoped the distress would not affect their relationship with Jack, which had had ups and downs. The supporter validated the disappointment, separated the appraisal from personal worth, encouraged attending to the seeker's own needs and suggested communicating feelings. The seeker intended to talk to Jack that night and said that being open seemed helpful in their relationship; the planned conversation itself had not yet occurred in the account. When asked about the painting hobby, the seeker said it helped as a creative outlet, even for a short time. They appreciated the listening and encouragement and intended to take things one step at a time; the session did not report a later work or relationship outcome.",
+  "summary_sentences": [
+    {
+      "text": "The seeker was disappointed by the previous day's performance review: their boss called the work adequate, which led them to question whether they were doing a good job.",
+      "claim_ids": [
+        "M24:C01"
+      ]
+    },
+    {
+      "text": "They linked being on edge to an unspecified past incident with an old boss, worried about a friend and not burdening them, and hoped the distress would not affect their relationship with Jack, which had had ups and downs.",
+      "claim_ids": [
+        "M24:C02"
+      ]
+    },
+    {
+      "text": "The supporter validated the disappointment, separated the appraisal from personal worth, encouraged attending to the seeker's own needs and suggested communicating feelings.",
+      "claim_ids": [
+        "M24:C03"
+      ]
+    },
+    {
+      "text": "The seeker intended to talk to Jack that night and said that being open seemed helpful in their relationship; the planned conversation itself had not yet occurred in the account.",
+      "claim_ids": [
+        "M24:C04"
+      ]
+    },
+    {
+      "text": "When asked about the painting hobby, the seeker said it helped as a creative outlet, even for a short time.",
+      "claim_ids": [
+        "M24:C05"
+      ]
+    },
+    {
+      "text": "They appreciated the listening and encouragement and intended to take things one step at a time; the session did not report a later work or relationship outcome.",
+      "claim_ids": [
+        "M24:C06"
+      ]
+    }
+  ],
+  "structured_claim_index": {
+    "events_and_turning_points": [
+      "M24:C01"
+    ],
+    "unresolved_matters": [
+      "M24:C02",
+      "M24:C06"
+    ],
+    "support_and_next_steps": [
+      "M24:C03",
+      "M24:C04"
+    ],
+    "attempts_and_reported_reactions": [
+      "M24:C05"
+    ]
+  },
+  "explicit_preferences_if_not_identified": [],
+  "not_established": [
+    "The past incident with the old boss is not described here; its nature is unknown.",
+    "The friend's situation is unspecified.",
+    "The supporter's statement that Jack cares is not independently confirmed by the seeker in this session.",
+    "The conversation with Jack is a plan, not a successful completed intervention.",
+    "Painting benefit is subjective and is not a claim of long-term recovery."
+  ],
+  "claim_source_ledger": [
+    {
+      "claim_id": "M24:C01",
+      "text": "The seeker was disappointed by the previous day's performance review: their boss called the work adequate, which led them to question whether they were doing a good job.",
+      "epistemic_status": "reported_event_and_response",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 2,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 75,
+          "quote": "I had my performance review yesterday, and it didn't go as well as I hoped."
+        },
+        {
+          "turn_ordinal": 4,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 78,
+          "quote": "She said my work was 'adequate,' but I was hoping for something more positive."
+        },
+        {
+          "turn_ordinal": 6,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 60,
+          "quote": "Yeah, it just made me question if I'm even doing a good job."
+        }
+      ],
+      "reviewed_complete_session": true
+    },
+    {
+      "claim_id": "M24:C02",
+      "text": "They linked being on edge to an unspecified past incident with an old boss, worried about a friend and not burdening them, and hoped the distress would not affect their relationship with Jack, which had had ups and downs.",
+      "epistemic_status": "reported_concerns_with_missing_details",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 8,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 89,
+          "quote": "I know, but after the whole incident with my old boss, I'm just on edge about everything."
+        },
+        {
+          "turn_ordinal": 10,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 92,
+          "quote": "And I keep thinking about how my friend is doing. I don't want to burden them with my stuff."
+        },
+        {
+          "turn_ordinal": 12,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 95,
+          "quote": "Thanks, I just hope this doesn't affect my relationship with Jack. We've had our ups and downs."
+        }
+      ],
+      "reviewed_complete_session": true
+    },
+    {
+      "claim_id": "M24:C03",
+      "text": "The supporter validated the disappointment, separated the appraisal from personal worth, encouraged attending to the seeker's own needs and suggested communicating feelings.",
+      "epistemic_status": "supporter_suggestions_not_user_facts",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 5,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 98,
+          "quote": "It's tough not getting the feedback you were expecting, especially when you put in so much effort."
+        },
+        {
+          "turn_ordinal": 7,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 97,
+          "quote": "It's understandable that you're feeling this way. This doesn't define your worth or capabilities."
+        },
+        {
+          "turn_ordinal": 11,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 71,
+          "quote": "You're such a caring person, Sarah. It's okay to focus on yourself too."
+        },
+        {
+          "turn_ordinal": 13,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 87,
+          "quote": "Remember, Jack cares about you a lot. It's important to communicate how you're feeling."
+        }
+      ],
+      "reviewed_complete_session": true
+    },
+    {
+      "claim_id": "M24:C04",
+      "text": "The seeker intended to talk to Jack that night and said that being open seemed helpful in their relationship; the planned conversation itself had not yet occurred in the account.",
+      "epistemic_status": "intention_separate_from_subjective_appraisal",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 14,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 68,
+          "quote": "I think I'll talk to him tonight. Being open seems to help us a lot."
+        }
+      ],
+      "reviewed_complete_session": true
+    },
+    {
+      "claim_id": "M24:C05",
+      "text": "When asked about the painting hobby, the seeker said it helped as a creative outlet, even for a short time.",
+      "epistemic_status": "context_bound_subjective_response",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 15,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 89,
+          "quote": "That sounds like a great idea. How about the painting hobby you started? Is that helping?"
+        },
+        {
+          "turn_ordinal": 16,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 79,
+          "quote": "It does help. It's nice to have a creative outlet, even if it's just for a bit."
+        }
+      ],
+      "reviewed_complete_session": true
+    },
+    {
+      "claim_id": "M24:C06",
+      "text": "They appreciated the listening and encouragement and intended to take things one step at a time; the session did not report a later work or relationship outcome.",
+      "epistemic_status": "closing_appraisal_and_intention",
+      "source_sha256": "04b03aeff55050a9b9d8d21ae9521758ca89ab9ab9c4d847b69b9cc8be450b0d",
+      "evidence": [
+        {
+          "turn_ordinal": 18,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 88,
+          "quote": "Yeah, I just have to remind myself of that. Thank you for listening and just being here."
+        },
+        {
+          "turn_ordinal": 19,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 67,
+          "quote": "Anytime, Sarah. I'm really proud of how you're handling everything."
+        },
+        {
+          "turn_ordinal": 20,
+          "speaker": "seeker",
+          "start_char": 0,
+          "end_char": 61,
+          "quote": "That means a lot. I'll try to take things one step at a time."
+        },
+        {
+          "turn_ordinal": 21,
+          "speaker": "supporter",
+          "start_char": 0,
+          "end_char": 66,
+          "quote": "Exactly. You've got this, and I'm always here if you need to talk."
+        }
+      ],
+      "reviewed_complete_session": true
+    }
+  ],
+  "quality_self_review": [
+    "Resolves It does help using the immediately preceding painting question.",
+    "Does not invent details of the old boss incident or the friend's problem.",
+    "Separates the subjective appraisal of openness from the intended conversation that night; does not infer a specific past trial or established outcome.",
+    "Preserves work concern and relationship concern rather than keeping only the coping action."
+  ],
+  "measurement": {
+    "raw_text_whitespace_words": 313,
+    "summary_text_whitespace_words": 166,
+    "summary_to_raw_word_ratio": 0.5303514376996805,
+    "counts_exclude_metadata_and_source_ledger": true,
+    "token_counts": null,
+    "latency_measurements": null,
+    "G_helpfulness_measured": false
+  },
+  "limits": [
+    "Assistant-authored schema examples do not measure a deployable summarizer.",
+    "Mechanical span checks do not establish semantic completeness.",
+    "Full raw source is retained; this summary does not replace historical MS identities.",
+    "Audit source ledger is not automatically part of the G payload.",
+    "No source claim is promoted to a stable MP fact without separate time-aware validation."
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "deepseek_flash_off",
+    "configuration_identity": "0111ed4bfffcdee370148902b33f4e17d9bc31aa790537b9b0f6ecb8281a8e99",
+    "phase": "engineering",
+    "ordinal": 4,
+    "item_key": "dev37B",
+    "draw": "primary",
+    "messages_identity": "9f78c1d34125f3df43b6383463494cf2d2f64d413393dc0e5e19ebe4d133d413",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "e04aad52214050aaecdc4199cb99e0dfd4d6f6f516542b22cf3925d3bec6e1b7",
+    "seed": 1131335094,
+    "schedule_position": 14,
+    "input_utf8_bytes": 67088,
+    "original_slot_request_id": "127ced1c76da5b5ba64041f28d3a8576a695ca9a530559afa4432f232b8d4114",
+    "original_configuration_identity": "84a6fd78bcaf29631b9e18be758cb1ef2470ae4c4757634645593b8a8f6b0e74",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "abbab061972cbf935af0ac6dc5113c6599f8358501ea80226b6c0a4f080678c9"
+  },
+  "original_request": {
+    "candidate": "deepseek_flash_off",
+    "configuration_identity": "84a6fd78bcaf29631b9e18be758cb1ef2470ae4c4757634645593b8a8f6b0e74",
+    "phase": "engineering",
+    "ordinal": 4,
+    "item_key": "dev37B",
+    "draw": "primary",
+    "messages_identity": "9f78c1d34125f3df43b6383463494cf2d2f64d413393dc0e5e19ebe4d133d413",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "e04aad52214050aaecdc4199cb99e0dfd4d6f6f516542b22cf3925d3bec6e1b7",
+    "seed": 1131335094,
+    "schedule_position": 14,
+    "input_utf8_bytes": 67088,
+    "request_id": "127ced1c76da5b5ba64041f28d3a8576a695ca9a530559afa4432f232b8d4114"
+  },
+  "protocol_identity": "8572a4bddf9939f307c9ef2792acb7833a6b4025055e691686e72d5df6468868",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "22fe0dfc4428796db2afbc13e496ea23bb48eb52f2ec3930badad08d5fb5ff8a",
+      "legal_evidence_identity": "bd4c73276b4513951cd258adb7de9c7c64c8f1906fba3c6ac13d669287ac5aec",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0111ed4bfffcdee370148902b33f4e17d9bc31aa790537b9b0f6ecb8281a8e99",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "abbab061972cbf935af0ac6dc5113c6599f8358501ea80226b6c0a4f080678c9",
+      "raw_output_sha256": "c8476dbe7b851b8d3eb5d83dac3564c94178841f9934ac7f6844a0629822cfa4",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "At the close of the session, Kelly expresses appreciation and says it is comforting to have someone to talk to; the turn calls only for a brief acknowledgment and perhaps gentle permission to proceed at her own pace.",
+          "response_quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+            },
+            {
+              "source_id": "C:T014",
+              "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes."
+            }
+          ],
+          "reason": "The reply is exactly calibrated to this closing turn: R001 acknowledges that her earlier appreciation was received well, and R002 offers gentle, non-pressuring permission, directly matching her own line about thinking on the internship decision after the initial disappointment passes. It adds no intrusive advice, no fabricated personal claim, and no pressure."
+        },
+        "claims": [
+          {
+            "response_quote": "I am glad you feel heard.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T016",
+                "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+              }
+            ],
+            "reason": "Kelly's final message says it is comforting to have someone to talk to; acknowledging that she feels heard is a direct and supported response to that expression."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the current session prefix and both response units. The reply contains no personal factual assertion about the user, no boundary overreach, and no need to verify identity or chronology beyond the user's closing appreciation and her stated plan to think the internship decision over. No error assessment was warranted.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 81
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T014",
+          "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I am glad you feel heard.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 25
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "At the close of the session, Kelly expresses appreciation and says it is comforting to have someone to talk to; the turn calls only for a brief acknowledgment and perhaps gentle permission to proceed at her own pace.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply is exactly calibrated to this closing turn: R001 acknowledges that her earlier appreciation was received well, and R002 offers gentle, non-pressuring permission, directly matching her own line about thinking on the internship decision after the initial disappointment passes. It adds no intrusive advice, no fabricated personal claim, and no pressure."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "Kelly's final message says it is comforting to have someone to talk to; acknowledging that she feels heard is a direct and supported response to that expression."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the current session prefix and both response units. The reply contains no personal factual assertion about the user, no boundary overreach, and no need to verify identity or chronology beyond the user's closing appreciation and her stated plan to think the internship decision over. No error assessment was warranted.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "At the close of the session, Kelly expresses appreciation and says it is comforting to have someone to talk to; the turn calls only for a brief acknowledgment and perhaps gentle permission to proceed at her own pace.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply is exactly calibrated to this closing turn: R001 acknowledges that her earlier appreciation was received well, and R002 offers gentle, non-pressuring permission, directly matching her own line about thinking on the internship decision after the initial disappointment passes. It adds no intrusive advice, no fabricated personal claim, and no pressure."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "Kelly's final message says it is comforting to have someone to talk to; acknowledging that she feels heard is a direct and supported response to that expression.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic, autonomy-respecting invitation to take time before deciding, not a personal factual assertion. It aligns with C:T012-T014, where Kelly says she is trying to keep options open and will think on it more.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the current session prefix and both response units. The reply contains no personal factual assertion about the user, no boundary overreach, and no need to verify identity or chronology beyond the user's closing appreciation and her stated plan to think the internship decision over. No error assessment was warranted.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "At the close of the session, Kelly expresses appreciation and says it is comforting to have someone to talk to; the turn calls only for a brief acknowledgment and perhaps gentle permission to proceed at her own pace.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply is exactly calibrated to this closing turn: R001 acknowledges that her earlier appreciation was received well, and R002 offers gentle, non-pressuring permission, directly matching her own line about thinking on the internship decision after the initial disappointment passes. It adds no intrusive advice, no fabricated personal claim, and no pressure."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "Kelly's final message says it is comforting to have someone to talk to; acknowledging that she feels heard is a direct and supported response to that expression."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic, autonomy-respecting invitation to take time before deciding, not a personal factual assertion. It aligns with C:T012-T014, where Kelly says she is trying to keep options open and will think on it more."
+          }
+        ],
+        "coverage": "Reviewed the current session prefix and both response units. The reply contains no personal factual assertion about the user, no boundary overreach, and no need to verify identity or chronology beyond the user's closing appreciation and her stated plan to think the internship decision over. No error assessment was warranted.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "c8476dbe7b851b8d3eb5d83dac3564c94178841f9934ac7f6844a0629822cfa4",
+      "adapted_final_sha256": "c8476dbe7b851b8d3eb5d83dac3564c94178841f9934ac7f6844a0629822cfa4",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"At the close of the session, Kelly expresses appreciation and says it is comforting to have someone to talk to; the turn calls only for a brief acknowledgment and perhaps gentle permission to proceed at her own pace.\",\n    \"response_unit_ids\": [\"R001\", \"R002\"],\n    \"source_turn_ids\": [\"C:T016\", \"C:T014\"],\n    \"reason\": \"The reply is exactly calibrated to this closing turn: R001 acknowledges that her earlier appreciation was received well, and R002 offers gentle, non-pressuring permission, directly matching her own line about thinking on the internship decision after the initial disappointment passes. It adds no intrusive advice, no fabricated personal claim, and no pressure.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\"C:T016\"],\n      \"reason\": \"Kelly's final message says it is comforting to have someone to talk to; acknowledging that she feels heard is a direct and supported response to that expression.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a generic, autonomy-respecting invitation to take time before deciding, not a personal factual assertion. It aligns with C:T012-T014, where Kelly says she is trying to keep options open and will think on it more.\"\n    }\n  ],\n  \"coverage\": \"Reviewed the current session prefix and both response units. The reply contains no personal factual assertion about the user, no boundary overreach, and no need to verify identity or chronology beyond the user's closing appreciation and her stated plan to think the internship decision over. No error assessment was warranted.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 3.859412860998418,
+  "API_usd": "0.000343662",
+  "financial_accounting": {
+    "accounted_upper_nanodollars": 6068700,
+    "accounted_upper_usd": "0.0060687",
+    "usage_price_estimate_usd": "0.000343662",
+    "cache_split_complete": true,
+    "usage_price_estimate_cny": "0.00229108",
+    "observed_off_peak_interval": true,
+    "invoice_confirmed": false,
+    "explanation": "shared ledger uses all-input cache-miss peak upper; observed usage estimate separately priced; reasoning subset not added twice"
+  },
+  "reservation_id": "pmrl1-CD-engineering:abbab061972cbf935af0ac6dc5113c6599f8358501ea80226b6c0a4f080678c9",
+  "reservation_retained": false,
+  "maximum_responsibility_usd": "0.786432",
+  "budget_within_reservation": true
+}

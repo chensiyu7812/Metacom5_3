@@ -1,0 +1,127 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v5",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 5760,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2612,
+      "reserved_prompt_tokens": 2740,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 354
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "fe2e127df8cdaf0a2889283df349631e17a8c6e54808ec32b915a40b6d19c9ce",
+    "prior_profile_sha256": "a8a53027c3411675022dd8ec2b32a6f5a59b09e895c4b87be1706809abd92283",
+    "request_payload_sha256": "00b33e4915ff4ca6cd923a0a04ca599a3fecd05adde65422726c6956bcb82d92"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p10",
+      "s": "p10_conv_1",
+      "p": [
+        {
+          "i": "mp_001",
+          "k": "durable_boundary",
+          "t": "durable_boundary",
+          "v": "willing to provide emotional support but not financial support without reciprocity",
+          "s": [
+            {
+              "i": "p10_conv_1:2"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "me_001",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "had a big argument with partner Bob about finances",
+          "s": [
+            {
+              "i": "p10_conv_1:3"
+            },
+            {
+              "i": "p10_conv_1:5"
+            }
+          ]
+        },
+        {
+          "i": "me_002",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feeling exhausted and stuck in a cycle of stress after argument with partner",
+          "s": [
+            {
+              "i": "p10_conv_1:7"
+            }
+          ]
+        },
+        {
+          "i": "me_003",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "taking space after argument to calm down",
+          "s": [
+            {
+              "i": "p10_conv_1:9"
+            }
+          ]
+        },
+        {
+          "i": "me_004",
+          "t": "coping_attempt",
+          "z": "planned",
+          "n": "planning to talk with partner after dinner using calm discussion approach",
+          "s": [
+            {
+              "i": "p10_conv_1:13"
+            }
+          ]
+        },
+        {
+          "i": "me_005",
+          "t": "coping_attempt",
+          "z": "considered",
+          "n": "considering going for a walk or listening to music for self-care",
+          "s": [
+            {
+              "i": "p10_conv_1:19"
+            }
+          ]
+        },
+        {
+          "i": "me_006",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received emotional support from conversation partner during distress",
+          "s": [
+            {
+              "i": "p10_conv_1:21"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "e9e2d99e5f9a84e767ba07bc805aa9a91dc6fc18c704c8442e73f26b60f12e60",
+    "usage": {
+      "prompt_tokens": 2614,
+      "completion_tokens": 573,
+      "total_tokens": 3187
+    },
+    "latency_ms": 6720.588616008172,
+    "provider_finish_reason": "stop"
+  }
+}

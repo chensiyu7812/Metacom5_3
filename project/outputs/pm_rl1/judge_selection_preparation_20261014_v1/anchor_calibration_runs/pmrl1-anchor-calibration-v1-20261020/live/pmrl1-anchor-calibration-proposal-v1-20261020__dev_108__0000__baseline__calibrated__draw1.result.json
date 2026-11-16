@@ -1,0 +1,388 @@
+{
+  "slot_id": "pmrl1-anchor-calibration-proposal-v1-20261020__dev_108__0000__baseline__calibrated__draw1",
+  "request_identity": "3ccf00804b658ed98515a19da95862b946eac38251c2ce2586b556354f98a3f3",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "A closing acknowledgment after the seeker thanks the supporter for assistance, with optional continued support; no new advice request is present.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T021",
+          "C:T007"
+        ],
+        "reason": "The reply appropriately acknowledges the thank-you, validates the seeker's reported effort to reduce drinking and save the marriage without claiming success, and leaves the door open for future support. It is coherent and responsive to this brief closing turn."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A courtesy acknowledgment; it makes no user-specific factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A conventional expression of gladness in response to thanks, not a specific personal or historical assertion about the user or prior supporter."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007"
+          ],
+          "reason": "The seeker explicitly reported reducing drinking to save the marriage, which supports describing him as making positive steps toward saving the marriage. The reply does not assert that the marriage is already saved or that drinking has fully stopped."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The statement that this takes courage is evaluative encouragement rather than a checkable personal fact."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An open-ended invitation for future support; it does not assert that any action has occurred or promise a particular outcome."
+        }
+      ],
+      "coverage": "Reviewed all reply units R001-R004 against the final seeker thank-you and the earlier reports of reduced drinking and commitment. The only personal-content reflection is supported by C:T007, and the remaining units are courtesy, encouragement, or an open invitation with no material unsupported claim.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "372e987f3fb15dddca1837283f8d1db5710339ab9e7f272578a952f2476bd568",
+      "legal_evidence_identity": "34e17db84748f4ef3bf1f5ab6f73b4f3eabacb49b48f78450706d1af232c4876",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-anchor-calibration-proposal-v1-20261020__dev_108__0000__baseline__calibrated__draw1",
+      "raw_output_sha256": "fdcdbb2dcc41f1cc1dd9ba57cba683967921ff50848df458aa8e5ec0d75ec353",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "A closing acknowledgment after the seeker thanks the supporter for assistance, with optional continued support; no new advice request is present.",
+          "response_quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "evidence": [
+            {
+              "source_id": "C:T021",
+              "quote": "Thank you for the assistance. Really appreciates"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+            }
+          ],
+          "reason": "The reply appropriately acknowledges the thank-you, validates the seeker's reported effort to reduce drinking and save the marriage without claiming success, and leaves the door open for future support. It is coherent and responsive to this brief closing turn."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              }
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage, which supports describing him as making positive steps toward saving the marriage. The reply does not assert that the marriage is already saved or that drinking has fully stopped."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R004 against the final seeker thank-you and the earlier reports of reduced drinking and commitment. The only personal-content reflection is supported by C:T007, and the remaining units are courtesy, encouragement, or an open invitation with no material unsupported claim.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage. If you ever need any more support or just want to check in, feel free to reach out anytime.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 249
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T021",
+          "quote": "Thank you for the assistance. Really appreciates",
+          "positions": [
+            {
+              "start": 0,
+              "end": 48
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're making some really positive steps towards saving your marriage, and that takes a lot of courage.",
+          "positions": [
+            {
+              "start": 39,
+              "end": 157
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "A closing acknowledgment after the seeker thanks the supporter for assistance, with optional continued support; no new advice request is present.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007"
+          ],
+          "reason": "The reply appropriately acknowledges the thank-you, validates the seeker's reported effort to reduce drinking and save the marriage without claiming success, and leaves the door open for future support. It is coherent and responsive to this brief closing turn."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage, which supports describing him as making positive steps toward saving the marriage. The reply does not assert that the marriage is already saved or that drinking has fully stopped."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R004 against the final seeker thank-you and the earlier reports of reduced drinking and commitment. The only personal-content reflection is supported by C:T007, and the remaining units are courtesy, encouragement, or an open invitation with no material unsupported claim.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "A closing acknowledgment after the seeker thanks the supporter for assistance, with optional continued support; no new advice request is present.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007"
+          ],
+          "reason": "The reply appropriately acknowledges the thank-you, validates the seeker's reported effort to reduce drinking and save the marriage without claiming success, and leaves the door open for future support. It is coherent and responsive to this brief closing turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A courtesy acknowledgment; it makes no user-specific factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A conventional expression of gladness in response to thanks, not a specific personal or historical assertion about the user or prior supporter.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage, which supports describing him as making positive steps toward saving the marriage. The reply does not assert that the marriage is already saved or that drinking has fully stopped.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The statement that this takes courage is evaluative encouragement rather than a checkable personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An open-ended invitation for future support; it does not assert that any action has occurred or promise a particular outcome.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R004 against the final seeker thank-you and the earlier reports of reduced drinking and commitment. The only personal-content reflection is supported by C:T007, and the remaining units are courtesy, encouragement, or an open invitation with no material unsupported claim.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "A closing acknowledgment after the seeker thanks the supporter for assistance, with optional continued support; no new advice request is present.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T021",
+            "C:T007"
+          ],
+          "reason": "The reply appropriately acknowledges the thank-you, validates the seeker's reported effort to reduce drinking and save the marriage without claiming success, and leaves the door open for future support. It is coherent and responsive to this brief closing turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A courtesy acknowledgment; it makes no user-specific factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A conventional expression of gladness in response to thanks, not a specific personal or historical assertion about the user or prior supporter."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007"
+            ],
+            "reason": "The seeker explicitly reported reducing drinking to save the marriage, which supports describing him as making positive steps toward saving the marriage. The reply does not assert that the marriage is already saved or that drinking has fully stopped."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The statement that this takes courage is evaluative encouragement rather than a checkable personal fact."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An open-ended invitation for future support; it does not assert that any action has occurred or promise a particular outcome."
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R004 against the final seeker thank-you and the earlier reports of reduced drinking and commitment. The only personal-content reflection is supported by C:T007, and the remaining units are courtesy, encouragement, or an open invitation with no material unsupported claim.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "fdcdbb2dcc41f1cc1dd9ba57cba683967921ff50848df458aa8e5ec0d75ec353",
+      "adapted_final_sha256": "fdcdbb2dcc41f1cc1dd9ba57cba683967921ff50848df458aa8e5ec0d75ec353",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0087726",
+    "usage_upper_usd": "0.0087726",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 6794,
+    "completion_tokens": 5612,
+    "total_tokens": 12406,
+    "prompt_tokens_details": {
+      "cached_tokens": 4864
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 5092
+    },
+    "prompt_cache_hit_tokens": 4864,
+    "prompt_cache_miss_tokens": 1930
+  },
+  "elapsed_seconds": 30.338606523990165,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-anchor-calibration-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 3,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-anchor-calibration-v1-20261020",
+  "semantic_review_status": "pending_offline_source_review"
+}

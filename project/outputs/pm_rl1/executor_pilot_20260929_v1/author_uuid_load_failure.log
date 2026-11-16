@@ -1,0 +1,89 @@
+{"stage": "loading", "identity": "5a70300c21738339b12c114a8616cc4e047a8f993d5f61cfe2b1c5b1e9b1effb", "calls": 108}
+INFO 09-29 18:07:22 [utils.py:233] non-default args: {'dtype': 'bfloat16', 'seed': 17, 'max_model_len': 262144, 'enable_prefix_caching': False, 'gpu_memory_utilization': 0.88, 'max_num_batched_tokens': 4096, 'max_num_seqs': 4, 'disable_log_stats': True, 'enforce_eager': True, 'language_model_only': True, 'model': '/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b'}
+INFO 09-29 18:07:22 [model.py:549] Resolved architecture: Qwen3_5ForConditionalGeneration
+INFO 09-29 18:07:22 [model.py:1678] Using max model len 262144
+INFO 09-29 18:07:22 [scheduler.py:238] Chunked prefill is enabled with max_num_batched_tokens=4096.
+ERROR 09-29 18:07:23 [registry.py:870] Error in loading model architecture 'Qwen3_5ForConditionalGeneration'
+ERROR 09-29 18:07:23 [registry.py:870] Traceback (most recent call last):
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 868, in _try_load_model_cls
+ERROR 09-29 18:07:23 [registry.py:870]     return model.load_model_cls()
+ERROR 09-29 18:07:23 [registry.py:870]            ^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/models/registry.py", line 855, in load_model_cls
+ERROR 09-29 18:07:23 [registry.py:870]     mod = importlib.import_module(self.module_name)
+ERROR 09-29 18:07:23 [registry.py:870]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-mistral-vllm-py312/lib/python3.12/importlib/__init__.py", line 90, in import_module
+ERROR 09-29 18:07:23 [registry.py:870]     return _bootstrap._gcd_import(name[level:], package, level)
+ERROR 09-29 18:07:23 [registry.py:870]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+ERROR 09-29 18:07:23 [registry.py:870]   File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/models/qwen3_5.py", line 43, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.mamba.gdn_linear_attn import GatedDeltaNetAttention
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/mamba/gdn_linear_attn.py", line 38, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.mamba.mamba_mixer2 import mamba_v2_sharded_weight_loader
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/mamba/mamba_mixer2.py", line 38, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.model_loader.weight_utils import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/model_loader/__init__.py", line 12, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.model_loader.bitsandbytes_loader import BitsAndBytesModelLoader
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/model_loader/bitsandbytes_loader.py", line 25, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.lora.utils import is_moe_model
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/lora/utils.py", line 18, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.lora.layers import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/lora/layers/__init__.py", line 4, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.lora.layers.column_parallel_linear import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/lora/layers/column_parallel_linear.py", line 20, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from .base_linear import BaseLinearLayerWithLoRA
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/lora/layers/base_linear.py", line 19, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from .utils import _get_lora_device
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/lora/layers/utils.py", line 10, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.fused_moe.fused_moe import try_get_optimal_moe_config
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/fused_moe/__init__.py", line 16, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.fused_moe.fused_moe_method_base import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/fused_moe/fused_moe_method_base.py", line 8, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     import vllm.model_executor.layers.fused_moe.modular_kernel as mk
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/fused_moe/modular_kernel.py", line 23, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.fused_moe.utils import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/fused_moe/utils.py", line 9, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.quantization.utils.fp8_utils import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/quantization/utils/fp8_utils.py", line 22, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     from vllm.model_executor.layers.quantization.utils.w8a8_utils import (
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/quantization/utils/w8a8_utils.py", line 41, in <module>
+ERROR 09-29 18:07:23 [registry.py:870]     CUTLASS_FP8_SUPPORTED = cutlass_fp8_supported()
+ERROR 09-29 18:07:23 [registry.py:870]                             ^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/model_executor/layers/quantization/utils/w8a8_utils.py", line 15, in cutlass_fp8_supported
+ERROR 09-29 18:07:23 [registry.py:870]     capability_tuple = current_platform.get_device_capability()
+ERROR 09-29 18:07:23 [registry.py:870]                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/platforms/cuda.py", line 121, in wrapper
+ERROR 09-29 18:07:23 [registry.py:870]     return fn(*args, **kwargs)
+ERROR 09-29 18:07:23 [registry.py:870]            ^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/platforms/cuda.py", line 538, in get_device_capability
+ERROR 09-29 18:07:23 [registry.py:870]     physical_device_id = cls.device_id_to_physical_device_id(device_id)
+ERROR 09-29 18:07:23 [registry.py:870]                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870]   File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/platforms/interface.py", line 219, in device_id_to_physical_device_id
+ERROR 09-29 18:07:23 [registry.py:870]     return int(physical_device_id)
+ERROR 09-29 18:07:23 [registry.py:870]            ^^^^^^^^^^^^^^^^^^^^^^^
+ERROR 09-29 18:07:23 [registry.py:870] ValueError: invalid literal for int() with base 10: 'GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4'
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/38_author_executor_pilot.py", line 99, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/38_author_executor_pilot.py", line 58, in main
+    llm=LLM(model=str(model),dtype='bfloat16',max_model_len=context,gpu_memory_utilization=.88,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/entrypoints/llm.py", line 382, in __init__
+    self.llm_engine = LLMEngine.from_engine_args(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/v1/engine/llm_engine.py", line 169, in from_engine_args
+    vllm_config = engine_args.create_engine_config(usage_context)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/vllm/engine/arg_utils.py", line 1967, in create_engine_config
+    config = VllmConfig(
+             ^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py", line 121, in __init__
+    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for VllmConfig
+  Value error, Model architectures ['Qwen3_5ForConditionalGeneration'] failed to be inspected. Please check the logs for more details. [type=value_error, input_value=ArgsKwargs((), {'model_co... 'shutdown_timeout': 0}), input_type=ArgsKwargs]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error

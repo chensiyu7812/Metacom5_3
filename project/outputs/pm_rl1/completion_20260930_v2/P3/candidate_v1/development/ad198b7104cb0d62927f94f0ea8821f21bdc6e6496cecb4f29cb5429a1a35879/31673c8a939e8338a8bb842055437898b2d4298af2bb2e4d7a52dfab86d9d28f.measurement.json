@@ -1,0 +1,225 @@
+{
+  "response_sha256": "f5f533c575b97b31ad07208ad08a1750684dbb463c4ee12af4476d07a551d26d",
+  "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "6778bdbeda9c41cc901a7f91e2a7bb08e8c7fa9fd6bed7d5897e2b77abc6a0a4",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user has explicitly requested advice on handling workplace injustice (C:T001) and just affirmed they feel strongly about intolerating unfair treatment (C:T008).",
+      "response_quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "Im feeling down and need some advice as to how do I handle this situation"
+        },
+        {
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice"
+        }
+      ],
+      "reason": "The reply effectively validates the user's emotional state derived from C:T008 and initiates the requested advice process (C:T001) by offering a discussion on options. It is coherent, respectful of the user's expressed need for control, and contains no factual errors or boundary violations."
+    },
+    "claims": [
+      {
+        "response_quote": "It's understandable that this feels unfair.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "Yes, it bothers me as I cannot tolerate injustice"
+          }
+        ],
+        "reason": "Accurately mirrors the user's statement about being unable to tolerate injustice, validating their perception of unfairness expressed in C:T008."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked emotional alignment with C:T008, responsiveness to advice request in C:T001, absence of identity conflicts with past sessions (H001-H004), and lack of fabricated personal history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 97
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "Im feeling down and need some advice as to how do I handle this situation",
+      "positions": [
+        {
+          "start": 0,
+          "end": 73
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's understandable that this feels unfair.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 43
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user has explicitly requested advice on handling workplace injustice (C:T001) and just affirmed they feel strongly about intolerating unfair treatment (C:T008).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T008"
+      ],
+      "reason": "The reply effectively validates the user's emotional state derived from C:T008 and initiates the requested advice process (C:T001) by offering a discussion on options. It is coherent, respectful of the user's expressed need for control, and contains no factual errors or boundary violations."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Accurately mirrors the user's statement about being unable to tolerate injustice, validating their perception of unfairness expressed in C:T008."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked emotional alignment with C:T008, responsiveness to advice request in C:T001, absence of identity conflicts with past sessions (H001-H004), and lack of fabricated personal history.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user has explicitly requested advice on handling workplace injustice (C:T001) and just affirmed they feel strongly about intolerating unfair treatment (C:T008).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T008"
+      ],
+      "reason": "The reply effectively validates the user's emotional state derived from C:T008 and initiates the requested advice process (C:T001) by offering a discussion on options. It is coherent, respectful of the user's expressed need for control, and contains no factual errors or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Accurately mirrors the user's statement about being unable to tolerate injustice, validating their perception of unfairness expressed in C:T008.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Proposes a generic next step for discussion (advice options) without making specific personal claims or relying on unverified assumptions from the current record.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Checked emotional alignment with C:T008, responsiveness to advice request in C:T001, absence of identity conflicts with past sessions (H001-H004), and lack of fabricated personal history.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user has explicitly requested advice on handling workplace injustice (C:T001) and just affirmed they feel strongly about intolerating unfair treatment (C:T008).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T008"
+      ],
+      "reason": "The reply effectively validates the user's emotional state derived from C:T008 and initiates the requested advice process (C:T001) by offering a discussion on options. It is coherent, respectful of the user's expressed need for control, and contains no factual errors or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Accurately mirrors the user's statement about being unable to tolerate injustice, validating their perception of unfairness expressed in C:T008."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Proposes a generic next step for discussion (advice options) without making specific personal claims or relying on unverified assumptions from the current record."
+      }
+    ],
+    "coverage": "Checked emotional alignment with C:T008, responsiveness to advice request in C:T001, absence of identity conflicts with past sessions (H001-H004), and lack of fabricated personal history.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

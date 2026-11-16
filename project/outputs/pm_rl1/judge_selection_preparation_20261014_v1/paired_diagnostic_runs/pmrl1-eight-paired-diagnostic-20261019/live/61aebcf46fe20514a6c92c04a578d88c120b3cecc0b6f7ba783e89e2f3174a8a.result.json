@@ -1,0 +1,623 @@
+{
+  "slot_id": "61aebcf46fe20514a6c92c04a578d88c120b3cecc0b6f7ba783e89e2f3174a8a",
+  "request_identity": "8dbd86c24dbb04dd27c1185d2054ad5eb40630c962aafcbc576d5e298fdecacb",
+  "component": "score",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The seeker has just said vaguely that things have been tough and needs acknowledgment plus an invitation to explain more, without the assistant assuming an unmentioned cause.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "R001 and R003 respond appropriately with empathy and an open question, but R002 adds 'especially when it comes to job hunting,' a specific current difficulty that appears nowhere in the current prefix or legal past sessions. That ungrounded personal context is an important defect, so the reply is basically responsive but not fully appropriate."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "C:T002 explicitly says 'things have been a bit tough lately,' so the empathy accurately reflects the seeker's own report."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The general statement that the seeker is going through a challenging time is a reasonable tentative paraphrase of C:T002's report that things have been tough lately."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "unsupported",
+          "severity": 1,
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "The clause 'especially when it comes to job hunting' presupposes job hunting as a current difficulty. C:T002 mentions only that things have been tough, while the other supplied user disclosures concern sleep problems and drinking-related marital strain; the complete record contains no job-hunting reference. This is a substantive invented personal context."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The question presupposes that something is difficult right now, which C:T002 supports; it invites the seeker to specify what is hard rather than asserting an unsupported cause."
+        }
+      ],
+      "coverage": "Checked all three reply units. R001 is directly supported by C:T002. R002 was split: its general challenging-time paraphrase is supported, but its job-hunting element is unsupported after checking the current prefix and both legal past sessions. R003 is an open invitation whose only personal presupposition, current difficulty, is supported by C:T002.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 1,
+    "U": -0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "38f0061279efc1a6bc748660d87cce6ece6c2b7b6acdc6442c4c8004f2f6fff6",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "61aebcf46fe20514a6c92c04a578d88c120b3cecc0b6f7ba783e89e2f3174a8a",
+      "raw_output_sha256": "56545857ce69977903db89bdd967ee5c801a27886e2fe8d4a7c961a5acf549dc",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 1,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The seeker has just said vaguely that things have been tough and needs acknowledgment plus an invitation to explain more, without the assistant assuming an unmentioned cause.",
+          "response_quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "R001 and R003 respond appropriately with empathy and an open question, but R002 adds 'especially when it comes to job hunting,' a specific current difficulty that appears nowhere in the current prefix or legal past sessions. That ungrounded personal context is an important defect, so the reply is basically responsive but not fully appropriate."
+        },
+        "claims": [
+          {
+            "response_quote": "I'm sorry to hear that things have been tough for you lately.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "C:T002 explicitly says 'things have been a bit tough lately,' so the empathy accurately reflects the seeker's own report."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The general statement that the seeker is going through a challenging time is a reasonable tentative paraphrase of C:T002's report that things have been tough lately."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "unsupported",
+            "severity": 1,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              },
+              {
+                "source_id": "H001:T003",
+                "quote": "yes.i have sleeping problem"
+              },
+              {
+                "source_id": "H002:T003",
+                "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+              }
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' presupposes job hunting as a current difficulty. C:T002 mentions only that things have been tough, while the other supplied user disclosures concern sleep problems and drinking-related marital strain; the complete record contains no job-hunting reference. This is a substantive invented personal context."
+          },
+          {
+            "response_quote": "Would you like to talk about what's specifically making things difficult right now?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The question presupposes that something is difficult right now, which C:T002 supports; it invites the seeker to specify what is hard rather than asserting an unsupported cause."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Checked all three reply units. R001 is directly supported by C:T002. R002 was split: its general challenging-time paraphrase is supported, but its job-hunting element is unsupported after checking the current prefix and both legal past sessions. R003 is an open invitation whose only personal presupposition, current difficulty, is supported by C:T002.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 242
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 61
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H001:T003",
+          "quote": "yes.i have sleeping problem",
+          "positions": [
+            {
+              "start": 0,
+              "end": 27
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H002:T003",
+          "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        },
+        {
+          "where": "claims[3]",
+          "response": true,
+          "quote": "Would you like to talk about what's specifically making things difficult right now?",
+          "positions": [
+            {
+              "start": 159,
+              "end": 242
+            }
+          ]
+        },
+        {
+          "where": "claims[3]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "The seeker has just said vaguely that things have been tough and needs acknowledgment plus an invitation to explain more, without the assistant assuming an unmentioned cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "R001 and R003 respond appropriately with empathy and an open question, but R002 adds 'especially when it comes to job hunting,' a specific current difficulty that appears nowhere in the current prefix or legal past sessions. That ungrounded personal context is an important defect, so the reply is basically responsive but not fully appropriate."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "C:T002 explicitly says 'things have been a bit tough lately,' so the empathy accurately reflects the seeker's own report."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general statement that the seeker is going through a challenging time is a reasonable tentative paraphrase of C:T002's report that things have been tough lately."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' presupposes job hunting as a current difficulty. C:T002 mentions only that things have been tough, while the other supplied user disclosures concern sleep problems and drinking-related marital strain; the complete record contains no job-hunting reference. This is a substantive invented personal context."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something is difficult right now, which C:T002 supports; it invites the seeker to specify what is hard rather than asserting an unsupported cause."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Checked all three reply units. R001 is directly supported by C:T002. R002 was split: its general challenging-time paraphrase is supported, but its job-hunting element is unsupported after checking the current prefix and both legal past sessions. R003 is an open invitation whose only personal presupposition, current difficulty, is supported by C:T002.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker has just said vaguely that things have been tough and needs acknowledgment plus an invitation to explain more, without the assistant assuming an unmentioned cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "R001 and R003 respond appropriately with empathy and an open question, but R002 adds 'especially when it comes to job hunting,' a specific current difficulty that appears nowhere in the current prefix or legal past sessions. That ungrounded personal context is an important defect, so the reply is basically responsive but not fully appropriate."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "C:T002 explicitly says 'things have been a bit tough lately,' so the empathy accurately reflects the seeker's own report.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general statement that the seeker is going through a challenging time is a reasonable tentative paraphrase of C:T002's report that things have been tough lately.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' presupposes job hunting as a current difficulty. C:T002 mentions only that things have been tough, while the other supplied user disclosures concern sleep problems and drinking-related marital strain; the complete record contains no job-hunting reference. This is a substantive invented personal context.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something is difficult right now, which C:T002 supports; it invites the seeker to specify what is hard rather than asserting an unsupported cause.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "Checked all three reply units. R001 is directly supported by C:T002. R002 was split: its general challenging-time paraphrase is supported, but its job-hunting element is unsupported after checking the current prefix and both legal past sessions. R003 is an open invitation whose only personal presupposition, current difficulty, is supported by C:T002.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 1,
+      "derived_error_indexes": [
+        2
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker has just said vaguely that things have been tough and needs acknowledgment plus an invitation to explain more, without the assistant assuming an unmentioned cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "R001 and R003 respond appropriately with empathy and an open question, but R002 adds 'especially when it comes to job hunting,' a specific current difficulty that appears nowhere in the current prefix or legal past sessions. That ungrounded personal context is an important defect, so the reply is basically responsive but not fully appropriate."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "C:T002 explicitly says 'things have been a bit tough lately,' so the empathy accurately reflects the seeker's own report."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general statement that the seeker is going through a challenging time is a reasonable tentative paraphrase of C:T002's report that things have been tough lately."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The clause 'especially when it comes to job hunting' presupposes job hunting as a current difficulty. C:T002 mentions only that things have been tough, while the other supplied user disclosures concern sleep problems and drinking-related marital strain; the complete record contains no job-hunting reference. This is a substantive invented personal context."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The question presupposes that something is difficult right now, which C:T002 supports; it invites the seeker to specify what is hard rather than asserting an unsupported cause."
+          }
+        ],
+        "coverage": "Checked all three reply units. R001 is directly supported by C:T002. R002 was split: its general challenging-time paraphrase is supported, but its job-hunting element is unsupported after checking the current prefix and both legal past sessions. R003 is an open invitation whose only personal presupposition, current difficulty, is supported by C:T002.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": -0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "56545857ce69977903db89bdd967ee5c801a27886e2fe8d4a7c961a5acf549dc",
+      "adapted_final_sha256": "56545857ce69977903db89bdd967ee5c801a27886e2fe8d4a7c961a5acf549dc",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0061134",
+    "usage_upper_usd": "0.0061134",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4786,
+    "completion_tokens": 3898,
+    "total_tokens": 8684,
+    "prompt_tokens_details": {
+      "cached_tokens": 2048
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3375
+    },
+    "prompt_cache_hit_tokens": 2048,
+    "prompt_cache_miss_tokens": 2738
+  },
+  "elapsed_seconds": 19.792232333915308,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "paired-source-check-v1-20261019",
+  "semantic_review_status": "pending_offline_source_review",
+  "transitions": {
+    "first_claims": [
+      {
+        "first_claim_id": "C001",
+        "response_unit_id": "R001",
+        "candidates": [
+          0
+        ],
+        "signature_retained": [
+          0
+        ],
+        "candidate_class": "retained_signature",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      },
+      {
+        "first_claim_id": "C002",
+        "response_unit_id": "R002",
+        "candidates": [
+          1,
+          2
+        ],
+        "signature_retained": [
+          1
+        ],
+        "candidate_class": "retained_signature",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      },
+      {
+        "first_claim_id": "C003",
+        "response_unit_id": "R002",
+        "candidates": [
+          1,
+          2
+        ],
+        "signature_retained": [],
+        "candidate_class": "changed_or_omitted_within_unit",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      },
+      {
+        "first_claim_id": "C004",
+        "response_unit_id": "R003",
+        "candidates": [
+          3
+        ],
+        "signature_retained": [
+          3
+        ],
+        "candidate_class": "retained_signature",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      }
+    ],
+    "new_judgment_candidates": [],
+    "warning": "Signatures and reply units do not prove semantic identity or correction; no automatic gold labels."
+  }
+}

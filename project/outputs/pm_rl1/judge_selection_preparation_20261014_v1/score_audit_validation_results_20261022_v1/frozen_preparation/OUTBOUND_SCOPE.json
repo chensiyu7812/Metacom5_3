@@ -1,0 +1,31 @@
+{
+  "recipient": "https://api.deepseek.com/chat/completions",
+  "purpose": "fixed preliminary-score audit diagnostic",
+  "model": "deepseek-flash / high",
+  "input_fields": [
+    "reply",
+    "legal_evidence",
+    "response_units",
+    "preliminary_score",
+    "preliminary_score_sha256",
+    "rubric_reference"
+  ],
+  "added_vs_previous_live": "Historical SAME-reply Flash/high A-condition score, plus frozen rubric reference and score-link output contract. No B human relationship reference is sent.",
+  "never_sent": [
+    "LOCAL_REFERENCE_NOTES",
+    "researcher answers",
+    "analyst review",
+    "expected q/m",
+    "resource winner",
+    "other candidates",
+    "other replies scores",
+    "sealed/test content",
+    "credential file"
+  ],
+  "local_review_only": true,
+  "credential_usage": "only after actual approval; DEEPSEEK_API_KEY in specified env, process only; never source/print/store",
+  "management_requests": {
+    "GET /models": 1,
+    "GET /user/balance": 1
+  }
+}

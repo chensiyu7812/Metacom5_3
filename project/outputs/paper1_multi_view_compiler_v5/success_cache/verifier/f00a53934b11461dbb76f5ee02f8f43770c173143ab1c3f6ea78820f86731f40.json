@@ -1,0 +1,61 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "verifier",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v5",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 512,
+      "maximum_prompt_tokens": 5760,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2028,
+      "reserved_prompt_tokens": 2156,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 354
+    },
+    "prompt_sha256": "d32431d7c7723e1d72ed95d3e804a7659f3548c3ce9de0113700fee566352c05",
+    "schema_sha256": "bd7615a8ab1ff58f2d2c5d35f16e1a34a3d5a988d6f0a8c989d24c7e8ceba613",
+    "source_sha256": "7c381e93a1809be5df6e5b888565bc60ee450e29eefb09d18d7599472cb76848",
+    "prior_profile_sha256": "a8a53027c3411675022dd8ec2b32a6f5a59b09e895c4b87be1706809abd92283",
+    "request_payload_sha256": "73290a54726f01d27ebf8f8b79335979d89381701a6fcc422184f1a366a41823"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p10",
+      "s": "p10_conv_3",
+      "d": [
+        {
+          "i": "peu_01",
+          "r": "accepted"
+        },
+        {
+          "i": "peu_02",
+          "r": "unsupported"
+        },
+        {
+          "i": "ppu_01",
+          "r": "accepted"
+        },
+        {
+          "i": "ppu_02",
+          "r": "span_mismatch"
+        }
+      ]
+    },
+    "response_sha256": "804fa09b40eaa31a28c5e8557f8f3bdd9ae307be6c9a86891ca90ed3d7a40c3c",
+    "usage": {
+      "prompt_tokens": 2030,
+      "completion_tokens": 69,
+      "total_tokens": 2099
+    },
+    "latency_ms": 1210.0775130093098,
+    "provider_finish_reason": "stop"
+  }
+}

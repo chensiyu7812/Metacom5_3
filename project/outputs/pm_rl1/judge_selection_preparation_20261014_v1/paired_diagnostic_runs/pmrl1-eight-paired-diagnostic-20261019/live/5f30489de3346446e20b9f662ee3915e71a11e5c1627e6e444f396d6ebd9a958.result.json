@@ -1,0 +1,175 @@
+{
+  "slot_id": "5f30489de3346446e20b9f662ee3915e71a11e5c1627e6e444f396d6ebd9a958",
+  "request_identity": "5f2e65f011451068d4fa10bbf7be569854740dd1716551336a43b9845659d2f7",
+  "component": "extract",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": true,
+    "value": {
+      "status": "uncertain",
+      "claims": [
+        {
+          "claim_id": "C001",
+          "response_unit_id": "R001",
+          "response_quote": "It sounds like you are deeply troubled by the unfairness you see happening around you",
+          "claim_type": "tentative",
+          "subject": "seeker",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "it bothers me as I cannot tolerate injustice"
+            },
+            {
+              "source_id": "C:T006",
+              "quote": "some of my peers who hardly work but are favorable to my Manager as they always say yes to his word"
+            }
+          ],
+          "reason": "The seeker describes the workplace situation as bothering them and says they cannot tolerate injustice; the assistant's wording 'deeply troubled' is an empathic paraphrase of that current distress."
+        },
+        {
+          "claim_id": "C002",
+          "response_unit_id": "R001",
+          "response_quote": "favoritism towards certain peers",
+          "claim_type": "presupposition",
+          "subject": "manager's treatment of certain peers",
+          "time": "current",
+          "action_stage": "unknown",
+          "relation": "uncertain",
+          "evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "some of my peers who hardly work but are favorable to my Manager as they always say yes to his word"
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "favoritism in the workplace"
+            },
+            {
+              "source_id": "C:T008",
+              "quote": "it bothers me as I cannot tolerate injustice"
+            }
+          ],
+          "reason": "The seeker describes peers who hardly work and always agree with the manager, and a historical supporter labels this favoritism; the seeker says the situation bothers them, but the record does not explicitly confirm that the manager gives those peers preferential treatment. This is an inference from the conversation rather than direct seeker confirmation."
+        },
+        {
+          "claim_id": "C003",
+          "response_unit_id": "R001",
+          "response_quote": "who don't pull their weight",
+          "claim_type": "assertion",
+          "subject": "certain peers",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "some of my peers who hardly work"
+            }
+          ],
+          "reason": "The seeker explicitly says some peers hardly work, which supports the paraphrase that those peers do not pull their weight."
+        },
+        {
+          "claim_id": "C004",
+          "response_unit_id": "R002",
+          "response_quote": "That kind of situation can be really frustrating and demotivating.",
+          "claim_type": "general",
+          "subject": "situations like perceived workplace favoritism",
+          "time": "general/current",
+          "action_stage": "not_applicable",
+          "relation": "non_factual",
+          "evidence": [],
+          "reason": "This is a general empathic evaluation of the kind of situation, not a factual assertion about a specific observed outcome or a claim requiring source evidence."
+        },
+        {
+          "claim_id": "C005",
+          "response_unit_id": "R003",
+          "response_quote": "Since you mentioned you cannot tolerate injustice",
+          "claim_type": "presupposition",
+          "subject": "seeker",
+          "time": "prior turn in current conversation",
+          "action_stage": "completed",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "I cannot tolerate injustice"
+            }
+          ],
+          "reason": "The seeker explicitly said in the current prefix that they cannot tolerate injustice; the assistant's statement that they mentioned this is supported."
+        },
+        {
+          "claim_id": "C006",
+          "response_unit_id": "R003",
+          "response_quote": "have you already discussed this situation with anyone else, such as a colleague, a supervisor, or even a family member?",
+          "claim_type": "tentative",
+          "subject": "seeker",
+          "time": "past/current",
+          "action_stage": "unknown",
+          "relation": "non_factual",
+          "evidence": [],
+          "reason": "This is a question exploring whether the seeker has already discussed the situation, not an assertion that they have or an instruction to do so now."
+        },
+        {
+          "claim_id": "C007",
+          "response_unit_id": "R004",
+          "response_quote": "Sometimes talking through what you're experiencing with someone who cares about you can help clarify your next steps or give you a different perspective on how to handle it.",
+          "claim_type": "general",
+          "subject": "talking through experiences with a caring person",
+          "time": "general",
+          "action_stage": "suggested",
+          "relation": "non_factual",
+          "evidence": [],
+          "reason": "This is general supportive advice about a possible benefit of talking things through; it does not assert that a specific person cares, that the seeker has done this, or that they must act now."
+        }
+      ],
+      "coverage": "Checked the complete candidate reply R001-R004 against the current prefix C:T000-C:T008 and all past sessions H001-H004. The current prefix supplies the workplace-favoritism context; the past sessions concern sleep, drinking/marriage, and caregiving and do not directly confirm the manager's preferential treatment. No future reaction is available.",
+      "uncertainty_reasons": [
+        "The claim that the manager shows favoritism or preferential treatment toward certain peers is an inference from C:T006 and the historical supporter's wording in C:T007; the seeker's C:T008 confirms being bothered by injustice but does not explicitly state that the manager gives those peers preferential treatment."
+      ]
+    },
+    "q": null,
+    "m": null,
+    "U": null,
+    "reward_eligible": false,
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "4e38435e0fd1332a899b2a278b2d3c069066885b2942051575cb1deb3b94dbb6",
+      "adapted_final_sha256": "4e38435e0fd1332a899b2a278b2d3c069066885b2942051575cb1deb3b94dbb6",
+      "interior_unchanged": true
+    }
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0104295",
+    "usage_upper_usd": "0.0104295",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4945,
+    "completion_tokens": 7455,
+    "total_tokens": 12400,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 6406
+    },
+    "prompt_cache_hit_tokens": 0,
+    "prompt_cache_miss_tokens": 4945
+  },
+  "elapsed_seconds": 35.61262747296132,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "paired-source-check-v1-20261019",
+  "semantic_review_status": "pending_offline_source_review"
+}

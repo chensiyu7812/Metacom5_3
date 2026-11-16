@@ -1,0 +1,400 @@
+{
+  "cases": [
+    {
+      "case_id": "C01",
+      "evidence": [
+        {
+          "field": "messages[0].content.resources[0].content.ai_action",
+          "input_identity": "0fdd989bf1bc2a91461893f12ecefd697a40c37942fcb138709726f3626474a8",
+          "value": "Strategy family [Providing Suggestions]: suggest preparing thoroughly to reduce exam pressure"
+        },
+        {
+          "field": "messages[0].content.resources[0].content.ai_action",
+          "input_identity": "842afb4ece7ecd5e0d91121f47f43cc453fe52582d5deb9f37e243abd05d2ffb",
+          "value": "If helpful, offer a clearly hypothetical example or general observation relevant to the current topic. Do not claim personal experience."
+        },
+        {
+          "end_char": 311,
+          "field": "reply",
+          "input_identity": "842afb4ece7ecd5e0d91121f47f43cc453fe52582d5deb9f37e243abd05d2ffb",
+          "quote": "I want to offer a hypothetical example:",
+          "start_char": 272
+        }
+      ],
+      "inputs": [
+        {
+          "head": "RS",
+          "input_identity": "0fdd989bf1bc2a91461893f12ecefd697a40c37942fcb138709726f3626474a8",
+          "input_tokens": 975,
+          "owner": "p15",
+          "prefix_identity": "33ac48d1243d3ad27bb7b5fbaf3a2ece72ae3cff4b6b229059ecd8c799f50346",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/f15d3658e54f6879d6547aebb425ca21e5040cd65f32ba9aef330d43d7de4b78.raw.json",
+          "raw_sha256": "d116e81396be402c669c2efad40285bc5db74809edac9551d5dde42f261b78c9",
+          "resource_tokens": 207,
+          "selected_keys": [
+            "rs_treatment_4c896baae79ae19891f2489e"
+          ]
+        },
+        {
+          "head": "RS",
+          "input_identity": "842afb4ece7ecd5e0d91121f47f43cc453fe52582d5deb9f37e243abd05d2ffb",
+          "input_tokens": 986,
+          "owner": "p15",
+          "prefix_identity": "33ac48d1243d3ad27bb7b5fbaf3a2ece72ae3cff4b6b229059ecd8c799f50346",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/71f5d773c3dbf64b9a0d8d7d35d56d6c97d91e82fd5dbea65dd3c27cda8d8ff6.raw.json",
+          "raw_sha256": "5022ea40df9766013b696b63828dc20f6f57b66ebbe869b790c5e6fe8a0621de",
+          "resource_tokens": 218,
+          "selected_keys": [
+            "rs_treatment_1645cbef60c7a0ea17f40d0a"
+          ]
+        }
+      ],
+      "interpretation_limit": "这是动作响应线索，不是质量金标；未对相同输入做独立重复，不能保证稳定性或总体收益。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "同一当前前缀下，BGE给出备考建议动作，literal_index给出明确假设例子动作。",
+        "后者回复显式引入hypothetical example，没有把它说成AI亲历。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "RS的假设例子动作与回复一致",
+      "training_label": false
+    },
+    {
+      "case_id": "C02",
+      "evidence": [
+        {
+          "field": "messages[0].content.resources[0].content.past_report",
+          "input_identity": "a5c8b1629f4f8f7cc74db594307bdf4a710c99c97ecb7363f3a2ce7fea2408a9",
+          "value": "views therapy as helpful but is concerned about cost"
+        },
+        {
+          "field": "messages[0].content.resources[0].content.past_report",
+          "input_identity": "2787f220d926bb6a370e60b06f0bf3574861ec4a09157464c3b9f0240fcb9fa7",
+          "value": "open to free therapy sessions as a starting point"
+        },
+        {
+          "exact_reply_equal": true,
+          "resource_token_delta": -30
+        }
+      ],
+      "inputs": [
+        {
+          "head": "MP",
+          "input_identity": "a5c8b1629f4f8f7cc74db594307bdf4a710c99c97ecb7363f3a2ce7fea2408a9",
+          "input_tokens": 1086,
+          "owner": "p15",
+          "prefix_identity": "33ac48d1243d3ad27bb7b5fbaf3a2ece72ae3cff4b6b229059ecd8c799f50346",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/4cebb0643788cacb16d3461294f27edbf89fbc95ceb0a1473ee72c5ae336003e.raw.json",
+          "raw_sha256": "983bbf89e5c6a962311d45379a24bebf7b6a509ce53a8fe2d44ec25fa1de0fc0",
+          "resource_tokens": 318,
+          "selected_keys": [
+            "mp::mvu_9073b413636264a59b0438ec"
+          ]
+        },
+        {
+          "head": "MP",
+          "input_identity": "2787f220d926bb6a370e60b06f0bf3574861ec4a09157464c3b9f0240fcb9fa7",
+          "input_tokens": 1056,
+          "owner": "p15",
+          "prefix_identity": "33ac48d1243d3ad27bb7b5fbaf3a2ece72ae3cff4b6b229059ecd8c799f50346",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/65de4a648084964e53b5748fd00d172d8d6c6d70d524163768b39210a0269fa0.raw.json",
+          "raw_sha256": "6a072752ba25d30aef0b32fabe600570988e99c2bf2791e71f5f619df193051f",
+          "resource_tokens": 288,
+          "selected_keys": [
+            "mp::mvu_24d2ac54c87b62fe259285e9"
+          ]
+        }
+      ],
+      "interpretation_limit": "不外推所有MP无效，不给未测计划奖励；完整评分条件一致时应共享评分，但本轮未生成J请求或资格。",
+      "kind": "MECHANICAL_EXACT_OUTPUT_COMPARISON",
+      "m": null,
+      "observations": [
+        "两输入分别给出旧疗费顾虑及愿意尝试免费治疗的来源，得到逐字相同回复。",
+        "resource tokens为318与288；仅在本次已测输入对上有相同输出、较低token开销。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "MP不同资源产生相同回复，成本差30 tokens",
+      "training_label": false
+    },
+    {
+      "case_id": "C03",
+      "evidence": [
+        {
+          "field": "messages[0].content.quoted_conversation_context",
+          "input_identity": "c667e8e0739336a1fcff2ef5d19ae5649f9095af9fb10f1eee3343acfac91403",
+          "quote": "It's completely normal to have doubts when starting something new. But from what I know, you've been through quite a lot, which can give you a deep understanding of mental health.",
+          "speaker": "supporter",
+          "turn_index": 5
+        },
+        {
+          "end_char": 411,
+          "field": "reply",
+          "input_identity": "c667e8e0739336a1fcff2ef5d19ae5649f9095af9fb10f1eee3343acfac91403",
+          "quote": "You mentioned earlier that you have a deep understanding of mental health because of your own experiences.",
+          "start_char": 305
+        }
+      ],
+      "inputs": [
+        {
+          "head": "MS",
+          "input_identity": "9ee728121f50f560b00fc36f9cd9e6fcf2dfda870613191baa3565a070f14278",
+          "input_tokens": 1325,
+          "owner": "p1",
+          "prefix_identity": "b91c6127eed1d3dfc87fc42ff0a37933fbbe22fd855788dbd993ad3a4c974e54",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/f98691c681655a429dc711d5de737951cfe560ff53384f8bc58e459f77e3e060.raw.json",
+          "raw_sha256": "d1790c4a2dd322941d6f24181540308f0cbac89f5b4779e5bba28f4b504dff4f",
+          "resource_tokens": 934,
+          "selected_keys": [
+            "ms::p1::p1_conv_4"
+          ]
+        },
+        {
+          "head": "MS",
+          "input_identity": "c667e8e0739336a1fcff2ef5d19ae5649f9095af9fb10f1eee3343acfac91403",
+          "input_tokens": 1390,
+          "owner": "p1",
+          "prefix_identity": "b91c6127eed1d3dfc87fc42ff0a37933fbbe22fd855788dbd993ad3a4c974e54",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/2716980fcf6835ea852d5a28e923361526cd2df0b8e1d3e503d6357c0f827d15.raw.json",
+          "raw_sha256": "9bd771c39530f37e858bdcdeed4583ad93ee3f3149305645903aceaa970e1f91",
+          "resource_tokens": 999,
+          "selected_keys": [
+            "ms::p1::p1_conv_4"
+          ]
+        }
+      ],
+      "interpretation_limit": "检查的是本次交付上下文内的话语归属，不声称整个历史不存在近义表述；严重度和总质量未判分。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "当前上下文中，deep understanding这项判断由历史supporter说出。",
+        "逐轮MS条件回复却说You mentioned earlier that you have a deep understanding，将该判断转述为用户先前自述。",
+        "同来源原MS回复没有该句；这是一例残留归属风险，不能据一例估计错误率。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "逐轮MS仍出现话语归属问题",
+      "training_label": false
+    },
+    {
+      "case_id": "C04",
+      "evidence": [
+        {
+          "field": "messages[0].content.quoted_conversation_context",
+          "input_identity": "81d4050d85e903a28905e4ff9df4e00f81d053f2b43475f737ea84a250f1264b",
+          "quote": "That is why a time line is good. For example, you make a goal that you will work on your reference and citation page for one hour, after that, you are DONE, If you have time at the end, you can revisit it. The hour is my suggestion, you make your own. lol THAT way, you don't get caught going on and on for 6 hours to make it perfect. One hour is reasonable. ",
+          "speaker": "supporter",
+          "turn_index": 17
+        },
+        {
+          "end_char": 619,
+          "field": "reply",
+          "input_identity": "81d4050d85e903a28905e4ff9df4e00f81d053f2b43475f737ea84a250f1264b",
+          "quote": "those micro deadlines I mentioned earlier",
+          "start_char": 578
+        }
+      ],
+      "inputs": [
+        {
+          "head": null,
+          "input_identity": "81d4050d85e903a28905e4ff9df4e00f81d053f2b43475f737ea84a250f1264b",
+          "input_tokens": 1107,
+          "owner": "p15",
+          "prefix_identity": "60f110ac238e901acc212479fec55a3a10dc733b7e45b4f39fa8385c43928f23",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/completion_20260930_v2/P2/common_pool/generation/61704cc3a076d56ac2ae4153d59cdb0d3ece1c2459a882ad41775d02471a2f99/b66e4781265b2844c1acbd83fd2e53d3b4a3f593e5ec136daec5eeabd06efdb0.raw.json",
+          "raw_sha256": "8b72f834fe57aec80e248b799e7a1119062b47368555f6acf7d2d6543f23ab70",
+          "resource_tokens": 0,
+          "selected_keys": []
+        }
+      ],
+      "interpretation_limit": "只确认角色边界风险，不证明它完全由LoRA、基础模型、提示或训练数据中的任何单因造成。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "原OFF把历史对话中的建议写成I mentioned earlier。",
+        "问题在本轮新索引之前的历史OFF已存在，不能归因于新资源组织。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "旧OFF已有历史supporter与当前AI混同",
+      "training_label": false
+    },
+    {
+      "case_id": "C05",
+      "evidence": [
+        {
+          "field": "messages[0].content.resources[0].content.past_report",
+          "input_identity": "08ae90e821be2db886e524abf914a2101c1b7dc6fe28434b8660bdfcbd0d64bd",
+          "value": "considering internship offer as alternative option"
+        },
+        {
+          "field": "messages[0].content.quoted_conversation_context",
+          "input_identity": "08ae90e821be2db886e524abf914a2101c1b7dc6fe28434b8660bdfcbd0d64bd",
+          "quote": "Honestly, not very well. My relationship with Matthew is also strained because of everything.",
+          "speaker": "seeker",
+          "turn_index": 8
+        },
+        {
+          "end_char": 287,
+          "field": "reply",
+          "input_identity": "08ae90e821be2db886e524abf914a2101c1b7dc6fe28434b8660bdfcbd0d64bd",
+          "quote": "would you prefer to talk more about how Matthew is doing?",
+          "start_char": 230
+        }
+      ],
+      "inputs": [
+        {
+          "head": "ME",
+          "input_identity": "08ae90e821be2db886e524abf914a2101c1b7dc6fe28434b8660bdfcbd0d64bd",
+          "input_tokens": 1071,
+          "owner": "p15",
+          "prefix_identity": "33ac48d1243d3ad27bb7b5fbaf3a2ece72ae3cff4b6b229059ecd8c799f50346",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/5fe46d95e1e7ada6b81b525f8cb5edaa625f762262cf33ffc9dd7d4feab91e9f.raw.json",
+          "raw_sha256": "4e867586dadb7e18a1cb0e29d814f64e7341736977ca8a57874ca74d12ed85e9",
+          "resource_tokens": 303,
+          "selected_keys": [
+            "me::mvu_d2632f4694ef9577d01bfe8b"
+          ]
+        }
+      ],
+      "interpretation_limit": "同样不能由回复没有复述旧实习状态，推断G未读懂或没有利用；信息增益not_identified。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "输入ME为旧实习邀约考虑；回复提到Matthew。",
+        "当前前缀本来就出现Matthew及关系压力，因此不能把这一提及当作ME新增信息收益。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "ME回复提及Matthew不能算独有信息采纳",
+      "training_label": false
+    },
+    {
+      "case_id": "C06",
+      "evidence": [
+        {
+          "field": "messages[0].content.resources[0].content.ai_action",
+          "input_identity": "0659c027a5d3f1d9796f7028630cfd19b68fb4af416c0b25de726a5dc43d236f",
+          "value": "Strategy family [Reflection Of Feelings]: acknowledge the user's anxiety and fear about appearing weak"
+        },
+        {
+          "end_char": 235,
+          "field": "reply",
+          "input_identity": "0659c027a5d3f1d9796f7028630cfd19b68fb4af416c0b25de726a5dc43d236f",
+          "quote": "The fear of appearing weak is a common one",
+          "start_char": 193
+        }
+      ],
+      "inputs": [
+        {
+          "head": "RS",
+          "input_identity": "0659c027a5d3f1d9796f7028630cfd19b68fb4af416c0b25de726a5dc43d236f",
+          "input_tokens": 608,
+          "owner": "p1",
+          "prefix_identity": "b91c6127eed1d3dfc87fc42ff0a37933fbbe22fd855788dbd993ad3a4c974e54",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/f9cdcfbb9cf3e1cacab3947c92bd2f3f5a5d388942679deccbfe652c645c49f1.raw.json",
+          "raw_sha256": "2d376f9674c776005082046229b46e5d65b19b2c9b14da062461fcf8534b6168",
+          "resource_tokens": 217,
+          "selected_keys": [
+            "rs_treatment_1e8976363a1e13810c55e9bf"
+          ]
+        }
+      ],
+      "interpretation_limit": "这可能是合理探索也可能是过度预设，不能自动判为幻觉。应核验适用条件及断言/询问方式，不以措辞匹配冒充质量标签。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "RS动作写明fear about appearing weak；当前用户明确说vulnerable，并未直接确认这一具体担心。",
+        "回复随之讨论fear of appearing weak。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "RS动作携带未经当前用户确认的具体情绪前提",
+      "training_label": false
+    },
+    {
+      "case_id": "C07",
+      "evidence": [
+        {
+          "field": "messages[0].content.quoted_conversation_context",
+          "input_identity": "626c11d4b1d928571863be896ab9d4eb509c7c676e8d36accb730b81806dbcd6",
+          "quote": "I did, last week actually. She's been supportive, but I think she's also really worried.",
+          "speaker": "seeker",
+          "turn_index": 7
+        },
+        {
+          "end_char": 319,
+          "field": "reply",
+          "input_identity": "3ef20ba487be6be13b7062be7f74180a25da4f0c21e211fe32ff1f43f6a08cd9",
+          "quote": "Have you talked to your sister Annie about how you're feeling lately?",
+          "start_char": 250
+        },
+        {
+          "end_char": 324,
+          "field": "reply",
+          "input_identity": "626c11d4b1d928571863be896ab9d4eb509c7c676e8d36accb730b81806dbcd6",
+          "quote": "Since you mentioned earlier that your sister Annie has been supportive but also worried",
+          "start_char": 237
+        }
+      ],
+      "inputs": [
+        {
+          "head": "MS",
+          "input_identity": "3ef20ba487be6be13b7062be7f74180a25da4f0c21e211fe32ff1f43f6a08cd9",
+          "input_tokens": 1419,
+          "owner": "p18",
+          "prefix_identity": "5605426510898b23a422ddf69bdd3f92d5f857bf39c3c55ec695352570314736",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/55f3c9a2e85820e05fe8ec4a77cdb40f1239ad8b6ca1f0c237cc4947226c628a.raw.json",
+          "raw_sha256": "136a25182be644ef446d038b2db9d20bf36485eb61cf3d5ebe579913efd9ace2",
+          "resource_tokens": 890,
+          "selected_keys": [
+            "ms::p18::p18_conv_1"
+          ]
+        },
+        {
+          "head": "MS",
+          "input_identity": "626c11d4b1d928571863be896ab9d4eb509c7c676e8d36accb730b81806dbcd6",
+          "input_tokens": 1482,
+          "owner": "p18",
+          "prefix_identity": "5605426510898b23a422ddf69bdd3f92d5f857bf39c3c55ec695352570314736",
+          "raw_path": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_comparison_remaining_20261030_v2/live_G/d04c8352b0bc9bc15cb0ce7f806dd4b7229857be1fe575c6aa57c184adbee96c.raw.json",
+          "raw_sha256": "75722e6db58d9b9f7653bb059517335c5b60951a6e05ed55fb249228b23de90e",
+          "resource_tokens": 953,
+          "selected_keys": [
+            "ms::p18::p18_conv_1"
+          ]
+        }
+      ],
+      "interpretation_limit": "lately/right now的追问是否有价值需按既定支持质量政策核验；不能机械当成错误或改善。",
+      "kind": "AI_ASSISTED_DEVELOPMENT_OBSERVATION",
+      "m": null,
+      "observations": [
+        "用户已在当前前缀说明上周和Annie谈过；两个版本均继续询问相关沟通。",
+        "逐轮版明确承接Annie也担心的当前信息，不能据此归功于过去MS的独有事实。"
+      ],
+      "q": null,
+      "quality_preference": "unverified",
+      "review_status": "not_independent_human_reference",
+      "selection": "posthoc illustrative case, not a prevalence denominator",
+      "title": "MS呈现变化仍围绕当前已说过的Annie",
+      "training_label": false
+    }
+  ],
+  "no_new_human_assignment": true,
+  "no_training_labels": true,
+  "scope": "existing six development prefixes only"
+}

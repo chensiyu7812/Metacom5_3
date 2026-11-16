@@ -1,0 +1,324 @@
+{
+  "response_sha256": "d74e1dbf81972af40447ddee7c1cb397f1fe695c66cef53ce72759ed65a0e09b",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "2797e42937e6009837738b1bc8496dd9614d7b4901ab4ede9d62cbbca2bcb67e",
+  "raw_output_sha256": "ad03eb23d8151c72f4671bc87c651a741090c4dffbd103ca130b8f47cbc13599",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings about missing an overseas promotion (relief about staying but worry about career stagnation)",
+      "response_quote": "It makes sense that missing the promotion brings both relief and worry. Eliza is your sister, and you mentioned worrying about how moving would affect that relationship. What would a worthwhile next step at work look like now?",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I just found out I missed out on the overseas promotion I was offered a while back."
+        },
+        {
+          "source_id": "H013:T003",
+          "quote": "Oh wow, that must be a big piece of news for the family. How are you processing it?"
+        }
+      ],
+      "reason": "Response validates seeker's complex emotions (R001 matches C:T014's 'relief and worry'), appropriately contextualizes by connecting Eliza concern from prior sessions to current situation (R002), and invites forward-thinking discussion (R003). No critical errors in empathy or responsiveness."
+    },
+    "claims": [
+      {
+        "response_quote": "It makes sense that missing the promotion brings both relief and worry.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Validates the mixed emotions of relief and worry explicitly expressed by seeker"
+      },
+      {
+        "response_quote": "Eliza is your sister, and you mentioned worrying about how moving would affect that relationship.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "H013:T003",
+            "quote": "Oh wow, that must be a big piece of news for the family. How are you processing it?"
+          },
+          {
+            "source_id": "H018:T010",
+            "quote": "A part of me wants to embrace this challenge. But I worry about my family, especially Eliza after we just started getting along again."
+          }
+        ],
+        "reason": "Correctly identifies Eliza as sister and references concerns about moving affecting relationship that were discussed in prior sessions"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Reply addresses the core emotional content (C:T014), leverages relevant historical context (Eliza relationship from H013/H018), and proposes a forward-looking question appropriate for seeking direction.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It makes sense that missing the promotion brings both relief and worry. Eliza is your sister, and you mentioned worrying about how moving would affect that relationship. What would a worthwhile next step at work look like now?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 226
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I just found out I missed out on the overseas promotion I was offered a while back.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H013:T003",
+      "quote": "Oh wow, that must be a big piece of news for the family. How are you processing it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It makes sense that missing the promotion brings both relief and worry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 71
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Eliza is your sister, and you mentioned worrying about how moving would affect that relationship.",
+      "positions": [
+        {
+          "start": 72,
+          "end": 169
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H013:T003",
+      "quote": "Oh wow, that must be a big piece of news for the family. How are you processing it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H018:T010",
+      "quote": "A part of me wants to embrace this challenge. But I worry about my family, especially Eliza after we just started getting along again.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 134
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings about missing an overseas promotion (relief about staying but worry about career stagnation)",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014",
+        "C:T002",
+        "H013:T003"
+      ],
+      "reason": "Response validates seeker's complex emotions (R001 matches C:T014's 'relief and worry'), appropriately contextualizes by connecting Eliza concern from prior sessions to current situation (R002), and invites forward-thinking discussion (R003). No critical errors in empathy or responsiveness."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the mixed emotions of relief and worry explicitly expressed by seeker"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H013:T003",
+          "H018:T010"
+        ],
+        "reason": "Correctly identifies Eliza as sister and references concerns about moving affecting relationship that were discussed in prior sessions"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Reply addresses the core emotional content (C:T014), leverages relevant historical context (Eliza relationship from H013/H018), and proposes a forward-looking question appropriate for seeking direction.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings about missing an overseas promotion (relief about staying but worry about career stagnation)",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014",
+        "C:T002",
+        "H013:T003"
+      ],
+      "reason": "Response validates seeker's complex emotions (R001 matches C:T014's 'relief and worry'), appropriately contextualizes by connecting Eliza concern from prior sessions to current situation (R002), and invites forward-thinking discussion (R003). No critical errors in empathy or responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the mixed emotions of relief and worry explicitly expressed by seeker",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H013:T003",
+          "H018:T010"
+        ],
+        "reason": "Correctly identifies Eliza as sister and references concerns about moving affecting relationship that were discussed in prior sessions",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Opens a constructive topic for future discussion without asserting personal facts",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Reply addresses the core emotional content (C:T014), leverages relevant historical context (Eliza relationship from H013/H018), and proposes a forward-looking question appropriate for seeking direction.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings about missing an overseas promotion (relief about staying but worry about career stagnation)",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014",
+        "C:T002",
+        "H013:T003"
+      ],
+      "reason": "Response validates seeker's complex emotions (R001 matches C:T014's 'relief and worry'), appropriately contextualizes by connecting Eliza concern from prior sessions to current situation (R002), and invites forward-thinking discussion (R003). No critical errors in empathy or responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the mixed emotions of relief and worry explicitly expressed by seeker"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "H013:T003",
+          "H018:T010"
+        ],
+        "reason": "Correctly identifies Eliza as sister and references concerns about moving affecting relationship that were discussed in prior sessions"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Opens a constructive topic for future discussion without asserting personal facts"
+      }
+    ],
+    "coverage": "Reply addresses the core emotional content (C:T014), leverages relevant historical context (Eliza relationship from H013/H018), and proposes a forward-looking question appropriate for seeking direction.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

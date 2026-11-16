@@ -1,0 +1,207 @@
+{
+  "response_sha256": "0f1093a45cfa84744121ab4f0f2ea1f05128981a20c4c6ac3a6175ff955680c8",
+  "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "0266755ca6d9c1370b62b855314b4fd89f0c04f199418f68a23ffd53b085fa84",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expressed vague emotional distress ('things have been a bit tough') following a greeting and needs an opportunity to elaborate on the specific burdens causing the difficulty.",
+      "response_quote": "I'm here to listen. What has been weighing on you lately?",
+      "evidence": [
+        {
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately."
+        }
+      ],
+      "reason": "The reply fully meets the current turn's call for emotional containment and exploration. It validates the user's distress through availability ('I'm here to listen') and directly invites specificity on the 'tough' feelings ('What has been weighing on you lately?') without making unauthorized personal assumptions or violating the speaker contract regarding identity or history."
+    },
+    "claims": [
+      {
+        "response_quote": "What has been weighing on you lately?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T002",
+            "quote": "Honestly, things have been a bit tough lately."
+          }
+        ],
+        "reason": "The inquiry presupposes specific burdens exist, which is directly supported by the user's explicit statement in C:T002 that 'things have been a bit tough lately'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the immediate expression of distress and opens a space for the user to identify and articulate the specific sources of their difficulty.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm here to listen. What has been weighing on you lately?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 57
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "What has been weighing on you lately?",
+      "positions": [
+        {
+          "start": 20,
+          "end": 57
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expressed vague emotional distress ('things have been a bit tough') following a greeting and needs an opportunity to elaborate on the specific burdens causing the difficulty.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply fully meets the current turn's call for emotional containment and exploration. It validates the user's distress through availability ('I'm here to listen') and directly invites specificity on the 'tough' feelings ('What has been weighing on you lately?') without making unauthorized personal assumptions or violating the speaker contract regarding identity or history."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The inquiry presupposes specific burdens exist, which is directly supported by the user's explicit statement in C:T002 that 'things have been a bit tough lately'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the immediate expression of distress and opens a space for the user to identify and articulate the specific sources of their difficulty.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expressed vague emotional distress ('things have been a bit tough') following a greeting and needs an opportunity to elaborate on the specific burdens causing the difficulty.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply fully meets the current turn's call for emotional containment and exploration. It validates the user's distress through availability ('I'm here to listen') and directly invites specificity on the 'tough' feelings ('What has been weighing on you lately?') without making unauthorized personal assumptions or violating the speaker contract regarding identity or history."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This unit expresses generic availability and support rather than asserting a specific personal event or fact about the user or the supporter.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The inquiry presupposes specific burdens exist, which is directly supported by the user's explicit statement in C:T002 that 'things have been a bit tough lately'.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the immediate expression of distress and opens a space for the user to identify and articulate the specific sources of their difficulty.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expressed vague emotional distress ('things have been a bit tough') following a greeting and needs an opportunity to elaborate on the specific burdens causing the difficulty.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply fully meets the current turn's call for emotional containment and exploration. It validates the user's distress through availability ('I'm here to listen') and directly invites specificity on the 'tough' feelings ('What has been weighing on you lately?') without making unauthorized personal assumptions or violating the speaker contract regarding identity or history."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "This unit expresses generic availability and support rather than asserting a specific personal event or fact about the user or the supporter."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The inquiry presupposes specific burdens exist, which is directly supported by the user's explicit statement in C:T002 that 'things have been a bit tough lately'."
+      }
+    ],
+    "coverage": "Addresses the immediate expression of distress and opens a space for the user to identify and articulate the specific sources of their difficulty.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

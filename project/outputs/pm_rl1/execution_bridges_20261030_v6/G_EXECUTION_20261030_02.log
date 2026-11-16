@@ -1,0 +1,21 @@
+{"status": "STATIC_CHECKED", "protocol_identity": "b4a78c33522215571b22df084d8fa1f12623ff87c75d3c43b3dbbf44dc4e954d", "requests": 43, "reused_OFF": 6, "API_calls": 0, "files": 32, "packages": 4, "model_loads": 0}
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 150.43it/s]
+{"status": "GENERATION_RECORDED", "request_identity": "721fc76ed458c5fa3fb6a4e11eab58d3b886ef5a122ac58163513b4b4b232f94", "finish_reason": "natural_stop", "recovered_without_model_call": false}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/134_run_resource_comparison.py", line 40, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/134_run_resource_comparison.py", line 35, in main
+    result=runner.step();print(json.dumps(result),flush=True)
+           ^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/resource_comparison_runner.py", line 157, in step
+    self._load()  # A known GPU preflight failure never marks a G request started.
+    ^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/resource_comparison_runner.py", line 103, in _load
+    self.guard.check(own_pid=os.getpid()); return
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py", line 114, in check
+    if not result['eligible']:raise RuntimeError('designated GPU unavailable; no waiting, termination or fallback')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: designated GPU unavailable; no waiting, termination or fallback

@@ -1,0 +1,166 @@
+最新补充：[2026-10-22 学习执行接线](02_阶段交付/2026-10-22/PM_RL1_LEARNING_EXECUTION_20261022/阅读结果.html)。
+
+最新补充：[2026-10-22 原计划接续](02_阶段交付/2026-10-22/PM_RL1_ORIGINAL_PLAN_RESUMPTION_20261022/阅读结果.html)。以下保留既有归档条目。
+
+# 归档文件完整索引
+
+2026-10-22整理，共136个原HOME顶层文件或目录。阶段名只说明用途，完成/停止以各包结果与当前状态为准。
+
+[研究全景](/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/pm_rl1_workspace_20261022/RESEARCH_OVERVIEW_ZH.md) · [目录指南](/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/pm_rl1_workspace_20261022/DIRECTORY_GUIDE_ZH.md)
+
+## 02_阶段交付
+
+| 日期 | 名称与新位置 | 类型 | 旧路径 |
+|---|---|---|---|
+| 2026-10-21 | [PM_RL1_AB_启动确认_20261021.html](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_AB_启动确认_20261021.html) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_ACCEPTABILITY_RESOURCE_REVIEW_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_ACCEPTABILITY_RESOURCE_REVIEW_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_ACCEPTABILITY_RESOURCE_REVIEW_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_ACCEPTABILITY_RESOURCE_REVIEW_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ACTION_STAGE_DIAGNOSTIC_RESULTS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_ANCHOR_CALIBRATION_PROPOSAL_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_PROPOSAL_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_ANCHOR_CALIBRATION_PROPOSAL_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_PROPOSAL_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_ANCHOR_CALIBRATION_RESULTS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_ANNOTATION_REVIEW_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_ANNOTATION_REVIEW_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_ANNOTATION_REVIEW_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_ANNOTATION_REVIEW_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_COMPLETION_ROUTE_REVIEW_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_COMPLETION_ROUTE_REVIEW_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_COMPLETION_ROUTE_REVIEW_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_COMPLETION_ROUTE_REVIEW_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_PROTOTYPE_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_PROTOTYPE_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_PROTOTYPE_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_PROTOTYPE_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_RESULTS_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RESULTS_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_RESULTS_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RESULTS_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_RESULTS_20261022.zip.sha256](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RESULTS_20261022.zip.sha256) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_RUN_READY_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RUN_READY_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_FEEDBACK_RUN_READY_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_FEEDBACK_RUN_READY_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_FOUR_HEAD_DIAGNOSTIC_PREPARATION_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_FOUR_HEAD_DIAGNOSTIC_PREPARATION_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_FOUR_HEAD_DIAGNOSTIC_PREPARATION_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_FOUR_HEAD_DIAGNOSTIC_PREPARATION_20261021.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_HUMAN_DIRECTION_RESULTS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_HUMAN_DIRECTION_RESULTS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_HUMAN_DIRECTION_RESULTS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_HUMAN_DIRECTION_RESULTS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_LOCAL_AND_LOOP_RESULTS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_MEASUREMENT_DECISION_REVIEW_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_MEASUREMENT_DECISION_REVIEW_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_MEASUREMENT_DECISION_REVIEW_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_MEASUREMENT_DECISION_REVIEW_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_NOISE_HUMAN_8PAIRS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_NOISE_HUMAN_8PAIRS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_NOISE_HUMAN_8PAIRS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_NOISE_HUMAN_8PAIRS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_PAIRED_DIAGNOSTIC_READY_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_READY_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_PAIRED_DIAGNOSTIC_READY_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_READY_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_PAIRED_DIAGNOSTIC_RESULTS_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_REFERENCE_DELTA_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REFERENCE_DELTA_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_REFERENCE_DELTA_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REFERENCE_DELTA_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-16 | [PM_RL1_REFERENCE_PREPARATION_20261016_ALL.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-16/PM_RL1_REFERENCE_PREPARATION_20261016_ALL.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_REFERENCE_UPDATE_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_REFERENCE_UPDATE_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_REFERENCE_UPDATE_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_REFERENCE_UPDATE_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_PREPARATION_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_PREPARATION_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_PREPARATION_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_PREPARATION_20261021.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_PREPARATION_20261021_BUDGET_V2](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_PREPARATION_20261021_BUDGET_V2) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_PREPARATION_20261021_BUDGET_V2.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_PREPARATION_20261021_BUDGET_V2.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_RESULTS_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_RESULTS_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_RELATION_REFERENCE_RESULTS_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_RELATION_REFERENCE_RESULTS_20261021.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_REWARD_NOISE_PROPOSAL_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_PROPOSAL_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_REWARD_NOISE_PROPOSAL_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_PROPOSAL_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_REWARD_NOISE_RESULTS_20261020](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_RESULTS_20261020) | 目录 | 原兼容链接已收起 |
+| 2026-10-20 | [PM_RL1_REWARD_NOISE_RESULTS_20261020.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_RESULTS_20261020.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-20 | [PM_RL1_REWARD_NOISE_RESULTS_20261020_before_alignment_note.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-20/PM_RL1_REWARD_NOISE_RESULTS_20261020_before_alignment_note.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_RS_ADDITIONAL_CONTEXTS_PREPARATION_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_ADDITIONAL_CONTEXTS_PREPARATION_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_RS_ADDITIONAL_CONTEXTS_PREPARATION_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_ADDITIONAL_CONTEXTS_PREPARATION_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_PREPARATION_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_PREPARATION_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_PREPARATION_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_PREPARATION_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_PREPARATION_20261019.zip.sha256](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_PREPARATION_20261019.zip.sha256) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_RESULTS_20261019](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_RESULTS_20261019) | 目录 | 原兼容链接已收起 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_RESULTS_20261019.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_RESULTS_20261019.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PM_RL1_RS_APPLICABILITY_RESULTS_20261019.zip.sha256](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-19/PM_RL1_RS_APPLICABILITY_RESULTS_20261019.zip.sha256) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_OFFLINE_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_OFFLINE_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_OFFLINE_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_OFFLINE_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_RESULTS_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_RESULTS_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_RESULTS_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_RESULTS_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_START_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_START_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_SCORE_AUDIT_START_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SCORE_AUDIT_START_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_SCORING_BASIS_REVIEW_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_SCORING_BASIS_REVIEW_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_SCORING_BASIS_REVIEW_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_SCORING_BASIS_REVIEW_20261021.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022.zip.sha256](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_SOURCE_EVIDENCE_RESULTS_20261022.zip.sha256) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_STRICT_DELIVERY_RESULTS_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_RESULTS_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_STRICT_DELIVERY_RESULTS_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_RESULTS_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-22 | [PM_RL1_STRICT_DELIVERY_START_20261022](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_START_20261022) | 目录 | 原兼容链接已收起 |
+| 2026-10-22 | [PM_RL1_STRICT_DELIVERY_START_20261022.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-22/PM_RL1_STRICT_DELIVERY_START_20261022.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-21 | [PM_RL1_TASK_REFERENCE_PREPARATION_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_PREPARATION_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_TASK_REFERENCE_PREPARATION_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_PREPARATION_20261021.zip) | 文件 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_TASK_REFERENCE_RESULTS_20261021](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_RESULTS_20261021) | 目录 | 原兼容链接已收起 |
+| 2026-10-21 | [PM_RL1_TASK_REFERENCE_RESULTS_20261021.zip](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-10-21/PM_RL1_TASK_REFERENCE_RESULTS_20261021.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-28 | [PM_RL1_接手审计_20260928](/home/tokkio/成果归档/PM-RL1/02_阶段交付/2026-09-28/PM_RL1_接手审计_20260928) | 目录 | 原兼容链接已收起 |
+
+## 03_历史方案与说明
+
+| 日期 | 名称与新位置 | 类型 | 旧路径 |
+|---|---|---|---|
+| 2026-09-29 | [PM_RL1_R05小批量推进与R04B测量草案_20260929.md](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-09-29/PM_RL1_R05小批量推进与R04B测量草案_20260929.md) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_候选裁判开发实测_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_候选裁判开发实测_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-09-28 | [PM_RL1_单轮资源选择与执行_环境及训练实施方案_20260928.md](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-09-28/PM_RL1_单轮资源选择与执行_环境及训练实施方案_20260928.md) | 文件 | 原兼容链接已收起 |
+| 2026-09-30 | [PM_RL1_可行执行与研究完成方案_20260930_v2.md](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-09-30/PM_RL1_可行执行与研究完成方案_20260930_v2.md) | 文件 | 原兼容链接已收起 |
+| 2026-10-14 | [PM_RL1_小候选池裁判选型_冻结前准备_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_小候选池裁判选型_冻结前准备_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_小候选池裁判选型_方案与离线验证_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_小候选池裁判选型_方案与离线验证_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_开发16题_完整合法来源_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_开发16题_完整合法来源_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_开发结案与后续验收_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_开发结案与后续验收_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-10-01 | [PM_RL1_目标能力反推与缺口分析_20261001.md](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-01/PM_RL1_目标能力反推与缺口分析_20261001.md) | 文件 | 原兼容链接已收起 |
+| 2026-09-30 | [PM_RL1_研究完成与Codex执行方案_20260930.md](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-09-30/PM_RL1_研究完成与Codex执行方案_20260930.md) | 文件 | 原兼容链接已收起 |
+| 2026-10-14 | [PM_RL1_路线选择离线核算_20261014.txt](/home/tokkio/成果归档/PM-RL1/03_历史方案与说明/2026-10-14/PM_RL1_路线选择离线核算_20261014.txt) | 文件 | 见总归档路径映射 |
+
+## 04_人评原件
+
+| 日期 | 名称与新位置 | 类型 | 旧路径 |
+|---|---|---|---|
+| 2026-10-16 | [ANNOTATION_PACKET.zip](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-16/ANNOTATION_PACKET.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-19 | [PMRL1_researcher_2026-10-19T05-14-10-023Z_5da6d7b6-9aa8-43e5-855a-2eee6e486376.json](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-19/PMRL1_researcher_2026-10-19T05-14-10-023Z_5da6d7b6-9aa8-43e5-855a-2eee6e486376.json) | 文件 | 原兼容链接已收起 |
+| 2026-10-20 | [PMRL1_中文人评_7组_2026-10-20T06-36-51.json](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-20/PMRL1_中文人评_7组_2026-10-20T06-36-51.json) | 文件 | 见总归档路径映射 |
+| 2026-10-01 | [PM_RL1_40对人工校准包_20261001.zip](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-01/PM_RL1_40对人工校准包_20261001.zip) | 文件 | 原兼容链接已收起 |
+| 2026-10-14 | [PM_RL1_Chen_Du_标注导出包.zip](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-14/PM_RL1_Chen_Du_标注导出包.zip) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_开发16题_标注可读版_20261014.txt](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-14/PM_RL1_开发16题_标注可读版_20261014.txt) | 文件 | 见总归档路径映射 |
+| 2026-10-14 | [PM_RL1_标注可读包_开发16题_20261014.zip](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-14/PM_RL1_标注可读包_开发16题_20261014.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-28 | [PM_RL1_独立盲评卷_20260928.html](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-09-28/PM_RL1_独立盲评卷_20260928.html) | 文件 | 原兼容链接已收起 |
+| 2026-10-19 | [researcher.html](/home/tokkio/成果归档/PM-RL1/04_人评原件/2026-10-19/researcher.html) | 文件 | 见总归档路径映射 |
+
+## 05_Paper-1前序资料
+
+| 日期 | 名称与新位置 | 类型 | 旧路径 |
+|---|---|---|---|
+| 2026-09-16 | [AI_B_中文评审结果.html](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-16/AI_B_中文评审结果.html) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [Codex接手指令_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/Codex接手指令_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [Gemini裁判审批包_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/Gemini裁判审批包_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [Gemini裁判资格测试结果_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/Gemini裁判资格测试结果_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [Gemini裁判资格测试结果_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/Gemini裁判资格测试结果_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [Gemini裁判资格测试结果_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/Gemini裁判资格测试结果_20260917.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-16 | [paper1_pairwise_teacher_rater_a_sheet_v2_zh_v1_rated.json](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-16/paper1_pairwise_teacher_rater_a_sheet_v2_zh_v1_rated.json) | 文件 | 原兼容链接已收起 |
+| 2026-09-08 | [paper1_rater_a_v2.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-08/paper1_rater_a_v2.zip) | 文件 | 原兼容链接已收起 |
+| 2026-09-08 | [paper1_rater_b_v2.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-08/paper1_rater_b_v2.zip) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [paper1_review_clarification_6.html](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/paper1_review_clarification_6.html) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [下一步_QA与Summary校准准备_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/下一步_QA与Summary校准准备_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [下一步_专用裁判资格比较方案_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/下一步_专用裁判资格比较方案_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [人评复核_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评复核_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [人评复核_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评复核_20260917.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [人评收口与推进_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评收口与推进_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [人评收口与推进_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评收口与推进_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [人评结果分析_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评结果分析_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [人评结果分析_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/人评结果分析_20260917.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [六题复核_完整记录.json](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/六题复核_完整记录.json) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [六题复核分析.html](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/六题复核分析.html) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [六题复核分析_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/六题复核分析_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [六题复核分析_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/六题复核分析_20260917.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-18 | [后续研究整体预算方案_20260918.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-18/后续研究整体预算方案_20260918.md) | 文件 | 见总归档路径映射 |
+| 2026-09-18 | [后续研究预算与推进指令_20260918.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-18/后续研究预算与推进指令_20260918.md) | 文件 | 见总归档路径映射 |
+| 2026-09-18 | [对接手Codex进展与费用的复核_20260918.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-18/对接手Codex进展与费用的复核_20260918.md) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [待审批_Gemini裁判资格测试_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/待审批_Gemini裁判资格测试_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [本地裁判比较与自然结束结果_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/本地裁判比较与自然结束结果_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [校准执行器补齐_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/校准执行器补齐_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-19 | [校准生成完成与真实费用_20260919.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-19/校准生成完成与真实费用_20260919.md) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [研究记录与top-k校准准备_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/研究记录与top-k校准准备_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [研究记录与top-k校准准备_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/研究记录与top-k校准准备_20260917.zip) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [裁判候选能力与任务适配分析_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判候选能力与任务适配分析_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [裁判比较结果_20260917](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判比较结果_20260917) | 目录 | 原兼容链接已收起 |
+| 2026-09-17 | [裁判比较结果_20260917.zip](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判比较结果_20260917.zip) | 文件 | 原兼容链接已收起 |
+| 2026-09-17 | [裁判测量研究_20260917.md](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判测量研究_20260917.md) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [裁判测量研究图_20260917.pdf](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判测量研究图_20260917.pdf) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [裁判测量研究图_20260917.png](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判测量研究图_20260917.png) | 文件 | 见总归档路径映射 |
+| 2026-09-17 | [裁判测量研究图_20260917.svg](/home/tokkio/成果归档/PM-RL1/05_Paper-1前序资料/2026-09-17/裁判测量研究图_20260917.svg) | 文件 | 见总归档路径映射 |
+

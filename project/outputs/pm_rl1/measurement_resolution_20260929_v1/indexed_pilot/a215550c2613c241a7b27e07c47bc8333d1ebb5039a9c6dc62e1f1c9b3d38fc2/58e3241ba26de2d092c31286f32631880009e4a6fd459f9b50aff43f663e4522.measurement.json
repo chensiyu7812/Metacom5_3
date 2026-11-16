@@ -1,0 +1,129 @@
+{
+  "response_sha256": "c2ce9207299b60f1e090fceb79ee6c0caab03edf5dc2221df34aa8e93d608904",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "2b4824bb5f83ce9b4d7f20fade99bd0f168201c17a5fbc8029c5ab0f1a13d4c7",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expresses a desire to pursue therapy, stating previous sessions have helped with stress and career issues, and asks if this might apply to the current situation.",
+      "response_quote": "That's a great idea. Talking to a therapist can provide a safe and non-judgmental space to explore your feelings and gain a deeper understanding of yourself. It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The response fully validates the user's proposal and accurately reflects their statement in C:T016 about benefiting from previous therapy, providing supportive feedback appropriate for the emotional context."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "C:T016 explicitly states, 'My sessions have been helping a lot with stress and career stuff,' which directly supports the claim in R003 that the user has seen benefits of therapy."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the user's claim regarding therapy benefits in C:T016 against the response in R003. Verified no identity assertions in the reply that could contradict the user's statements or the historical context (Charlotte/Alex ambiguity in C:T001/C:T002 was not asserted in the reply). Checked for boundary violations or factual contradictions; none found.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea. Talking to a therapist can provide a safe and non-judgmental space to explore your feelings and gain a deeper understanding of yourself. It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 248
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've already seen the benefits of therapy in other areas of your life.",
+      "positions": [
+        {
+          "start": 158,
+          "end": 248
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expresses a desire to pursue therapy, stating previous sessions have helped with stress and career issues, and asks if this might apply to the current situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response fully validates the user's proposal and accurately reflects their statement in C:T016 about benefiting from previous therapy, providing supportive feedback appropriate for the emotional context."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "C:T016 explicitly states, 'My sessions have been helping a lot with stress and career stuff,' which directly supports the claim in R003 that the user has seen benefits of therapy."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked the user's claim regarding therapy benefits in C:T016 against the response in R003. Verified no identity assertions in the reply that could contradict the user's statements or the historical context (Charlotte/Alex ambiguity in C:T001/C:T002 was not asserted in the reply). Checked for boundary violations or factual contradictions; none found.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

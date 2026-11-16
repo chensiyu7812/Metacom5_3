@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "pytest": {
+    "command": "python -m pytest project/tests/test_rl1_rs_applicability.py -q",
+    "returncode": 0,
+    "passed": 25,
+    "output": ".........................                                                [100%]"
+  },
+  "structural_projection": {
+    "checks": 2,
+    "passed": 2,
+    "skipped_body_deserialization_forbidden": true
+  },
+  "runner_checks": [
+    {
+      "name": "preflight_only",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py",
+        "--rs-package",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/rs_transfer_preparation_20261019_v1",
+        "--preflight-only"
+      ],
+      "returncode": 0,
+      "stdout": "{\"preflight\": \"OK\", \"jobs\": 41, \"mode\": \"RS diagnostic\", \"protocol_identity\": \"7e22e9cc2bf37492b73b5c4e145de0ec25ab837f1664030500e0af11eb46fe6a\", \"execution_authorized\": false}\n",
+      "stderr": ""
+    },
+    {
+      "name": "pending_authorization_refused",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py",
+        "--rs-package",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/rs_transfer_preparation_20261019_v1",
+        "--execution-authorization",
+        "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/rs_transfer_preparation_20261019_v1/launch_request.json"
+      ],
+      "returncode": 1,
+      "stdout": "{\"preflight\": \"OK\", \"jobs\": 41, \"mode\": \"RS diagnostic\", \"protocol_identity\": \"7e22e9cc2bf37492b73b5c4e145de0ec25ab837f1664030500e0af11eb46fe6a\", \"execution_authorized\": false}\n",
+      "stderr": "Traceback (most recent call last):\n  File \"/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py\", line 252, in <module>\n    main()\n  File \"/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py\", line 141, in main\n    run_rs_package(args)\n  File \"/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/92_run_p2_common_pool.py\", line 67, in run_rs_package\n    validate_authorization(protocol, authorization)\n  File \"/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/rs_development.py\", line 70, in validate_authorization\n    raise ValueError('this exact new generator batch has no matching execution authorization')\nValueError: this exact new generator batch has no matching execution authorization\n"
+    }
+  ],
+  "gpu_loaded": false,
+  "model_calls": 0,
+  "execution_directory_created": false
+}

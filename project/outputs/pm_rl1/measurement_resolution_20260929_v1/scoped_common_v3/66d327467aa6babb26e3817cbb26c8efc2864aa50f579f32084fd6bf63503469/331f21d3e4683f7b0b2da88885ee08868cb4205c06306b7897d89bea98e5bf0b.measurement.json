@@ -1,0 +1,126 @@
+{
+  "response_sha256": "1f921a6fcbcd782f0d419354294c2f2e119abe1b4b5bc355e818a6e809e7c97a",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "944013750964c02f8c58eb439e7724570df552ef857c1f9991f6baa03ffacfb1",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "relation/severity conflict",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expressed ambivalence about an overseas promotion outcome: relieved about avoiding relocation but worried about career stagnation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately reflects the seeker's stated mixed emotions (R002) using specific language from C:T014 (relief vs. stagnation fear). It validates the difficulty of the situation (R003) and proposes actionable, contextually appropriate support strategies consistent with previous effective interactions (R004/R005). No constraints were violated, and no facts were invented."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately restates user's own reported feelings ('relieved'/'worried') without asserting new information."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "unsupported",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Advice suggestion. 'Manager or mentor' is a general suggestion, not a factual claim requiring verification. It fits within the role."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All reply units assessed. Personal facts checked against C:T014. Advice verified for appropriateness.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker expressed ambivalence about an overseas promotion outcome: relieved about avoiding relocation but worried about career stagnation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately reflects the seeker's stated mixed emotions (R002) using specific language from C:T014 (relief vs. stagnation fear). It validates the difficulty of the situation (R003) and proposes actionable, contextually appropriate support strategies consistent with previous effective interactions (R004/R005). No constraints were violated, and no facts were invented."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Reflective statement summarizing user experience, not a personal factual assertion."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "personal_fact",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Accurately restates user's own reported feelings ('relieved'/'worried') without asserting new information."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic validation phrase."
+      },
+      {
+        "response_unit_id": "R004",
+        "kind": "boundary_issue",
+        "relation": "unsupported",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Advice suggestion. 'Manager or mentor' is a general suggestion, not a factual claim requiring verification. It fits within the role."
+      },
+      {
+        "response_unit_id": "R005",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advice/guidance."
+      }
+    ],
+    "coverage": "All reply units assessed. Personal facts checked against C:T014. Advice verified for appropriateness.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

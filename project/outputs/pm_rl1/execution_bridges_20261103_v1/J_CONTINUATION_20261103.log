@@ -1,0 +1,26 @@
+{"status": "RETAINED_LIABILITY_CHECKED", "same_stage_identity": "99ef5d00e257720ee58d2d4fa0f1bd9ed14a003b034d9a4249fb437e58b32ac9", "continuation_identity": "2c6889d18a1772a63c5a68755dfca51af8a63e7f0688ba8d79599663bdac637a", "max_attempts": 82, "new_allowance": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/147_continue_development_retained_liability.py", line 76, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/147_continue_development_retained_liability.py", line 70, in main
+    result=stage.advance(transport)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_feedback.py", line 254, in advance
+    claim = schedule.claim_next(lambda c: self.reserve(c, requests[c['slot_id']]))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/recovery_schedule.py", line 170, in claim_next
+    reservation = reserve(dict(claim))
+                  ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_feedback.py", line 254, in <lambda>
+    claim = schedule.claim_next(lambda c: self.reserve(c, requests[c['slot_id']]))
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_dispatch.py", line 154, in reserve
+    self.budget.reserve(claim['attempt_id'], self.policy['reserve_nanodollars'], binding)
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/retained_liability_continuation.py", line 100, in reserve
+    raise ValueError('verified account balance insufficient')
+ValueError: verified account balance insufficient

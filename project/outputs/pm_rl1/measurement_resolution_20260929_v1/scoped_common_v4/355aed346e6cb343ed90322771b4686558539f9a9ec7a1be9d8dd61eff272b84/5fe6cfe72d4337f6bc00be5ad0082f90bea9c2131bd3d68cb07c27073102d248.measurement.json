@@ -1,0 +1,244 @@
+{
+  "response_sha256": "7bc11cf2b9f69b8dbbcfa4beda4e21e73956145b27a50e6c47e36acc6fa039a5",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "3b3c593784fa8eabc757d98b4263ec4f281fcdd2743cdae827e859588cfad1ab",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker (Jane) expressed a mix of relief about not moving overseas and fear of career stagnation after losing a promotion opportunity.",
+      "response_quote": "It's like you're caught between two opposing emotions. On one hand, you're disappointed about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in.",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The reply accurately identifies the conflict between career stagnation and life changes (R003/R005). However, R002 ('disappointed about not having to move') contradicts the explicit statement in C:T014 ('relieved I don't have to move overseas'). While the reply offers appropriate advice (R004), the factual error in attributing 'disappointment' instead of 'relief' regarding the relocation choice is a noticeable defect in emotional accuracy that prevents a 4."
+    },
+    "claims": [
+      {
+        "response_quote": "On one hand, you're disappointed about not having to move, but on the other hand, you're worried about getting stuck in your career.",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Claims 'disappointed about not having to move'. C:T014 explicitly states 'relieved I don't have to move overseas'. This contradicts the user's stated valence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply covers the emotional state described in C:T14 and offers next steps consistent with the conversation flow (seeking guidance). It does not hallucinate new events or violate boundaries.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're caught between two opposing emotions. On one hand, you're disappointed about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 217
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "On one hand, you're disappointed about not having to move, but on the other hand, you're worried about getting stuck in your career.",
+      "positions": [
+        {
+          "start": 55,
+          "end": 187
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker (Jane) expressed a mix of relief about not moving overseas and fear of career stagnation after losing a promotion opportunity.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately identifies the conflict between career stagnation and life changes (R003/R005). However, R002 ('disappointed about not having to move') contradicts the explicit statement in C:T014 ('relieved I don't have to move overseas'). While the reply offers appropriate advice (R004), the factual error in attributing 'disappointment' instead of 'relief' regarding the relocation choice is a noticeable defect in emotional accuracy that prevents a 4."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Claims 'disappointed about not having to move'. C:T014 explicitly states 'relieved I don't have to move overseas'. This contradicts the user's stated valence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply covers the emotional state described in C:T14 and offers next steps consistent with the conversation flow (seeking guidance). It does not hallucinate new events or violate boundaries.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker (Jane) expressed a mix of relief about not moving overseas and fear of career stagnation after losing a promotion opportunity.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately identifies the conflict between career stagnation and life changes (R003/R005). However, R002 ('disappointed about not having to move') contradicts the explicit statement in C:T014 ('relieved I don't have to move overseas'). While the reply offers appropriate advice (R004), the factual error in attributing 'disappointment' instead of 'relief' regarding the relocation choice is a noticeable defect in emotional accuracy that prevents a 4."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic reflective statement summarizing emotions.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Claims 'disappointed about not having to move'. C:T014 explicitly states 'relieved I don't have to move overseas'. This contradicts the user's stated valence.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggestion/question, not a claim of fact.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General explanation of benefit.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The reply covers the emotional state described in C:T14 and offers next steps consistent with the conversation flow (seeking guidance). It does not hallucinate new events or violate boundaries.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker (Jane) expressed a mix of relief about not moving overseas and fear of career stagnation after losing a promotion opportunity.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014"
+      ],
+      "reason": "The reply accurately identifies the conflict between career stagnation and life changes (R003/R005). However, R002 ('disappointed about not having to move') contradicts the explicit statement in C:T014 ('relieved I don't have to move overseas'). While the reply offers appropriate advice (R004), the factual error in attributing 'disappointment' instead of 'relief' regarding the relocation choice is a noticeable defect in emotional accuracy that prevents a 4."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic reflective statement summarizing emotions."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Claims 'disappointed about not having to move'. C:T014 explicitly states 'relieved I don't have to move overseas'. This contradicts the user's stated valence."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggestion/question, not a claim of fact."
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General explanation of benefit."
+      }
+    ],
+    "coverage": "The reply covers the emotional state described in C:T14 and offers next steps consistent with the conversation flow (seeking guidance). It does not hallucinate new events or violate boundaries.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

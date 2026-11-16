@@ -1,0 +1,124 @@
+{
+  "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "1a958ba36019ef5ac61ac557d4a14b8966c3c1ed119339f160a4c442169255b7",
+  "raw_output_sha256": "1aa8dbb9f96fa88120aac29092afe92d87feff49fd6673d9af60f63be7b56adc",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses intent to discuss workload adjustments with supervisor but fears their reaction (C:T015).",
+      "response_quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "This reply is highly responsive to the final user turn (C:T015). Unit R001 validates the user's expressed uncertainty ('not sure how they'll react'), providing necessary empathy. Unit R002 directly builds upon the user's stated topic ('workload adjustments') and the specific obstacle ('supervisor reaction'). It prompts the user to clarify their plan without forcing a decision, matching the supportive scaffold role required. There are no factual errors or boundary violations; all claims align with the provided context (Amanda working with supervisor, considering adjustments). It fully meets the conversational goal of processing the immediate anxiety."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The reply addresses the immediate concern regarding the supervisor interaction and plans for the workload discussion. It leverages the current session context without contradicting the prior history (promotion timeline in H018 aligns with 'new promotion' in C:T013).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User expresses intent to discuss workload adjustments with supervisor but fears their reaction (C:T015).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "This reply is highly responsive to the final user turn (C:T015). Unit R001 validates the user's expressed uncertainty ('not sure how they'll react'), providing necessary empathy. Unit R002 directly builds upon the user's stated topic ('workload adjustments') and the specific obstacle ('supervisor reaction'). It prompts the user to clarify their plan without forcing a decision, matching the supportive scaffold role required. There are no factual errors or boundary violations; all claims align with the provided context (Amanda working with supervisor, considering adjustments). It fully meets the conversational goal of processing the immediate anxiety."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The reply addresses the immediate concern regarding the supervisor interaction and plans for the workload discussion. It leverages the current session context without contradicting the prior history (promotion timeline in H018 aligns with 'new promotion' in C:T013).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses intent to discuss workload adjustments with supervisor but fears their reaction (C:T015).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "This reply is highly responsive to the final user turn (C:T015). Unit R001 validates the user's expressed uncertainty ('not sure how they'll react'), providing necessary empathy. Unit R002 directly builds upon the user's stated topic ('workload adjustments') and the specific obstacle ('supervisor reaction'). It prompts the user to clarify their plan without forcing a decision, matching the supportive scaffold role required. There are no factual errors or boundary violations; all claims align with the provided context (Amanda working with supervisor, considering adjustments). It fully meets the conversational goal of processing the immediate anxiety."
+    },
+    "assessments": [],
+    "coverage": "The reply addresses the immediate concern regarding the supervisor interaction and plans for the workload discussion. It leverages the current session context without contradicting the prior history (promotion timeline in H018 aligns with 'new promotion' in C:T013).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "User expresses intent to discuss workload adjustments with supervisor but fears their reaction (C:T015).",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "This reply is highly responsive to the final user turn (C:T015). Unit R001 validates the user's expressed uncertainty ('not sure how they'll react'), providing necessary empathy. Unit R002 directly builds upon the user's stated topic ('workload adjustments') and the specific obstacle ('supervisor reaction'). It prompts the user to clarify their plan without forcing a decision, matching the supportive scaffold role required. There are no factual errors or boundary violations; all claims align with the provided context (Amanda working with supervisor, considering adjustments). It fully meets the conversational goal of processing the immediate anxiety."
+    },
+    "assessments": [],
+    "coverage": "The reply addresses the immediate concern regarding the supervisor interaction and plans for the workload discussion. It leverages the current session context without contradicting the prior history (promotion timeline in H018 aligns with 'new promotion' in C:T013).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

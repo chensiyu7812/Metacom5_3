@@ -1,0 +1,51 @@
+{
+  "scope": "SOURCE_FIRST_BOUNDED_HISTORY_VALUE_DIAGNOSTIC",
+  "created_utc": "2026-11-05T00:35:37.382820+00:00",
+  "authorization": "2026-11-05 researcher: 好的，推进吧。 Following the accepted bounded proposal; no global retrieval rebuild.",
+  "source_scope": "96 train prefixes from the isolated train/dev catalog manifest; filter split before content reads. No test/sealed/deprecated corpus.",
+  "selection_inputs": "Current prefix and strictly past source texts only. Do not use generated replies or preference outcomes to choose cases. Previously viewed cases remain exposed development.",
+  "inclusion": [
+    "Write a specific information gap absent from the complete current prefix, with an exact current-turn anchor.",
+    "Bind an explicit legal past seeker statement that fills that gap and changes an actionable support option, resolves a referent, avoids a concrete contradiction, or avoids asking for information already established as still applicable.",
+    "State what reasonable OFF support can already do and an observable disconfirmation; generic extra background, source mention, stylistic preference alone and a similar old mood do not qualify.",
+    "Past plans are not completed actions, past states are not automatically current, suggestions by a historical supporter are not seeker preferences.",
+    "A complete source conversation must be available and grounded; partial history coverage is disclosed and unresolved temporal conflicts prevent selection."
+  ],
+  "selection_order": "Review all 96 in owner/session/prefix order; each annotated eligibility decision retained. Then round-robin eligible owners in lexicographic owner order, within owner by SHA256(prefix_identity); at most 2 per owner, no duplicate current session. Target one owner each where available.",
+  "target_cases": 12,
+  "minimum_cases_for_full_probe": 10,
+  "maximum_cases": 12,
+  "insufficient_candidates": "If fewer than 10 independently eligible cases with valid controls remain, stop this planned generation/human batch and report coverage insufficiency; do not loosen inclusion or manufacture current turns.",
+  "conditions": [
+    "OFF",
+    "C_one_target_complete_legal_MS",
+    "D_one_other_topic_complete_legal_MS_same_owner"
+  ],
+  "target_choice": "Choose the most recent complete session resolving the declared gap; if equal date choose stable key. No manually authored summaries, source trimming or desired-answer injection.",
+  "distractor_choice": "Same-owner strictly past complete session without the target gap information and without a clear current support connection; choose closest native-token length, tie by key. Record mismatch; do not invent or corrupt history.",
+  "generation": "Frozen Gemma candidate cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e, unchanged messages renderer and natural EOS; at most 36 distinct calls, 1 actual load, no automatic request retries, no paid fallback. Exact cache reuse checked only after selected cases/resources are frozen.",
+  "human_review": "At most 12 blinded triplets with common current/legal-source evidence; allow ties, slight/material differences, uncertainty. Exact old judgments reused; no repeated old questions. Obtain direct C/OFF and C/D comparisons rather than aggregate win rates alone.",
+  "continuity_checks": "Source-anchored wrong referents, contradictions, falsely completed plans, and genuinely redundant questions; asking whether an old state changed is not automatically an error. These checks do not replace helpfulness preference.",
+  "decision_gate": {
+    "required_valid_triplets": 10,
+    "required_joint_wins": 4,
+    "required_joint_win_owners": 3,
+    "joint_win": "C preferred over BOTH OFF and D in the same case (slight counts); no source-confirmed factual error providing the apparent advantage.",
+    "loss_check": "Number of joint wins must exceed number of cases C is judged worse than OFF. Report every loss and material source misuse separately.",
+    "pass": "Only proceed to a scoped deployable path/latency and feedback study; not a population claim, qualified scalar reward or automatic PPO start.",
+    "fail": "Stop expanding G tuning/global retrieval/positive-example search for this task under this protocol; report bounded evidence and develop avoidance/latency findings with fixed STOP baseline. No claim contextual RL beats STOP.",
+    "technical_or_rating_insufficiency": "Report inconclusive/coverage limits; no replacement cases or automatic expansion."
+  },
+  "latency": "No count-based 3-second inference. Record G components only in this diagnostic; any subsequent deployment decision requires the agreed actual waiting endpoint and complete relevant path.",
+  "new_training": false,
+  "API_cost_usd": 0,
+  "no_changes": [
+    "old human registry",
+    "old prompts or G",
+    "original ranking",
+    "sealed results",
+    "shared money ledger"
+  ],
+  "source_manifest_sha256": "dccd202a38d2b0269d4c1ef491ae4f8e4b6b663f78889b22ec5abdb0516c102a",
+  "identity": "1984752a285296fce7d328279e49b4a27538897211ba8660008e9ddbade03ebc"
+}

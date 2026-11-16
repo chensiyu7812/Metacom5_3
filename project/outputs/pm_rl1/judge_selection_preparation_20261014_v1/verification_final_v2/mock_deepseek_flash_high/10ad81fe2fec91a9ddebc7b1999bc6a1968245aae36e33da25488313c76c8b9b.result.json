@@ -1,0 +1,237 @@
+{
+  "request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "d1fffecb077486869d9a65f36684b0e65d2212e7d9bfec67b5731058e6a69275",
+    "phase": "engineering",
+    "ordinal": 2,
+    "item_key": "dev15B",
+    "draw": "primary",
+    "messages_identity": "b541f867fe73507f59d1300aa70bc56cb5ffa9f2370885ce0c9a932879d8f3fe",
+    "schema_identity": "0c1163b9008d6abb2db9b9ef79819f95da2b752b6cec9375ce859676e30d8d73",
+    "seed": 118704109,
+    "input_utf8_bytes": 56316,
+    "request_id": "10ad81fe2fec91a9ddebc7b1999bc6a1968245aae36e33da25488313c76c8b9b"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "0229cd6adcded5a7082ace51b60fd17ccbe7ec0816670dafcce687120a27cbe5",
+    "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "d1fffecb077486869d9a65f36684b0e65d2212e7d9bfec67b5731058e6a69275",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "10ad81fe2fec91a9ddebc7b1999bc6a1968245aae36e33da25488313c76c8b9b",
+    "raw_output_sha256": "6427a44c32d42aed06ac99ee00f3b985395591d9465f945607c22c3d552ef37f",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "Talking with me helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "What part of that perspective feels most helpful to hold onto?",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "Talking with me helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+        "positions": [
+          {
+            "start": 0,
+            "end": 135
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T013",
+        "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 116
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "Talking with me helped you see your thesis from a different perspective.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 72
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "What part of that perspective feels most helpful to hold onto?",
+        "positions": [
+          {
+            "start": 73,
+            "end": 135
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.041556697979103774,
+  "accounted_peak_usd": "0.0015",
+  "reservation_retained": false
+}

@@ -1,0 +1,558 @@
+{
+  "slot_id": "pmrl1-anchor-calibration-proposal-v1-20261020__context_01_0000__calibrated__draw2",
+  "request_identity": "5b0e798055b161c48ed48b6163c08cd02f02bca4636a78e2c032e548118c49cd",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 3,
+      "q_rationale": {
+        "current_need": "The user needs acknowledgment of their distress about perceived favoritism and injustice at work, plus help deciding how to handle it.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "R001-R002 accurately reflect the reported favoritism and the user's stated intolerance of injustice. R003-R004 offer two relevant, non-coercive directions: talking with the manager or coping without involving them. The main limitation is R003's unsupported presupposition that the favoritism affects the team's morale and productivity, so the reply is appropriate but not fully grounded."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The user reported that peers who hardly work are favored and that this bothers them because they cannot tolerate injustice; this tentative empathic reflection matches that."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006"
+          ],
+          "reason": "The description of others being favored despite their work ethic matches the user's report. 'Completely understandable' is an evaluative phrase rather than a separate personal factual assertion."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T008"
+          ],
+          "reason": "The clause 'Since you mentioned you can't tolerate injustice' accurately recalls the user's own statement."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The question whether the user has considered talking directly with the manager is an optional invitation to explore an action, not an assertion that it happened or must happen."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "unsupported",
+          "severity": 0.25,
+          "source_turn_ids": [],
+          "reason": "The embedded phrase about 'how this favoritism affects your team's morale and productivity' presupposes a team-level morale/productivity effect. The complete legal record reports favored peers and the user's personal distress, but not any team morale or productivity impact."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This asks whether the user wants ways to cope without involving the manager; it is an open question, not a personal factual assertion or reported completed action."
+        }
+      ],
+      "coverage": "Checked all current-prefix turns C:T000-C:T008 and all legal past sessions H001-H004. Past sessions concern sleep, marriage/drinking, and the user's mother; none reports current workplace team morale/productivity or contradicts the user's present account. No role or identity claim by the new AI is present.",
+      "uncertainty_reasons": []
+    },
+    "q": 3,
+    "m": 0.25,
+    "U": 0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2cb5b3936bedbf54795d1c4fe3c5e0a01d4133d70a229256b497d8f6e2bef01c",
+      "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-anchor-calibration-proposal-v1-20261020__context_01_0000__calibrated__draw2",
+      "raw_output_sha256": "240bc126812afe5be757dba9119ff5435e79ea4c5222c31c9d555c85cf8fd6c5",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0.25,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The user needs acknowledgment of their distress about perceived favoritism and injustice at work, plus help deciding how to handle it.",
+          "response_quote": "It sounds like you're feeling frustrated by the unfair treatment, and that sense of injustice is really weighing on you. It's completely understandable to feel that way when you see others being favored for reasons that don't seem to align with their actual work ethic.\n\nSince you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity? Or are you looking for ways to cope with the situation without involving them?",
+          "evidence": [
+            {
+              "source_id": "C:T006",
+              "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+            },
+            {
+              "source_id": "C:T008",
+              "quote": "Yes, it bothers me as I cannot tolerate injustice"
+            }
+          ],
+          "reason": "R001-R002 accurately reflect the reported favoritism and the user's stated intolerance of injustice. R003-R004 offer two relevant, non-coercive directions: talking with the manager or coping without involving them. The main limitation is R003's unsupported presupposition that the favoritism affects the team's morale and productivity, so the reply is appropriate but not fully grounded."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're feeling frustrated by the unfair treatment, and that sense of injustice is really weighing on you.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+              },
+              {
+                "source_id": "C:T008",
+                "quote": "Yes, it bothers me as I cannot tolerate injustice"
+              }
+            ],
+            "reason": "The user reported that peers who hardly work are favored and that this bothers them because they cannot tolerate injustice; this tentative empathic reflection matches that."
+          },
+          {
+            "response_quote": "It's completely understandable to feel that way when you see others being favored for reasons that don't seem to align with their actual work ethic.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+              }
+            ],
+            "reason": "The description of others being favored despite their work ethic matches the user's report. 'Completely understandable' is an evaluative phrase rather than a separate personal factual assertion."
+          },
+          {
+            "response_quote": "Since you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T008",
+                "quote": "Yes, it bothers me as I cannot tolerate injustice"
+              }
+            ],
+            "reason": "The clause 'Since you mentioned you can't tolerate injustice' accurately recalls the user's own statement."
+          },
+          {
+            "response_quote": "Since you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity?",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "evidence": [],
+            "reason": "The embedded phrase about 'how this favoritism affects your team's morale and productivity' presupposes a team-level morale/productivity effect. The complete legal record reports favored peers and the user's personal distress, but not any team morale or productivity impact."
+          }
+        ],
+        "misuse_findings": [
+          3
+        ],
+        "coverage": "Checked all current-prefix turns C:T000-C:T008 and all legal past sessions H001-H004. Past sessions concern sleep, marriage/drinking, and the user's mother; none reports current workplace team morale/productivity or contradicts the user's present account. No role or identity claim by the new AI is present.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you're feeling frustrated by the unfair treatment, and that sense of injustice is really weighing on you. It's completely understandable to feel that way when you see others being favored for reasons that don't seem to align with their actual work ethic.\n\nSince you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity? Or are you looking for ways to cope with the situation without involving them?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 523
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're feeling frustrated by the unfair treatment, and that sense of injustice is really weighing on you.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 120
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It's completely understandable to feel that way when you see others being favored for reasons that don't seem to align with their actual work ethic.",
+          "positions": [
+            {
+              "start": 121,
+              "end": 269
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "Since you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity?",
+          "positions": [
+            {
+              "start": 271,
+              "end": 444
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        },
+        {
+          "where": "claims[3]",
+          "response": true,
+          "quote": "Since you mentioned you can't tolerate injustice, have you considered talking directly to your manager about how this favoritism affects your team's morale and productivity?",
+          "positions": [
+            {
+              "start": 271,
+              "end": 444
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The user needs acknowledgment of their distress about perceived favoritism and injustice at work, plus help deciding how to handle it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "R001-R002 accurately reflect the reported favoritism and the user's stated intolerance of injustice. R003-R004 offer two relevant, non-coercive directions: talking with the manager or coping without involving them. The main limitation is R003's unsupported presupposition that the favoritism affects the team's morale and productivity, so the reply is appropriate but not fully grounded."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "The user reported that peers who hardly work are favored and that this bothers them because they cannot tolerate injustice; this tentative empathic reflection matches that."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The description of others being favored despite their work ethic matches the user's report. 'Completely understandable' is an evaluative phrase rather than a separate personal factual assertion."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The clause 'Since you mentioned you can't tolerate injustice' accurately recalls the user's own statement."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [],
+            "reason": "The embedded phrase about 'how this favoritism affects your team's morale and productivity' presupposes a team-level morale/productivity effect. The complete legal record reports favored peers and the user's personal distress, but not any team morale or productivity impact."
+          }
+        ],
+        "misuse_findings": [
+          3
+        ],
+        "coverage": "Checked all current-prefix turns C:T000-C:T008 and all legal past sessions H001-H004. Past sessions concern sleep, marriage/drinking, and the user's mother; none reports current workplace team morale/productivity or contradicts the user's present account. No role or identity claim by the new AI is present.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The user needs acknowledgment of their distress about perceived favoritism and injustice at work, plus help deciding how to handle it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "R001-R002 accurately reflect the reported favoritism and the user's stated intolerance of injustice. R003-R004 offer two relevant, non-coercive directions: talking with the manager or coping without involving them. The main limitation is R003's unsupported presupposition that the favoritism affects the team's morale and productivity, so the reply is appropriate but not fully grounded."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "The user reported that peers who hardly work are favored and that this bothers them because they cannot tolerate injustice; this tentative empathic reflection matches that.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The description of others being favored despite their work ethic matches the user's report. 'Completely understandable' is an evaluative phrase rather than a separate personal factual assertion.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The clause 'Since you mentioned you can't tolerate injustice' accurately recalls the user's own statement.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The question whether the user has considered talking directly with the manager is an optional invitation to explore an action, not an assertion that it happened or must happen.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [],
+            "reason": "The embedded phrase about 'how this favoritism affects your team's morale and productivity' presupposes a team-level morale/productivity effect. The complete legal record reports favored peers and the user's personal distress, but not any team morale or productivity impact.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This asks whether the user wants ways to cope without involving the manager; it is an open question, not a personal factual assertion or reported completed action.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Checked all current-prefix turns C:T000-C:T008 and all legal past sessions H001-H004. Past sessions concern sleep, marriage/drinking, and the user's mother; none reports current workplace team morale/productivity or contradicts the user's present account. No role or identity claim by the new AI is present.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0.25,
+      "derived_error_indexes": [
+        3
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The user needs acknowledgment of their distress about perceived favoritism and injustice at work, plus help deciding how to handle it.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "R001-R002 accurately reflect the reported favoritism and the user's stated intolerance of injustice. R003-R004 offer two relevant, non-coercive directions: talking with the manager or coping without involving them. The main limitation is R003's unsupported presupposition that the favoritism affects the team's morale and productivity, so the reply is appropriate but not fully grounded."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "The user reported that peers who hardly work are favored and that this bothers them because they cannot tolerate injustice; this tentative empathic reflection matches that."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006"
+            ],
+            "reason": "The description of others being favored despite their work ethic matches the user's report. 'Completely understandable' is an evaluative phrase rather than a separate personal factual assertion."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The clause 'Since you mentioned you can't tolerate injustice' accurately recalls the user's own statement."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The question whether the user has considered talking directly with the manager is an optional invitation to explore an action, not an assertion that it happened or must happen."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [],
+            "reason": "The embedded phrase about 'how this favoritism affects your team's morale and productivity' presupposes a team-level morale/productivity effect. The complete legal record reports favored peers and the user's personal distress, but not any team morale or productivity impact."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This asks whether the user wants ways to cope without involving the manager; it is an open question, not a personal factual assertion or reported completed action."
+          }
+        ],
+        "coverage": "Checked all current-prefix turns C:T000-C:T008 and all legal past sessions H001-H004. Past sessions concern sleep, marriage/drinking, and the user's mother; none reports current workplace team morale/productivity or contradicts the user's present account. No role or identity claim by the new AI is present.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "240bc126812afe5be757dba9119ff5435e79ea4c5222c31c9d555c85cf8fd6c5",
+      "adapted_final_sha256": "240bc126812afe5be757dba9119ff5435e79ea4c5222c31c9d555c85cf8fd6c5",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0118872",
+    "usage_upper_usd": "0.0118872",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 9312,
+    "completion_tokens": 7578,
+    "total_tokens": 16890,
+    "prompt_tokens_details": {
+      "cached_tokens": 9088
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 6895
+    },
+    "prompt_cache_hit_tokens": 9088,
+    "prompt_cache_miss_tokens": 224
+  },
+  "elapsed_seconds": 41.68216198901064,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-anchor-calibration-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 3,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-anchor-calibration-v1-20261020",
+  "semantic_review_status": "pending_offline_source_review"
+}

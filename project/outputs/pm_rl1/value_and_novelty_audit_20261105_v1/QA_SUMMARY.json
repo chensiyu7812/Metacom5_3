@@ -1,0 +1,219 @@
+{
+  "scope": "EXISTING_TRAIN_DEV_DATA_AND_LITERATURE_FEASIBILITY_ONLY",
+  "local_dataset_version": "ES-MemEval-Public-v1.0.0-1427",
+  "task_counts_metadata_only": {
+    "train": {
+      "qa": 1003,
+      "summary": 81,
+      "dg": 25
+    },
+    "dev": {
+      "qa": 258,
+      "summary": 22,
+      "dg": 4
+    },
+    "test": {
+      "qa": 166,
+      "summary": 22,
+      "dg": 5
+    }
+  },
+  "qa": {
+    "train": {
+      "rows": 1003,
+      "owners": 12,
+      "capabilities": {
+        "information extraction": 219,
+        "temporal reasoning": 195,
+        "abstention": 185,
+        "user modeling": 213,
+        "conflict detection": 191
+      },
+      "strata": {
+        "visible_reference_present": 785,
+        "no_evidence": 183,
+        "unresolved_reference": 18,
+        "private_only": 17
+      },
+      "visible_sessions": {
+        "1": 610,
+        "2": 182,
+        "0": 211
+      },
+      "visible_sessions_key": "0 / 1 / 2 means no cited visible session / one / at least two; not minimal necessary reads.",
+      "solely_visible_resolved": 603,
+      "multisession_solely_visible_resolved": 134,
+      "short_extractive_candidates": 65,
+      "answer_form_by_capability": {
+        "abstention": {
+          "unknown": 182,
+          "open_other": 3
+        },
+        "conflict detection": {
+          "negative_prefix": 135,
+          "positive_prefix": 43,
+          "open_other": 13
+        },
+        "information extraction": {
+          "open_other": 218,
+          "negative_prefix": 1
+        },
+        "temporal reasoning": {
+          "open_other": 192,
+          "positive_prefix": 3
+        },
+        "user modeling": {
+          "open_other": 212,
+          "positive_prefix": 1
+        }
+      }
+    },
+    "dev": {
+      "rows": 258,
+      "owners": 3,
+      "capabilities": {
+        "temporal reasoning": 60,
+        "conflict detection": 49,
+        "user modeling": 60,
+        "abstention": 40,
+        "information extraction": 49
+      },
+      "strata": {
+        "visible_reference_present": 212,
+        "no_evidence": 41,
+        "private_only": 3,
+        "unresolved_reference": 2
+      },
+      "visible_sessions": {
+        "2": 37,
+        "0": 44,
+        "1": 177
+      },
+      "visible_sessions_key": "0 / 1 / 2 means no cited visible session / one / at least two; not minimal necessary reads.",
+      "solely_visible_resolved": 101,
+      "multisession_solely_visible_resolved": 24,
+      "short_extractive_candidates": 14,
+      "answer_form_by_capability": {
+        "abstention": {
+          "unknown": 40
+        },
+        "conflict detection": {
+          "negative_prefix": 39,
+          "positive_prefix": 7,
+          "open_other": 2,
+          "unknown": 1
+        },
+        "information extraction": {
+          "open_other": 48,
+          "negative_prefix": 1
+        },
+        "temporal reasoning": {
+          "open_other": 60
+        },
+        "user modeling": {
+          "open_other": 60
+        }
+      }
+    },
+    "combined": {
+      "rows": 1261,
+      "owners": 15,
+      "capabilities": {
+        "temporal reasoning": 255,
+        "conflict detection": 240,
+        "user modeling": 273,
+        "abstention": 225,
+        "information extraction": 268
+      },
+      "strata": {
+        "visible_reference_present": 997,
+        "no_evidence": 224,
+        "private_only": 20,
+        "unresolved_reference": 20
+      },
+      "visible_sessions": {
+        "2": 219,
+        "0": 255,
+        "1": 787
+      },
+      "visible_sessions_key": "0 / 1 / 2 means no cited visible session / one / at least two; not minimal necessary reads.",
+      "solely_visible_resolved": 704,
+      "multisession_solely_visible_resolved": 158,
+      "short_extractive_candidates": 79,
+      "answer_form_by_capability": {
+        "abstention": {
+          "unknown": 222,
+          "open_other": 3
+        },
+        "conflict detection": {
+          "negative_prefix": 174,
+          "positive_prefix": 50,
+          "open_other": 15,
+          "unknown": 1
+        },
+        "information extraction": {
+          "open_other": 266,
+          "negative_prefix": 2
+        },
+        "temporal reasoning": {
+          "open_other": 252,
+          "positive_prefix": 3
+        },
+        "user modeling": {
+          "open_other": 272,
+          "positive_prefix": 1
+        }
+      }
+    }
+  },
+  "old_qa_inventory_already_existed": true,
+  "old_semantic_examples": 20,
+  "new_citation_review_examples": 15,
+  "new_example_selection": "SHA256(owner|group|idx), first three train rows per capability; illustrative, not prevalence.",
+  "natural_history_value": {
+    "cases": 10,
+    "joint_wins": 2,
+    "joint_questions": [
+      "Q01",
+      "Q08"
+    ],
+    "joint_owners": [
+      "p11",
+      "p3"
+    ],
+    "comparisons": {
+      "C/OFF": {
+        "preferred": 4,
+        "equivalent": 5,
+        "worse": 1,
+        "not_directly_judged": 0
+      },
+      "C/D": {
+        "preferred": 3,
+        "equivalent": 5,
+        "worse": 2,
+        "not_directly_judged": 0
+      },
+      "D/OFF": {
+        "preferred": 2,
+        "equivalent": 4,
+        "worse": 2,
+        "not_directly_judged": 2
+      }
+    }
+  },
+  "three_questions": {
+    "response_quality": "SPECIFIC_INTERACTION_PROBLEMS_OBSERVED; improvement magnitude not established",
+    "incremental_resource_value": "NATURAL_PROBE_GATE_NOT_MET; QA_HAS_SOURCE_GROUNDED_CANDIDATES_NOT_MEASURED_GAIN",
+    "sequential_policy_value": "NOT_ESTABLISHED; multi-session citations do not prove adaptive value"
+  },
+  "evidence_type_note": "A citation or literal answer hit is not semantic certification, a usable reward, or a deployable retrieval path.",
+  "shortcut_note": "Answer-prefix counts are dataset diagnostics, not predictions or measured classifier accuracy; task capability labels remain evaluator-only.",
+  "new_qualified_rewards": 0,
+  "model_calls": 0,
+  "new_training_updates": 0,
+  "API_cost_usd": 0,
+  "test_gold_content_read": false,
+  "old_protocol_reopened": false,
+  "research_decision": "BOUNDED_GAIN_VALIDATION_WORTH_PREPARING; FULL_RL_AND_NOVELTY_CLAIM_NOT_JUSTIFIED_YET"
+}

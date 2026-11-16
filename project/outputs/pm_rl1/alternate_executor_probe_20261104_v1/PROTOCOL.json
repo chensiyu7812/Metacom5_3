@@ -1,0 +1,96 @@
+{
+  "api_cost_usd": 0,
+  "authorization": "2026-11-04 researcher: compare whether G or small resource gain is the bottleneck; check local models; 按计划继续推进。",
+  "automatic_retries": 0,
+  "cards_identity": "5dd876c9cf89ef1bbd905409f58c9b0bf87fe1162edbe40f1f9d029544cf82e7",
+  "code": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/167_probe_alternate_executor.py": "da49d24f2c53256d867fa18b715012fba45ca76cf3996b73e5b1bad443b9b74d",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py": "57ba5a7fea68616fc25f4123c91ba163b2fc17442a3bd941e4fc662710962993",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/generation.py": "9bdc101d7733dc936124cd092c7475da78ef229e000bfe5ae1464038b10bbe30",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py": "671d93606bfb2291876552c95d950e873518ce95c6305e996e576aa049bc5c85"
+  },
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "human_primary": "All seven C-vs-A pairs; two preregistered OFF comparisons N18/N21. D optional up to three only if independently noted interference; no wait-tradeoff questions.",
+  "identity": "946b7632e70679e8c1b6f2c24f298974d696d09e6c98cc03affda3b72d1f4fad",
+  "inputs_identity": "6d4f0022c808fd1a72b213b2ba51dc603065232d5b4546d51f6ffafcdc006800",
+  "interpretation": [
+    "Analyze the 2x2 G-by-resource contrast within each context, not cross-model ON alone.",
+    "Positive replicated helpful use supports attainability, not a population effect or exclusive cause.",
+    "No positive comparison means no demonstrated benefit here under these configurations; not zero intrinsic resource value.",
+    "Two OFF judgments only screen those cases; they cannot establish overall superiority.",
+    "D harm in two generators is observed in two configurations, not G-independence.",
+    "Human judgments and source use remain separate; missing stays null; no arbitrary 0/1/2 threshold."
+  ],
+  "latency": {
+    "above_upper": "usually unacceptable, not a universal law",
+    "deployment_claim": false,
+    "first_token_metric": "local generation component only",
+    "lambda_value": null,
+    "objective": "Tokkio end-to-end audible useful response plus resource incremental wait",
+    "researcher_provisional_extra_wait_upper_seconds": 3,
+    "under_upper": "not automatically acceptable"
+  },
+  "max_calls": 36,
+  "max_loads": 1,
+  "model_selection": "Gemma4-12B exists locally, supported by existing environment, different from P2 author Qwen; not presumed stronger.",
+  "new_rewards": false,
+  "new_training": false,
+  "originals_identity": "1b9b7bdc19c848b021cddcbde699b41ac2cbfc658273a87ca153a958167735f0",
+  "promote": false,
+  "requests_identity": "5eff354b3e6ed7d1e65473b0faf593efca578c9c741d131b293d1ead448473e7",
+  "runtime": {
+    "adapter": null,
+    "attention": "sdpa",
+    "chat_template_identity": "1ae50c25a46588b30b82c4d519360cb8e8184b621b32213710ee40e600bea5b5",
+    "cuda_device_order": "PCI_BUS_ID",
+    "cuda_visible_devices": "1",
+    "do_sample": false,
+    "dtype": "bfloat16",
+    "enable_thinking": false,
+    "identity": "cf84d46eccfb00133963f0b31e80eb323c0fa3c58ba64455b215c1a7dbcf0b3e",
+    "model_class": "AutoModelForMultimodalLM",
+    "model_dir": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+    "model_files": {
+      "chat_template.jinja": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4",
+      "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+      "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+      "model.safetensors": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d",
+      "processor_config.json": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9",
+      "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+      "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+    },
+    "native_suppress_tokens": [
+      258883,
+      258882
+    ],
+    "packages": {
+      "safetensors": "0.8.0",
+      "tokenizers": "0.23.2",
+      "torch": "2.7.1+cu128",
+      "transformers": "5.17.0"
+    },
+    "pad_token_id": 0,
+    "policy": {
+      "context_limit": 262144,
+      "cycle_repetitions": 4,
+      "cycle_width": 32,
+      "eos_token_ids": [
+        1,
+        106,
+        50
+      ],
+      "timeout_seconds": 300.0
+    },
+    "seed": 0
+  },
+  "scope": "ALTERNATE_LOCAL_G_DIAGNOSTIC_NOT_SUPERIORITY_OR_REWARD",
+  "sources": {
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/executor_revision_20261104_v2/OUTPUT_MANIFEST.json": "1fd875786f84a7d3ed455384efa0c8f7144346f100b832b4b155723d1c3bc175",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_value_probe_20261104_v1/ANSWER_REGISTRY_PRIVATE.json": "ac56cb14b3170112ae0499aff71e08ca4258a0cd64c1f2e2d98a1a4786848bb1",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_value_probe_20261104_v1/CARDS_PRIVATE.json": "652092518a45e16eeec36598d7f162c8a1619f16ce7f3b618d089e0dda9e3cdb",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_value_probe_20261104_v1/INPUTS_PRIVATE.json": "a50d633bfb8d1a88a16d9333f77de78c4edde6a4e26cba7e9db51dec5b352dd1",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_value_probe_20261104_v1/OUTPUT_MANIFEST.json": "eec4a4ae15526fce51105dd383174aa45d27e0b98d10c6af908fffcd7ecb83fe",
+    "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/resource_value_probe_20261104_v1/RESULTS_PRIVATE.json": "5cd43327de20c46dc04bbc5b1767cdeed9c1da9452bcfbff1e0a0efa7490d38b"
+  },
+  "stage_seconds": 1800
+}

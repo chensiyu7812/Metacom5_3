@@ -1,0 +1,220 @@
+{
+  "response_sha256": "8c47ba18fe764fdafc0a99bc178e2c1f90b56f7e69c45802999b593d6183e908",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "a59536cd3b2282219dcc195d1853ec12a79e0690f80a5e04ac3e4599b3c1820d",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings (relief vs stagnation fear) regarding missed overseas promotion and career stability.",
+      "response_quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "I just found out I missed out on the overseas promotion I was offered a while back."
+        },
+        {
+          "source_id": "C:T010",
+          "quote": "Maybe. I was really torn about the decision, fearing how it would affect my relationship with Eliza and just leaving everything behind."
+        }
+      ],
+      "reason": "The reply accurately reflects the specific emotional ambivalence described in C:T014 (relief vs fear of stagnation). It contextualizes the situation using the promotion details from C:T002 and prior career discussions (C:T010). The response validates feelings without violating boundaries, and the closing question directly addresses the 'career moving forward' concern raised in C:T013/C:T014, fitting the venting/processing mode requested in C:T000."
+    },
+    "claims": [
+      {
+        "response_quote": "It's like you're caught between two emotions - relief and uncertainty.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Directly paraphrases the 'relieved' and 'fear I'll remain stagnant' sentiments expressed in C:T014."
+      },
+      {
+        "response_quote": "It's understandable to feel stuck, especially when you were looking forward to a new challenge.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T002",
+            "quote": "I just found out I missed out on the overseas promotion I was offered a while back."
+          },
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Infers 'new challenge' from the context of the 'overseas promotion' (C:T002) and career stagnation concern (C:T014), which aligns with the perceived loss of professional growth."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked identity (Jane implied via C:T001 context), timeline (Aug 2025 matches C prefix), and explicit-boundary adherence (supportive reflection vs advice). Validated emotional state against C:T014 and addressed career context from C:T002/C:T013.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're caught between two emotions - relief and uncertainty. It's understandable to feel stuck, especially when you were looking forward to a new challenge. Can you tell me more about what's holding you back from taking the next step in your career?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 259
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "I just found out I missed out on the overseas promotion I was offered a while back.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T010",
+      "quote": "Maybe. I was really torn about the decision, fearing how it would affect my relationship with Eliza and just leaving everything behind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's like you're caught between two emotions - relief and uncertainty.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 70
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It's understandable to feel stuck, especially when you were looking forward to a new challenge.",
+      "positions": [
+        {
+          "start": 71,
+          "end": 166
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T002",
+      "quote": "I just found out I missed out on the overseas promotion I was offered a while back.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 83
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses mixed feelings (relief vs stagnation fear) regarding missed overseas promotion and career stability.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T014",
+        "C:T002",
+        "C:T010"
+      ],
+      "reason": "The reply accurately reflects the specific emotional ambivalence described in C:T014 (relief vs fear of stagnation). It contextualizes the situation using the promotion details from C:T002 and prior career discussions (C:T010). The response validates feelings without violating boundaries, and the closing question directly addresses the 'career moving forward' concern raised in C:T013/C:T014, fitting the venting/processing mode requested in C:T000."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Directly paraphrases the 'relieved' and 'fear I'll remain stagnant' sentiments expressed in C:T014."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002",
+          "C:T014"
+        ],
+        "reason": "Infers 'new challenge' from the context of the 'overseas promotion' (C:T002) and career stagnation concern (C:T014), which aligns with the perceived loss of professional growth."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked identity (Jane implied via C:T001 context), timeline (Aug 2025 matches C prefix), and explicit-boundary adherence (supportive reflection vs advice). Validated emotional state against C:T014 and addressed career context from C:T002/C:T013.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

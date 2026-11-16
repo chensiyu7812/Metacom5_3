@@ -1,0 +1,130 @@
+{
+  "response_sha256": "d38c2613d16b88b2f23bf9e0b80628f533368160c96902c4ecaf170025a93b07",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "3b59c23eec9eb35ae1737a5f950622a98f8ddb7586e80ca63ef0604aa73327f9",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses uncertainty about her supervisor's reaction to discussing workload adjustments (C:T015) and seeks support on this decision.",
+      "response_quote": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply directly addresses the user's stated hesitation in C:T015 ('I'm not sure how they'll react') by validating the uncertainty (R001), suggesting the value of conversation despite the fear (R002, R003), and prompting further exploration of the barrier (R004). It fully respects the user's current emotional state and constraints without introducing factual inaccuracies."
+    },
+    "claims": [
+      {
+        "response_quote": "It's natural to feel uncertain about how your supervisor will respond.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "R001 ('It's natural to feel uncertain') is semantically aligned with the user's explicit uncertainty expressed in C:T015 ('I'm not sure how they'll react')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the response against the user's explicit statement of uncertainty regarding the supervisor discussion in C:T015 and the broader context of workplace dissatisfaction established in prior turns (C:T015, C:T014). Checked for factual claims about the supervisor's nature against the provided evidence history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 310
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how your supervisor will respond.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 70
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses uncertainty about her supervisor's reaction to discussing workload adjustments (C:T015) and seeks support on this decision.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the user's stated hesitation in C:T015 ('I'm not sure how they'll react') by validating the uncertainty (R001), suggesting the value of conversation despite the fear (R002, R003), and prompting further exploration of the barrier (R004). It fully respects the user's current emotional state and constraints without introducing factual inaccuracies."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "R001 ('It's natural to feel uncertain') is semantically aligned with the user's explicit uncertainty expressed in C:T015 ('I'm not sure how they'll react')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated the response against the user's explicit statement of uncertainty regarding the supervisor discussion in C:T015 and the broader context of workplace dissatisfaction established in prior turns (C:T015, C:T014). Checked for factual claims about the supervisor's nature against the provided evidence history.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

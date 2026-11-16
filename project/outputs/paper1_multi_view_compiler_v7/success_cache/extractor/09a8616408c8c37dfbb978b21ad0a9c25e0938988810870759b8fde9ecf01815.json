@@ -1,0 +1,111 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2095,
+      "reserved_prompt_tokens": 2223,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 33
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "57688d124c2edbdacc83010cf17503dfb5556f092c3ad576ecb678bd404e1dbb",
+    "prior_profile_sha256": "f2f11533eb1213d1a5e6c6be631da58e9fec9753a29d5220979d2dee70d5235b",
+    "request_payload_sha256": "9b59c72c92becec4353b18a86744e34109d5893fea13ff740f8e650ecc2a55bb"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p3",
+      "s": "p3_conv_1",
+      "p": [
+        {
+          "i": "p3p1",
+          "t": "stable_relationship_role",
+          "k": "friend_with_henry",
+          "v": "Henry is a long-term friend",
+          "s": [
+            {
+              "i": "p3_conv_1:10"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p3e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "argued with Henry over insensitive jokes",
+          "s": [
+            {
+              "i": "p3_conv_1:4"
+            },
+            {
+              "i": "p3_conv_1:6"
+            },
+            {
+              "i": "p3_conv_1:8"
+            }
+          ]
+        },
+        {
+          "i": "p3e2",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "tried to communicate feelings during argument with Henry",
+          "s": [
+            {
+              "i": "p3_conv_1:8"
+            }
+          ]
+        },
+        {
+          "i": "p3e3",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "feeling down due to conflict with Henry",
+          "s": [
+            {
+              "i": "p3_conv_1:2"
+            },
+            {
+              "i": "p3_conv_1:4"
+            }
+          ]
+        },
+        {
+          "i": "p3e4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considering future conversation with Henry when emotions are calmer",
+          "s": [
+            {
+              "i": "p3_conv_1:16"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "32b7e428d0e1ce48a68cf81f34749c1a9cc4f5458d23962aced23b2159ea3d00",
+    "usage": {
+      "prompt_tokens": 2097,
+      "completion_tokens": 450,
+      "total_tokens": 2547
+    },
+    "latency_ms": 5202.211529016495,
+    "provider_finish_reason": "stop"
+  }
+}

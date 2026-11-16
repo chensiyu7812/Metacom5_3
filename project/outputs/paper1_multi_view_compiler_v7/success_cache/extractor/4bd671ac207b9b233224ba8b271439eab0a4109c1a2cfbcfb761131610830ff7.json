@@ -1,0 +1,97 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2518,
+      "reserved_prompt_tokens": 2646,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 227
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "74118c72fff864dd44102f57fb74562124abb2a1d223b0922d7b2db87e2d9382",
+    "prior_profile_sha256": "9236e9018fbffbb4c7fb1b5b9a3ac56a4c60e9048c430b8efdaf2321e454daa7",
+    "request_payload_sha256": "63386c615a46c704265fa8ee0a966e45a1814a1283788a87c68bef3b5b2bdc89"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p13",
+      "s": "p13_conv_16",
+      "p": [
+        {
+          "i": "p13_p1",
+          "t": "occupation",
+          "k": "current_employment_status",
+          "v": "actively employed; offered leadership role in new project but experiencing anxiety about increased responsibilities",
+          "s": [
+            {
+              "i": "p13_conv_16:5"
+            },
+            {
+              "i": "p13_conv_16:9"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p13_e1",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "experienced renewed anxiety about potential panic attack triggered by new project responsibility, referencing past panic attack",
+          "s": [
+            {
+              "i": "p13_conv_16:7"
+            }
+          ]
+        },
+        {
+          "i": "p13_e2",
+          "t": "relationship_event",
+          "z": "ongoing_stage",
+          "n": "reconsidering willingness to seek support from sister Lily despite prior conflict, following her previous apology and reconciliation efforts",
+          "s": [
+            {
+              "i": "p13_conv_16:15"
+            },
+            {
+              "i": "p13_conv_16:17"
+            }
+          ]
+        },
+        {
+          "i": "p13_e3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "resumes meditation practice as strategy to manage overlapping stressors from work and wedding planning",
+          "s": [
+            {
+              "i": "p13_conv_16:21"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "da8e81f251ea0938e15d0ed3142db3a755275974420cc7790149ad9212416228",
+    "usage": {
+      "prompt_tokens": 2520,
+      "completion_tokens": 406,
+      "total_tokens": 2926
+    },
+    "latency_ms": 5342.44125400437,
+    "provider_finish_reason": "stop"
+  }
+}

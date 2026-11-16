@@ -1,0 +1,219 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+.......................................F................................ [ 41%]
+........................................................................ [ 47%]
+........................................................................ [ 53%]
+........................................................................ [ 59%]
+........................................................................ [ 65%]
+........................................................................ [ 71%]
+.............FF...FFFF.......F.......................................... [ 77%]
+........................................................................ [ 83%]
+........................................................................ [ 89%]
+........................................................................ [ 95%]
+......................................................                   [100%]
+=================================== FAILURES ===================================
+___________ test_batch_output_is_parsed_with_the_same_official_rules ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-30/test_batch_output_is_parsed_wi0')
+
+    def test_batch_output_is_parsed_with_the_same_official_rules(tmp_path):
+        payloads = {"r1": payload(1), "r2": payload(2, task="summary")}
+        summary_reply = json.dumps({"score": 4, "num_events_reference": 4,
+                                    "num_events_generated": 5, "num_events_recalled": 3})
+>       records, usage = batch.parse_batch_output(
+            [batch_line("r1", "Score: 2"), batch_line("r2", summary_reply, completion=900)], payloads)
+
+tests/test_paper1_official_scoring_batch.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/paper1/83_submit_official_static_scoring_batch.py:132: in parse_batch_output
+    record["official"] = parse_official_reply(payload["task"], reply)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:111: in parse_official_reply
+    summary = parse_official_summary(reply)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+________ test_json_repair_is_a_declared_dependency_at_the_upstream_pin _________
+
+    def test_json_repair_is_a_declared_dependency_at_the_upstream_pin():
+        config = tomllib.loads((Path(__file__).resolve().parents[1] / "pyproject.toml").read_text())
+        assert f"json-repair=={PINNED_JSON_REPAIR_VERSION}" in config['project']['dependencies']
+>       assert load_json_repair().loads('{"score": 1}') == {"score": 1}
+               ^^^^^^^^^^^^^^^^^^
+
+tests/test_paper1_static_official_scoring.py:17: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+____ test_different_parser_version_cannot_silently_change_official_scoring _____
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f89bcd67d10>
+
+    def test_different_parser_version_cannot_silently_change_official_scoring(monkeypatch):
+        from metacom_pm.paper1.evaluation import static_official_scoring as scoring
+        monkeypatch.setattr(scoring, 'version', lambda package: '0.0.0')
+        with pytest.raises(RuntimeError, match='version differs'):
+>           scoring.load_json_repair()
+
+tests/test_paper1_static_official_scoring.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+___________ test_summary_parser_reproduces_the_upstream_event_ratios ___________
+
+    def test_summary_parser_reproduces_the_upstream_event_ratios():
+>       parsed = parse_official_summary(summary_reply())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_paper1_static_official_scoring.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+_______ test_summary_zero_denominators_follow_upstream_and_do_not_divide _______
+
+    def test_summary_zero_denominators_follow_upstream_and_do_not_divide():
+>       parsed = parse_official_summary(summary_reply(reference=0, generated=0, recalled=0))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_paper1_static_official_scoring.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+_______ test_summary_parser_uses_json_repair_on_truncated_official_json ________
+
+    def test_summary_parser_uses_json_repair_on_truncated_official_json():
+        # json_repair is exactly why upstream tolerates an unterminated object.
+>       parsed = parse_official_summary(
+            '{"score": 5, "num_events_reference": 2, "num_events_generated": 2, "num_events_recalled": 2')
+
+tests/test_paper1_static_official_scoring.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+_____ test_summary_parse_failure_is_disclosed_missingness_not_a_zero_score _____
+
+    def test_summary_parse_failure_is_disclosed_missingness_not_a_zero_score():
+        for reply in ["", "I cannot evaluate this.", '{"score": "high"}', '{"num_events_reference": 3}']:
+            with pytest.raises(OfficialParseError):
+>               parse_official_summary(reply)
+
+tests/test_paper1_static_official_scoring.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+_____________ test_summary_replies_produce_event_f1_as_the_primary _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-tokkio/pytest-30/test_summary_replies_produce_e0')
+
+    def test_summary_replies_produce_event_f1_as_the_primary(tmp_path):
+        reply = json.dumps({"score": 4, "num_events_reference": 4, "num_events_generated": 5,
+                            "num_events_recalled": 3})
+>       ledger, stopped, records, skipped = run(tmp_path, [payload(1, task="summary")],
+                                       lambda body: ok(reply, completion_tokens=900))
+
+tests/test_paper1_static_official_scoring_execution.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_paper1_static_official_scoring_execution.py:66: in run
+    stopped, records, skipped = scoring.execute_payloads(
+scripts/paper1/80_execute_official_static_scoring.py:267: in execute_payloads
+    outcome["official"] = parse_official_reply(payload["task"], reply)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:111: in parse_official_reply
+    summary = parse_official_summary(reply)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:87: in parse_official_summary
+    json_repair = load_json_repair()
+                  ^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def load_json_repair():
+        """Use the historical vendor when present, otherwise the pinned dependency."""
+        if VENDOR_PYTHON.is_dir() and str(VENDOR_PYTHON) not in sys.path:
+            sys.path.insert(0, str(VENDOR_PYTHON))
+>       import json_repair
+E       ModuleNotFoundError: No module named 'json_repair'
+
+src/metacom_pm/paper1/evaluation/static_official_scoring.py:36: ModuleNotFoundError
+- generated xml file: /tmp/pmrl1_publish_20261002_nlsghiz4/verification/tests_ci.xml -
+=========================== short test summary info ============================
+FAILED tests/test_paper1_official_scoring_batch.py::test_batch_output_is_parsed_with_the_same_official_rules
+FAILED tests/test_paper1_static_official_scoring.py::test_json_repair_is_a_declared_dependency_at_the_upstream_pin
+FAILED tests/test_paper1_static_official_scoring.py::test_different_parser_version_cannot_silently_change_official_scoring
+FAILED tests/test_paper1_static_official_scoring.py::test_summary_parser_reproduces_the_upstream_event_ratios
+FAILED tests/test_paper1_static_official_scoring.py::test_summary_zero_denominators_follow_upstream_and_do_not_divide
+FAILED tests/test_paper1_static_official_scoring.py::test_summary_parser_uses_json_repair_on_truncated_official_json
+FAILED tests/test_paper1_static_official_scoring.py::test_summary_parse_failure_is_disclosed_missingness_not_a_zero_score
+FAILED tests/test_paper1_static_official_scoring_execution.py::test_summary_replies_produce_event_f1_as_the_primary

@@ -1,0 +1,253 @@
+{
+  "request": {
+    "candidate": "gemma4_12b_bf16_thinking",
+    "configuration_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "phase": "development",
+    "ordinal": 24,
+    "item_key": "dev31B",
+    "draw": "primary",
+    "messages_identity": "c38ff1a5b57aecc1deadb41adfebec45ec9e770f8b3ebc839243fd79c7032057",
+    "schema_identity": "85e2c2a5345fcdd7dba92f456b595101dfb1b7b6a6915dcaf054cfab3a8c251e",
+    "paired_slot": "84cebb39cc04a61ec7fc59d6d5541682142334d0156ee4b15d4ef2416f7719dd",
+    "seed": 2166682156,
+    "schedule_position": 95,
+    "input_utf8_bytes": 43560,
+    "request_id": "30b21c7ecf24000ba61e6a97d3025758b994c8c659d1b407bda1e2d4d862d60d"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "ed4ebf205821d8ac3222519d8881d5babc7c4376667b20fa285d8ba8f9baa817",
+    "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "393a13d52203691d2a6e0019d3f5936041687c8e63119c01701f22133af4d387",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "30b21c7ecf24000ba61e6a97d3025758b994c8c659d1b407bda1e2d4d862d60d",
+    "raw_output_sha256": "338660a55518b71923129ffaa392121f4cedf465c19d572c14efe29adcad28ba",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+        "evidence": [
+          {
+            "source_id": "C:T018",
+            "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "You have already discussed the new relationship with your therapist in your session.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "It is good that yoga and reading give you some space to unwind.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 148
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T018",
+        "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 115
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "You have already discussed the new relationship with your therapist in your session.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 84
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "It is good that yoga and reading give you some space to unwind.",
+        "positions": [
+          {
+            "start": 85,
+            "end": 148
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.008246719953604043,
+  "started_unix": 1791993590.152403,
+  "accounted_peak_usd": "0",
+  "reservation_retained": false,
+  "token_accounting": {
+    "input": 1000,
+    "total_output": 1000,
+    "thinking": 100,
+    "final": 890,
+    "format": 10
+  },
+  "gpu_usage": {
+    "gpu_seconds": 0,
+    "peak_allocated_bytes": 0,
+    "peak_reserved_bytes": null
+  },
+  "provider_usage": null
+}

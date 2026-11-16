@@ -1,0 +1,790 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PM-RL1：有界历史信息帮助性比较</title><style>
+body{font:17px/1.7 system-ui,sans-serif;max-width:1250px;margin:auto;padding:24px;background:#f5f7fa;color:#203047}h1{font-size:27px}h2{font-size:22px}h3{font-size:18px}section{background:white;border:1px solid #dbe2eb;border-radius:12px;margin:24px 0;padding:22px}.current{background:#edf3fa;padding:14px}.responses{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin:16px 0}article{border:1px solid #d3dce7;border-radius:8px;padding:16px}.reply,pre{white-space:pre-wrap;overflow-wrap:anywhere}pre{font:14px/1.65 system-ui,sans-serif}details{margin:10px 0}summary{cursor:pointer;color:#28598b}.note{color:#4d647b}label{display:block;margin-top:14px}select,textarea,button{font:inherit;padding:10px;box-sizing:border-box}textarea{width:100%}select{max-width:100%}button{cursor:pointer;margin:5px;background:#fff;border:1px solid #7f95ac;border-radius:6px}.toolbar{position:sticky;top:0;background:#f5f7faf5;padding:10px;border-bottom:1px solid #ccd7e5;z-index:1}#export{width:100%;height:170px}small{color:#506479}
+</style><h1>10 个情境：历史信息是否增加了实际帮助</h1>
+<p>请按对当前用户的实际帮助比较。不同支持策略都可以，完全可以判相当；引用了真实历史本身不加分。无需打分，也无需判断愿意等几秒。</p>
+<p>8 个情境各有三条回复，请选一个允许并列的顺序；另 2 个情境已复用旧回答，只显示尚需比较的两条。显示字母已打乱，不表示模型或输入条件。可分批填写。</p>
+<p>当前情况与回复提供中文；完整英文和共同历史均可展开。中文译文如影响判断，可选“不确定”并指出。这里的判断不会直接写成 PPO 奖励。</p>
+<div class="toolbar"><strong id="progress"></strong> <button id="download">下载已填答案 JSON</button><button id="show">显示可复制答案</button><small id="saved"></small></div>
+<section id="Q01"><h2>Q01</h2><p class="current">用户与前女友重新联系，感觉情绪起伏。他觉得两人分手后都成长、成熟了，但仍害怕。最后说：“我怕我们又回到以前的相处模式。”当前未说明那些模式是什么。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>supporter: Hey, Nick! How are you holding up these days?
+seeker: Hey! Overall, I&#x27;m doing okay, but there&#x27;s something on my mind recently.
+supporter: I&#x27;m here to listen, Nick. What&#x27;s been on your mind?
+seeker: Well, I reconnected with my ex-girlfriend, and it&#x27;s been a bit of an emotional rollercoaster.
+supporter: That sounds like a big step. How do you feel about reconnecting with her?
+seeker: I feel relieved in some ways. We&#x27;ve both grown and matured since our breakup, but it&#x27;s also scary.
+supporter: It&#x27;s understandable to have mixed feelings. What scares you about it?
+seeker: I guess I&#x27;m afraid of falling back into the same patterns we had before.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-12-20</h3><p>用户当时放寒假，与家人住在一起、减少外出，觉得家庭相处不错，考试已经结束。谈话没有提到女友或分手。</p><details><summary>本段完整英文</summary><pre>supporter: How are you today?
+seeker: I&#x27;m doing pretty good.
+supporter: I&#x27;m glad to hear you&#x27;re doing well in these trying times.
+seeker: Yah they are very difficult.
+supporter: How have you been managing everything?
+seeker: Fine I&#x27;ve been pretty much just trying to go out as little as possible and stay safe.
+supporter: Same here, it&#x27;s a tough time to do that after doing it so long. Especially with the holidays coming up.
+seeker: Yes I would have to agree.
+supporter: Are you in close proximity to your family?
+seeker: Yeah I&#x27;m staying with them for the holidays and then going back home in January.
+supporter: I imagine that can create some stress?
+seeker: No not really it&#x27;s all good over here.
+supporter: Well I&#x27;m glad to hear it, sounds like you&#x27;ve been managing pretty well then.  
+seeker: Yes because I am on winter break now.
+supporter: I assume that means you&#x27;re in college then? So the stress of finals is over now?
+seeker: Yes I am. And yeah I just finished finals.
+supporter: That&#x27;s good, I hope they went well for you.
+seeker: They did. Some were hard, but at least they&#x27;re over now.
+supporter: Yes, now you can relax and spend time with your family without the added stress.
+seeker: Yes, exactly.
+supporter: Well I hope you and your family enjoy the holidays and stay safe.
+seeker: Thank you, you too. 
+supporter: Thanks so much!
+seeker: Are you with family?
+supporter: Yes, just my immediate family.
+seeker: Oh that&#x27;s good. Staying safe.
+supporter: Absolutely, the best thing we can do right now. Even though it&#x27;s kind of a bummer.
+seeker: Yeah, hopefully things will go back to normal soon. 
+supporter: I hope so too, this has been such a crazy year.
+seeker: I agree.</pre></details>
+<h3>2025-09-06</h3><p>用户刚与女友分手，说小分歧引发了反复争吵。支持者曾猜测不忠，但用户没有确认；后来双方讨论过留出空间、联系或送花等可能做法，未证明已经实施。</p><details><summary>本段完整英文</summary><pre>supporter: Hello, how is your life at the moment? Do you want to talk about anything? 
+seeker: I am doing ok. I just broke up with my girlfriend and sad about it
+supporter: so I hear you are not feeling at all your best at the moment? 
+seeker: That is correct.
+supporter: Do you feel as though you have no-one to talk to about this situation? I am happy to listen. 
+seeker: I am so sad and just wonder why did it happen!!!
+supporter: Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you? 
+seeker: We had simple disagreement and both of us were keep fighting.. now I can not get over it.
+supporter: Do you consider that there might be any hope for the  two of you at all? 
+seeker: I don&#x27;t know. What should I do?
+supporter: Well, I think you should give her some space but people do sometimes get back together after they&#x27;ve separated 
+seeker: I see your point.
+supporter: You really do need to give her some space though - don&#x27;t crowd her 
+seeker: Should I call her directly? What should I say?
+supporter: I would give her a little time. Maybe two or three days? She might need some time to clear her head 
+seeker: That&#x27;s a good idea. What should I say? Should I apologize? 
+supporter: Perhaps you could send flowers and a note asking her if she&#x27;d like to talk? 
+seeker: That&#x27;s a good idea. I will try that. Thank you.
+supporter: She might be feeling receptive to that but if she&#x27;s not you might have to accept that it&#x27;s over. 
+seeker: Thanks.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">重新面对过去的一段关系时，尤其知道哪些具体相处方式导致了分手，有这样的感觉很常见。你提到你们都觉得自己成长、成熟了；你最担心重复哪些具体模式？</div><details><summary>英文原文</summary><pre>It is very common to feel that way when revisiting a past relationship, especially when you know the specific dynamics that led to the breakup. Since you mentioned that you both feel you have grown and matured, what specific patterns are you most concerned about repeating?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">你会这样想是可以理解的，尤其你提到过，之前的关系里有频繁的争吵和分歧。经历过这些模式后，自然会担心它们重演。
+既然分手后你们都成长、成熟了，你最担心重复哪些具体模式？</div><details><summary>英文原文</summary><pre>It is understandable why you would feel that way, especially since you mentioned that the previous relationship involved frequent fighting and disagreements. When you&#x27;ve experienced those patterns before, it&#x27;s natural to worry that they might repeat themselves.
+
+Since you&#x27;ve both grown and matured since the breakup, what specific patterns are you most concerned about repeating?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">你会这样想是可以理解的，尤其你已经经历过旧模式带来的后果。你提到你们都觉得自己成长、成熟了；你最担心重复哪些具体模式？</div><details><summary>英文原文</summary><pre>It is understandable why you would feel that way, especially when you&#x27;ve already experienced the consequences of those old patterns in the past. Since you mentioned that you both feel you have grown and matured, what specific patterns are you most concerned about repeating?</pre></details></article>
+</div>
+<label for="Q01-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q01-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q01-degree">如果有差别，整体程度</label><select id="Q01-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q01-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q01-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q02"><h2>Q02</h2><p class="current">Jerry 最近回家了。用户既宽慰又焦虑，最后说：“我担心过去的争吵会怎样影响我们往后相处，不想再回到旧模式。”当前对话没有展开争吵的内容。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey, I just wanted to talk a bit about something that&#x27;s been on my mind.
+supporter: Of course, Emily. I&#x27;m here to listen. What&#x27;s going on?
+seeker: Well, it&#x27;s about Jerry. He came back home recently and I&#x27;m feeling all sorts of emotions.
+supporter: That sounds like a big change. How are you feeling about that?
+seeker: I&#x27;m relieved but also anxious. I mean, I&#x27;m so happy he&#x27;s back, but I&#x27;m worried about how things will be different now.
+supporter: It&#x27;s understandable to feel that way. Reconciliation is such a positive step, but it can also bring uncertainties. What are you most concerned about?
+seeker: I guess I&#x27;m worried about the past arguments and how they&#x27;ll affect us moving forward. I don&#x27;t want us to fall back into old patterns.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-07-01</h3><p>用户谈公司并购后工作量翻倍，同事加薪而自己没有；她工作了十五年，想准备工作量证明，与老板冷静谈加薪。谈话中没有 Jerry 的离家或回家事件。</p><details><summary>本段完整英文</summary><pre>supporter: Hello
+seeker: Hello, I hope you can help me.
+supporter: Sure I can
+seeker: I work hard at my job in an office.  We acquired another company and my job is now twice the work.
+seeker: Two of my coworkers have gotten a raise and I have not gotten anything!
+supporter: Have you talked to your boss about it?
+seeker: I have hinted around that my job is sooo busy and he knows it, I haven&#x27;t come out and said anything yet.
+supporter: I can understand how you feeling you work extremely hard and get no raise when you deserve it
+seeker: Yes, I have been at the job for 15 years and make a decent salary but this amount of work is insane.  Do you think I should bring it up to him&gt;
+supporter: oh wow 15 years? I really believe you need a raise and doing more work now.
+supporter: I honestly think you should bring it up to your boss
+seeker: Yes, I think so too.  I like my boss but he is funny about things sometimes.  Any ideas on how I could bring it up to him.  I hate feeling this way, my attitude is really turning sour.
+supporter: I can&#x27;t believe he has not given you a raise by now 
+seeker: I know!
+supporter: Just tell him that you need to have a serious talk with him and tell him straight up what is on your mind don&#x27;t hold it back
+seeker: So, I guess I&#x27;ll have to be honest and brave at the same time.  
+seeker: Do you think I should bring in proof....paperwork, etc.  I have been working extra as well.
+supporter: Yes I know you can do it but that is the only way to solve the situation is by communicating with him
+supporter: Yes that would help more by bringing in proof to him 
+seeker: Ok, I am just so angry over the whole thing, I&#x27;m going to have to keep my cool and let him know without getting an attitude, do you think that will work?
+supporter: Yes just remain calm with him 
+seeker: I will try, I hope I don&#x27;t start crying!  I tend to get frustrated and cry.
+supporter: getting a attitude with him will not help at all 
+seeker: Yes, you are right, it will make it a bad situation.
+supporter: Don&#x27;t let this situation get to you so much 
+seeker: O
+seeker: oops
+seeker: I&#x27;ll try not to, I have to be calm, like you said
+supporter: Everything will be ok
+seeker: Thank you so much for your positive support!
+seeker: I&#x27;ll let him know I need to talk and I&#x27;ll remain calm
+supporter: Your welcome i am sure he will give you a raise once you talk to him
+seeker: Fingers crossed!  I really have gone above and beyond and feel I really deserve it.
+supporter: I will be praying that you get the raise because you deserve it
+seeker: Thank you so much, you&#x27;ve been very helpful!
+supporter: Your most welcome
+seeker: Merry Christmas!
+supporter: Merry Christmas to you to!</pre></details>
+<h3>2024-12-30</h3><p>用户说 Jerry 在一次激烈争吵后离家。争吵涉及他缺乏责任感及忽视未来，用户也怀疑自己是否太严厉。当时联系他没有回复；她还谈到 Bob、财务和治疗。这里描述的是当时，不代表现在仍未联系。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, I really need to talk. Things have been so overwhelming lately.
+supporter: I&#x27;m here for you, Emily. What&#x27;s been going on?
+seeker: Jerry left us. It was so sudden after a huge argument, and I feel lost.
+supporter: I&#x27;m so sorry to hear that. It must be incredibly hard for you. Do you want to talk about what led to the disagreement?
+seeker: We were arguing about his lack of responsibility and how he&#x27;s ignoring his future. Maybe I was too harsh.
+supporter: It sounds like you&#x27;re worried about his well-being and future, which is completely understandable. How are you feeling about the situation now?
+seeker: I&#x27;m torn. Part of me feels guilty, but another part feels exhausted from all the stress we&#x27;ve been through.
+supporter: It&#x27;s okay to feel mixed emotions. You&#x27;re dealing with a lot on your plate—work, family, and financial pressures. It&#x27;s understandable to feel overwhelmed.
+seeker: Yeah, with Bob&#x27;s job, Jerry&#x27;s incident at school, and all... it feels never-ending. I just want a break.
+supporter: You&#x27;ve been through an extraordinary amount. Can your therapy sessions provide a space to process these feelings?
+seeker: They&#x27;re helpful, but it&#x27;s hard to shake the constant anxiety. I just wish Jerry was back home so we could work things out.
+supporter: It sounds like you really value the connection with your family. Have you tried reaching out to Jerry since he left?
+seeker: I have, but he hasn&#x27;t responded. It breaks my heart knowing he&#x27;s out there, upset and alone.
+supporter: Feeling powerless in this situation can be stressful. Is there anyone else you can lean on for support during this time?
+seeker: Bob&#x27;s trying his best, but we both feel so drained. It&#x27;s tough to even find time for us to talk deeply anymore.
+supporter: Finding moments to connect amidst the chaos sounds challenging. Maybe even small shared moments with Bob could provide some comfort?
+seeker: That&#x27;s true. Even just sitting together, watching something light, might ease the tension.
+supporter: That sounds like a good start. Remember, you&#x27;re doing your best in a tough situation. It&#x27;s okay to take small steps and be kind to yourself.
+seeker: Thank you, that really helps. I guess I just have to keep trying and hope things will get better.
+supporter: Absolutely, Emily. Keep holding on to that hope, and I&#x27;m here for you whenever you need to talk.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">经历一段冲突后想向前走，却担心重蹈覆辙，这很常见。想到过去的争吵可能影响未来时，你最希望避免哪些具体行为或相处方式？</div><details><summary>英文原文</summary><pre>It is very common to feel apprehensive about repeating old patterns when trying to move forward after a period of conflict. When you are worried about those past arguments affecting your future, what specific behaviors or dynamics are you most hoping to avoid?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">有这样的感觉完全可以理解。发生过重大的冲突后，现在情况在变化，自然会担心旧的相处方式是否再次出现。
+既然你担心重蹈覆辙，在与 Jerry 开始这一新阶段时，你最希望避免哪些具体行为或哪类争吵？</div><details><summary>英文原文</summary><pre>It is completely understandable to feel that way. When a significant conflict has occurred, it&#x27;s natural to worry about whether those old dynamics will resurface now that things are changing. 
+
+Since you&#x27;re concerned about falling back into old patterns, what specific behaviors or types of arguments are you most hoping to avoid as you navigate this new chapter with Jerry?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">一个人离开一段时间后又回来，有这样的感觉很常见。有过冲突时，担心重复同样模式可能让人很难承受。
+为了帮助你理清这些，你最害怕哪些“旧模式”再次出现？</div><details><summary>英文原文</summary><pre>It is very common to feel that way when someone returns after a period of absence. When there is a history of conflict, the fear of repeating those same patterns can feel overwhelming.
+
+To help you navigate this, what specific &quot;old patterns&quot; are you most afraid of seeing resurface?</pre></details></article>
+</div>
+<label for="Q02-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q02-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q02-degree">如果有差别，整体程度</label><select id="Q02-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q02-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q02-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q03"><h2>Q03</h2><p class="current">用户获得一个需要移居海外的晋升机会，既期待又害怕失败，也担心家人，尤其是刚刚和好的 Eliza。她还没有告诉 Eliza，怕对方觉得被抛下。被建议坦诚沟通后，她说：“你说得对，我应该和她谈。我只是不想把事情弄糟。”</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey, are you available to chat?
+supporter: Hi Jane! I&#x27;m here. What&#x27;s going on?
+seeker: I don&#x27;t know, it&#x27;s just been a lot lately. I got a promotion offer, but there&#x27;s a catch.
+supporter: Congratulations on the promotion offer! But what’s the catch?
+seeker: Thanks. It means relocating overseas. I’m feeling pretty overwhelmed.
+supporter: That&#x27;s a big decision. It sounds like there&#x27;s a lot to consider. How are you feeling about moving overseas?
+seeker: Honestly, I have mixed feelings. It&#x27;s a great opportunity, but I’m scared of leaving everything behind. What if I fail?
+supporter: It’s completely natural to feel that way. You&#x27;ve been through a lot of stressful situations before, remember when you had the falling out with your friend over the money issue, and you managed to handle it?
+seeker: True, I did handle that. But this feels different, like if I accept, everything changes.
+supporter: Change can be daunting, but it also can be exciting. Deep down, what does your gut tell you?
+seeker: A part of me wants to embrace this challenge. But I worry about my family, especially Eliza after we just started getting along again.
+supporter: It&#x27;s understandable to worry about your relationship with Eliza. Have you talked to her about this yet?
+seeker: Not yet. I&#x27;m afraid she’ll feel like I&#x27;m abandoning her right when things are starting to get better between us.
+supporter: Maybe having an open conversation with Eliza would help. She might surprise you with her support, especially after you both mended fences.
+seeker: You’re right. I should probably talk to her. I just don&#x27;t want to ruin anything.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-09-01</h3><p>用户发现男友曾与自己的好友有过不忠行为，对两人的信任受损。她原先考虑订婚，开始重新思考关系及自己的选择。这里没有 Eliza 或搬迁决定的信息。</p><details><summary>本段完整英文</summary><pre>supporter: Hey! How are you?
+seeker: Hi, I am having a really hard time. I just found out that my boyfriend cheated on me a year ago.
+supporter: Have you confronted him about it yet?
+seeker: Yes, I told him that my best friend confessed it to me. It was my best friend and him. I was so shocked.
+supporter: Have you broken up yet?
+seeker: No, I am so mad but I don&#x27;t want to break up with him. I told my best friends that I never want to see her again though. My boyfriend and I have plans to get engaged this month. I am furious at him though.
+supporter: I think you should postpone the engagement as infidelity during marriage is far more painful
+supporter: You are strong if you are able to forgive him though because I know I wouldn&#x27;t 
+seeker: I have never been so blind sided. Maybe I should reconsider! I have had a guy after me for at least the last year but I never cheated! I really wanted to though.
+supporter: No you should never cheat, because you would be on the same wavelength as your boyfriend. Instead, if you like the other man then you should go where your feelings take you :)
+seeker: I am thinking that you are right. I feel like my whole world is upside down and I have wasted all this time with the wrong guy and the wrong best friend. I also wonder who else he might have cheated on my with. 
+supporter: Yeah, that might be true, a relationship isn&#x27;t healthy if you are cheated on
+seeker: I am so grossed out because I am a germaphobe to begin with. I have not slept with any other person in my whole life so I feel like I am ruined. I want to throw up when I think of him cheating on me. I want to get married and I have a timeline so I am also really confused on what to do if I dump him.
+supporter: To dump him is the best thing to do in my opinion. But always go where your heart is, because you won&#x27;t be happy if you don&#x27;t. If you do though, there are plenty men out there, and one of them is chasing you
+seeker: Yeah, the guy who liked me was super rich too! My boyfriend is telling me that he wants my best friend to still be in the wedding party too. She was suppose to be my maid of honor, no less.
+supporter: Yeah, but don&#x27;t go with him because of he money though, genuinely get to know him first
+seeker: I have compartmentalized my life and never thought of looking around at my other options. You are making really good points. I need to just stop and really look at my options. I never realized that I have options, it&#x27;s not like i am even engaged yet.
+supporter: Yeah, you have a lot of options at this stage, so always do what your heart is telling you at the end of the day
+seeker: It feels good sharing how I feel with you because you don&#x27;t have a dog in the fight so to speak.
+supporter: yeah, lool something like that ;). Glad your better
+seeker: I never listen to my heart and think that is a great place to start. I always have a plan and go with that but you are making a lot of sense. Thank you for your time today.
+supporter: Your welcome ;)
+seeker: Have a great day and I might be back soon to give an update.</pre></details>
+<h3>2025-03-20</h3><p>用户与 Eliza 为婚礼安排争执后，已深入谈过并和解。双方承认筹备婚礼让彼此压力大，同意对决定更公开地交流，用户觉得更像相互协作。她也说日记有帮助，仍在处理财务压力。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, feeling a bit all over the place today. Mind if I share?
+supporter: Of course, Jane. I&#x27;m here to listen. What&#x27;s been going on?
+seeker: Well, you know how Eliza and I had that big fight about her wedding?
+supporter: Yes, you’ve mentioned feeling misunderstood during that time. How are things between you two now?
+seeker: We actually had a really deep conversation a few days ago. Lots of tears but good ones, I think.
+supporter: That sounds intense but potentially healing. How did that feel for you?
+seeker: It was a mix of relief and lingering sadness. I’m happy we cleared the air, but all those pent-up emotions were exhausting.
+supporter: It makes sense to feel drained after such a heart-to-heart. It&#x27;s brave of you both to confront those emotions together.
+seeker: Thanks. I just wish it didn&#x27;t have to get so messy before getting better.
+supporter: Relationships can be messy, but the reconciling part is important. How’s your perspective on everything now?
+seeker: I feel closer to her actually. We both admitted how much the wedding planning has stressed us out.
+supporter: That’s insightful. Acknowledging shared stress can bring people together. How’s the wedding planning going now?
+seeker: Better. We’ve agreed to communicate openly about decisions. It feels more like a partnership now, rather than me just helping her.
+supporter: That’s great to hear, Jane. Open communication is key in any relationship.
+seeker: Yeah, I&#x27;ve also started journaling again. It helps sort through these complicated feelings.
+supporter: Journaling is a great tool. How does writing about your thoughts and emotions help you?
+seeker: It gives me clarity. Putting pen to paper makes everything feel less overwhelming and more manageable.
+supporter: I’m glad it’s helping you. Have you noticed any other changes since you reconciled with Eliza?
+seeker: I feel a bit lighter emotionally. Mending the rift with her feels like a burden lifted.
+supporter: That’s a beautiful way to put it. Rebuilding that connection must feel rewarding.
+seeker: It does. I’m also trying to be more proactive about addressing my financial stress instead of letting it control me.
+supporter: That’s a positive step forward. You&#x27;ve been through a lot, and it’s important to take care of yourself too.
+seeker: Trying my best. It’s a work in progress, you know? Balancing everything is tough.
+supporter: Absolutely. You’re making great progress, even if it doesn’t always feel that way. I’m here whenever you need to talk.
+seeker: Thank you, that means a lot. I’ll keep leaning on you if that&#x27;s okay.
+supporter: Always, Jane. Your journey is important, and I’m here to support you along the way.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">你想保护你和 Eliza 已取得的进展，这是可以理解的。经历了那段“混乱”的澄清与关系修复过程后，你希望格外谨慎地处理下一步，很合理。
+不过，既然你们已同意更坦诚地交流决定，也一直在努力建立更相互支持的伙伴关系，分享你的处境实际上可能增强这份联系。如果你围绕对机会的期待，以及希望她继续参与自己的生活来展开谈话，你觉得她会怎样反应？</div><details><summary>英文原文</summary><pre>It is understandable that you feel protective of the progress you and Eliza have made. After the &quot;messy&quot; process of clearing the air and mending your relationship, it makes sense that you&#x27;d want to handle this next step with extra care.
+
+However, since you both agreed to communicate more openly about decisions and have been working toward a more supportive partnership, sharing your situation might actually strengthen that bond. How do you think she might react if you framed the conversation around your excitement for the opportunity and your desire to keep her involved in your life?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">你想保护与 Eliza 已经取得的进展，这是可以理解的。一段关系刚开始修复时，害怕说错话可能让人觉得很沉重。
+不过，可以想想，坦诚往往是长久联系的基础。如果你把消息藏着，距离最终可能给你们的关系带来另一种压力。坦诚交谈，会给她机会参与这段旅程，并在这次转变中支持你。
+关于你为什么考虑搬迁，你最希望她理解的一点是什么？</div><details><summary>英文原文</summary><pre>It is understandable that you feel protective of the progress you&#x27;ve made with Eliza. When a relationship is starting to heal, the fear of saying the wrong thing can feel very heavy.
+
+However, consider that honesty is often the foundation of a lasting connection. If you keep this news to yourself, the distance might eventually create a different kind of strain on your bond. By talking to her openly, you give her the chance to be a part of your journey and support you through this transition.
+
+What do you think is the most important thing you want her to understand about why you&#x27;re considering this move?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">你想保护与 Eliza 已经取得的进展，这是可以理解的。一段关系刚开始修复时，害怕倒退可能让人感到很沉重。
+不过，既然你面对的是重大的生活变化，如果她以后是从别人那里、而不是直接从你这里听说这件事，你觉得她可能会怎样反应？</div><details><summary>英文原文</summary><pre>It is understandable that you feel protective of the progress you&#x27;ve made with Eliza. When a relationship is starting to heal, the fear of causing a setback can feel very heavy.
+
+However, since you are facing a major life change, how do you think she might react if she hears about this from someone else later, rather than directly from you?</pre></details></article>
+</div>
+<label for="Q03-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q03-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q03-degree">如果有差别，整体程度</label><select id="Q03-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q03-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q03-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q04"><h2>Q04</h2><p class="current">医生建议用户规律运动来管理压力。他刚换到离家近、有弹性的新工作，担心再增加任务会打乱生活。当前也提到旧工作、汽车故障及兄弟援助。最后说：“工作挺好的，我喜欢它的灵活性，但现在要想办法把运动安排进去，又不失去这种平衡。”</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey there, can we talk for a bit? I could use some support right now.
+supporter: Of course, Michael. I&#x27;m here for you. What&#x27;s been going on?
+seeker: I had a health check-up recently, and the doctor advised me to exercise regularly to manage my stress.
+supporter: That sounds like an important step. How are you feeling about it?
+seeker: Honestly, it&#x27;s overwhelming. I&#x27;ve been trying to get my life back on track with this new job, but now I have to add exercise to the mix.
+supporter: I can imagine that&#x27;s a lot to take on, especially after everything you&#x27;ve been through. It&#x27;s okay to feel overwhelmed.
+seeker: Yeah, the past year has been a rollercoaster. The job far from home was stressful, I felt so isolated. Now this new job is better, but my health is another concern.
+supporter: You&#x27;ve really had a tough time, and it&#x27;s impressive how you&#x27;ve managed to push through. It&#x27;s okay to take things one step at a time.
+seeker: Thanks for saying that. I keep thinking about how my car breaking down was such a low point. It just felt like I couldn&#x27;t catch a break.
+supporter: That must have been incredibly difficult. It&#x27;s understandable that these events would add up and make you feel stuck. But you&#x27;ve made strides since then.
+seeker: I did, yeah. My brother helping out was a lifeline, and finding the job nearby really changed things for me.
+supporter: It&#x27;s great that your brother was there for you. It&#x27;s okay to lean on others when you need to. How&#x27;s the new job treating you?
+seeker: It&#x27;s been good. I like the flexibility, but now I have to figure out how to fit exercise in without losing that balance.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-06-14</h3><p>用户因爱犬去世而悲伤，看见电影中相似的狗后再次难过。他说与人交谈有帮助，也考虑换一部喜剧或做喜欢的事。对话没有新工作或运动安排的信息。</p><details><summary>本段完整英文</summary><pre>supporter: Hello
+seeker: hello
+supporter: How may i help you today?
+seeker: I&#x27;ve been sad. My dog died
+supporter: I am sorry I know exactly how you are feeling I have had a dog that i loved more than anything die couple years ago
+seeker: Sorry to hear that. I just watched a movie that had a dog that looked like mine in it. It upset me
+supporter: What movie was it?
+seeker: I don&#x27;t remember the name of the movie, but it was about some kids trying to find homes for dogs that a shelter was closing before Christmas
+supporter: Oh ok how did your dog die was something wrong with him or just old age?
+seeker: She was old, blind and was getting dog dementia. I had to have her put to sleep
+supporter: I am really sorry that has got to be the worst feeling putting your dog to sleep
+seeker: It is. At least I was able to be with her so she wasn&#x27;t afraid.
+supporter: I just think of it this way your dog is in dog heaven and is watching over you that is how i think of it even though it really aint true thats just how i think
+supporter: My dog died of old age 
+supporter: it took me like 2 or 3 weeks to get over it and not cry for once 
+seeker: I just miss her. I believe she is with her brother. He died 7 years ago. He was hit by a car.
+seeker: I can understand that
+supporter: I can understand how you feeling but everything will be okay and it is ok to miss her 
+seeker: I was doing pretty good then there was this dog in the movie and I just broke down again.
+supporter: I understand I would break down to if I saw that 
+supporter: Just do something you like to do to get your mind off of it 
+seeker: It helps to have a person to talk to. I used this chat Hit before right after I had to put her to sleep. The person I talked to then had a dog too.
+supporter: Right it is always good to have someone to talk to in a situation like that 
+seeker: It&#x27;s a good Idea to do something to get my mind off of it.
+supporter: Just by expressing your feelings with someone will help a lot to
+seeker: Yes it helps.
+supporter: Maybe you can watch a comedy movie or another kind of movie to get your mind off of it
+seeker: That sounds like a good idea. A comedy probably would help
+supporter: yes it would help. Keep your head up and know your dog is dog heaven and not suffering anymore.
+seeker: Okay. Thanks for talking. Goodnight.
+supporter: your welcome goodnight</pre></details>
+<h3>2025-06-05</h3><p>用户已接受离家近、薪资更高、时间灵活的新工作；他想维持界限、改善同事关系、照顾健康，并提到此前的背痛、冥想及兄弟提供的经济帮助。没有说明现在背痛是否持续或医生的具体运动要求。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, I wanted to chat with you for a bit if you have time.
+supporter: Of course, Michael. What&#x27;s on your mind?
+seeker: Well, I accepted this new job offer. It&#x27;s closer to home, better pay, and has flexible hours.
+supporter: That sounds like a great opportunity. How do you feel about it?
+seeker: I feel hopeful, but I&#x27;m also kind of anxious. My previous experience at the other job wasn&#x27;t great, you know.
+supporter: It&#x27;s understandable to feel both excited and nervous after what you&#x27;ve been through. What specifically makes you anxious?
+seeker: I guess I&#x27;m worried that things might go wrong again. Getting stressed and isolated like before isn&#x27;t something I want to repeat.
+supporter: That makes sense. It sounds like you&#x27;ve learned a lot from past experiences. What have you thought about doing differently this time?
+seeker: I&#x27;m trying to maintain clearer boundaries and make an effort to build better relationships at work. I don&#x27;t want another falling out like I had with my colleague at the last job.
+supporter: Setting boundaries and focusing on positive relationships is a great plan. Is there something else you feel would help ease your transition?
+seeker: Maybe focusing more on self-care. The back pain from before reminded me to pay attention to my health.
+supporter: That sounds like a good idea. Taking care of your health is important and can make a big difference.
+seeker: Also, I&#x27;m trying to manage my anxiety better this time. I&#x27;ve been meditating more, and my brother&#x27;s financial help gave me some breathing room.
+supporter: That&#x27;s great to hear! Meditation can be very helpful. And it&#x27;s good that your brother could support you when you needed it.
+seeker: Yeah, it took a load off my shoulders. I just want to keep this positive momentum going.
+supporter: It sounds like you have a solid plan going forward. Just remember, it&#x27;s okay to ask for help if things get overwhelming again.
+seeker: Thanks. I won&#x27;t hesitate to reach out. I&#x27;m trying not to let past experiences dictate this new chapter completely.
+supporter: That&#x27;s a healthy attitude. Trust in yourself and your ability to handle things with the knowledge you&#x27;ve gained.
+seeker: Thanks for listening. I feel a bit more confident now.
+supporter: Anytime, Michael. Keep me posted on how things go, and remember I&#x27;m here if you need to talk.
+seeker: Will do! Thank you again.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">你担心保持这种平衡，是可以理解的。你努力借这份新工作让生活回到正轨，最不希望的就是再加上一项重大安排，让自己不堪重负。
+既然你喜欢工作的灵活性，也许可以把活动融入生活，让它不像一项死板的待办任务。你想过目前哪种运动对自己最容易做到吗，还是仍在考虑从哪里开始？</div><details><summary>英文原文</summary><pre>It makes sense that you&#x27;re concerned about maintaining that balance. You&#x27;ve worked hard to get your life on track with this new job, and the last thing you want is to feel overwhelmed by adding another major commitment to your schedule.
+
+Since the flexibility of the job is something you enjoy, perhaps there are ways to incorporate movement that don&#x27;t feel like a rigid &quot;to-do&quot; item. Have you thought about what kind of exercise feels most manageable for you right now, or are you still trying to decide where to start?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">你担心保持这种平衡，是可以理解的。你努力利用新工作灵活的时间建立了更好的日常节奏，不想打乱已经取得的进展。
+既然目标是管理压力，也许可以从很小、容易做到的活动量开始，让它不至于成为待办清单上的又一个沉重负担。在一天里找出一小段时间来做简短活动，你觉得怎么样？</div><details><summary>英文原文</summary><pre>It makes sense that you&#x27;re concerned about maintaining that balance. You&#x27;ve worked hard to establish a better routine with your new job&#x27;s flexible hours, and you don&#x27;t want to disrupt the progress you&#x27;ve made.
+
+Since the goal is to manage stress, perhaps you could start with very small, manageable increments of movement that don&#x27;t feel like another heavy obligation on your to-do list. How would you feel about identifying just one small window of time during your day where you could incorporate a brief activity?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">你想保护自己为新工作努力建立起来的平衡，这是合理的。既然你看重灵活性，也许可以找些融入活动的方式，让它不像一项死板的待办任务。
+你通常喜欢什么活动，或者医生有没有推荐某种具体运动？</div><details><summary>英文原文</summary><pre>It makes sense that you&#x27;d want to protect the balance you&#x27;ve worked so hard to establish with your new job. Since the flexibility is something you value, perhaps you could look for ways to integrate movement that don&#x27;t feel like a rigid &quot;to-do&quot; item.
+
+What kind of activities do you usually enjoy, or is there a specific type of exercise your doctor recommended?</pre></details></article>
+</div>
+<label for="Q04-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q04-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q04-degree">如果有差别，整体程度</label><select id="Q04-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q04-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q04-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q05"><h2>Q05</h2><p class="current">用户的家人病情比原先以为的严重，家里人互相隐忍，她也怕给别人增添负担。同时，新晋升的责任让她焦虑。最后说：“我在考虑和主管讨论调整工作量，但不知道他们会怎样反应。”</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>supporter: Hi Amanda! I just wanted to check in and see how you’re doing lately.
+seeker: Hey, thanks for asking. I&#x27;m feeling a bit overwhelmed, to be honest.
+supporter: I’m sorry to hear that. It sounds like a lot is going on right now. Would you like to talk about what’s been happening?
+seeker: Yeah, it&#x27;s just everything piling up. I recently found out that my family member’s illness is much more serious than we thought.
+supporter: Oh no, Amanda. That must be incredibly difficult news to process. How are you coping with it?
+seeker: It&#x27;s been really tough. My mind is constantly racing, worrying about what might happen next.
+supporter: It’s completely understandable to feel that way. It seems like there are a lot of uncertainties right now. Have you been able to talk to anyone in your family about it?
+seeker: Not really. Everyone&#x27;s trying to stay strong, but honestly, I feel kind of alone in all this.
+supporter: Feeling isolated during tough times is so challenging. Do you think talking with them could help you feel more connected?
+seeker: Maybe. I just don’t want to burden them with my emotions when they’re handling their own.
+supporter: I get that. But remember, sharing how you feel can also be a way to support each other. It might be comforting for them to know they’re not alone in their worries either.
+seeker: Yeah, I guess you’re right. I’ll try to reach out more.
+supporter: That’s a brave step, Amanda, and I’m really proud of you for considering it. How&#x27;s everything else with work and personal life? Are they adding to your stress?
+seeker: Work has been demanding too. I&#x27;m worried about the new promotion. It&#x27;s great, but the responsibility is daunting, especially now.
+supporter: Taking on more responsibility, while all of this is happening, must feel overwhelming. Have you thought about what help or changes could make it more manageable for you?
+seeker: I’ve been thinking of discussing some workload adjustments with my supervisor, but I&#x27;m not sure how they’ll react.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-09-10</h3><p>用户与交往三年的男友对关系下一阶段意见不同。她曾讨论过，对方当时没准备好；她计划再次谈清期待，若仍无进展，可能结束关系。</p><details><summary>本段完整英文</summary><pre>seeker: Hello, how are you ?
+supporter: Hello
+supporter: I am good, how are you?
+seeker: I&#x27;m doing well, but it could have been better
+supporter: What seems to be bothering you tonight?
+seeker: Yes, my boy friend of 3 years has refused to take our relationship to the next level and I&#x27;m kind of getting tired, I don&#x27;t want to play games anymore
+supporter: So just to make sure I understand completely, you are ready to move on to the next step of your relationship and you don&#x27;t feel as though your boyfriend is and this is making you anxious and upset, 
+seeker: exactly, I hate to feel that I&#x27;m wasting my time
+supporter: I completely understand that, as I was in a long term relationship and I felt as though my girlfriend at the time did not want to take things to the next step and I was not happy about it. 
+seeker: Yes, I love him so dearly to want to settle down with him, but if he doesn&#x27;t want that for me I would rather call it quits now than continue and be disappointed at the long run. 
+supporter: Have you had that conversation with him? I know it might be a difficult conversation to have, but it is often good to get expectations out in the open so you are on the same page with your partner. 
+seeker: Yes, sort of and he gave me the impression that he is not there yet and that was a like almost a year ago, I don&#x27;t want it to look like I&#x27;m pushing him if I try to talk to him again about it. His nonchalant attitude in not seeing the seriousness of it is killing me, I&#x27;m just not happy. 
+supporter: That is tough, but sometimes people just portray things differently, for instance I am also very laid back and nonchalant about most things which can lead to miscommunications. 
+supporter: I don&#x27;t think it would be pushing if you haven&#x27;t had that conversation in almost a year.
+seeker: I hope you are right, just don&#x27;t want to come across as a desperate person and that&#x27;s why I&#x27;m setting myself up to call it quits if he tries to sound like he sounded the last time. 
+supporter: You need to know where he is so you can make a good decision for yourself!
+supporter: I know it is difficult, but I know you can get through it!
+seeker: You are right, that&#x27;s exactly what I&#x27;m going to do because the wait is killing me. 
+supporter: Good, I am happy for you!
+seeker: Thank you very much, you&#x27;ve been a great help
+supporter: I am glad I was able to help!
+seeker: Thanks, it was nice chatting with you.
+supporter: You&#x27;re welcome! If you need any more help just chat back with us again.
+seeker: no problem, take care.
+supporter: You as well!</pre></details>
+<h3>2025-04-22</h3><p>用户收到晋升提议，却因责任增加而焦虑。被问到此前关切是否获处理时，她说没有真正解决，负面绩效评估仍让她介怀，也不确定晋升动机。她说绘画也因追求完美变成压力，打算试着不要求立刻掌握，并考虑与主管谈支持安排；均未证实后续执行。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, are you available to talk for a bit?
+supporter: Of course, Amanda. What&#x27;s on your mind?
+seeker: Well, I got some unexpected news at work today.
+supporter: Oh? What happened?
+seeker: My supervisor offered me a promotion.
+supporter: Wow, that&#x27;s big news! How are you feeling about it?
+seeker: Honestly, I&#x27;m feeling pretty anxious about it.
+supporter: I can imagine. A promotion brings a lot of changes. What part is making you the most anxious?
+seeker: I think it&#x27;s the increased responsibilities. I&#x27;m already feeling stretched at work with everything that&#x27;s been going on.
+supporter: With your supervisor constantly undermining you, I can see why this would add stress. Have they addressed your past concerns?
+seeker: Not really. The negative performance review still hangs over me. The promotion feels like they&#x27;re trying to make up for that.
+supporter: That must be quite confusing for you. Do you feel like this promotion is genuine recognition of your work?
+seeker: I&#x27;m not sure. Part of me wonders if it&#x27;s just to keep me from looking elsewhere. With everything with Bill and John Doe, I&#x27;ve just been on edge.
+supporter: It sounds like a lot to juggle. Do you have anyone at work you trust to discuss this with, like Sarah who sent you that note?
+seeker: Sarah&#x27;s been supportive, but I don&#x27;t want to burden her. I&#x27;m also worried about being too vulnerable at work.
+supporter: It&#x27;s understandable to feel wary. What helps you ground yourself when things feel unstable?
+seeker: I&#x27;ve been painting, but recently it&#x27;s added to my stress. I keep pushing myself to be perfect in it too.
+supporter: Perfectionism can be tough. How about leaning into the joy of painting instead of the pressure to excel?
+seeker: I should try that. I sometimes forget it doesn&#x27;t have to be another thing I master right away.
+supporter: Exactly. It&#x27;s okay to allow yourself some space to enjoy without expectations. What do you think about the promotion now?
+seeker: I&#x27;m still scared, but I think I need to have an open talk with my supervisor about what support looks like moving forward.
+supporter: That sounds like a great step. Being clear about your needs can help manage this transition.
+seeker: Thank you for listening. I needed to get this off my chest before making a decision.
+supporter: Anytime, Amanda. You&#x27;re navigating a lot, and you&#x27;re doing it with so much grace.
+seeker: Thanks for saying that. I&#x27;ll let you know how it goes.
+supporter: I&#x27;m here anytime. Take care, Amanda.</pre></details>
+</details>
+<p class="note">本情境已有一项比较与你的旧回答精确对应，已复用。这里只补另一项比较，不需要重答旧题。</p>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">不确定主管会怎样反应，是完全自然的，尤其考虑到你一直在应对的复杂工作情况。你说新晋升增加的责任让你焦虑，也一直介意过去的绩效评估，因此想谨慎一些很合理。
+为了帮助你准备这次谈话，你正考虑提出哪些具体的工作量调整或支持安排？</div><details><summary>英文原文</summary><pre>It is completely natural to feel uncertain about how your supervisor will react, especially given the complexities you&#x27;ve been navigating at work. Since you&#x27;ve mentioned feeling anxious about the increased responsibilities of your new promotion and have had concerns about past performance reviews, it makes sense that you&#x27;d want to be cautious.
+
+To help you prepare for that conversation, what specific types of workload adjustments or support systems are you considering asking for?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">提出调整请求时，不确定主管会怎样反应，是完全自然的，尤其你本来就承受着很多个人压力。
+为了帮助你准备这次谈话，对于他们的反应，你具体担心什么？比如，你担心他们认为你对新晋升缺乏投入，还是更担心怎样有效表达请求？</div><details><summary>英文原文</summary><pre>It is completely natural to feel uncertain about how a supervisor might react when you&#x27;re asking for adjustments, especially when you are already navigating a lot of personal stress.
+
+To help you prepare for that conversation, what specific concerns do you have about their reaction? For example, are you worried they might see it as a lack of commitment to your new promotion, or are you more concerned about how to frame the request effectively?</pre></details></article>
+</div>
+<label for="Q05-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q05-order" data-field="order"><option value="">尚未填写</option><option value="A=B">A=B</option><option value="A&gt;B">A&gt;B</option><option value="B&gt;A">B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q05-degree">如果有差别，整体程度</label><select id="Q05-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q05-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q05-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q06"><h2>Q06</h2><p class="current">用户说起物理课：“教授今天联系我，提出愿意帮忙。”被问感受后，他说一方面很高兴有人关心，另一方面压力很大，不确定帮助能否改变情况。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey, I guess I just need someone to talk to right now.
+supporter: Of course, Nick. I&#x27;m here for you. What&#x27;s on your mind?
+seeker: It&#x27;s about my physics course again. My professor contacted me today to offer help.
+supporter: That sounds like a positive step. How do you feel about it?
+seeker: I feel a bit conflicted. On one hand, it&#x27;s great to know someone cares, but on the other, I&#x27;m just so stressed and unsure it can make a difference.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2025-03-25</h3><p>用户和因玩笑闹翻的朋友 Henry 再次交谈，彼此道歉、和好，并同意以后有不舒服的事就更坦诚地说，避免积压。</p><details><summary>本段完整英文</summary><pre>supporter: Hey Nick, it&#x27;s nice to see you online. How are you doing today?
+seeker: Hey, I&#x27;m feeling a mix of things actually. There&#x27;s a lot on my mind.
+supporter: I’m here to listen. What&#x27;s been going on?
+seeker: Well, remember how I had that fallout with Henry because of those jokes?
+supporter: Yeah, I remember. That was really tough for you both. How’s that been playing out?
+seeker: We finally talked again, and it was... unexpectedly emotional. We actually sorted things out.
+supporter: That’s great to hear, Nick! How did the conversation go?
+seeker: It started off a bit awkward, but we both apologized. We realized how much we missed each other.
+supporter: Sometimes those tough conversations are what make friendships stronger. You must have felt a lot lighter afterward.
+seeker: Yeah, I did. But it also made me think about how close I came to losing a really important person in my life.
+supporter: That realization can be a lot to take in. It sounds like you value that friendship deeply.
+seeker: I really do. We&#x27;ve been friends for so long, and it just felt wrong not having him around.
+supporter: It’s understandable. When someone is that integral in your life, their absence can feel enormous.
+seeker: Exactly. I guess part of me is still worried we might slip back into old patterns.
+supporter: That&#x27;s a valid concern. Have you both talked about how to avoid that?
+seeker: A bit. We agreed to be more open when things bother us, instead of letting them build up.
+supporter: That sounds like a solid plan. Communication is so key. How are you feeling about that agreement?
+seeker: Hopeful, mostly. I guess I&#x27;m just trying to stay positive about it.
+supporter: That’s a great mindset, Nick. It takes courage to forgive and move forward.
+seeker: Thanks. It helps to talk about it, honestly. I guess I needed to process it out loud.
+supporter: I’m always here for that. It’s important to have spaces to express what you’re going through.
+seeker: Definitely. It’s nice to know I&#x27;m not alone in this.
+supporter: You’re certainly not alone, Nick. Anytime you need to talk, just reach out.
+seeker: Thanks again. I really appreciate our chats.
+supporter: Anytime, Nick. Take care of yourself and keep nurturing that friendship.</pre></details>
+<h3>2025-06-05</h3><p>用户与家人谈过学业压力，得到支持但仍觉得他们不完全理解。她说物理课教学质量没有改善、作业压力大，考虑过退课。她担心向学校求助不被认真对待，考虑给顾问发邮件，没有说已经发出。</p><details><summary>本段完整英文</summary><pre>supporter: Hey Nick, how have you been doing lately?
+seeker: Hey, it&#x27;s been a bit tough honestly. I decided to talk to my family about everything that&#x27;s been happening.
+supporter: I&#x27;m glad you opened up to them. How did that conversation go?
+seeker: It was a relief in some ways. They listened to me, which was good.
+supporter: That&#x27;s great to hear! Did they offer any advice or support?
+seeker: They did offer support, but it still feels like they don&#x27;t fully understand the pressure I&#x27;m under with my physics course.
+supporter: I can imagine that&#x27;s frustrating. Do you feel like you got to express everything you wanted to?
+seeker: Mostly, yes. But it&#x27;s hard for them to really grasp the academic stress when they haven&#x27;t experienced it themselves.
+supporter: It&#x27;s definitely tough when others can&#x27;t fully relate. How are you handling the pressure now?
+seeker: I&#x27;m trying to stay on top of my assignments, but the quality of teaching hasn&#x27;t improved. It feels like a constant uphill battle.
+supporter: That sounds really challenging, especially when support isn&#x27;t available. Have you thought again about possibly dropping the course?
+seeker: I have, but it&#x27;s also hard to think about leaving something unfinished. I don&#x27;t want to feel like I&#x27;ve failed.
+supporter: It&#x27;s understandable. Remember, taking a step back doesn&#x27;t mean you&#x27;re failing—it can be a strategic move for your well-being.
+seeker: That&#x27;s a good point. I just wish there was more support from the university, like better teaching or someone I could talk to.
+supporter: Have you considered reaching out to a student advisor or counseling services at your university?
+seeker: I&#x27;ve thought about it, but it&#x27;s a bit intimidating to take that step. I guess I&#x27;m worried about not being taken seriously.
+supporter: It&#x27;s totally normal to feel that way. Maybe starting with a small step, like emailing an advisor, could make it feel more manageable.
+seeker: That sounds like a good way to ease into it. I think I&#x27;ll give it a try.
+supporter: I&#x27;m proud of you for taking this step, Nick. Remember, I&#x27;m here for you and you&#x27;re not alone in this.
+seeker: Thanks, I really appreciate it. It helps to know there&#x27;s someone who understands what I&#x27;m going through.
+supporter: Anytime, Nick. Keep me posted on how things go with the advisor, okay?
+seeker: Will do. Thanks again for being there for me.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">有这样的感觉完全可以理解。一方面感激别人的支持，另一方面又承受着当前巨大的压力，两者可能很难平衡。当你不确定情况能否改善时，即使是一个积极的帮助提议，也可能像是又多了一件需要处理的事。
+现在情况中的哪一部分让你最感到不确定？</div><details><summary>英文原文</summary><pre>It is completely understandable to feel that way. It can be difficult to balance the appreciation for a supportive gesture with the overwhelming weight of the stress you are currently facing. When you&#x27;re feeling unsure about whether things can improve, even a positive offer of help can feel like just one more thing to navigate.
+
+What part of the situation feels the most uncertain to you right now?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">有这样的感觉完全可以理解。要在获得支持的宽慰和课程本身带来的巨大压力之间取得平衡，可能很困难。已经压力很大时，自然会怀疑一次会面或一些额外帮助，是否足以改变整体情况。
+这门课目前具体哪一方面让你压力最大？</div><details><summary>英文原文</summary><pre>It is completely understandable to feel that way. It can be difficult to balance the relief of receiving support with the overwhelming pressure of the course itself. When you are already feeling stressed, it’s natural to doubt whether a single meeting or some extra help will be enough to change the overall situation.
+
+What specifically about the course is causing you the most stress right now?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">承受这么大压力时，感到矛盾完全可以理解。面对一门困难的课程，一直艰难应对时，很难看出一次谈话或一个支持的举动能怎样改变整体情况。
+现在觉得压力难以承受是可以理解的，尤其是你曾说，别人很难完全理解你承受的具体学业压力。处于这种“艰难应对”的过程中，可能会觉得作业的重量远超外界支持所能卸下的分量。
+既然你不确定这次帮助能否起作用，现在情况中的哪一部分让你最感到难以面对？</div><details><summary>英文原文</summary><pre>It is completely understandable to feel conflicted when you are under that much pressure. When you&#x27;re facing a constant uphill battle with a difficult course, it can be hard to see how a single conversation or a gesture of support will change the overall situation.
+
+It makes sense that the stress feels overwhelming right now, especially when you&#x27;ve expressed how difficult it is for others to fully grasp the specific academic pressure you&#x27;re under. When you&#x27;re in the middle of that &quot;uphill battle,&quot; it can feel like the weight of the assignments is much heavier than any outside support can lift.
+
+Since you&#x27;re feeling unsure about whether this help will make a difference, what part of the situation feels the most daunting to you right now?</pre></details></article>
+</div>
+<label for="Q06-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q06-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q06-degree">如果有差别，整体程度</label><select id="Q06-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q06-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q06-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q07"><h2>Q07</h2><p class="current">用户刚与父母团聚，也谈到晋升后主管依然不重视自己、工作焦虑增加。她尝试绘画等爱好，但也要求自己表现出色。最后说：“一开始画画时我很平静，接着就想把一切做到完美，结果又变成压力。”</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>supporter: Hey Amanda, how have you been lately?
+seeker: I&#x27;ve been feeling a mix of emotions recently. My parents visited me last weekend, and it stirred up a lot of feelings.
+supporter: It&#x27;s understandable that a visit from your parents could bring up a lot of emotions. How did it go overall?
+seeker: Overall, it was nice to see them. I hadn&#x27;t realized just how much I missed them.
+supporter: Reconnecting with family can be really comforting. Did you get to talk about anything meaningful with them?
+seeker: Yes, we talked a lot about my childhood and some of the happier times. They even shared some old stories that I had forgotten.
+supporter: That sounds really special. It’s great they brought back those memories for you.
+seeker: It was. But it also made me realize how much I&#x27;ve changed, and how stressed I&#x27;ve been lately with everything going on.
+supporter: Change can be overwhelming, especially when stress is involved. Is there any specific stress that&#x27;s been bothering you?
+seeker: Work has been really stressful. My supervisor still doesn&#x27;t value my contributions, even after the promotion.
+supporter: I remember you mentioned your supervisor&#x27;s behavior in the past. It must be tough feeling undervalued even as you rise in your career.
+seeker: It is. I worked so hard for that promotion, but it only seems to have increased my anxiety.
+supporter: That&#x27;s really challenging. Have you been able to find ways to manage your work stress?
+seeker: I&#x27;ve tried painting and other hobbies, but I end up putting pressure on myself to excel even in those.
+supporter: It sounds like you might be putting a lot of pressure on yourself in different areas. What do you feel when you paint?
+seeker: When I start, I feel calm, but then I get this need to make everything perfect and it becomes stressful.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-09-10</h3><p>用户与交往三年的男友对关系下一阶段意见不同。她曾讨论过，对方当时没准备好；她计划再次谈清期待，若仍无进展，可能结束关系。</p><details><summary>本段完整英文</summary><pre>seeker: Hello, how are you ?
+supporter: Hello
+supporter: I am good, how are you?
+seeker: I&#x27;m doing well, but it could have been better
+supporter: What seems to be bothering you tonight?
+seeker: Yes, my boy friend of 3 years has refused to take our relationship to the next level and I&#x27;m kind of getting tired, I don&#x27;t want to play games anymore
+supporter: So just to make sure I understand completely, you are ready to move on to the next step of your relationship and you don&#x27;t feel as though your boyfriend is and this is making you anxious and upset, 
+seeker: exactly, I hate to feel that I&#x27;m wasting my time
+supporter: I completely understand that, as I was in a long term relationship and I felt as though my girlfriend at the time did not want to take things to the next step and I was not happy about it. 
+seeker: Yes, I love him so dearly to want to settle down with him, but if he doesn&#x27;t want that for me I would rather call it quits now than continue and be disappointed at the long run. 
+supporter: Have you had that conversation with him? I know it might be a difficult conversation to have, but it is often good to get expectations out in the open so you are on the same page with your partner. 
+seeker: Yes, sort of and he gave me the impression that he is not there yet and that was a like almost a year ago, I don&#x27;t want it to look like I&#x27;m pushing him if I try to talk to him again about it. His nonchalant attitude in not seeing the seriousness of it is killing me, I&#x27;m just not happy. 
+supporter: That is tough, but sometimes people just portray things differently, for instance I am also very laid back and nonchalant about most things which can lead to miscommunications. 
+supporter: I don&#x27;t think it would be pushing if you haven&#x27;t had that conversation in almost a year.
+seeker: I hope you are right, just don&#x27;t want to come across as a desperate person and that&#x27;s why I&#x27;m setting myself up to call it quits if he tries to sound like he sounded the last time. 
+supporter: You need to know where he is so you can make a good decision for yourself!
+supporter: I know it is difficult, but I know you can get through it!
+seeker: You are right, that&#x27;s exactly what I&#x27;m going to do because the wait is killing me. 
+supporter: Good, I am happy for you!
+seeker: Thank you very much, you&#x27;ve been a great help
+supporter: I am glad I was able to help!
+seeker: Thanks, it was nice chatting with you.
+supporter: You&#x27;re welcome! If you need any more help just chat back with us again.
+seeker: no problem, take care.
+supporter: You as well!</pre></details>
+<h3>2025-04-22</h3><p>用户收到晋升提议，却因责任增加而焦虑。被问到此前关切是否获处理时，她说没有真正解决，负面绩效评估仍让她介怀，也不确定晋升动机。她说绘画也因追求完美变成压力，打算试着不要求立刻掌握，并考虑与主管谈支持安排；均未证实后续执行。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, are you available to talk for a bit?
+supporter: Of course, Amanda. What&#x27;s on your mind?
+seeker: Well, I got some unexpected news at work today.
+supporter: Oh? What happened?
+seeker: My supervisor offered me a promotion.
+supporter: Wow, that&#x27;s big news! How are you feeling about it?
+seeker: Honestly, I&#x27;m feeling pretty anxious about it.
+supporter: I can imagine. A promotion brings a lot of changes. What part is making you the most anxious?
+seeker: I think it&#x27;s the increased responsibilities. I&#x27;m already feeling stretched at work with everything that&#x27;s been going on.
+supporter: With your supervisor constantly undermining you, I can see why this would add stress. Have they addressed your past concerns?
+seeker: Not really. The negative performance review still hangs over me. The promotion feels like they&#x27;re trying to make up for that.
+supporter: That must be quite confusing for you. Do you feel like this promotion is genuine recognition of your work?
+seeker: I&#x27;m not sure. Part of me wonders if it&#x27;s just to keep me from looking elsewhere. With everything with Bill and John Doe, I&#x27;ve just been on edge.
+supporter: It sounds like a lot to juggle. Do you have anyone at work you trust to discuss this with, like Sarah who sent you that note?
+seeker: Sarah&#x27;s been supportive, but I don&#x27;t want to burden her. I&#x27;m also worried about being too vulnerable at work.
+supporter: It&#x27;s understandable to feel wary. What helps you ground yourself when things feel unstable?
+seeker: I&#x27;ve been painting, but recently it&#x27;s added to my stress. I keep pushing myself to be perfect in it too.
+supporter: Perfectionism can be tough. How about leaning into the joy of painting instead of the pressure to excel?
+seeker: I should try that. I sometimes forget it doesn&#x27;t have to be another thing I master right away.
+supporter: Exactly. It&#x27;s okay to allow yourself some space to enjoy without expectations. What do you think about the promotion now?
+seeker: I&#x27;m still scared, but I think I need to have an open talk with my supervisor about what support looks like moving forward.
+supporter: That sounds like a great step. Being clear about your needs can help manage this transition.
+seeker: Thank you for listening. I needed to get this off my chest before making a decision.
+supporter: Anytime, Amanda. You&#x27;re navigating a lot, and you&#x27;re doing it with so much grace.
+seeker: Thanks for saying that. I&#x27;ll let you know how it goes.
+supporter: I&#x27;m here anytime. Take care, Amanda.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">听起来，起初的平静很快被追求完美的高标准取代，于是爱好又成了压力。你提到工作压力很大，甚至对爱好也要求自己出色；你发现这种追求完美的需要也出现在生活的其他方面吗？</div><details><summary>英文原文</summary><pre>It sounds like that initial sense of calm is quickly overtaken by a high standard for perfection, which then turns your hobby into another source of pressure. Since you mentioned that you&#x27;ve been feeling stressed at work and even find yourself putting pressure on your hobbies to excel, do you find that this need for perfection shows up in other areas of your life as well?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">听起来，你起初在绘画中获得的平静，被追求完美的冲动打断了。发生这种转变时，压力更像是来自怕犯错，还是想达到某个特定结果？</div><details><summary>英文原文</summary><pre>It sounds like the initial peace you find in painting is being interrupted by a drive for perfection. When that shift happens, does the stress feel like it&#x27;s coming from a fear of making a mistake, or more from a desire to achieve a specific result?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">听起来，起初的平静被表现出色的压力取代，使绘画从放松的爱好变成了另一种压力。你提到即使画画也会给自己施压、要求出色，你觉得怎样才能允许自己享受过程，而不担心最后的结果？</div><details><summary>英文原文</summary><pre>It sounds like that initial sense of calm is being overtaken by a pressure to perform, which shifts the experience from a relaxing hobby into another source of stress. Since you mentioned that you&#x27;ve been putting pressure on yourself to excel even in your painting, how do you think you could give yourself permission to just enjoy the process without worrying about the final result?</pre></details></article>
+</div>
+<label for="Q07-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q07-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q07-degree">如果有差别，整体程度</label><select id="Q07-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q07-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q07-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q08"><h2>Q08</h2><p class="current">用户期中考试失利，担心下次仍考不好。她说时间没安排好，也一直因与父母的争执而分心，需要兼顾让父母满意和自己的未来。最后说还没有再谈，大家回避话题，家里气氛紧张。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey, are you there? I could really use someone to talk to.
+supporter: Hi Anna, I&#x27;m here for you. What&#x27;s going on?
+seeker: I just got my midterm results and they weren&#x27;t good at all.
+supporter: I&#x27;m so sorry to hear that. It sounds really disappointing. Do you want to talk about it?
+seeker: Yeah, I just feel like I&#x27;m under a lot of pressure right now. Everything seems to be piling up.
+supporter: That&#x27;s totally understandable, especially with finals coming up too. It can feel overwhelming.
+seeker: Exactly, and I&#x27;m scared I won&#x27;t be able to do better next time.
+supporter: It&#x27;s natural to feel scared, but remember you have the strength to improve. Do you have any thoughts about why it didn&#x27;t go well?
+seeker: I think part of it is because I haven&#x27;t been managing my time well. And I&#x27;ve been so distracted since the argument with my parents.
+supporter: That makes sense. It must be hard to focus with so many things on your mind.
+seeker: Yeah, I&#x27;ve been trying to balance everything, like pleasing my parents and figuring out my future. It&#x27;s just a lot.
+supporter: It sounds like you&#x27;re dealing with so much at once, and that&#x27;s truly challenging. Have you been able to talk to your parents after the argument?
+seeker: Not really. We&#x27;ve been kind of avoiding the topic, and it&#x27;s been tense at home.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-09-05</h3><p>用户因朋友不信任自己、隐瞒活动而难过。她说尝试沟通却没有回应；后来提到喜欢读书，考虑通过阅读缓解情绪。</p><details><summary>本段完整英文</summary><pre>seeker: Hello
+seeker: Please reply to me 
+supporter: hi how are you
+seeker: I am not good . 
+seeker: What about you?
+supporter: i am so sorry to hear that. what seems to be worrying you today?
+supporter: i am doing ok thanks for asking
+seeker: I trust my friends blindly. But they not. 
+seeker: It creates depression on my mind
+seeker: I cannot concentrate on any other works
+supporter: it seems to me that you feel you can not trust a friend, correct me if im wrong?
+seeker: I trust my friends very much. They won&#x27;t show the same trustfulness on me.  
+supporter: Oh ok, have you asked them why they feel they can not trust you?
+supporter: Maybe you could have a conversation about it and see what you could do to gain their trust.
+supporter: I have had a friend not to trust me and i know how hurtful that can feel, maybe there has just been some sort of misunderstanding.
+seeker: They think I am not suitable for some places. They want to go that places without my knowledge is not a problem. But they hide the total matter
+seeker: It may be misunderstanding. I tried to talk with them.
+seeker: They won&#x27;t respond to me
+supporter: Could it be that it is not that they do not trust you but they feel you would not feel comfortable going to such places?
+seeker: If they feel uncomfortable , they could speak directly but they won&#x27;t did that also
+supporter: I am sorry you feel ignored sometimes people choose to ignore issues rather than confront them and try to come to some sort of solution, i would try not to take it to personnel as you seem like a very friendly person. 
+supporter: You could try to send a message just stating that your feelings are hurt and it would be nice if they would at least reply back with a explanation on why they have made you feel this way.
+seeker: Can you any idea to get out from this?
+supporter: Are you asking how to end the chat?
+seeker: no
+seeker: how to get out from my depression?
+supporter: I think you need to spend some time doing something you enjoy to try to take your mind off of it, maybe go to a movie or for a nice walk.
+supporter: Or if you have a family member you are close to you could speak to them about it and see what the perspective of the situation is.
+seeker: Thank you my dear. 
+seeker: I got a little bit idea
+seeker: I will try to explore it
+seeker: is there any general way to get out from stress?
+supporter: No problem you really seem like a nice person so i think the problem more so is with them and not you so try not to let it ruin your holiday season!
+supporter: When i am stressed or depressed I like to workout and listen to music.
+seeker: I like to read book. Shall I try this?
+supporter: Yes getting lost in a good book is a great way to get your mind off of it!
+seeker: Thank you friend. Shall we end the chat?
+supporter: If you feel i have helped you we can, if not i am glad to stay and continue trying to help.
+seeker: I feel very happy about your help
+supporter: i am glad i could be of some help i hope you feel better soon!
+seeker: Ok buddy. Thank you and bye. 
+supporter: you are very welcome, goodbye</pre></details>
+<h3>2024-10-20</h3><p>用户与父母为未来争执：父母希望她进入好大学，她却不确定学什么。她说喜欢艺术和写作，又担心不实用，也提到与男友的未来分歧。她考虑从小规模探索开始，再与父母谈，并未说已经执行。</p><details><summary>本段完整英文</summary><pre>supporter: Hey Anna, it&#x27;s good to see you online. How are you doing today?
+seeker: Hi... honestly, not so great. It&#x27;s been a rough week.
+supporter: I&#x27;m really sorry to hear that. Do you want to talk about what&#x27;s been going on?
+seeker: Yeah, I had an argument with my parents about my future plans, and it got really intense.
+supporter: That sounds tough. What was the argument about, if you&#x27;re comfortable sharing?
+seeker: They want me to focus on getting into a good university, but I&#x27;m not even sure what I want to study yet.
+supporter: It can be really overwhelming when you&#x27;re not sure about your path, and there&#x27;s pressure from others. How did that make you feel?
+seeker: I just felt trapped and like I was disappointing them. It reminded me of the fight I had with my boyfriend about future plans too.
+supporter: It&#x27;s natural to feel that way when expectations feel piled up. How&#x27;s everything with your boyfriend now?
+seeker: We haven&#x27;t really resolved things. It&#x27;s this limbo where everything feels uncertain, and now my parents add to that stress.
+supporter: That sounds like so much to carry all at once, Anna. It’s understandable to feel overwhelmed. What do you feel you need right now?
+seeker: I think I need to figure out what I actually want for my future without feeling like I&#x27;m letting everyone down.
+supporter: That&#x27;s a really important realization. It&#x27;s your future, after all. Have you had any thoughts about what interests or excites you?
+seeker: I love art and writing, but I&#x27;m not sure if that&#x27;s practical. It feels risky compared to more traditional paths.
+supporter: Pursuing your passions is important, and finding a balance is possible. Perhaps exploring these interests, even as a hobby, could help you feel more connected to what you love?
+seeker: That might actually be a good idea. Maybe starting with small steps could clarify things without committing everything right now.
+supporter: Starting small sounds like a great plan. You don&#x27;t have to have everything figured out at once. It&#x27;s okay to take your time.
+seeker: Thanks for saying that. I think I’ll try talking to my parents again once I&#x27;ve thought more about what I want.
+supporter: That sounds like a positive step forward. I&#x27;m here for you, and remember, it&#x27;s okay to ask for this space to explore your interests.
+seeker: Thanks for listening. It really helps to talk about it.
+supporter: Anytime, Anna. You&#x27;re doing your best, and that&#x27;s all anyone can ask for. Let me know how things go, okay?</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">听起来，这种紧张让你更难集中现在所需的注意力。家里持续有冲突时，可能会让你总是绷紧神经，很难优先处理学习或有效安排时间。
+既然气氛现在这么紧张，你每天是怎样应对这种环境的？</div><details><summary>英文原文</summary><pre>It sounds like that tension is making it even harder to find the focus you need right now. When there is an ongoing conflict at home, it can feel like you&#x27;re constantly on edge, which makes it very difficult to prioritize your studies or manage your time effectively.
+
+Since the atmosphere is currently tense, how are you managing to cope with that environment on a daily basis?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">听起来，家里的紧张气氛又给学业问题增加了很大的压力。身处的环境令人紧绷时，更难找到学习所需的专注。
+现在气氛这么紧张，你怎样为自己或学习找到一点空间？</div><details><summary>英文原文</summary><pre>It sounds like that tension at home is adding a significant layer of stress to your academic situation. When your personal environment feels strained, it can make it much harder to find the focus you need for your studies.
+
+Since the atmosphere is currently tense, how are you managing to find any space for yourself or your schoolwork amidst that environment?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">听起来，家里的紧张关系让你原本的负担又重了许多。与父母关系紧绷时，可能更难专注学习，也更难对自己的计划感到踏实。
+你前面提到，一边有讨好他们的压力，一边又要寻找自己的方向。现在这么多压力压在肩上，你还好吗？</div><details><summary>英文原文</summary><pre>It sounds like that tension at home is adding a lot of weight to what you&#x27;re already dealing with. When things are strained with your parents, it can make it even harder to focus on your studies or feel settled about your own plans. 
+
+Since you mentioned earlier that you&#x27;re feeling pressured to please them while also trying to figure out your own path, how are you holding up with all that pressure on your shoulders right now?</pre></details></article>
+</div>
+<label for="Q08-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q08-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q08-degree">如果有差别，整体程度</label><select id="Q08-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q08-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q08-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q09"><h2>Q09</h2><p class="current">用户想换工作。被问原因后，她说各种事情加在一起，工作压力总是不停，去年十一月的绩效评估之后，她一直在怀疑自己。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>seeker: Hey there, can we chat for a bit?
+supporter: Of course, Jane. What&#x27;s on your mind?
+seeker: I&#x27;ve been feeling really overwhelmed lately. I&#x27;m actually considering switching jobs.
+supporter: That sounds like a big decision. What&#x27;s been making you feel this way?
+seeker: It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-09-01</h3><p>用户发现男友曾与自己的好友有过不忠行为，对两人的信任受损。她原先考虑订婚，开始重新思考关系及自己的选择。这里没有 Eliza 或搬迁决定的信息。</p><details><summary>本段完整英文</summary><pre>supporter: Hey! How are you?
+seeker: Hi, I am having a really hard time. I just found out that my boyfriend cheated on me a year ago.
+supporter: Have you confronted him about it yet?
+seeker: Yes, I told him that my best friend confessed it to me. It was my best friend and him. I was so shocked.
+supporter: Have you broken up yet?
+seeker: No, I am so mad but I don&#x27;t want to break up with him. I told my best friends that I never want to see her again though. My boyfriend and I have plans to get engaged this month. I am furious at him though.
+supporter: I think you should postpone the engagement as infidelity during marriage is far more painful
+supporter: You are strong if you are able to forgive him though because I know I wouldn&#x27;t 
+seeker: I have never been so blind sided. Maybe I should reconsider! I have had a guy after me for at least the last year but I never cheated! I really wanted to though.
+supporter: No you should never cheat, because you would be on the same wavelength as your boyfriend. Instead, if you like the other man then you should go where your feelings take you :)
+seeker: I am thinking that you are right. I feel like my whole world is upside down and I have wasted all this time with the wrong guy and the wrong best friend. I also wonder who else he might have cheated on my with. 
+supporter: Yeah, that might be true, a relationship isn&#x27;t healthy if you are cheated on
+seeker: I am so grossed out because I am a germaphobe to begin with. I have not slept with any other person in my whole life so I feel like I am ruined. I want to throw up when I think of him cheating on me. I want to get married and I have a timeline so I am also really confused on what to do if I dump him.
+supporter: To dump him is the best thing to do in my opinion. But always go where your heart is, because you won&#x27;t be happy if you don&#x27;t. If you do though, there are plenty men out there, and one of them is chasing you
+seeker: Yeah, the guy who liked me was super rich too! My boyfriend is telling me that he wants my best friend to still be in the wedding party too. She was suppose to be my maid of honor, no less.
+supporter: Yeah, but don&#x27;t go with him because of he money though, genuinely get to know him first
+seeker: I have compartmentalized my life and never thought of looking around at my other options. You are making really good points. I need to just stop and really look at my options. I never realized that I have options, it&#x27;s not like i am even engaged yet.
+supporter: Yeah, you have a lot of options at this stage, so always do what your heart is telling you at the end of the day
+seeker: It feels good sharing how I feel with you because you don&#x27;t have a dog in the fight so to speak.
+supporter: yeah, lool something like that ;). Glad your better
+seeker: I never listen to my heart and think that is a great place to start. I always have a plan and go with that but you are making a lot of sense. Thank you for your time today.
+supporter: Your welcome ;)
+seeker: Have a great day and I might be back soon to give an update.</pre></details>
+<h3>2024-12-10</h3><p>用户的车坏了，维修费用当时难以承担，朋友借款未还及其他财务压力也未解决。她用日记整理情绪，但仍担心工作表现，不敢向同事或主管求助。不能由此认定这些账单现在仍未解决。</p><details><summary>本段完整英文</summary><pre>supporter: Hi Jane, it&#x27;s great to hear from you again. How have you been holding up?
+seeker: Hi, it&#x27;s been a bit rough lately. My car broke down and the repair costs are just... more than I can handle right now.
+supporter: Oh no, I&#x27;m so sorry to hear that, Jane. That must be incredibly stressful, especially with everything else you&#x27;ve had to deal with recently.
+seeker: It really is. I&#x27;ve been trying to manage, but the financial stress keeps piling up. I still haven&#x27;t resolved the money issue with my friend, and now this... It&#x27;s overwhelming.
+supporter: I can only imagine how difficult that must be. You&#x27;ve been doing your best under such challenging circumstances. It&#x27;s okay to feel overwhelmed.
+seeker: Thank you. Sometimes it feels like I&#x27;m just not able to catch a break. I&#x27;ve been trying to keep track of everything with my journal, but it feels like every day brings something new.
+supporter: Journaling is a great tool, and it&#x27;s a good step that you&#x27;re using it to process your thoughts and feelings. It shows how you&#x27;re trying to find ways to cope.
+seeker: Yeah, I thought it might help calm my anxieties. But with my job performance not being where it&#x27;s supposed to be, and money problems, I just feel stuck.
+supporter: Feeling stuck is definitely tough. It&#x27;s important to remember that it&#x27;s not a reflection of your abilities or worth. You&#x27;re dealing with a lot, and your efforts are meaningful.
+seeker: Thanks. Sometimes I just worry that I&#x27;m not living up to expectations, especially at work. The fear of being seen as incompetent is always there.
+supporter: I understand. Work pressure can be intense, and when combined with personal challenges, it&#x27;s a lot to balance. Have you been able to talk to anyone at work about how you&#x27;re feeling?
+seeker: Not yet. I&#x27;m hesitant because I don&#x27;t want it to seem like I&#x27;m making excuses. I really want to prove myself and get back on track.
+supporter: That makes sense. It might help to reach out for support when you&#x27;re ready, even just to get some feedback. Sometimes, opening up can bring understanding and solutions you couldn&#x27;t see before.
+seeker: You&#x27;re right. I&#x27;ll think about that. Maybe just having a conversation could help put things into perspective.
+supporter: Absolutely, even small steps can lead to positive changes. Remember, you&#x27;re doing the best you can, and it&#x27;s okay to seek help when you need it.
+seeker: I will try to remember that. It&#x27;s helpful to talk about it and just get it off my chest a bit.
+supporter: I&#x27;m glad you reached out, Jane. It&#x27;s important to have a space where you feel heard. If you ever need to talk or get things off your mind, I&#x27;m here.
+seeker: Thank you so much. It really means a lot to have someone who listens and understands.
+supporter: You&#x27;re welcome. Remember, one step at a time, and be gentle with yourself. You&#x27;re not alone in this, and there are brighter days ahead.
+seeker: I&#x27;ll keep that in mind. Thanks again for your support.</pre></details>
+</details>
+<p class="note">本情境已有一项比较与你的旧回答精确对应，已复用。这里只补另一项比较，不需要重答旧题。</p>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">听起来，那次绩效评估一直沉沉压在你心上，尤其再加上工作中持续的压力。面对这些期待，同时还要处理其他压力源时，你开始怀疑自己是可以理解的。
+回想那次评估的反馈，其中哪些具体部分最让你一直放不下？</div><details><summary>英文原文</summary><pre>It sounds like that performance review has been weighing heavily on you, especially when combined with the ongoing pressure at your job. It is understandable that you would start second-guessing yourself when you&#x27;re facing those kinds of expectations while also dealing with other stressors.
+
+When you think about the feedback from that review, what specific parts of it have been sticking with you the most?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">听起来，那次绩效评估一直沉沉压在你心上，尤其再加上持续的压力感。当你感到受到质疑时，想到还要留在同一个环境里，可能会更觉得难以面对。
+你能多说说，那次评估具体哪些内容让你开始怀疑自己吗？</div><details><summary>英文原文</summary><pre>It sounds like that performance review has been weighing heavily on you, especially when combined with a constant sense of pressure. When you&#x27;re feeling second-guessed, it can make the idea of staying in the same environment feel much more daunting.
+
+Could you tell me more about what specifically from that review made you start doubting yourself?</pre></details></article>
+</div>
+<label for="Q09-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q09-order" data-field="order"><option value="">尚未填写</option><option value="A=B">A=B</option><option value="A&gt;B">A&gt;B</option><option value="B&gt;A">B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q09-degree">如果有差别，整体程度</label><select id="Q09-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q09-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q09-reason" data-field="reason" rows="3"></textarea></section>
+<section id="Q10"><h2>Q10</h2><p class="current">支持者问 Linda 最近怎样。她回答：“不太好，说实话，我和 David 现在关系非常紧张。”这就是当前对话的全部内容。</p>
+<details><summary>完整当前对话（英文原文）</summary><pre>supporter: Hey Linda, how have you been holding up lately?
+seeker: Not too great, to be honest. Things are really tense between David and me right now.</pre></details>
+<details><summary>共同历史依据：两段合法过去记录（含中文摘要与完整原文）</summary><p>这些是过去的记录。状态可能变化；提出过的计划不代表已执行。历史支持者的话不是当前 AI 的个人经历。</p>
+<h3>2024-07-01</h3><p>用户把原本想发给约会对象的私密照片误发到朋友群，担心见朋友时尴尬、被取笑，谈过用幽默回应的想法。对话没有说明约会对象是否是 David。</p><details><summary>本段完整英文</summary><pre>supporter: HI there, how are you doing?
+seeker: Hi, I&#x27;m ok
+supporter: Do you want to talk about whats going on right now?
+seeker: Sure. I took a nude photo of myself to share with someone I&#x27;m dating, and accidentally sent it to several friends in a group chat
+seeker: I&#x27;m really embarrassed about it and I have some anxiety about meeting or talking to my friends
+supporter: Ive done some things like that before. I know this might sound weird but what helped me through it was to actually own it. Take control of it before they can.
+seeker: Do you think it would be helpful to use humor? I don&#x27;t want them to tease me about it but I don&#x27;t know how else to approach it
+supporter: Yea that is definitely one way to control it
+seeker: Lol maybe some of my friends will share with the group too
+seeker: that would definitely make me feel better about it
+supporter: Ha, well that could get interesting
+seeker: yes, for sure
+seeker: anyway, thanks for the chat. this was helpful</pre></details>
+<h3>2024-12-01</h3><p>用户刚领养小狗，担心像是在替代去世的 Max，也觉得训练小狗有些忙乱。她说 David 搬来同住，带来支持，但担心自己太依赖他。没有说明后来此次关系紧张的原因。</p><details><summary>本段完整英文</summary><pre>seeker: Hey, I could really use someone to talk to right now. Mind lending an ear?
+supporter: Of course, Linda. I&#x27;m here for you. What&#x27;s on your mind?
+seeker: I just adopted a new puppy, and while I thought it would help, I’m feeling all sorts of things I didn’t expect.
+supporter: Adopting a new puppy sounds like a big step. What feelings are coming up for you?
+seeker: I thought it would ease the pain of losing Max. But sometimes, it feels like I&#x27;m trying to replace him.
+supporter: Losing Max was really tough on you. It&#x27;s understandable to have mixed emotions. It&#x27;s okay to miss him while also making room for new love.
+seeker: Thank you for saying that. I just feel guilty, like I&#x27;m betraying Max&#x27;s memory by loving another dog.
+supporter: Guilt is a common feeling, but remember, Max would want you to be happy and give love to another dog. You&#x27;re not replacing him; you&#x27;re honoring the love you shared by opening your heart again.
+seeker: I know, logically, you’re right. I guess it&#x27;s just my heart struggling to catch up.
+supporter: That&#x27;s completely normal, Linda. Healing takes time, and you&#x27;re doing your best. How is the new puppy helping, if at all?
+seeker: Well, he’s full of energy and brings some chaos into my routine, which is a nice distraction. But sometimes, I feel overwhelmed trying to train him.
+supporter: It sounds like he&#x27;s bringing some lively energy into your life, but it&#x27;s okay to feel overwhelmed. It&#x27;s a big adjustment for both of you.
+seeker: Exactly. And with David moving in, I worry about how all these changes are affecting us.
+supporter: That&#x27;s a lot to juggle. How&#x27;s your relationship with David? Is he supportive with all these changes?
+seeker: David&#x27;s been wonderful. Having him here helps, but I fear I&#x27;m relying on him too much.
+supporter: It&#x27;s great that David is there for support. It&#x27;s okay to lean on him during tough times, as long as you communicate and find balance together.
+seeker: I&#x27;ll keep that in mind. I just need to find my own footing amidst everything that&#x27;s happening.
+supporter: You will. You&#x27;re taking steps by adopting a new puppy and being honest about your feelings. It shows strength and courage.
+seeker: Thanks for saying that. It&#x27;s just been a whirlwind lately, and I appreciate having someone to talk it through with.
+supporter: Anytime, Linda. Remember, it&#x27;s okay to feel however you feel right now. You&#x27;re doing an amazing job taking care of yourself and embracing change.</pre></details>
+</details>
+<div class="responses">
+<article><h3>回复 A</h3><div class="reply">听说你和 David 现在关系这么紧张，我很难过。你愿意多聊聊发生了什么吗？</div><details><summary>英文原文</summary><pre>I&#x27;m sorry to hear that things are feeling so tense between you and David right now. Would you like to talk more about what&#x27;s been happening?</pre></details></article>
+<article><h3>回复 B</h3><div class="reply">听说你和 David 的关系变得紧张，我很难过。考虑到你一直在应对新来的小狗以及最近其他种种变化，现在感到关系紧绷是可以理解的。
+你能多说说你们两人之间发生了什么吗？</div><details><summary>英文原文</summary><pre>I&#x27;m sorry to hear that things have become tense between you and David. Given how much you&#x27;ve been navigating with the new puppy and all the other recent changes, it makes sense that things might feel strained right now.
+
+Can you tell me more about what has been happening between the two of you?</pre></details></article>
+<article><h3>回复 C</h3><div class="reply">听说你和 David 现在关系这么紧张，我很难过。应对这样的摩擦可能非常消耗精力。你愿意多聊聊发生了什么吗？</div><details><summary>英文原文</summary><pre>I&#x27;m sorry to hear that things are so tense between you and David right now. It can be incredibly draining to navigate that kind of friction. Would you like to talk more about what&#x27;s been happening?</pre></details></article>
+</div>
+<label for="Q10-order">实际帮助的顺序（&gt; 表示更好，= 表示相当）</label><select id="Q10-order" data-field="order"><option value="">尚未填写</option><option value="A=B=C">A=B=C</option><option value="A&gt;B=C">A&gt;B=C</option><option value="B&gt;A=C">B&gt;A=C</option><option value="C&gt;A=B">C&gt;A=B</option><option value="A=B&gt;C">A=B&gt;C</option><option value="A=C&gt;B">A=C&gt;B</option><option value="B=C&gt;A">B=C&gt;A</option><option value="A&gt;B&gt;C">A&gt;B&gt;C</option><option value="A&gt;C&gt;B">A&gt;C&gt;B</option><option value="B&gt;A&gt;C">B&gt;A&gt;C</option><option value="B&gt;C&gt;A">B&gt;C&gt;A</option><option value="C&gt;A&gt;B">C&gt;A&gt;B</option><option value="C&gt;B&gt;A">C&gt;B&gt;A</option><option value="不确定">不确定</option></select>
+<label for="Q10-degree">如果有差别，整体程度</label><select id="Q10-degree" data-field="degree"><option value="">可不填</option><option>略好</option><option>有实质改善</option><option>不同两条之间程度不同，见理由</option><option>不确定</option></select>
+<label for="Q10-reason">一句主要理由；若有事实错误或不同策略都合适，也可写在这里</label><textarea id="Q10-reason" data-field="reason" rows="3"></textarea></section>
+<p>请把下载或复制的 JSON 发回对话。页面本身不会向外发送答案；浏览器内保存仅供续填。</p><textarea id="export" hidden aria-label="可复制的答案 JSON"></textarea>
+<script>const packet={"study": "c52a56fd81d55d112ce227063bbdbcff0d0fb3325df03c03c2adde5a298e4e78", "questions": ["Q01", "Q02", "Q03", "Q04", "Q05", "Q06", "Q07", "Q08", "Q09", "Q10"]};const key='pmrl1-history-'+packet.study;
+function answers(){const data={};for(const id of packet.questions){const s=document.getElementById(id);const v={};s.querySelectorAll('[data-field]').forEach(e=>v[e.dataset.field]=e.value);if(v.order||v.reason)data[id]=v;}return data;}
+function payload(){return JSON.stringify({study:packet.study,answers:answers()},null,2);}
+function update(){const a=answers();document.getElementById('progress').textContent=`已填写 ${Object.values(a).filter(v=>v.order).length} / ${packet.questions.length}`;try{localStorage.setItem(key,JSON.stringify(a));document.getElementById('saved').textContent='本机浏览器已保存';}catch(e){document.getElementById('saved').textContent='浏览器保存不可用，请下载或复制答案';}}
+try{const a=JSON.parse(localStorage.getItem(key)||'{}');for(const [id,v] of Object.entries(a)){const s=document.getElementById(id);if(s)s.querySelectorAll('[data-field]').forEach(e=>e.value=v[e.dataset.field]||'');}}catch(e){}
+document.querySelectorAll('[data-field]').forEach(e=>e.addEventListener('input',update));
+document.getElementById('show').onclick=()=>{const e=document.getElementById('export');e.hidden=false;e.value=payload();e.focus();e.select();};
+document.getElementById('download').onclick=()=>{const u=URL.createObjectURL(new Blob([payload()],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='pmrl1-history-answers.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};update();</script></html>

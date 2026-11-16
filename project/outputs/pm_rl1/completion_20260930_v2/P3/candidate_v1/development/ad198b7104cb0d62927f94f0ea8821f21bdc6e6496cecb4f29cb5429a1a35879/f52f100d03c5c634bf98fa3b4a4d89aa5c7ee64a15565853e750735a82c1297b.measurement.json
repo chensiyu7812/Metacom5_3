@@ -1,0 +1,344 @@
+{
+  "response_sha256": "476e020e8491fe027979e29fa7207b31e343b1520f9acd7aef946a01183d8c1d",
+  "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "4d1625ca0a46c1faa7f19692851978c60e3195f8a0003c2ad7a8bc602e4c3dec",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses mixed feelings (sad, angry) regarding parental restrictions on friendships, specifically reacting to a previous supporter's personal anecdote about a similar situation.",
+      "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+      "evidence": [
+        {
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry."
+        }
+      ],
+      "reason": "The reply appropriately validates the user's emotional state (anger/tension) and provides a gentle, non-fabricated path forward by offering a reflective question about coping strategies. It respects the new AI assistant boundary by not claiming personal history or attempting to guess the specific outcomes of the previous supporter's (C:T008) story, instead pivoting constructively to the user's own processing of the dynamic."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "Really? How did you deal with that because for me it makes me angry."
+          }
+        ],
+        "reason": "Interprets user's reported anger and frustration as tension caused by the situation, consistent with C:T009's statement 'makes me angry'."
+      },
+      {
+        "response_quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+          },
+          {
+            "source_id": "C:T009",
+            "quote": "Really? How did you deal with that because for me it makes me angry."
+          }
+        ],
+        "reason": "Acknowledges the natural reaction to authority restrictions aligns with user's expressed belief in freedom to choose friends (C:T007) and current anger (C:T009)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the emotional validation regarding parental conflict over friends and offers a supportive opening for discussing communication strategies, while maintaining appropriate boundaries regarding the user's personal history compared to previous session contexts.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 388
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+      "positions": [
+        {
+          "start": 35,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+      "positions": [
+        {
+          "start": 115,
+          "end": 252
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 94
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T009",
+      "quote": "Really? How did you deal with that because for me it makes me angry.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses mixed feelings (sad, angry) regarding parental restrictions on friendships, specifically reacting to a previous supporter's personal anecdote about a similar situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply appropriately validates the user's emotional state (anger/tension) and provides a gentle, non-fabricated path forward by offering a reflective question about coping strategies. It respects the new AI assistant boundary by not claiming personal history or attempting to guess the specific outcomes of the previous supporter's (C:T008) story, instead pivoting constructively to the user's own processing of the dynamic."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Interprets user's reported anger and frustration as tension caused by the situation, consistent with C:T009's statement 'makes me angry'."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Acknowledges the natural reaction to authority restrictions aligns with user's expressed belief in freedom to choose friends (C:T007) and current anger (C:T009)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the emotional validation regarding parental conflict over friends and offers a supportive opening for discussing communication strategies, while maintaining appropriate boundaries regarding the user's personal history compared to previous session contexts.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses mixed feelings (sad, angry) regarding parental restrictions on friendships, specifically reacting to a previous supporter's personal anecdote about a similar situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply appropriately validates the user's emotional state (anger/tension) and provides a gentle, non-fabricated path forward by offering a reflective question about coping strategies. It respects the new AI assistant boundary by not claiming personal history or attempting to guess the specific outcomes of the previous supporter's (C:T008) story, instead pivoting constructively to the user's own processing of the dynamic."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic expression of empathy and apology.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Interprets user's reported anger and frustration as tension caused by the situation, consistent with C:T009's statement 'makes me angry'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Acknowledges the natural reaction to authority restrictions aligns with user's expressed belief in freedom to choose friends (C:T007) and current anger (C:T009).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Asks a probing question about past experiences or coping mechanisms without asserting a definitive personal fact about the user.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Addresses the emotional validation regarding parental conflict over friends and offers a supportive opening for discussing communication strategies, while maintaining appropriate boundaries regarding the user's personal history compared to previous session contexts.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses mixed feelings (sad, angry) regarding parental restrictions on friendships, specifically reacting to a previous supporter's personal anecdote about a similar situation.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "reason": "The reply appropriately validates the user's emotional state (anger/tension) and provides a gentle, non-fabricated path forward by offering a reflective question about coping strategies. It respects the new AI assistant boundary by not claiming personal history or attempting to guess the specific outcomes of the previous supporter's (C:T008) story, instead pivoting constructively to the user's own processing of the dynamic."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic expression of empathy and apology."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "Interprets user's reported anger and frustration as tension caused by the situation, consistent with C:T009's statement 'makes me angry'."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "Acknowledges the natural reaction to authority restrictions aligns with user's expressed belief in freedom to choose friends (C:T007) and current anger (C:T009)."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Asks a probing question about past experiences or coping mechanisms without asserting a definitive personal fact about the user."
+      }
+    ],
+    "coverage": "Addresses the emotional validation regarding parental conflict over friends and offers a supportive opening for discussing communication strategies, while maintaining appropriate boundaries regarding the user's personal history compared to previous session contexts.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

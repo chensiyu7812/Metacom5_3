@@ -1,0 +1,22 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 150.55it/s]
+{"stage": "baseline_G", "input": "c983e98420d33fc498843cdc302507a01e08346cba14f2cca08f13316fd5eefd", "replay": false}
+{"stage": "baseline_G", "input": "8dcdb55e4c228b3526822e6edabcf07ac2c2d3b3b20121dbefa32b0348a02da5", "replay": false}
+{"stage": "baseline_G", "input": "7193fbe5584866d0fda1ef8c718e88ac931a251d1755604df5661af18745edb0", "replay": false}
+{"stage": "baseline_G", "input": "395ff0042aff7682ee459245ea918abd50de5c7bbd03ed0d6e3c166b4bd1b989", "replay": true}
+{"stage": "baseline_G", "input": "6036325655e8d090d8d757180dfcff7feae2c75e42a020ecf74703f973d068ba", "replay": true}
+{"stage": "baseline_fit", "nll": 1.5875629161092697}
+{"step": 1, "epoch": 1, "examples": 4, "target_tokens": 337, "nll": 1.2067339526439633, "gradient_norm": 3.6205029487609863}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/164_train_executor_revision.py", line 212, in <module>
+    args=parser.parse_args();globals()[args.action](args.root.resolve())
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/164_train_executor_revision.py", line 149, in train
+    steps.append(record);save_json(run/'steps.json',steps);print(json.dumps(record),flush=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/supervised_learning.py", line 36, in save_json
+    publish(path, lambda f: f.write(data))
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py", line 27, in publish
+    os.link(temporary, path)  # atomic create; never overwrite an old result
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: '/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/executor_revision_20261104_v1/training/.steps.json.chksmcsm' -> '/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/executor_revision_20261104_v1/training/steps.json'

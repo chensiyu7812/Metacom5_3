@@ -1,0 +1,288 @@
+{
+  "response_sha256": "fc6fad604d267afac19a73e19ac275d046f6baea88f49fb68918a9473b560a9a",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+  "raw_output_sha256": "fe45765a26bd11280cb1c41a38b0abd212d18b81c75f3adbe49377832a2af666",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker shares consideration of renewable energy research aligned with values; expects validation and exploration",
+      "response_quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "Reply appropriately acknowledges the seeker's stated direction, affirms alignment with values, and thoughtfully probes deeper motivations via two complementary questions without redundancy or constraint violation"
+    },
+    "claims": [
+      {
+        "response_quote": "That is a great direction to consider!",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Validation matches user's positive framing"
+      },
+      {
+        "response_quote": "Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Correctly reflects user's value alignment statement"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Full response addresses seeker's disclosure; no gaps detected",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That is a great direction to consider!\n\nRenewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.\n\nWhat specifically about renewable energy sources resonates with you?\n\nIs it the environmental benefits, the technological challenges, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 322
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "That is a great direction to consider!",
+      "positions": [
+        {
+          "start": 0,
+          "end": 38
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Renewable energy is a field that is not only aligned with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 40,
+          "end": 168
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker shares consideration of renewable energy research aligned with values; expects validation and exploration",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "Reply appropriately acknowledges the seeker's stated direction, affirms alignment with values, and thoughtfully probes deeper motivations via two complementary questions without redundancy or constraint violation"
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validation matches user's positive framing"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Correctly reflects user's value alignment statement"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Full response addresses seeker's disclosure; no gaps detected",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker shares consideration of renewable energy research aligned with values; expects validation and exploration",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "Reply appropriately acknowledges the seeker's stated direction, affirms alignment with values, and thoughtfully probes deeper motivations via two complementary questions without redundancy or constraint violation"
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validation matches user's positive framing",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Correctly reflects user's value alignment statement",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative exploratory question, no personal claim",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Exploratory follow-up question, no personal fact",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Full response addresses seeker's disclosure; no gaps detected",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker shares consideration of renewable energy research aligned with values; expects validation and exploration",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "Reply appropriately acknowledges the seeker's stated direction, affirms alignment with values, and thoughtfully probes deeper motivations via two complementary questions without redundancy or constraint violation"
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validation matches user's positive framing"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Correctly reflects user's value alignment statement"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative exploratory question, no personal claim"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Exploratory follow-up question, no personal fact"
+      }
+    ],
+    "coverage": "Full response addresses seeker's disclosure; no gaps detected",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

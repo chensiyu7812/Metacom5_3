@@ -1,0 +1,38 @@
+{
+  "protocol": "rl1-e0-ppo-learning-v1",
+  "cases": [
+    "no_resource",
+    "one_helpful",
+    "two_complementary",
+    "harmful_distractor",
+    "budget_mask"
+  ],
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "episodes_per_seed": 4096,
+  "episodes_per_batch": 16,
+  "epochs": 4,
+  "episodes_per_minibatch": 4,
+  "gamma": 1,
+  "gae_lambda": 1,
+  "learning_rate": 0.0003,
+  "clip": 0.2,
+  "value_coefficient": 0.5,
+  "entropy_coefficient": 0.01,
+  "gradient_clip": 0.5,
+  "device": "cpu",
+  "threads": 1,
+  "public_toy_features": "five task-category flags, canonical acquired counts, budget and step fractions",
+  "production_encoder": false,
+  "semantic_training": false,
+  "real_PM_checkpoint": false,
+  "endpoint_rule": "fixed 4096; report all cases/seeds, no outcome-dependent extension or checkpoint selection",
+  "validation_target": "greedy endpoint matches exact DP on all five finite toy cases for each seed",
+  "module_sha256": "016c5a123cf76280080f0bb6e6b2dc6429bee7aa42521981aab34f255c3d77cc",
+  "runner_sha256": "8fb9ea0698f939d30e9defe60bf435e0306c0062bed7e64c21e8515aa5bf886b",
+  "torch_version": "2.3.1+cu121",
+  "API_usd": 0
+}

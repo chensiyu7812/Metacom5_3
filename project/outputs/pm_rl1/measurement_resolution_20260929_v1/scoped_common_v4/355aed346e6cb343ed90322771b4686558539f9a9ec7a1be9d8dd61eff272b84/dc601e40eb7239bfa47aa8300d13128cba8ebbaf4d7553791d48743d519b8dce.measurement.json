@@ -1,0 +1,259 @@
+{
+  "response_sha256": "33e5dccbd9186b32698b716fbae18470584d06a58484b9bbd20cdc65aa3c1a39",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "cb2d39d6538b2f048fc5db0bb5b1f40e0e26d3ff2fa2754d5ba5cfba42c7df77",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of user's plan to seek therapy help for current relationship distress, acknowledging past success in therapy.",
+      "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply effectively validates the user's decision (C:T016) without overriding their agency. It connects the user's stated past success ('helping a lot') with the proposed solution (R003 supported by C:T016). It asks a relevant follow-up question (R005) rather than leading into generic advice, respecting the user's autonomy. Tone is warm, non-judgmental, and consistent with prior sessions (e.g., H011)."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "Reflects user's claim that sessions help with stress/career (implied 'other areas')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All units assessed.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've already seen the benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 445
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've already seen the benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 196
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of user's plan to seek therapy help for current relationship distress, acknowledging past success in therapy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply effectively validates the user's decision (C:T016) without overriding their agency. It connects the user's stated past success ('helping a lot') with the proposed solution (R003 supported by C:T016). It asks a relevant follow-up question (R005) rather than leading into generic advice, respecting the user's autonomy. Tone is warm, non-judgmental, and consistent with prior sessions (e.g., H011)."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Reflects user's claim that sessions help with stress/career (implied 'other areas')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All units assessed.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of user's plan to seek therapy help for current relationship distress, acknowledging past success in therapy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply effectively validates the user's decision (C:T016) without overriding their agency. It connects the user's stated past success ('helping a lot') with the proposed solution (R003 supported by C:T016). It asks a relevant follow-up question (R005) rather than leading into generic advice, respecting the user's autonomy. Tone is warm, non-judgmental, and consistent with prior sessions (e.g., H011)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic acknowledgement.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advisory statement.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Reflects user's claim that sessions help with stress/career (implied 'other areas').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advice.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Engaging question, no personal assertion.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All units assessed.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of user's plan to seek therapy help for current relationship distress, acknowledging past success in therapy.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply effectively validates the user's decision (C:T016) without overriding their agency. It connects the user's stated past success ('helping a lot') with the proposed solution (R003 supported by C:T016). It asks a relevant follow-up question (R005) rather than leading into generic advice, respecting the user's autonomy. Tone is warm, non-judgmental, and consistent with prior sessions (e.g., H011)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic acknowledgement."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advisory statement."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "Reflects user's claim that sessions help with stress/career (implied 'other areas')."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advice."
+      },
+      {
+        "response_unit_id": "R005",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Engaging question, no personal assertion."
+      }
+    ],
+    "coverage": "All units assessed.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

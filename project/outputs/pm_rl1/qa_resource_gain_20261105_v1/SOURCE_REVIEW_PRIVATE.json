@@ -1,0 +1,502 @@
+{
+  "scope": "Assistant source admission before QA generation; not independent human gold, reward qualification, or official benchmark replacement.",
+  "rows": [
+    {
+      "case": "F01",
+      "source_identity": "a0c547160e9e445a8a923a0658bf9b97e18ac316170af703b8383a18e7112fa0",
+      "source_key": [
+        "p12",
+        "p12_conv_15",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Jessica"
+      ],
+      "note_zh": "同owner历史唯一的Jessica搬家工作事件，seeker直接姓名，未以展示记忆加分。",
+      "fact_family": "p12|F01"
+    },
+    {
+      "case": "F02",
+      "source_identity": "cdb5e0ab60b486fd87b14b72e873bf66b8ca1c831ebec76c058d053aeb3f20b4",
+      "source_key": [
+        "p9",
+        "esc88",
+        3
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Male",
+        "Man",
+        "A man"
+      ],
+      "note_zh": "seeker明确自述Male；不依据兴趣、姓名或supporter代词推断。D中姓名仍可能给模型猜测线索，D不是绝对无信息。",
+      "fact_family": "p9|F02"
+    },
+    {
+      "case": "F03",
+      "source_identity": "826812102aa9479be6c5bb98d9ee92b09b201a21bb0e83eb1d76c52e5bb700dd",
+      "source_key": [
+        "p16",
+        "p16_conv_16",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Emily"
+      ],
+      "note_zh": "best friend Emily在p16_conv_9和p16_conv_16直接自述一致，检索跨完整owner历史未见第二个best friend候选。",
+      "fact_family": "p16|F03"
+    },
+    {
+      "case": "F04",
+      "source_identity": "1dd87fb51a33a71211c1b2e2dbf5b81f1afb1f7726385fc41ba05d95548ffee1",
+      "source_key": [
+        "p6",
+        "p6_conv_9",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Eliza"
+      ],
+      "note_zh": "Eliza与sister的直接绑定，跨p6_conv_8/9/19等复述一致；F14归为同一事实家族。",
+      "fact_family": "p6|F04"
+    },
+    {
+      "case": "F05",
+      "source_identity": "ecae3fe415f2f0480b9f2c3bab67bf3780800cf02825abdf7431477b3a6f7693",
+      "source_key": [
+        "p3",
+        "p3_conv_16",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Psychology",
+        "A psychology major",
+        "Major in psychology"
+      ],
+      "note_zh": "p3_conv_6直接提出psychology，p3_conv_16谈已进入new major；其他会话有转专业后复述，答案可见。两引用不意味着两段均必要。",
+      "fact_family": "p3|F05"
+    },
+    {
+      "case": "F06",
+      "source_identity": "1ab496b3915ab8dd38706563969b99cb5b2cc66c1449665146d36c5be1c9e554",
+      "source_key": [
+        "p13",
+        "p13_conv_4",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "David"
+      ],
+      "note_zh": "p13_conv_1 seeker明确David moved in，与丧失Max的同段语境相连。",
+      "fact_family": "p13|F06"
+    },
+    {
+      "case": "F07",
+      "source_identity": "8ec0143d8bce3614cf178323ac7de9944df2d1f43c884aeede59c824e93bee72",
+      "source_key": [
+        "p5",
+        "p5_conv_1",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Emily"
+      ],
+      "note_zh": "p5_conv_1 Emily住院、no parent wants及she直接形成亲子关系；其他会话反复女儿健康，无第二姓名。",
+      "fact_family": "p5|F07"
+    },
+    {
+      "case": "F08",
+      "source_identity": "e1f8037fd340d544787a4bc9900bbad2836af4d0bf110742b37e4c2a133740e0",
+      "source_key": [
+        "p11",
+        "p11_conv_9",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "unresolved_question_time_scope",
+      "note_zh": "问题指特定conversation但未给该对话/时点，后续历史已与John分手，不能把question group作为隐藏当前语境。"
+    },
+    {
+      "case": "F09",
+      "source_identity": "630b76ef40fc503ce11c92d402409c8b38bfd9302da952e2696114ce12a6d098",
+      "source_key": [
+        "p10",
+        "p10_conv_9",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "George"
+      ],
+      "note_zh": "p10_conv_9直接George my youngest；与Jerry有明确区别。",
+      "fact_family": "p10|F09"
+    },
+    {
+      "case": "F10",
+      "source_identity": "96efea4d4c46af9ff09b70077e0759432dc06b62e8eab41220d8a4ee44a6f96e",
+      "source_key": [
+        "p17",
+        "p17_conv_5",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Jenny"
+      ],
+      "note_zh": "Jenny关系在p17_conv_2/4/5及后续历史一致；未见已换伴侣。三段多为重复，不认证最少三读。",
+      "fact_family": "p17|F10"
+    },
+    {
+      "case": "F11",
+      "source_identity": "cd9801e9acc4dec9eb03cef068b1dbb0cf10a23990861d9ff6f1276003cc9ac6",
+      "source_key": [
+        "p2",
+        "p2_conv_8",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "nonunique_open_condition",
+      "note_zh": "mental struggle未指定阶段，完整历史还有焦虑、自我怀疑等，单一imposter syndrome不是可靠唯一答案。"
+    },
+    {
+      "case": "F12",
+      "source_identity": "2469ae95a1a4c3075c3f35966f71923b97a12f3a3e95dab2836255e1991d59d2",
+      "source_key": [
+        "p12",
+        "p12_conv_12",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Chicago"
+      ],
+      "note_zh": "唯一childhood friend moved to Chicago的明确历史事件；与Jessica搬工作事件区分。",
+      "fact_family": "p12|F12"
+    },
+    {
+      "case": "F13",
+      "source_identity": "493ff3e21e99f34da2087e92542890e5792e58269d92253ac9c3de64a8f92734",
+      "source_key": [
+        "p9",
+        "esc88",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "time_varying_fact_without_anchor",
+      "note_zh": "农村居住在2024-07明确，后续为工作搬迁、再换近家工作；原问题未给时点，不能认证唯一当前居住地。"
+    },
+    {
+      "case": "F14",
+      "source_identity": "51d35c87de02922a7f83d6d76492dbbd2cf17218fa299754d4b491c60e89ad60",
+      "source_key": [
+        "p6",
+        "p6_conv_8",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "duplicate_fact_family",
+      "note_zh": "与F04相同owner的同一姐妹姓名事实，保留候选但不重复当独立收益题。"
+    },
+    {
+      "case": "F15",
+      "source_identity": "6e54abf2830b62a9a3fb029c901a7b3d555466a3e3a9565eb6560a4ffd477961",
+      "source_key": [
+        "p3",
+        "p3_conv_4",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "unresolved_question_time_scope",
+      "note_zh": "物理困难之后已转心理学；问题未给当前时点，不能暗用p3_conv_4分组作为截止。"
+    },
+    {
+      "case": "F16",
+      "source_identity": "6b3de1cc004b1778020c03a86abd30189eb619223df53f28c9e683a86ad56f93",
+      "source_key": [
+        "p13",
+        "esc1198",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "duration_without_anchor",
+      "note_zh": "over 7 years属于特定早期报告；当前job/持续时间无时点，不能把后期合法时长表述判错。"
+    },
+    {
+      "case": "F17",
+      "source_identity": "912af88c0a2af05568c9581fccb7a5321f1324634cf253459a37bd8daff688ac",
+      "source_key": [
+        "p5",
+        "p5_conv_10",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Gardening",
+        "Gardening together"
+      ],
+      "note_zh": "p5_conv_10直接说Emily与自己gardening、soothing，无需推断疗效。",
+      "fact_family": "p5|F17"
+    },
+    {
+      "case": "F18",
+      "source_identity": "303a1d01077e46d9736b5e828845cc74126e38224d1064948987092df46fdf41",
+      "source_key": [
+        "p11",
+        "p11_conv_4",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Lily"
+      ],
+      "note_zh": "p11_conv_4直接Lily moving，后续仍同一好友离开事件。",
+      "fact_family": "p11|F18"
+    },
+    {
+      "case": "F19",
+      "source_identity": "fd9faa579173958b1abe9a37978c6d3f0f20ae45adc0f5001d8319abf418b60c",
+      "source_key": [
+        "p2",
+        "p2_conv_16",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "A poetry slam",
+        "Poetry slam"
+      ],
+      "note_zh": "记录日期2025-02-15与问题around日期一致，seeker直接poetry slam。",
+      "fact_family": "p2|F19"
+    },
+    {
+      "case": "F20",
+      "source_identity": "a6cedf52beade11db818f43635bd3bc77a732fb8505a836aef7a1d32e091bbdb",
+      "source_key": [
+        "p12",
+        "p12_conv_8",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_factual_diagnostic",
+      "aliases": [
+        "Alex"
+      ],
+      "note_zh": "p12_conv_8完整对话将Alex与过去结束的恋爱关系、道歉及closure连接；5年关系在esc894自述，只有此名前任。原C不额外补引用，时长由问题提供；不把C当完整历史上界。",
+      "fact_family": "p12|F20"
+    },
+    {
+      "case": "M01",
+      "source_identity": "b4ca83dac5bf22b8c7531ead01a2a92dd3ebb758bb5bee4bba517fc8d223bc9d",
+      "source_key": [
+        "p12",
+        "esc1149",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_semantic_diagnostic",
+      "required": [
+        "Career advancement anxiety preceded the staff-appreciation-Thursday worry."
+      ],
+      "notes": "esc559为2024-08-15，esc1149为2024-09-12；两个特定事件顺序有日期支持。日期是数据提供的记录时间，不声称真实人物行为时间。",
+      "one_session_sufficiency": "Not established: the two cited sessions separately report the two events."
+    },
+    {
+      "case": "M02",
+      "source_identity": "5563ceea668fffc3e770aaa149e8dedbe520363c6c0f2d2b97ae5abb6b6f5fe7",
+      "source_key": [
+        "p9",
+        "p9_conv_3",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_semantic_diagnostic",
+      "required": [
+        "Isolation/loneliness after moving",
+        "Missing home",
+        "Back pain",
+        "Job stress",
+        "Financial pressure such as rent/bills or low pay"
+      ],
+      "notes": "明确as of 2024-11-15；p9_conv_3单段已含全部五要点，p9_conv_1提供低薪背景。不能据2引用称需两读。",
+      "one_session_sufficiency": "p9_conv_3 contains all required facts."
+    },
+    {
+      "case": "M03",
+      "source_identity": "5165fc3653a1a010eaf1c4217ecdf0ef9d159e6da70ddf217b134fb8affae158",
+      "source_key": [
+        "p6",
+        "esc660",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "nonunique_causal_start_and_bad_citation",
+      "note_zh": "esc660引文是工作能力担忧，未证明雪崩压力起点；p6_conv_1支持欠债失联但不能认证全历史唯一始因。"
+    },
+    {
+      "case": "M04",
+      "source_identity": "eeb8b7519727251593379673b169d8096d1577ebf841e6098e202d59d1469e7f",
+      "source_key": [
+        "p8",
+        "p8_conv_5",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "unbounded_recent_trajectory",
+      "note_zh": "recent conversations范围未给；后期还有对信任的反复与压力，初期朋友到AA的轨迹并非完整最近状态。"
+    },
+    {
+      "case": "M05",
+      "source_identity": "7b5d577a216e7561e17c4a79320943a673b263a71eafa0c771a75cce71f0e3dd",
+      "source_key": [
+        "p3",
+        "p3_conv_23",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "contradictory_gold_and_dates",
+      "note_zh": "2025-07-05到2025-10-07约3个月非17个月；被引用presentation会话时间为2026-03-15，也晚于题目当前时点。原gold不修写、不授奖。"
+    },
+    {
+      "case": "M06",
+      "source_identity": "3a0e90ccb307e4ce6beb2858de50c1ccb2a21d7ab6e0a626c8a2696bdae1af33",
+      "source_key": [
+        "p13",
+        "p13_conv_10",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_semantic_diagnostic",
+      "required": [
+        "Lily apologized and they reconnected",
+        "Relationship became better/supportive afterward",
+        "Do not claim all tension is permanently resolved; later hesitation is allowed."
+      ],
+      "notes": "p13_conv_7 2025-02-07、p13_conv_10 2025-03-15直接支持道歉后改善；后期p13_conv_16仍对求助有顾虑，所以不得声称永久完全解决。具体日期可不输出。",
+      "one_session_sufficiency": "p13_conv_7 may already convey reconnection and support; need outcome comparison, not assumed two reads."
+    },
+    {
+      "case": "M07",
+      "source_identity": "81fa3042b5ec1b63e804ef45323ee22149d3fe4feb8d48f42be94e097afde753",
+      "source_key": [
+        "p11",
+        "p11_conv_9",
+        2
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_semantic_diagnostic",
+      "required": [
+        "Poor midterm results came before the parents apologizing"
+      ],
+      "notes": "2024-11-05成绩不佳；2025-01-05报告父母昨日道歉，且同段回顾midterms not going so well，后者单段可能已足够。",
+      "one_session_sufficiency": "p11_conv_8 retrospectively mentions poor midterms alongside the new apology; multi-read necessity not established."
+    },
+    {
+      "case": "M08",
+      "source_identity": "639af1884cec1ce9ce8b896e5c7564e95e3c3da0b68ad03e2031140495b042db",
+      "source_key": [
+        "p10",
+        "esc1029",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "source_time_conflict",
+      "note_zh": "esc81元数据2024-07-01但原文结尾双方祝Merry Christmas；本次高置信时间问答不静默选一方为真。"
+    },
+    {
+      "case": "M09",
+      "source_identity": "4b33b0ad135d1aa472a8b331b6ccbd250125b3389ee80453c885ccdfd4cc42a8",
+      "source_key": [
+        "p17",
+        "esc629",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "admit_semantic_diagnostic",
+      "required": [
+        "June: school stress and sadness/loneliness",
+        "July: upset/angry and feeling unimportant to friends"
+      ],
+      "notes": "esc85 2024-06-10和esc67 2024-07-12直接自述情绪，必须保留月份归属，不能把两个时期颠倒。",
+      "one_session_sufficiency": "Not established: cited sessions separately describe June and July."
+    },
+    {
+      "case": "M10",
+      "source_identity": "2c54a3351d56fc6bf374c5d0c2070e1cb914b8833601fdf9ef8a6c19f33b29c3",
+      "source_key": [
+        "p2",
+        "p2_conv_7",
+        1
+      ],
+      "question_changed": false,
+      "gold_changed": false,
+      "decision": "exclude_before_generation",
+      "reason_code": "nonunique_unbounded_after_event",
+      "note_zh": "writer block之后发生过多个事件，问题未限定时间或要求两个事件；在线社区和workshop不是唯一合法回答，不能用gold列表排斥其他有据后续事件。"
+    }
+  ],
+  "semantic_rubric": "Complete: all required propositions with correct entity/time/order and no unsupported contradictory claim. Partial: some correct propositions, omissions. Incorrect: false answer/order. Uncertain: legitimate alternative or unresolved entailment; never force a score. Equivalent wording accepted by blind source review, no string-only score for open answers.",
+  "automatic_alias_metric": "Predeclared normalized short-answer exact aliases; nonmatch is review_pending, not automatically incorrect.",
+  "source_admitted": 19,
+  "primary_short_facts": 14,
+  "secondary_semantic": 5,
+  "excluded": 11,
+  "pre_generation_review_correction": "M06记录日期核为2025-02-07，补记后期关系仍有顾虑；F20改为原文实际表达而非并不存在的字面ex标签。未生成任何QA回复。"
+}

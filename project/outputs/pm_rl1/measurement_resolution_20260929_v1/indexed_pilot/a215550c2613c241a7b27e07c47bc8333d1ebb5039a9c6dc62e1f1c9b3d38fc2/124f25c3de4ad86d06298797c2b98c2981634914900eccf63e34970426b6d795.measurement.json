@@ -1,0 +1,83 @@
+{
+  "response_sha256": "e90a48d9e77e2d3305c6bc9a6e0834a23fce3a7f93f1294cae2576bd4439c792",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "1a958ba36019ef5ac61ac557d4a14b8966c3c1ed119339f160a4c442169255b7",
+  "raw_output_sha256": "7a6f150bd8b05c0988ee45870f616a9fc02507fd19af9319e6c0678bb9d78c1b",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate Amanda's uncertainty regarding communicating workload adjustments to her supervisor and assist in identifying barriers.",
+      "response_quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply directly addresses the core issue raised in C:T015 ('I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.') by validating the uncertainty (R001) and probing for specific details to aid planning (R002). It avoids unsupported claims or factual errors consistent with the user's history of workplace challenges documented in current and past turns."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked validation of feelings against C:T015 expression of uncertainty. Verified alignment with context of supervisor relationship from C:T013, H009, H010, and H018. No contradictory personal facts or boundary violations detected in the reply.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how others will respond. What are some specific adjustments you're thinking of discussing, and what's holding you back from bringing it up with your supervisor?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 197
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate Amanda's uncertainty regarding communicating workload adjustments to her supervisor and assist in identifying barriers.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the core issue raised in C:T015 ('I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.') by validating the uncertainty (R001) and probing for specific details to aid planning (R002). It avoids unsupported claims or factual errors consistent with the user's history of workplace challenges documented in current and past turns."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked validation of feelings against C:T015 expression of uncertainty. Verified alignment with context of supervisor relationship from C:T013, H009, H010, and H018. No contradictory personal facts or boundary violations detected in the reply.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

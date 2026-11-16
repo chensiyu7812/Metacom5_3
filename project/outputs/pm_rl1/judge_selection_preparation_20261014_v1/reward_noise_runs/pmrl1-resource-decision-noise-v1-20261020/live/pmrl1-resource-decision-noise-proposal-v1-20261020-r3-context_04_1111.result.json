@@ -1,0 +1,370 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_04_1111",
+  "request_identity": "4a6655d52f6de79009add9dd61f14037135512333416ce06a90c0e1237e17e79",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "A brief, supportive response to the seeker's vague statement that things have been tough lately, without assuming unstated details or pushing advice.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The reply directly acknowledges the seeker's reported difficulty, offers to listen if they want to share more, and asks how to support them. That fits this early, unspecified turn: it is responsive and respectful, does not over-assume from past sessions, and makes no important omission."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "This is an empathic paraphrase of the seeker's current report that things have been 'a bit tough lately.'"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "'It sounds like you're going through a difficult time' is a tentative reflection of C:T002; the offer to listen is a supportive role statement, not a personal factual claim about the user."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open support question, not an assertion of personal fact; it appropriately invites the seeker to name what kind of support they want."
+        }
+      ],
+      "coverage": "Reviewed the current prefix through C:T002 and both past sessions H001 and H002. The reply does not cite or contradict past details about sleep or drinking/marriage, and it makes no specific personal or boundary claims requiring further factual verification.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "1101550b528e2fd63106e8db74c2dad7847432e00420e83f4975deecae409b3e",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r3-context_04_1111",
+      "raw_output_sha256": "7b21304d62ca9820a30c6005cc3a777a8ac7b1093fae6656e325aa97378f58a4",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "A brief, supportive response to the seeker's vague statement that things have been tough lately, without assuming unstated details or pushing advice.",
+          "response_quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a difficult time, and I'm here to listen if you'd like to share more about what's on your mind. How can I support you today?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The reply directly acknowledges the seeker's reported difficulty, offers to listen if they want to share more, and asks how to support them. That fits this early, unspecified turn: it is responsive and respectful, does not over-assume from past sessions, and makes no important omission."
+        },
+        "claims": [
+          {
+            "response_quote": "I'm sorry to hear that things have been tough for you lately.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "This is an empathic paraphrase of the seeker's current report that things have been 'a bit tough lately.'"
+          },
+          {
+            "response_quote": "It sounds like you're going through a difficult time, and I'm here to listen if you'd like to share more about what's on your mind.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "'It sounds like you're going through a difficult time' is a tentative reflection of C:T002; the offer to listen is a supportive role statement, not a personal factual claim about the user."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the current prefix through C:T002 and both past sessions H001 and H002. The reply does not cite or contradict past details about sleep or drinking/marriage, and it makes no specific personal or boundary claims requiring further factual verification.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a difficult time, and I'm here to listen if you'd like to share more about what's on your mind. How can I support you today?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 222
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 61
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It sounds like you're going through a difficult time, and I'm here to listen if you'd like to share more about what's on your mind.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 193
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "A brief, supportive response to the seeker's vague statement that things have been tough lately, without assuming unstated details or pushing advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's reported difficulty, offers to listen if they want to share more, and asks how to support them. That fits this early, unspecified turn: it is responsive and respectful, does not over-assume from past sessions, and makes no important omission."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "This is an empathic paraphrase of the seeker's current report that things have been 'a bit tough lately.'"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "'It sounds like you're going through a difficult time' is a tentative reflection of C:T002; the offer to listen is a supportive role statement, not a personal factual claim about the user."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the current prefix through C:T002 and both past sessions H001 and H002. The reply does not cite or contradict past details about sleep or drinking/marriage, and it makes no specific personal or boundary claims requiring further factual verification.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "A brief, supportive response to the seeker's vague statement that things have been tough lately, without assuming unstated details or pushing advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's reported difficulty, offers to listen if they want to share more, and asks how to support them. That fits this early, unspecified turn: it is responsive and respectful, does not over-assume from past sessions, and makes no important omission."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "This is an empathic paraphrase of the seeker's current report that things have been 'a bit tough lately.'",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "'It sounds like you're going through a difficult time' is a tentative reflection of C:T002; the offer to listen is a supportive role statement, not a personal factual claim about the user.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open support question, not an assertion of personal fact; it appropriately invites the seeker to name what kind of support they want.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the current prefix through C:T002 and both past sessions H001 and H002. The reply does not cite or contradict past details about sleep or drinking/marriage, and it makes no specific personal or boundary claims requiring further factual verification.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "A brief, supportive response to the seeker's vague statement that things have been tough lately, without assuming unstated details or pushing advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's reported difficulty, offers to listen if they want to share more, and asks how to support them. That fits this early, unspecified turn: it is responsive and respectful, does not over-assume from past sessions, and makes no important omission."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "This is an empathic paraphrase of the seeker's current report that things have been 'a bit tough lately.'"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "'It sounds like you're going through a difficult time' is a tentative reflection of C:T002; the offer to listen is a supportive role statement, not a personal factual claim about the user."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open support question, not an assertion of personal fact; it appropriately invites the seeker to name what kind of support they want."
+          }
+        ],
+        "coverage": "Reviewed the current prefix through C:T002 and both past sessions H001 and H002. The reply does not cite or contradict past details about sleep or drinking/marriage, and it makes no specific personal or boundary claims requiring further factual verification.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "7b21304d62ca9820a30c6005cc3a777a8ac7b1093fae6656e325aa97378f58a4",
+      "adapted_final_sha256": "7b21304d62ca9820a30c6005cc3a777a8ac7b1093fae6656e325aa97378f58a4",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0027579",
+    "usage_upper_usd": "0.0027579",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4205,
+    "completion_tokens": 1247,
+    "total_tokens": 5452,
+    "prompt_tokens_details": {
+      "cached_tokens": 3968
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 864
+    },
+    "prompt_cache_hit_tokens": 3968,
+    "prompt_cache_miss_tokens": 237
+  },
+  "elapsed_seconds": 7.271645221000654,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

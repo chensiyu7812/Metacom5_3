@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "new-human-reference",
+      "title": "7组已完成：6组相当，1组A更好",
+      "queries": [
+        {
+          "id": "human-input",
+          "source": {
+            "label": "研究者原始导出及版本绑定",
+            "files": [
+              {
+                "label": "researcher_original.json"
+              },
+              {
+                "label": "packet_metadata.json"
+              }
+            ],
+            "caveats": [
+              "同一位研究者；4个已暴露情境、2个来源owner。历史P04另列，不是本次新作答。"
+            ]
+          },
+          "columns": [
+            {
+              "field": "complete",
+              "label": "完整作答"
+            },
+            {
+              "field": "tie",
+              "label": "相当"
+            },
+            {
+              "field": "A",
+              "label": "A更好"
+            },
+            {
+              "field": "unknown",
+              "label": "未知"
+            }
+          ],
+          "rows": [
+            {
+              "complete": 7,
+              "tie": 6,
+              "A": 1,
+              "unknown": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "direction-readout",
+      "title": "平均未改善与本批人类偏好的方向一致",
+      "queries": [
+        {
+          "id": "frozen-comparison",
+          "source": {
+            "label": "原48次评分与新7组偏好",
+            "files": [
+              {
+                "label": "analysis.json"
+              },
+              {
+                "label": "PAIR_MATRIX.csv"
+              }
+            ],
+            "caveats": [
+              "重复读数不增加人评或独立案例；一致数不是q/m绝对准确率。",
+              "人类相当不提供精确效用数值；比较不扣资源成本、不事后调平局阈值。"
+            ]
+          },
+          "columns": [
+            {
+              "field": "method",
+              "label": "固定读数"
+            },
+            {
+              "field": "agreement",
+              "label": "方向相同"
+            },
+            {
+              "field": "tie_agreement",
+              "label": "6组平局中相同"
+            }
+          ],
+          "rows": [
+            {
+              "method": "第1轮",
+              "agreement": "6/7",
+              "tie_agreement": "5/6"
+            },
+            {
+              "method": "第3轮",
+              "agreement": "7/7",
+              "tie_agreement": "6/6"
+            },
+            {
+              "method": "1/2轮均值",
+              "agreement": "4/7",
+              "tie_agreement": "3/6"
+            },
+            {
+              "method": "3/4轮均值",
+              "agreement": "4/7",
+              "tie_agreement": "3/6"
+            }
+          ],
+          "methods": [
+            {
+              "language": "calculation",
+              "code": "U = q/4 - m; direction = sign(U_A - U_B). Single draws: 1 and 3. Mean blocks: (1,2) and (3,4). Historical P04 is excluded from these seven-pair denominators."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

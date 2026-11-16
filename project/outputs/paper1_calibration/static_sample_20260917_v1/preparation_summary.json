@@ -1,0 +1,125 @@
+{
+  "protocol": "paper1-static-amount-calibration-preparation-20260917-v1",
+  "status": "PREPARED_NO_GENERATION_NO_PAID_CALLS",
+  "sample_targets": 148,
+  "targets_by_task": {
+    "qa": 85,
+    "summary": 63
+  },
+  "owners": 18,
+  "outer_folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "sampling": "one component then one target per task/owner/fold, fixed seed 0, inverse inclusion weights",
+  "generator_calls": 1924,
+  "nominal_official_scorer_calls": 1924,
+  "scorer_calls_by_task": {
+    "qa": 1105,
+    "summary": 819
+  },
+  "analytical_rows_OFF_reused_across_heads": 2220,
+  "generator_input_tokens_min_median_max": [
+    260,
+    589.0,
+    3497
+  ],
+  "max_exact_resource_tokens_by_head": {
+    "MP": 339,
+    "ME": 314,
+    "MS": 3101
+  },
+  "per_heldout_fold_training_side_sample": {
+    "0": {
+      "qa": 68,
+      "summary": 50
+    },
+    "1": {
+      "qa": 68,
+      "summary": 51
+    },
+    "2": {
+      "qa": 68,
+      "summary": 50
+    },
+    "3": {
+      "qa": 68,
+      "summary": 51
+    },
+    "4": {
+      "qa": 68,
+      "summary": 50
+    }
+  },
+  "cost_scenarios": [
+    {
+      "scenario": "short",
+      "assumed_mean_answer_tokens_in_scorer_encoding": 256,
+      "assumed_QA_judge_output_tokens": 8,
+      "assumed_Summary_judge_output_tokens": 512,
+      "first_attempt_estimate_usd": 7.845727,
+      "assumptions_not_token_caps": true
+    },
+    {
+      "scenario": "central",
+      "assumed_mean_answer_tokens_in_scorer_encoding": 512,
+      "assumed_QA_judge_output_tokens": 8,
+      "assumed_Summary_judge_output_tokens": 1024,
+      "first_attempt_estimate_usd": 13.270368,
+      "assumptions_not_token_caps": true
+    },
+    {
+      "scenario": "long",
+      "assumed_mean_answer_tokens_in_scorer_encoding": 1024,
+      "assumed_QA_judge_output_tokens": 16,
+      "assumed_Summary_judge_output_tokens": 2048,
+      "first_attempt_estimate_usd": 24.208047,
+      "assumptions_not_token_caps": true
+    }
+  ],
+  "proposed_stage_hard_cap_including_retries_usd": 15,
+  "stage_cap_is_not_guaranteed_full_batch_cost": true,
+  "budget_execution": "Sequential worst-case reservation for each actual request and full provider output allowance; stop before next reservation exceeds stage/cumulative cap. Never shorten an answer to fit cost.",
+  "current_accounted_Paper1_API_usd": "1.50724291",
+  "current_remaining_Paper1_API_usd": "48.49275709",
+  "price_snapshot": {
+    "date": "2026-09-17",
+    "source": "https://developers.openai.com/api/docs/pricing",
+    "standard_input_per_million": 2.5,
+    "standard_output_per_million": 10,
+    "cached_discount_assumed": false
+  },
+  "price_estimates_depend_on_unobserved_output_lengths": true,
+  "calibration_outcomes": 0,
+  "formal_outcomes": 0,
+  "PM_training_runs": 0,
+  "not_in_this_static_batch": [
+    "RS multi-round calibration",
+    "DG live-seeker calibration",
+    "formal effect labels",
+    "PM training"
+  ],
+  "sources": {
+    "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "data/paper1_public_memory/es_memeval_public_multi_view_session_results_v1.jsonl": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "data/paper1_public_memory/es_memeval_public_active_multi_view_bge_top8_v1.jsonl": "19cabd4a9a820a020dacf5e747c1a053296e1f45d92b3955e79d05da521f886f",
+    "data/paper1_public_memory/es_memeval_public_outer_fold_assignments_k5_seed0_v1.jsonl": "8a1116aa56b934f7331eb2b4c0b8663551bab78298b00620eed7d6c861b391cb",
+    "data/external/evo_emo.json": "f30698e87fddaeff51270a666c654da604f487a3456ec60d2b6ae08a6fecd420",
+    "outputs/vendor_es_memeval/src/lib/qa/qa_experiment.py": "0607d0316d508db0002fb63e18ab86f3dbd2119ec6d90978d7170ed3db99b1db",
+    "outputs/vendor_es_memeval/src/lib/sum/sum_experiment.py": "93f8267f6aff734fd5f42a7fdd1844b2754e8f314d50d938663f4e1dc0ff6d0f"
+  },
+  "package_artifacts": {
+    "scorer_config.json": "071807e0855f156d9e42277c011fdf9bbb5723339b638244594ff2385fd1ab53",
+    "generator_requests.jsonl": "430969cf1f20ef418a6187ed66481e075ebe20cbaa2c82fce503bc7ea94c5122",
+    "scorer_slots.jsonl": "e2d918746305bc8aa6057a1cdd28acf02dd2f82ba96c8eb4c3fd5b3e57f37dc6",
+    "selected_targets.jsonl": "08397dc4ef2ff429a24bc22513f27c700a80ca6b6816fdc2f80676438063e94f",
+    "official_scorer_templates.json": "7e6a19ad37cadf732f7dc14500ff8d82711290ad5ca69319867b8551e6621600",
+    "evaluator_inputs.jsonl": "6d3acbeb4760b60ee46e55b6d45d9232fd772be845f057c1a1a6b84f1b89c3a3",
+    "analytical_design.jsonl": "ef5d69acbaa83f14bf1770d0c045822a947441a7bcfbd7784e4ba39d1e2cb439",
+    "generator_config.json": "0958d995bc3188cc45b36457380f766c7a0954f688b1f6ef844b04e399f8a592"
+  },
+  "selection": "Fold-external one-SE on official task primary; weighted owner-cluster bootstrap, cheapest input tokens then k. Complete paired grids only; missingness disclosed; guards reviewed before freeze."
+}

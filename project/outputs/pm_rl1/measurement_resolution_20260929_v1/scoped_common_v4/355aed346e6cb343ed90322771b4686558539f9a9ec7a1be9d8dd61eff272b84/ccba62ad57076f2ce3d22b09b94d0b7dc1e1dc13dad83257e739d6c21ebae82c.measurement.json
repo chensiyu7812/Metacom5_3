@@ -1,0 +1,192 @@
+{
+  "response_sha256": "3e6f198330d0801f850567d15ce80fa270b8ca87b94eeb8e4517790b7fffa6f7",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+  "raw_output_sha256": "84b03ace8512531092a75a3e2f2d1ea7150db68579684801223e076f3056ba2c",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "open_emotional_connection",
+      "response_quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "The reply fully meets the current turn's call for connection and support without making unverified assumptions about the specific topic since none was detailed in the single-turn prefix. It validates the seeker's expressed need for talking, normalizes the feeling, and respectfully invites further disclosure. There are no factual claims made about the user's history that contradict evidence or introduce unsupported personal facts, maintaining consistency with the supportive tone established in prior sessions (validating efforts, offering presence)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All four units contribute to validating the user's need and inviting conversation; no specific facts are required or asserted.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm glad you reached out. It's completely normal to need someone to talk to sometimes. Would you like to talk about what's been going on and why you needed to talk to someone today? I'm here to listen and offer support if you need it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 234
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "open_emotional_connection",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the current turn's call for connection and support without making unverified assumptions about the specific topic since none was detailed in the single-turn prefix. It validates the seeker's expressed need for talking, normalizes the feeling, and respectfully invites further disclosure. There are no factual claims made about the user's history that contradict evidence or introduce unsupported personal facts, maintaining consistency with the supportive tone established in prior sessions (validating efforts, offering presence)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All four units contribute to validating the user's need and inviting conversation; no specific facts are required or asserted.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "open_emotional_connection",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the current turn's call for connection and support without making unverified assumptions about the specific topic since none was detailed in the single-turn prefix. It validates the seeker's expressed need for talking, normalizes the feeling, and respectfully invites further disclosure. There are no factual claims made about the user's history that contradict evidence or introduce unsupported personal facts, maintaining consistency with the supportive tone established in prior sessions (validating efforts, offering presence)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathetic validation of reaching out.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General normalization of emotional needs.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Invitational question seeking further details without presupposing specific causes or facts.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Commitment to provide support, aligning with the persona.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All four units contribute to validating the user's need and inviting conversation; no specific facts are required or asserted.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "open_emotional_connection",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the current turn's call for connection and support without making unverified assumptions about the specific topic since none was detailed in the single-turn prefix. It validates the seeker's expressed need for talking, normalizes the feeling, and respectfully invites further disclosure. There are no factual claims made about the user's history that contradict evidence or introduce unsupported personal facts, maintaining consistency with the supportive tone established in prior sessions (validating efforts, offering presence)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathetic validation of reaching out."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General normalization of emotional needs."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Invitational question seeking further details without presupposing specific causes or facts."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Commitment to provide support, aligning with the persona."
+      }
+    ],
+    "coverage": "All four units contribute to validating the user's need and inviting conversation; no specific facts are required or asserted.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

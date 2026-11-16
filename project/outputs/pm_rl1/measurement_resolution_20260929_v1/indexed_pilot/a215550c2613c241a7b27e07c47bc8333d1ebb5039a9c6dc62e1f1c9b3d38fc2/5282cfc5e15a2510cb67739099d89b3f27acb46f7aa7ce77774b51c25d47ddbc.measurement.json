@@ -1,0 +1,85 @@
+{
+  "response_sha256": "16834ac17e414203f18d19a6511f98253832a65882bc4ebd2b126884c6f3e8a1",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "a9029ac20b7120e0a9fd6ea7a9275b15bbd4f22388745b1dc402d9ef5ba1dabc",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the user's hesitation to seek support due to distrust and past disappointments, and a gentle suggestion to consider alternative support sources.",
+      "response_quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling? Sometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "The reply directly addresses the user's expressed difficulty in asking for help ('Have you thought about talking to someone you trust...'). It validates the emotional weight ('carrying the weight of uncertainty', 'tough') derived from C:T012's context of isolation and past failures to trust ('trust it'll come through'). The tone is empathetic and respectful of the user's caution while offering a constructive direction without pushing for immediate action. It avoids contradicting prior context regarding the colleague James (C:T008/T009) or the financial/transport stress."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked the reply against the user's explicit statement of inability to trust/help-seeking in C:T012. Verified no invented personal history or identity errors (user identified as Michael in C:T001). Confirmed no contradictions with the James colleague scenario in C:T008/T009. Suggested categories of support ('friend or family') are treated as general options rather than assertions of existing specific contacts.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling? Sometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 292
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of the user's hesitation to seek support due to distrust and past disappointments, and a gentle suggestion to consider alternative support sources.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply directly addresses the user's expressed difficulty in asking for help ('Have you thought about talking to someone you trust...'). It validates the emotional weight ('carrying the weight of uncertainty', 'tough') derived from C:T012's context of isolation and past failures to trust ('trust it'll come through'). The tone is empathetic and respectful of the user's caution while offering a constructive direction without pushing for immediate action. It avoids contradicting prior context regarding the colleague James (C:T008/T009) or the financial/transport stress."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked the reply against the user's explicit statement of inability to trust/help-seeking in C:T012. Verified no invented personal history or identity errors (user identified as Michael in C:T001). Confirmed no contradictions with the James colleague scenario in C:T008/T009. Suggested categories of support ('friend or family') are treated as general options rather than assertions of existing specific contacts.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

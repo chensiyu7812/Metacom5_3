@@ -1,0 +1,135 @@
+{
+  "response_sha256": "32383d2b8d37209daf54f88b9c42da74ce052df491496dc2c1fc798d7fad54d8",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "198b3a7ba2c23a7a8f68f4b7f72b9c6d5d27bcd74e44589d8b3b59cb4663c2b0",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's consideration of returning to therapy for processing complex emotions related to the recent contact.",
+      "response_quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've never seen any benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply adequately supports the user's decision to see a therapist but introduces a significant factual error regarding the user's history. The user explicitly stated in C:T016 that their therapy 'has been helping a lot with stress and career stuff,' directly contradicting the reply's claim in R003 that the user 'never seen any benefits.' While the supportive tone remains, this hallucination undermines the accuracy of the validation and risks confusing the user about their own progress, constituting a mishandled constraint and lowering the quality score."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+          }
+        ],
+        "reason": "R003 asserts the user has never seen benefits in therapy, while C:T016 clearly states the opposite—that sessions have been helpful with stress and career."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked the accuracy of the reply's claim regarding therapy effectiveness (R003) against the user's explicit statement in the current session (C:T016). Assessed whether other turns provided supporting evidence for the 'benefits' claim. None were found that support 'never seen benefits'; instead, C:T016 contradicts it.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great idea! Therapy can be a really powerful tool for processing complex emotions and gaining new insights. It's awesome that you've never seen any benefits in other areas of your life. Talking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you. Would you like to talk more about what you're hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 443
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 194
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the user's consideration of returning to therapy for processing complex emotions related to the recent contact.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The reply adequately supports the user's decision to see a therapist but introduces a significant factual error regarding the user's history. The user explicitly stated in C:T016 that their therapy 'has been helping a lot with stress and career stuff,' directly contradicting the reply's claim in R003 that the user 'never seen any benefits.' While the supportive tone remains, this hallucination undermines the accuracy of the validation and risks confusing the user about their own progress, constituting a mishandled constraint and lowering the quality score."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "R003 asserts the user has never seen benefits in therapy, while C:T016 clearly states the opposite—that sessions have been helpful with stress and career."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked the accuracy of the reply's claim regarding therapy effectiveness (R003) against the user's explicit statement in the current session (C:T016). Assessed whether other turns provided supporting evidence for the 'benefits' claim. None were found that support 'never seen benefits'; instead, C:T016 contradicts it.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

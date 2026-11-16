@@ -1,0 +1,415 @@
+{
+  "response_sha256": "bfc3cbc3692e807282ed1c7365e7922d1b283bd8d6d6c44bc81da9426fb3fb5a",
+  "legal_evidence_identity": "6ea81f1c5657b032d3acaf9233beaba13fb22112658e9ae7a186f2bfd6252da4",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "d0774f56a6a3f4cacfd493da752aa75412d9ce9a2221beff1c4f0d6218263249",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the emotional impact of the user's mother's relapse news and acknowledge the cumulative stress of ongoing work issues, inviting further expression.",
+      "response_quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+      "evidence": [
+        {
+          "source_id": "C:T009",
+          "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+        },
+        {
+          "source_id": "C:T003",
+          "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me."
+        },
+        {
+          "source_id": "C:T001",
+          "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything."
+        }
+      ],
+      "reason": "The reply directly acknowledges the specific disclosure in C:T009 (mom's relapse) with appropriate empathy (R001). It accurately synthesizes the user's described burdens from C:T001 ('overwhelmed') and C:T007 ('work stress' + 'mom illness') to validate their situation (R002, R003). It closes with an open-ended question (R004) that respects the user's agency and seeks deeper engagement without making unwarranted assumptions or boundary violations."
+    },
+    "claims": [
+      {
+        "response_quote": "I'm so sorry to hear that your mom had another relapse.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "R001 asserts the mother had another relapse, which is explicitly confirmed in the user's last turn C:T009 ('She had another relapse recently')."
+      },
+      {
+        "response_quote": "It sounds like you and your family are carrying a heavy load right now.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          },
+          {
+            "source_id": "C:T001",
+            "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything."
+          }
+        ],
+        "reason": "R002 reflects the user's description of burden ('carrying a heavy load'), supported by C:T009 ('tough on her and us') and C:T001 ('overwhelmed with everything')."
+      },
+      {
+        "response_quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+          }
+        ],
+        "reason": "R003 describes the draining combination of illness and work issues, supported by C:T007 ('dealing with my mom's illness is just adding more stress' to ongoing work conflict)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response fully addresses the user's current distress regarding their mother's relapse and work stress, validating both the immediate news and the ongoing context provided in the session prefix. It provides empathetic connection and a constructive prompt for further discussion.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 310
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 107
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 74
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "I'm so sorry to hear that your mom had another relapse.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 55
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It sounds like you and your family are carrying a heavy load right now.",
+      "positions": [
+        {
+          "start": 56,
+          "end": 127
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T001",
+      "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 74
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+      "positions": [
+        {
+          "start": 128,
+          "end": 220
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the emotional impact of the user's mother's relapse news and acknowledge the cumulative stress of ongoing work issues, inviting further expression.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T003",
+        "C:T001"
+      ],
+      "reason": "The reply directly acknowledges the specific disclosure in C:T009 (mom's relapse) with appropriate empathy (R001). It accurately synthesizes the user's described burdens from C:T001 ('overwhelmed') and C:T007 ('work stress' + 'mom illness') to validate their situation (R002, R003). It closes with an open-ended question (R004) that respects the user's agency and seeks deeper engagement without making unwarranted assumptions or boundary violations."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "R001 asserts the mother had another relapse, which is explicitly confirmed in the user's last turn C:T009 ('She had another relapse recently')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T001"
+        ],
+        "reason": "R002 reflects the user's description of burden ('carrying a heavy load'), supported by C:T009 ('tough on her and us') and C:T001 ('overwhelmed with everything')."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "R003 describes the draining combination of illness and work issues, supported by C:T007 ('dealing with my mom's illness is just adding more stress' to ongoing work conflict)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response fully addresses the user's current distress regarding their mother's relapse and work stress, validating both the immediate news and the ongoing context provided in the session prefix. It provides empathetic connection and a constructive prompt for further discussion.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validate the emotional impact of the user's mother's relapse news and acknowledge the cumulative stress of ongoing work issues, inviting further expression.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T003",
+        "C:T001"
+      ],
+      "reason": "The reply directly acknowledges the specific disclosure in C:T009 (mom's relapse) with appropriate empathy (R001). It accurately synthesizes the user's described burdens from C:T001 ('overwhelmed') and C:T007 ('work stress' + 'mom illness') to validate their situation (R002, R003). It closes with an open-ended question (R004) that respects the user's agency and seeks deeper engagement without making unwarranted assumptions or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "R001 asserts the mother had another relapse, which is explicitly confirmed in the user's last turn C:T009 ('She had another relapse recently').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T001"
+        ],
+        "reason": "R002 reflects the user's description of burden ('carrying a heavy load'), supported by C:T009 ('tough on her and us') and C:T001 ('overwhelmed with everything').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "R003 describes the draining combination of illness and work issues, supported by C:T007 ('dealing with my mom's illness is just adding more stress' to ongoing work conflict).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T001"
+        ],
+        "reason": "R004 is an exploratory question ('How are you managing') responding to the user's state expressed in C:T009 and C:T001, without asserting new facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response fully addresses the user's current distress regarding their mother's relapse and work stress, validating both the immediate news and the ongoing context provided in the session prefix. It provides empathetic connection and a constructive prompt for further discussion.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validate the emotional impact of the user's mother's relapse news and acknowledge the cumulative stress of ongoing work issues, inviting further expression.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T003",
+        "C:T001"
+      ],
+      "reason": "The reply directly acknowledges the specific disclosure in C:T009 (mom's relapse) with appropriate empathy (R001). It accurately synthesizes the user's described burdens from C:T001 ('overwhelmed') and C:T007 ('work stress' + 'mom illness') to validate their situation (R002, R003). It closes with an open-ended question (R004) that respects the user's agency and seeks deeper engagement without making unwarranted assumptions or boundary violations."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "R001 asserts the mother had another relapse, which is explicitly confirmed in the user's last turn C:T009 ('She had another relapse recently')."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T001"
+        ],
+        "reason": "R002 reflects the user's description of burden ('carrying a heavy load'), supported by C:T009 ('tough on her and us') and C:T001 ('overwhelmed with everything')."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "R003 describes the draining combination of illness and work issues, supported by C:T007 ('dealing with my mom's illness is just adding more stress' to ongoing work conflict)."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T001"
+        ],
+        "reason": "R004 is an exploratory question ('How are you managing') responding to the user's state expressed in C:T009 and C:T001, without asserting new facts."
+      }
+    ],
+    "coverage": "The response fully addresses the user's current distress regarding their mother's relapse and work stress, validating both the immediate news and the ongoing context provided in the session prefix. It provides empathetic connection and a constructive prompt for further discussion.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

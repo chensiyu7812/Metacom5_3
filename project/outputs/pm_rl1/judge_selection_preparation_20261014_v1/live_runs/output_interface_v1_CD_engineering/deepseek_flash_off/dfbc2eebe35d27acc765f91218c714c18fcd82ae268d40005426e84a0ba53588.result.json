@@ -1,0 +1,312 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "deepseek_flash_off",
+    "configuration_identity": "0111ed4bfffcdee370148902b33f4e17d9bc31aa790537b9b0f6ecb8281a8e99",
+    "phase": "engineering",
+    "ordinal": 3,
+    "item_key": "dev37A",
+    "draw": "primary",
+    "messages_identity": "a9d193bce591df9d82805aca346f5d25354d1bd4abf243df396eb8795a34a877",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "bddcc4beab101fb52b92cf99a779728dba6c649869dad73603f6434f6b5b89e5",
+    "seed": 2861122427,
+    "schedule_position": 9,
+    "input_utf8_bytes": 67086,
+    "original_slot_request_id": "9914353c0d93e2bf102e3d22f022ee29ac72efff27c2dc01251c64b65381ce93",
+    "original_configuration_identity": "84a6fd78bcaf29631b9e18be758cb1ef2470ae4c4757634645593b8a8f6b0e74",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "dfbc2eebe35d27acc765f91218c714c18fcd82ae268d40005426e84a0ba53588"
+  },
+  "original_request": {
+    "candidate": "deepseek_flash_off",
+    "configuration_identity": "84a6fd78bcaf29631b9e18be758cb1ef2470ae4c4757634645593b8a8f6b0e74",
+    "phase": "engineering",
+    "ordinal": 3,
+    "item_key": "dev37A",
+    "draw": "primary",
+    "messages_identity": "a9d193bce591df9d82805aca346f5d25354d1bd4abf243df396eb8795a34a877",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "bddcc4beab101fb52b92cf99a779728dba6c649869dad73603f6434f6b5b89e5",
+    "seed": 2861122427,
+    "schedule_position": 9,
+    "input_utf8_bytes": 67086,
+    "request_id": "9914353c0d93e2bf102e3d22f022ee29ac72efff27c2dc01251c64b65381ce93"
+  },
+  "protocol_identity": "8572a4bddf9939f307c9ef2792acb7833a6b4025055e691686e72d5df6468868",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "d0a1a8917cfb159953fc77e03b7608485ba3c5463047f9c814b22e19efff0e2b",
+      "legal_evidence_identity": "bd4c73276b4513951cd258adb7de9c7c64c8f1906fba3c6ac13d669287ac5aec",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0111ed4bfffcdee370148902b33f4e17d9bc31aa790537b9b0f6ecb8281a8e99",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "dfbc2eebe35d27acc765f91218c714c18fcd82ae268d40005426e84a0ba53588",
+      "raw_output_sha256": "fd5ddfeb6ed5e79162d1d06095d0007315a325abd38d9b2207c12f316fc9b721",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Kelly is closing out the conversation, thanking the listener for being heard and understood; the turn calls for a warm acknowledgment rather than new probing or advice.",
+          "response_quote": "I'm glad you feel heard. You can take some time before deciding what to do next.",
+          "evidence": [
+            {
+              "source_id": "C:T016",
+              "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+            },
+            {
+              "source_id": "C:T014",
+              "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes."
+            }
+          ],
+          "reason": "The reply warmly acknowledges Kelly's sense of being heard (matching C:T016) and echoes her own stated plan to think on the internship decision (C:T014) without imposing new direction or a personal anecdote—appropriate and complete for a closing turn."
+        },
+        "claims": [
+          {
+            "response_quote": "You can take some time before deciding what to do next.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T012",
+                "quote": "I'm trying to keep my options open. There's the internship offer, but I'm not sure about committing to it right now."
+              },
+              {
+                "source_id": "C:T014",
+                "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes."
+              }
+            ],
+            "reason": "Restates Kelly's own stated stance to \"think on it more\" before committing to the internship offer, a supported reflection of her words rather than a new personal claim."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Both reply units are short, responsive, and free of factual or boundary errors; they acknowledge the closing gratitude and echo Kelly's stated plan to take time deciding. No clinical claim, invented history, or identity/boundary issue was found in the complete supplied evidence.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm glad you feel heard. You can take some time before deciding what to do next.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 80
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 98
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T014",
+          "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "You can take some time before deciding what to do next.",
+          "positions": [
+            {
+              "start": 25,
+              "end": 80
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T012",
+          "quote": "I'm trying to keep my options open. There's the internship offer, but I'm not sure about committing to it right now.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T014",
+          "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 101
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Kelly is closing out the conversation, thanking the listener for being heard and understood; the turn calls for a warm acknowledgment rather than new probing or advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply warmly acknowledges Kelly's sense of being heard (matching C:T016) and echoes her own stated plan to think on the internship decision (C:T014) without imposing new direction or a personal anecdote—appropriate and complete for a closing turn."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012",
+              "C:T014"
+            ],
+            "reason": "Restates Kelly's own stated stance to \"think on it more\" before committing to the internship offer, a supported reflection of her words rather than a new personal claim."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Both reply units are short, responsive, and free of factual or boundary errors; they acknowledge the closing gratitude and echo Kelly's stated plan to take time deciding. No clinical claim, invented history, or identity/boundary issue was found in the complete supplied evidence.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "Kelly is closing out the conversation, thanking the listener for being heard and understood; the turn calls for a warm acknowledgment rather than new probing or advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply warmly acknowledges Kelly's sense of being heard (matching C:T016) and echoes her own stated plan to think on the internship decision (C:T014) without imposing new direction or a personal anecdote—appropriate and complete for a closing turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "Empathic acknowledgment keyed to Kelly's stated feeling of being heard; not a specific personal factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012",
+              "C:T014"
+            ],
+            "reason": "Restates Kelly's own stated stance to \"think on it more\" before committing to the internship offer, a supported reflection of her words rather than a new personal claim.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "Both reply units are short, responsive, and free of factual or boundary errors; they acknowledge the closing gratitude and echo Kelly's stated plan to take time deciding. No clinical claim, invented history, or identity/boundary issue was found in the complete supplied evidence.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "Kelly is closing out the conversation, thanking the listener for being heard and understood; the turn calls for a warm acknowledgment rather than new probing or advice.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T016",
+            "C:T014"
+          ],
+          "reason": "The reply warmly acknowledges Kelly's sense of being heard (matching C:T016) and echoes her own stated plan to think on the internship decision (C:T014) without imposing new direction or a personal anecdote—appropriate and complete for a closing turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T016"
+            ],
+            "reason": "Empathic acknowledgment keyed to Kelly's stated feeling of being heard; not a specific personal factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T012",
+              "C:T014"
+            ],
+            "reason": "Restates Kelly's own stated stance to \"think on it more\" before committing to the internship offer, a supported reflection of her words rather than a new personal claim."
+          }
+        ],
+        "coverage": "Both reply units are short, responsive, and free of factual or boundary errors; they acknowledge the closing gratitude and echo Kelly's stated plan to take time deciding. No clinical claim, invented history, or identity/boundary issue was found in the complete supplied evidence.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.75,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "fd5ddfeb6ed5e79162d1d06095d0007315a325abd38d9b2207c12f316fc9b721",
+      "adapted_final_sha256": "fd5ddfeb6ed5e79162d1d06095d0007315a325abd38d9b2207c12f316fc9b721",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\"status\": \"scored\", \"q\": 3, \"q_rationale\": {\"current_need\": \"Kelly is closing out the conversation, thanking the listener for being heard and understood; the turn calls for a warm acknowledgment rather than new probing or advice.\", \"response_unit_ids\": [\"R001\", \"R002\"], \"source_turn_ids\": [\"C:T016\", \"C:T014\"], \"reason\": \"The reply warmly acknowledges Kelly's sense of being heard (matching C:T016) and echoes her own stated plan to think on the internship decision (C:T014) without imposing new direction or a personal anecdote—appropriate and complete for a closing turn.\"}, \"assessments\": [{\"response_unit_id\": \"R001\", \"relation\": \"non_factual\", \"severity\": 0, \"source_turn_ids\": [\"C:T016\"], \"reason\": \"Empathic acknowledgment keyed to Kelly's stated feeling of being heard; not a specific personal factual assertion.\"}, {\"response_unit_id\": \"R002\", \"relation\": \"supported\", \"severity\": 0, \"source_turn_ids\": [\"C:T012\", \"C:T014\"], \"reason\": \"Restates Kelly's own stated stance to \\\"think on it more\\\" before committing to the internship offer, a supported reflection of her words rather than a new personal claim.\"}], \"coverage\": \"Both reply units are short, responsive, and free of factual or boundary errors; they acknowledge the closing gratitude and echo Kelly's stated plan to take time deciding. No clinical claim, invented history, or identity/boundary issue was found in the complete supplied evidence.\", \"uncertainty_reasons\": []}"
+  },
+  "elapsed_seconds": 3.7329087810358033,
+  "API_usd": "0.00270951",
+  "financial_accounting": {
+    "accounted_upper_nanodollars": 5983500,
+    "accounted_upper_usd": "0.0059835",
+    "usage_price_estimate_usd": "0.00270951",
+    "cache_split_complete": true,
+    "usage_price_estimate_cny": "0.0180634",
+    "observed_off_peak_interval": true,
+    "invoice_confirmed": false,
+    "explanation": "shared ledger uses all-input cache-miss peak upper; observed usage estimate separately priced; reasoning subset not added twice"
+  },
+  "reservation_id": "pmrl1-CD-engineering:dfbc2eebe35d27acc765f91218c714c18fcd82ae268d40005426e84a0ba53588",
+  "reservation_retained": false,
+  "maximum_responsibility_usd": "0.786432",
+  "budget_within_reservation": true
+}

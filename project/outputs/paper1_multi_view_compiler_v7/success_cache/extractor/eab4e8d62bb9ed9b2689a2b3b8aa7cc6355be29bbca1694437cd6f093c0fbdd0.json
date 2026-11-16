@@ -1,0 +1,131 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2468,
+      "reserved_prompt_tokens": 2596,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 150
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "989099fdf883b262393e0cdb048613f6076f617a8620fc67b466c237ceaa914e",
+    "prior_profile_sha256": "cb4c05e2e6e368156cd4f2d33bb58335b035a13732ad0196815014d22a0f1aec",
+    "request_payload_sha256": "0c7a8f7aa0f4449d988d6c6a165304e1069d011e73515fbddb05a3b126cb6ae6"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p6",
+      "s": "p6_conv_1",
+      "p": [
+        {
+          "i": "p6_p1",
+          "k": "close_friend_status",
+          "t": "stable_relationship_role",
+          "v": "estranged from close friend Lisa due to unpaid loan and communication cutoff",
+          "s": [
+            {
+              "i": "p6_conv_1:4"
+            },
+            {
+              "i": "p6_conv_1:6"
+            },
+            {
+              "i": "p6_conv_1:8"
+            }
+          ]
+        },
+        {
+          "i": "p6_p2",
+          "k": "financial_burden_impact",
+          "t": "durable_health_constraint",
+          "v": "experiencing financial burden and emotional stress due to lent money not repaid by friend Lisa",
+          "s": [
+            {
+              "i": "p6_conv_1:6"
+            },
+            {
+              "i": "p6_conv_1:16"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p6_e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "friend Lisa stopped all communication after seeker lent her money",
+          "s": [
+            {
+              "i": "p6_conv_1:6"
+            },
+            {
+              "i": "p6_conv_1:8"
+            }
+          ]
+        },
+        {
+          "i": "p6_e2",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "seeker attempted to contact Lisa via unanswered messages",
+          "s": [
+            {
+              "i": "p6_conv_1:12"
+            }
+          ]
+        },
+        {
+          "i": "p6_e3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "seeker considers resuming painting as a way to cope with emotional distress",
+          "s": [
+            {
+              "i": "p6_conv_1:20"
+            },
+            {
+              "i": "p6_conv_1:22"
+            }
+          ]
+        },
+        {
+          "i": "p6_e4",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "seeker shared feelings of isolation and loss in conversation with supporter",
+          "s": [
+            {
+              "i": "p6_conv_1:16"
+            },
+            {
+              "i": "p6_conv_1:18"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "4d82a7330857ad7b86299c73da1ccb525c1329e13aac59c5e2b31a6ca12172be",
+    "usage": {
+      "prompt_tokens": 2470,
+      "completion_tokens": 581,
+      "total_tokens": 3051
+    },
+    "latency_ms": 7032.565125991823,
+    "provider_finish_reason": "stop"
+  }
+}

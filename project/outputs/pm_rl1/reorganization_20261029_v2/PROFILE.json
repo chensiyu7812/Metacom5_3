@@ -1,0 +1,128 @@
+{
+  "status": "OFFLINE_PACKAGE_COMPLETE_WITH_LIMITS",
+  "date": "2026-10-29",
+  "scope": {
+    "prefixes": 114,
+    "split": {
+      "train": 96,
+      "dev": 18
+    },
+    "owners_by_split": {
+      "train": 12,
+      "dev": 3
+    },
+    "response_prefixes": 42,
+    "primary_responses": 586,
+    "secondary_matched_pairs": 53,
+    "new_model_loads": 0,
+    "new_model_calls": 0,
+    "training_updates": 0,
+    "new_human_tasks": 0,
+    "audit_script_test_or_sealed_content_read": false,
+    "audit_script_mixed_raw_corpus_opened": false,
+    "local_tokenizer_only": true,
+    "operator_mixed_corpus_output_incident": true
+  },
+  "by_head": {
+    "RS": {
+      "candidate_occurrences": 456,
+      "unique_candidate_ids": 347,
+      "source_check_counts": {
+        "canonical_alias_text_and_all_train_ids_verified": 456
+      },
+      "reachable": 456,
+      "individually_over_budget": 0,
+      "preceding_or_combined_budget_block": 0,
+      "matched_candidate_occurrences": 84,
+      "semantic_compilation_unverified": 456,
+      "uptake_unverified": 456,
+      "first_candidate_blocked_prefixes": 0,
+      "exact_literal_repetition": 0
+    },
+    "MP": {
+      "candidate_occurrences": 374,
+      "unique_candidate_ids": 184,
+      "source_check_counts": {
+        "exact_spans_roles_and_offsets_verified": 320,
+        "unverified": 54
+      },
+      "reachable": 374,
+      "individually_over_budget": 0,
+      "preceding_or_combined_budget_block": 0,
+      "matched_candidate_occurrences": 72,
+      "semantic_compilation_unverified": 374,
+      "uptake_unverified": 374,
+      "first_candidate_blocked_prefixes": 0,
+      "exact_literal_repetition": 5
+    },
+    "MS": {
+      "candidate_occurrences": 425,
+      "unique_candidate_ids": 200,
+      "source_check_counts": {
+        "complete_raw_session_roles_and_text_verified": 354,
+        "unverified": 71
+      },
+      "reachable": 246,
+      "individually_over_budget": 0,
+      "preceding_or_combined_budget_block": 179,
+      "matched_candidate_occurrences": 80,
+      "semantic_compilation_unverified": 425,
+      "uptake_unverified": 425,
+      "first_candidate_blocked_prefixes": 0,
+      "exact_literal_repetition": 0
+    },
+    "ME": {
+      "candidate_occurrences": 449,
+      "unique_candidate_ids": 285,
+      "source_check_counts": {
+        "exact_spans_roles_and_offsets_verified": 380,
+        "unverified": 69
+      },
+      "reachable": 449,
+      "individually_over_budget": 0,
+      "preceding_or_combined_budget_block": 0,
+      "matched_candidate_occurrences": 81,
+      "semantic_compilation_unverified": 449,
+      "uptake_unverified": 449,
+      "first_candidate_blocked_prefixes": 0,
+      "exact_literal_repetition": 0
+    }
+  },
+  "total_reachable_plans": 6899,
+  "same_content_higher_cost": 52,
+  "matched_add_one_contrasts": 593,
+  "same_reply_matched_contrasts": 35,
+  "all_pool_and_renderer_bindings_verified": true,
+  "rs_aliases_checked": 13172,
+  "rs_source_split_and_seed_exclusion_all_ids": true,
+  "rs_near_duplicate_leakage": "unverified",
+  "exact_sources": {
+    "legal_history_sessions": 216,
+    "source_complete_prefixes": 42,
+    "missing_source_candidate_occurrences": 194
+  },
+  "index": {
+    "instances": 114,
+    "claims": 700,
+    "semantic_relations": 0,
+    "new_summaries": 0,
+    "new_RS_conditions": 0,
+    "primary_environment_unchanged": true
+  },
+  "timing": {
+    "total_seconds": 33.566309357993305,
+    "index_build_export_query_seconds": 3.182148234336637,
+    "scope": "offline CPU + local tokenizer + filesystem; not model/online latency"
+  },
+  "original_root_audit_reproduced": true,
+  "independent_owner_sample_size_not_prefix_count": true,
+  "limitations": [
+    "Only frozen top4 ranks persisted; beyond-top4 BGE ranks/vectors not reconstructed.",
+    "42 legal evidence packages reused; missing raw source coverage stays unverified.",
+    "Raw source turn idx is not the blinded ordinal; quotes matched uniquely, raw idx mapping unverified.",
+    "Operator head command emitted mixed raw corpus before repair; exposure incident disclosed separately, not used by audit/index.",
+    "Exact quote checks do not certify entailment, relevance, adoption or quality.",
+    "All new indices remain construction-only; no active rank, resource, prompt or reward change.",
+    "No newly returned human labels or qualified feedback; no natural PM training."
+  ]
+}

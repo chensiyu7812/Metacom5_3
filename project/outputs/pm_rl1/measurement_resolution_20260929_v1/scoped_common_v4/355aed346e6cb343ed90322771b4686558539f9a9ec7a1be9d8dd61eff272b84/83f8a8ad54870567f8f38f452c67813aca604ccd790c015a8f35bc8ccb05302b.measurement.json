@@ -1,0 +1,400 @@
+{
+  "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "5e39f787875d616e43cb98bac2ff28f1aec6d33d72b2caf183386a60599464b6",
+  "raw_output_sha256": "b9a54e6826075bf3f0c05fbcccd7bd4d0bdf1116e0cc09972d04c1aeb48f188e",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expressed sadness and inability to move on from a breakup due to fighting.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply directly validates the seeker's expressed feelings of sadness and inability to move on from the breakup detailed in C:T001 and C:T007. It appropriately refrains from forcing answers regarding the 'why' (addressed in prior turns) and instead focuses on the emotional impact ('tough to move on', 'stuck'). The subsequent questions invite the seeker to elaborate on the specific thoughts causing the pain, which aligns perfectly with the immediate conversational goal of processing grief. No constraints are violated, and the tone is empathetic and non-judgmental."
+    },
+    "claims": [
+      {
+        "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Reflects the user's statement 'can not get over it'."
+      },
+      {
+        "response_quote": "It is normal to feel stuck in those emotions.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Validates the emotional state described."
+      },
+      {
+        "response_quote": "Can you tell me more about what you are thinking about when you are feeling sad?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+          }
+        ],
+        "reason": "Invites expansion on the stated sadness."
+      },
+      {
+        "response_quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+          }
+        ],
+        "reason": "Offers options to clarify the nature of the sadness."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All four units are grounded in the current session's dialogue.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 329
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 103
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It is normal to feel stuck in those emotions.",
+      "positions": [
+        {
+          "start": 105,
+          "end": 150
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "Can you tell me more about what you are thinking about when you are feeling sad?",
+      "positions": [
+        {
+          "start": 152,
+          "end": 232
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "response": true,
+      "quote": "Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 234,
+          "end": 329
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expressed sadness and inability to move on from a breakup due to fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply directly validates the seeker's expressed feelings of sadness and inability to move on from the breakup detailed in C:T001 and C:T007. It appropriately refrains from forcing answers regarding the 'why' (addressed in prior turns) and instead focuses on the emotional impact ('tough to move on', 'stuck'). The subsequent questions invite the seeker to elaborate on the specific thoughts causing the pain, which aligns perfectly with the immediate conversational goal of processing grief. No constraints are violated, and the tone is empathetic and non-judgmental."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the user's statement 'can not get over it'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validates the emotional state described."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Invites expansion on the stated sadness."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Offers options to clarify the nature of the sadness."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All four units are grounded in the current session's dialogue.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker expressed sadness and inability to move on from a breakup due to fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply directly validates the seeker's expressed feelings of sadness and inability to move on from the breakup detailed in C:T001 and C:T007. It appropriately refrains from forcing answers regarding the 'why' (addressed in prior turns) and instead focuses on the emotional impact ('tough to move on', 'stuck'). The subsequent questions invite the seeker to elaborate on the specific thoughts causing the pain, which aligns perfectly with the immediate conversational goal of processing grief. No constraints are violated, and the tone is empathetic and non-judgmental."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the user's statement 'can not get over it'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validates the emotional state described.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Invites expansion on the stated sadness.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Offers options to clarify the nature of the sadness.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "All four units are grounded in the current session's dialogue.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker expressed sadness and inability to move on from a breakup due to fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply directly validates the seeker's expressed feelings of sadness and inability to move on from the breakup detailed in C:T001 and C:T007. It appropriately refrains from forcing answers regarding the 'why' (addressed in prior turns) and instead focuses on the emotional impact ('tough to move on', 'stuck'). The subsequent questions invite the seeker to elaborate on the specific thoughts causing the pain, which aligns perfectly with the immediate conversational goal of processing grief. No constraints are violated, and the tone is empathetic and non-judgmental."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Reflects the user's statement 'can not get over it'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Validates the emotional state described."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Invites expansion on the stated sadness."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001"
+        ],
+        "reason": "Offers options to clarify the nature of the sadness."
+      }
+    ],
+    "coverage": "All four units are grounded in the current session's dialogue.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

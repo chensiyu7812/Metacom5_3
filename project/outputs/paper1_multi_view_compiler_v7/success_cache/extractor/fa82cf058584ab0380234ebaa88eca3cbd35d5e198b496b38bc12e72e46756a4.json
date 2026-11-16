@@ -1,0 +1,146 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2381,
+      "reserved_prompt_tokens": 2509,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 102
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "fe2e127df8cdaf0a2889283df349631e17a8c6e54808ec32b915a40b6d19c9ce",
+    "prior_profile_sha256": "a7cce331794d37a00d034532b6f58de9489efd62b7292a3420b302bc43f69249",
+    "request_payload_sha256": "4f22d1de71e36b29dce8b6b3b3bc4b82ed002dd4509c0cf16e9d5b1e864d7276"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p10",
+      "s": "p10_conv_1",
+      "p": [
+        {
+          "i": "p10_p1",
+          "t": "stable_relationship_role",
+          "k": "marital_status",
+          "v": "married",
+          "s": [
+            {
+              "i": "p10_conv_1:3"
+            }
+          ]
+        },
+        {
+          "i": "p10_p2",
+          "t": "stable_relationship_role",
+          "k": "spouse_name",
+          "v": "Bob",
+          "s": [
+            {
+              "i": "p10_conv_1:3"
+            }
+          ]
+        },
+        {
+          "i": "p10_p3",
+          "t": "durable_health_constraint",
+          "k": "experiencing_depression",
+          "v": "yes",
+          "s": [
+            {
+              "i": "p10_conv_1:7"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p10_e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "had argument with spouse about finances",
+          "s": [
+            {
+              "i": "p10_conv_1:3"
+            },
+            {
+              "i": "p10_conv_1:5"
+            }
+          ],
+          "a": "discussed finances with spouse",
+          "o": "argument escalated"
+        },
+        {
+          "i": "p10_e2",
+          "t": "transient_state",
+          "z": "ongoing_stage",
+          "n": "feeling exhausted and stuck in cycle of stress after argument",
+          "s": [
+            {
+              "i": "p10_conv_1:7"
+            }
+          ]
+        },
+        {
+          "i": "p10_e3",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "took space after argument to calm down",
+          "s": [
+            {
+              "i": "p10_conv_1:9"
+            }
+          ],
+          "a": "took space and tried to calm down",
+          "o": "spouse went for a drive, seeker remained apart to de-escalate"
+        },
+        {
+          "i": "p10_e4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considered self-care activities to manage emotional state",
+          "s": [
+            {
+              "i": "p10_conv_1:19"
+            }
+          ],
+          "a": "considered going for a walk or listening to music",
+          "o": "planning to engage in calming activity"
+        },
+        {
+          "i": "p10_e5",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received emotional support through conversation with supporter",
+          "s": [
+            {
+              "i": "p10_conv_1:21"
+            }
+          ],
+          "a": "talked about relationship conflict and emotional burden",
+          "o": "felt heard and acknowledged by supporter"
+        }
+      ]
+    },
+    "response_sha256": "44c37fc4a2240d0a7938a19a061f6481416cb46869f59c98cff584ac34877abc",
+    "usage": {
+      "prompt_tokens": 2383,
+      "completion_tokens": 731,
+      "total_tokens": 3114
+    },
+    "latency_ms": 8813.113693991909,
+    "provider_finish_reason": "stop"
+  }
+}

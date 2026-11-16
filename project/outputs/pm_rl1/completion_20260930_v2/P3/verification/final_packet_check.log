@@ -1,0 +1,65 @@
+{
+  "status": "PASS",
+  "checks": [
+    "common_evidence: frozen source/code/artifact hashes",
+    "calibration: frozen source/code/artifact hashes",
+    "candidate_v1: frozen source/code/artifact hashes",
+    "development vs validation/reserve: disjoint owners and prefixes",
+    "fixed 40 active plus 8 reserve, no filtering on scorer results",
+    "rater_1: blind fields, exact responses, complete same sources, all pairs present",
+    "rater_2: blind fields, exact responses, complete same sources, all pairs present",
+    "12 independent repeat jobs use identical source/reply and distinct draws/seeds",
+    "one identical-content pair side reused, never model-invented score difference"
+  ],
+  "pair_counts": {
+    "development_natural": 8,
+    "development_control": 8,
+    "validation_natural": 16,
+    "validation_control": 8,
+    "reserve_natural": 8
+  },
+  "owners": {
+    "development": [
+      "p1",
+      "p15",
+      "p18"
+    ],
+    "validation": [
+      "p10",
+      "p11",
+      "p12",
+      "p13",
+      "p16",
+      "p17",
+      "p2",
+      "p3",
+      "p5",
+      "p6",
+      "p8",
+      "p9"
+    ],
+    "reserve": [
+      "p10",
+      "p11",
+      "p17",
+      "p2",
+      "p3",
+      "p5",
+      "p8",
+      "p9"
+    ]
+  },
+  "distinct_primary_replies": 95,
+  "development_scoring_replies": 32,
+  "validation_scoring_replies": 47,
+  "reserve_scoring_replies": 16,
+  "human_labels_created": 0,
+  "human_labels_read": 0,
+  "validation_scores_read": 0,
+  "limitations": [
+    "No claim of independence among pairs within owner.",
+    "No claim of exhaustively detecting cross-owner paraphrased shared sources.",
+    "Four executor contrasts are development-only; sealed validation is resource contrasts.",
+    "Control source anchors are coordinator construction evidence, not human correctness judgments."
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "response_sha256": "df8943d719de61e20d396cfd58b952b67c9f29a7a81b1fbb3e15397393167e9a",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "0742239f6fd09c750e31ec47def1bff57c28a74db12be6193ddfd51a2eb7b50c",
+  "judge_runtime_identity": "66d327467aa6babb26e3817cbb26c8efc2864aa50f579f32084fd6bf63503469",
+  "parser_version": "pm-rl1-qm-scoped-derived-v3",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "1daba8d4a7013547d54f84847c773fbe7311bc71d82a1d15e615f5fd9bdf2b1d",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate feelings of trust/difficulty asking for help (C:T012) and encourage small steps towards support.",
+      "response_quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "evidence": [
+        {
+          "source_id": "C:T010",
+          "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress."
+        },
+        {
+          "source_id": "C:T011",
+          "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?"
+        },
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        },
+        {
+          "source_id": "H003:T000",
+          "quote": "hi"
+        },
+        {
+          "source_id": "H009:T003",
+          "quote": "Well, you remember that job I took a while back? It's been rough. And to add to everything, I had a falling out with a colleague I thought I could rely on."
+        }
+      ],
+      "reason": "reply validates the difficulty expressed in C:T012 without invalidating the struggle, uses general supportive wisdom (strength vs weakness), and offers a concrete, low-barrier suggestion (small step) that aligns with established contact history (friends/family in H007/H009). It directly responds to the 'I haven't yet' statement in C:T012. No important needs or constraints were missed."
+    },
+    "claims": [
+      {
+        "response_quote": "It's tough to put yourself out there when you've been hurt before.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+          }
+        ],
+        "reason": "Reference to being 'hurt before' is supported by C:T012 ('trust it'll come through') and historical evidence of relationship strains (H003, H009)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked all three response units.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before. But sometimes, asking for help can be a sign of strength, not weakness. Would you be willing to try reaching out to someone, even if it's just a small step, like talking to a friend or family member?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 266
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T010",
+      "quote": "Yeah, exactly. I thought I had someone to lean on, but it just became another source of stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 95
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 168
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H003:T000",
+      "quote": "hi",
+      "positions": [
+        {
+          "start": 0,
+          "end": 2
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H009:T003",
+      "quote": "Well, you remember that job I took a while back? It's been rough. And to add to everything, I had a falling out with a colleague I thought I could rely on.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's tough to put yourself out there when you've been hurt before.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate feelings of trust/difficulty asking for help (C:T012) and encourage small steps towards support.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T011",
+        "C:T012",
+        "H003:T000",
+        "H009:T003"
+      ],
+      "reason": "reply validates the difficulty expressed in C:T012 without invalidating the struggle, uses general supportive wisdom (strength vs weakness), and offers a concrete, low-barrier suggestion (small step) that aligns with established contact history (friends/family in H007/H009). It directly responds to the 'I haven't yet' statement in C:T012. No important needs or constraints were missed."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Reference to being 'hurt before' is supported by C:T012 ('trust it'll come through') and historical evidence of relationship strains (H003, H009)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked all three response units.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validate feelings of trust/difficulty asking for help (C:T012) and encourage small steps towards support.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T011",
+        "C:T012",
+        "H003:T000",
+        "H009:T003"
+      ],
+      "reason": "reply validates the difficulty expressed in C:T012 without invalidating the struggle, uses general supportive wisdom (strength vs weakness), and offers a concrete, low-barrier suggestion (small step) that aligns with established contact history (friends/family in H007/H009). It directly responds to the 'I haven't yet' statement in C:T012. No important needs or constraints were missed."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "kind": "personal_fact",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Reference to being 'hurt before' is supported by C:T012 ('trust it'll come through') and historical evidence of relationship strains (H003, H009)."
+      },
+      {
+        "response_unit_id": "R002",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General advice/statement about strength."
+      },
+      {
+        "response_unit_id": "R003",
+        "kind": "non_factual",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Question/Suggestion."
+      }
+    ],
+    "coverage": "Checked all three response units.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation"
+}

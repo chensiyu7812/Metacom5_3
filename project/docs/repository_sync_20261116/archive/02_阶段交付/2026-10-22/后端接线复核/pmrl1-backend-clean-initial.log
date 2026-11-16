@@ -1,0 +1,293 @@
+..........F............................................................. [  4%]
+........................................................................ [  9%]
+........................................................................ [ 13%]
+........................................................................ [ 18%]
+........................................................................ [ 22%]
+........................................................................ [ 27%]
+........................................................................ [ 31%]
+........................................................................ [ 36%]
+........................................................................ [ 40%]
+........................................................................ [ 45%]
+........................................................................ [ 49%]
+........................................................................ [ 54%]
+........................................................................ [ 58%]
+........................................................................ [ 63%]
+........................................................................ [ 67%]
+........................................................................ [ 72%]
+.............................FFFF......s...................s............ [ 76%]
+........................................................................ [ 81%]
+........................................................................ [ 85%]
+............................................ssssssssssssssssssssssssssss [ 90%]
+ssss.................................................................... [ 95%]
+...................................................sssssssssssssssssssss [ 99%]
+sssssss                                                                  [100%]
+=================================== FAILURES ===================================
+_________ test_ci_blocks_on_current_paper1_and_omits_historical_suites _________
+
+    def test_ci_blocks_on_current_paper1_and_omits_historical_suites():
+        workflow = (ROOT.parent / ".github/workflows/pm-v2-tests.yml").read_text()
+        assert "Run blocking public-only Paper-1 suite" in workflow
+>       assert 'pytest -q -m "not gpu" tests/test_paper1_*.py' in workflow
+E       assert 'pytest -q -m "not gpu" tests/test_paper1_*.py' in 'name: PM tests\n\non:\n  pull_request:\n    paths:\n      - "project/**"\n      - "README.md"\n      - "README_FOR_RE...lidate Paper-1 integration base and outcome lock\n        run: python scripts/paper1/00_validate_integration_base.py\n'
+
+tests/test_paper1_authority.py:68: AssertionError
+_______ Interface.test_duplicate_truncation_and_extra_text_not_repaired ________
+
+self = <test_rl1_feedback_score_audit.Interface testMethod=test_duplicate_truncation_and_extra_text_not_repaired>
+
+    def setUp(self):
+        self.p = fixtures.p
+        self.item = fixtures.fixture()[0]['V1_OFF']
+        self.score = fixtures.WorkflowIntegrationTests.score(self, self.item)
+        # This fixture's score helper uses self.p only through module p.
+        self.value = fixtures.WorkflowIntegrationTests.audit(self, self.item, True)
+        self.value['findings'][0]['source_evidence'] = self.value['findings'][0].pop('evidence')
+        j, a = example(); self.value['score_review'] = a['evaluation']['value']['score_review']
+        rv = self.value['score_review']; rv['preliminary_score_sha256'] = digest(self.score)
+        rv['findings'][0]['disposition'] = 'unresolved'
+        rv['findings'][0]['score_links'] = [dict(path='/assessments/0/reason', quote='SYNTHETIC')]
+        for name, path in [('quality', '/q_rationale/reason'), ('severity', '/assessments/0/reason'), ('coverage', '/coverage')]:
+            rv['checks'][name]['score_links'] = [dict(path=path, quote='SYNTHETIC')]
+        self.addCleanup(patch.stopall)
+        patch('socket.socket.connect', side_effect=AssertionError('no network')).start()
+>       patch('deepseek_access.read_key', side_effect=AssertionError('no credentials')).start()
+
+tests/test_rl1_feedback_score_audit.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1594: in start
+    result = self.__enter__()
+             ^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1430: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pkgutil.py:700: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'deepseek_access', import_ = <function _gcd_import at 0x7fe0f4633d80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'deepseek_access'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+________ Interface.test_invalid_source_and_score_quotes_remain_failures ________
+
+self = <test_rl1_feedback_score_audit.Interface testMethod=test_invalid_source_and_score_quotes_remain_failures>
+
+    def setUp(self):
+        self.p = fixtures.p
+        self.item = fixtures.fixture()[0]['V1_OFF']
+        self.score = fixtures.WorkflowIntegrationTests.score(self, self.item)
+        # This fixture's score helper uses self.p only through module p.
+        self.value = fixtures.WorkflowIntegrationTests.audit(self, self.item, True)
+        self.value['findings'][0]['source_evidence'] = self.value['findings'][0].pop('evidence')
+        j, a = example(); self.value['score_review'] = a['evaluation']['value']['score_review']
+        rv = self.value['score_review']; rv['preliminary_score_sha256'] = digest(self.score)
+        rv['findings'][0]['disposition'] = 'unresolved'
+        rv['findings'][0]['score_links'] = [dict(path='/assessments/0/reason', quote='SYNTHETIC')]
+        for name, path in [('quality', '/q_rationale/reason'), ('severity', '/assessments/0/reason'), ('coverage', '/coverage')]:
+            rv['checks'][name]['score_links'] = [dict(path=path, quote='SYNTHETIC')]
+        self.addCleanup(patch.stopall)
+        patch('socket.socket.connect', side_effect=AssertionError('no network')).start()
+>       patch('deepseek_access.read_key', side_effect=AssertionError('no credentials')).start()
+
+tests/test_rl1_feedback_score_audit.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1594: in start
+    result = self.__enter__()
+             ^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1430: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pkgutil.py:700: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'deepseek_access', import_ = <function _gcd_import at 0x7fe0f4633d80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'deepseek_access'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+___ Interface.test_payload_has_one_exact_schema_and_complete_input_allowlist ___
+
+self = <test_rl1_feedback_score_audit.Interface testMethod=test_payload_has_one_exact_schema_and_complete_input_allowlist>
+
+    def setUp(self):
+        self.p = fixtures.p
+        self.item = fixtures.fixture()[0]['V1_OFF']
+        self.score = fixtures.WorkflowIntegrationTests.score(self, self.item)
+        # This fixture's score helper uses self.p only through module p.
+        self.value = fixtures.WorkflowIntegrationTests.audit(self, self.item, True)
+        self.value['findings'][0]['source_evidence'] = self.value['findings'][0].pop('evidence')
+        j, a = example(); self.value['score_review'] = a['evaluation']['value']['score_review']
+        rv = self.value['score_review']; rv['preliminary_score_sha256'] = digest(self.score)
+        rv['findings'][0]['disposition'] = 'unresolved'
+        rv['findings'][0]['score_links'] = [dict(path='/assessments/0/reason', quote='SYNTHETIC')]
+        for name, path in [('quality', '/q_rationale/reason'), ('severity', '/assessments/0/reason'), ('coverage', '/coverage')]:
+            rv['checks'][name]['score_links'] = [dict(path=path, quote='SYNTHETIC')]
+        self.addCleanup(patch.stopall)
+        patch('socket.socket.connect', side_effect=AssertionError('no network')).start()
+>       patch('deepseek_access.read_key', side_effect=AssertionError('no credentials')).start()
+
+tests/test_rl1_feedback_score_audit.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1594: in start
+    result = self.__enter__()
+             ^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1430: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pkgutil.py:700: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'deepseek_access', import_ = <function _gcd_import at 0x7fe0f4633d80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'deepseek_access'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+_____________ Interface.test_valid_source_evidence_and_score_links _____________
+
+self = <test_rl1_feedback_score_audit.Interface testMethod=test_valid_source_evidence_and_score_links>
+
+    def setUp(self):
+        self.p = fixtures.p
+        self.item = fixtures.fixture()[0]['V1_OFF']
+        self.score = fixtures.WorkflowIntegrationTests.score(self, self.item)
+        # This fixture's score helper uses self.p only through module p.
+        self.value = fixtures.WorkflowIntegrationTests.audit(self, self.item, True)
+        self.value['findings'][0]['source_evidence'] = self.value['findings'][0].pop('evidence')
+        j, a = example(); self.value['score_review'] = a['evaluation']['value']['score_review']
+        rv = self.value['score_review']; rv['preliminary_score_sha256'] = digest(self.score)
+        rv['findings'][0]['disposition'] = 'unresolved'
+        rv['findings'][0]['score_links'] = [dict(path='/assessments/0/reason', quote='SYNTHETIC')]
+        for name, path in [('quality', '/q_rationale/reason'), ('severity', '/assessments/0/reason'), ('coverage', '/coverage')]:
+            rv['checks'][name]['score_links'] = [dict(path=path, quote='SYNTHETIC')]
+        self.addCleanup(patch.stopall)
+        patch('socket.socket.connect', side_effect=AssertionError('no network')).start()
+>       patch('deepseek_access.read_key', side_effect=AssertionError('no credentials')).start()
+
+tests/test_rl1_feedback_score_audit.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1594: in start
+    result = self.__enter__()
+             ^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/unittest/mock.py:1430: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pkgutil.py:700: in resolve_name
+    mod = importlib.import_module(modname)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<frozen importlib._bootstrap>:1204: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1176: in _find_and_load
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'deepseek_access', import_ = <function _gcd_import at 0x7fe0f4633d80>
+
+>   ???
+E   ModuleNotFoundError: No module named 'deepseek_access'
+
+<frozen importlib._bootstrap>:1140: ModuleNotFoundError
+--------------- generated xml file: /tmp/pmrl1-backend-clean.xml ---------------
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_paper1_bge_m3_encoder.py:11: could not import 'sentence_transformers': No module named 'sentence_transformers'
+SKIPPED [1] tests/test_paper1_llama_tokenizer.py:15: frozen tokenizer not present at /home/chenzhi/paper1_runs/frozen_tokenizers/llama31_8b_instruct_tokenizer.json
+SKIPPED [1] tests/test_rl1_feedback_source_evidence.py:130: historical private credential/transport adapter
+SKIPPED [1] tests/test_rl1_feedback_workflow.py:243: historical private credential/transport adapter
+SKIPPED [1] tests/test_rl1_relation_reference.py:195: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:69: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:182: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:199: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:75: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:89: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:161: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:131: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:177: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:186: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:140: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:221: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:264: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:261: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:216: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:164: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:233: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:172: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:226: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:110: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:152: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:254: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:211: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:246: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:117: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:106: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:168: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:206: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:136: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:122: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:146: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_relation_reference.py:156: requires preserved local engine and relation inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:67: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:131: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:73: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:176: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:190: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:149: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:96: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:202: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:230: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:157: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:138: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:123: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:91: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:219: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:209: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:198: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:193: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:115: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:172: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:82: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:102: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:167: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:180: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:153: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:141: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:163: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:223: requires preserved local engine and task inputs
+SKIPPED [1] tests/test_rl1_task_reference.py:106: requires preserved local engine and task inputs
+FAILED tests/test_paper1_authority.py::test_ci_blocks_on_current_paper1_and_omits_historical_suites
+FAILED tests/test_rl1_feedback_score_audit.py::Interface::test_duplicate_truncation_and_extra_text_not_repaired
+FAILED tests/test_rl1_feedback_score_audit.py::Interface::test_invalid_source_and_score_quotes_remain_failures
+FAILED tests/test_rl1_feedback_score_audit.py::Interface::test_payload_has_one_exact_schema_and_complete_input_allowlist
+FAILED tests/test_rl1_feedback_score_audit.py::Interface::test_valid_source_evidence_and_score_links
+5 failed, 1524 passed, 64 skipped, 1 deselected in 354.81s (0:05:54)

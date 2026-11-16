@@ -1,0 +1,214 @@
+{
+  "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+  "raw_output_sha256": "2d4e49c365103eb5100b7e6aca30ddc01a7c3a815704b8b55d8bcaa2188eb93b",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Charles expresses he has 'spent too long focusing on the bitter moments' regarding his deceased father, implying he recognizes this pattern.",
+      "response_quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "evidence": [
+        {
+          "source_id": "C:T011",
+          "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+        }
+      ],
+      "reason": "The reply responds appropriately to the expressed emotion of regret and the hope for reconciliation. However, R001 ('It's amazing how much time we can spend dwelling on the negative') assumes a judgment that Charles himself made ('I've spent too long focusing on the bitter moments'), which creates mild mismatch—it reframes his self-awareness as something needing validation rather than acknowledging it. R002 claims 'you're making progress,' which is unsupported because Charles hasn't confirmed any shift in perspective yet; he merely stated the problem, not the solution. This isn't a major error but represents a gap between the user's disclosed state and the support's assumption of progress."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "C:T011",
+            "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+          }
+        ],
+        "reason": "Asserts 'making progress in shifting focus,' but C:T011 only states the problem, not progress made."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Reply addresses the current emotional content and theme, but misses explicit acknowledgment of Charles' own recognition. R002's claim of progress lacks evidence from the turn.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 198
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+      "positions": [
+        {
+          "start": 66,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Charles expresses he has 'spent too long focusing on the bitter moments' regarding his deceased father, implying he recognizes this pattern.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "The reply responds appropriately to the expressed emotion of regret and the hope for reconciliation. However, R001 ('It's amazing how much time we can spend dwelling on the negative') assumes a judgment that Charles himself made ('I've spent too long focusing on the bitter moments'), which creates mild mismatch—it reframes his self-awareness as something needing validation rather than acknowledging it. R002 claims 'you're making progress,' which is unsupported because Charles hasn't confirmed any shift in perspective yet; he merely stated the problem, not the solution. This isn't a major error but represents a gap between the user's disclosed state and the support's assumption of progress."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Asserts 'making progress in shifting focus,' but C:T011 only states the problem, not progress made."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Reply addresses the current emotional content and theme, but misses explicit acknowledgment of Charles' own recognition. R002's claim of progress lacks evidence from the turn.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Charles expresses he has 'spent too long focusing on the bitter moments' regarding his deceased father, implying he recognizes this pattern.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "The reply responds appropriately to the expressed emotion of regret and the hope for reconciliation. However, R001 ('It's amazing how much time we can spend dwelling on the negative') assumes a judgment that Charles himself made ('I've spent too long focusing on the bitter moments'), which creates mild mismatch—it reframes his self-awareness as something needing validation rather than acknowledging it. R002 claims 'you're making progress,' which is unsupported because Charles hasn't confirmed any shift in perspective yet; he merely stated the problem, not the solution. This isn't a major error but represents a gap between the user's disclosed state and the support's assumption of progress."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathy/observation, no personal factual claim.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Asserts 'making progress in shifting focus,' but C:T011 only states the problem, not progress made.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Reply addresses the current emotional content and theme, but misses explicit acknowledgment of Charles' own recognition. R002's claim of progress lacks evidence from the turn.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Charles expresses he has 'spent too long focusing on the bitter moments' regarding his deceased father, implying he recognizes this pattern.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T011"
+      ],
+      "reason": "The reply responds appropriately to the expressed emotion of regret and the hope for reconciliation. However, R001 ('It's amazing how much time we can spend dwelling on the negative') assumes a judgment that Charles himself made ('I've spent too long focusing on the bitter moments'), which creates mild mismatch—it reframes his self-awareness as something needing validation rather than acknowledging it. R002 claims 'you're making progress,' which is unsupported because Charles hasn't confirmed any shift in perspective yet; he merely stated the problem, not the solution. This isn't a major error but represents a gap between the user's disclosed state and the support's assumption of progress."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathy/observation, no personal factual claim."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T011"
+        ],
+        "reason": "Asserts 'making progress in shifting focus,' but C:T011 only states the problem, not progress made."
+      }
+    ],
+    "coverage": "Reply addresses the current emotional content and theme, but misses explicit acknowledgment of Charles' own recognition. R002's claim of progress lacks evidence from the turn.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

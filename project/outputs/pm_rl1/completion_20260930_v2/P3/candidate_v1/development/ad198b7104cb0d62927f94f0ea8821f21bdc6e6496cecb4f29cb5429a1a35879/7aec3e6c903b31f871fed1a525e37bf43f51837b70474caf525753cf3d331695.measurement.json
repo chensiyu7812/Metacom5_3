@@ -1,0 +1,278 @@
+{
+  "response_sha256": "ed4ebf205821d8ac3222519d8881d5babc7c4376667b20fa285d8ba8f9baa817",
+  "legal_evidence_identity": "0c3ec6a3e695690a3829a2e7f5f25eab0cce5b877a12bd211166996d5d42fbba",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "15a543f7010469a47b8c1aa56e768e03d6d01c33fdd9d4f3c726b13f551cb5db",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user sought validation for their self-care strategies (yoga and reading) and implicitly needed accurate reflection of their therapeutic journey.",
+      "response_quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+        },
+        {
+          "source_id": "C:T018",
+          "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+        }
+      ],
+      "reason": "The reply appropriately validates the user's coping mechanisms described in C:T018 (R002). However, R001 makes a definitive factual claim that the user has already discussed the new relationship with their therapist. This directly contradicts the user's explicit statement in C:T012 that they have 'Not yet' discussed it and are planning to do so in the 'next session'. This error undermines the accuracy of the support and violates the constraint of factual consistency with the current conversation record."
+    },
+    "claims": [
+      {
+        "response_quote": "You have already discussed the new relationship with your therapist in your session.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T012",
+            "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships."
+          }
+        ],
+        "reason": "R001 asserts that the new relationship was already discussed in a session, whereas the user explicitly stated in C:T012 that they had not yet discussed it and were planning to bring it up in the next session."
+      },
+      {
+        "response_quote": "It is good that yoga and reading give you some space to unwind.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T018",
+            "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while."
+          }
+        ],
+        "reason": "R002 accurately summarizes the user's reported activities for unwinding (yoga and reading) as stated in C:T018."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Reflects on the user's self-care habits and assumes completion of therapy discussions regarding the new relationship.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You have already discussed the new relationship with your therapist in your session. It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You have already discussed the new relationship with your therapist in your session.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 84
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "Not yet, but I'm planning on bringing it up in my next session. My therapist has really helped me gain perspective on my relationships.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It is good that yoga and reading give you some space to unwind.",
+      "positions": [
+        {
+          "start": 85,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T018",
+      "quote": "I've been getting into yoga and reading a lot lately. It helps me center myself and escape my thoughts for a while.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 115
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "The user sought validation for their self-care strategies (yoga and reading) and implicitly needed accurate reflection of their therapeutic journey.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply appropriately validates the user's coping mechanisms described in C:T018 (R002). However, R001 makes a definitive factual claim that the user has already discussed the new relationship with their therapist. This directly contradicts the user's explicit statement in C:T012 that they have 'Not yet' discussed it and are planning to do so in the 'next session'. This error undermines the accuracy of the support and violates the constraint of factual consistency with the current conversation record."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "R001 asserts that the new relationship was already discussed in a session, whereas the user explicitly stated in C:T012 that they had not yet discussed it and were planning to bring it up in the next session."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "R002 accurately summarizes the user's reported activities for unwinding (yoga and reading) as stated in C:T018."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Reflects on the user's self-care habits and assumes completion of therapy discussions regarding the new relationship.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "The user sought validation for their self-care strategies (yoga and reading) and implicitly needed accurate reflection of their therapeutic journey.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply appropriately validates the user's coping mechanisms described in C:T018 (R002). However, R001 makes a definitive factual claim that the user has already discussed the new relationship with their therapist. This directly contradicts the user's explicit statement in C:T012 that they have 'Not yet' discussed it and are planning to do so in the 'next session'. This error undermines the accuracy of the support and violates the constraint of factual consistency with the current conversation record."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "R001 asserts that the new relationship was already discussed in a session, whereas the user explicitly stated in C:T012 that they had not yet discussed it and were planning to bring it up in the next session.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "R002 accurately summarizes the user's reported activities for unwinding (yoga and reading) as stated in C:T018.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Reflects on the user's self-care habits and assumes completion of therapy discussions regarding the new relationship.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "The user sought validation for their self-care strategies (yoga and reading) and implicitly needed accurate reflection of their therapeutic journey.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T012",
+        "C:T018"
+      ],
+      "reason": "The reply appropriately validates the user's coping mechanisms described in C:T018 (R002). However, R001 makes a definitive factual claim that the user has already discussed the new relationship with their therapist. This directly contradicts the user's explicit statement in C:T012 that they have 'Not yet' discussed it and are planning to do so in the 'next session'. This error undermines the accuracy of the support and violates the constraint of factual consistency with the current conversation record."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "R001 asserts that the new relationship was already discussed in a session, whereas the user explicitly stated in C:T012 that they had not yet discussed it and were planning to bring it up in the next session."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T018"
+        ],
+        "reason": "R002 accurately summarizes the user's reported activities for unwinding (yoga and reading) as stated in C:T018."
+      }
+    ],
+    "coverage": "Reflects on the user's self-care habits and assumes completion of therapy discussions regarding the new relationship.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": -0.5
+}

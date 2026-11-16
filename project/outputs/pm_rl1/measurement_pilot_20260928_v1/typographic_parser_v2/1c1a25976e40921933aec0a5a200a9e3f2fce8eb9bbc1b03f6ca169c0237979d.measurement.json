@@ -1,0 +1,133 @@
+{
+  "response_sha256": "43005cc8bdc6256a16216764a607d5908c75a8638e5a84384e84d30965493940",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "cedf50ee62f2a27ad3a05a6837498cc2247d3b615fb7ca186c0515e1e555919d",
+  "raw_output_sha256": "9740f338b30f2b3138ebf2d42ecbac4c006cad674ca1b77555912119b27cecee",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate mixed feelings (relief vs. stagnation fears) and provide potential next steps for career growth after a missed promotion.",
+      "response_quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations?",
+      "evidence": [
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The response accurately reflects the user's stated emotions in the current turn (T014) and offers a constructive suggestion. It is coherent and responsive without violating boundaries or missing explicit constraints. While it transitions from venting to actionable advice, this aligns with previous support patterns in the history regarding career stress, making it appropriate. No major defect prevents a score of 3."
+    },
+    "claims": [
+      {
+        "response_quote": "On one hand, you're relieved about not having to move",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "relieved I don't have to move overseas"
+          }
+        ],
+        "reason": "User explicitly stated relief about not moving in the current turn."
+      },
+      {
+        "response_quote": "worried about getting stuck in your career",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "nagging fear I'll remain stagnant in my career"
+          }
+        ],
+        "reason": "User explicitly stated the fear of remaining stagnant/career stagnation."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Checked personal claims regarding relief about relocation and fear of career stagnation against current turn T014. Identity (Jane) and temporal context verified against full history. No unsupported personal facts or identity assertions found.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "On one hand, you're relieved about not having to move, but on the other hand, you're worried about getting stuck in your career. That's a tough spot to be in. Have you considered talking to your manager or a mentor about your concerns and aspirations?",
+      "positions": [
+        {
+          "start": 55,
+          "end": 306
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "On one hand, you're relieved about not having to move",
+      "positions": [
+        {
+          "start": 55,
+          "end": 108
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "relieved I don't have to move overseas",
+      "positions": [
+        {
+          "start": 50,
+          "end": 88
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "worried about getting stuck in your career",
+      "positions": [
+        {
+          "start": 140,
+          "end": 182
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T014",
+      "quote": "nagging fear I'll remain stagnant in my career",
+      "positions": [
+        {
+          "start": 108,
+          "end": 154
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "measured_candidate",
+  "quote_transformations": []
+}

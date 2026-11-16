@@ -1,0 +1,119 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2749,
+      "reserved_prompt_tokens": 2877,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 500
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "83b370c60d7ca33c7f6666cbc470f3e7ba9f891dcc5df93589c2d0614c0cd21c",
+    "prior_profile_sha256": "4418069ebac533bdafa8d3800f7674720632f8f0ab0120f70981df32d1a7e041",
+    "request_payload_sha256": "d4891192d1611166024ea89cff3806edc52ac256c18ddddd388ee09e6235d49c"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p14",
+      "s": "p14_conv_5",
+      "p": [
+        {
+          "i": "p14_p1",
+          "t": "durable_health_constraint",
+          "k": "pregnancy_complication_diagnosed",
+          "v": "diagnosed with pregnancy complications during a recent check-up, increasing fear due to history of prior pregnancy losses",
+          "s": [
+            {
+              "i": "p14_conv_5:4"
+            }
+          ]
+        },
+        {
+          "i": "p14_p2",
+          "t": "stable_relationship_role",
+          "k": "romantic_partner_employment_situation_impact",
+          "v": "partner Dan has unpredictable work schedule causing tension and difficulty discussing family matters calmly",
+          "s": [
+            {
+              "i": "p14_conv_5:6"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p14_e1",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "experienced onset of heightened anxiety following a concerning pregnancy check-up",
+          "s": [
+            {
+              "i": "p14_conv_5:2"
+            }
+          ]
+        },
+        {
+          "i": "p14_e2",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "attempted to discuss emotional concerns with partner Dan but experienced communication breakdown due to his work-related unavailability",
+          "s": [
+            {
+              "i": "p14_conv_5:6"
+            }
+          ]
+        },
+        {
+          "i": "p14_e3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considering joining a support group for pregnant women as a way to manage emotional burden and reduce feelings of isolation",
+          "s": [
+            {
+              "i": "p14_conv_5:12"
+            },
+            {
+              "i": "p14_conv_5:14"
+            }
+          ]
+        },
+        {
+          "i": "p14_e4",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "felt emotionally supported and validated after receiving encouragement from the supporter about managing multiple life challenges",
+          "s": [
+            {
+              "i": "p14_conv_5:15"
+            },
+            {
+              "i": "p14_conv_5:20"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "b2239113515362e83b89015fb7e8f9c3c49ad78d82dad74ff92f95452ef64f87",
+    "usage": {
+      "prompt_tokens": 2751,
+      "completion_tokens": 572,
+      "total_tokens": 3323
+    },
+    "latency_ms": 7390.633056027582,
+    "provider_finish_reason": "stop"
+  }
+}

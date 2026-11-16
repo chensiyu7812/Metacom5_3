@@ -1,0 +1,142 @@
+{
+  "response_sha256": "753ddcfc2082b0bfc9969acdfcb8c00d14e809868feba4e198501c6b0ae46833",
+  "legal_evidence_identity": "348791845b3d46b47c6c0b09417d64eb2f693c08163e3b6bf4a142c774c33cb7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "f9fd02947ccb12d3bc07f999103a080e911d7a71ddbec59f7df55d76b3531bc4",
+  "raw_output_sha256": "b2611ea4c9ac77347cce760a0df18d00177bd15e928bd0b9a15a89504388d01f",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker explicitly stated they did not want to take up any more time and thanked the supporter, indicating a clear intent to conclude the session.",
+      "response_quote": "You're welcome. We can stop here; take care.",
+      "evidence": [
+        {
+          "source_id": "C:T038",
+          "quote": "This solves the problem in person, but it doesn't solve the talks over the phone, but it has been 15 minutes now and this has been helpful enough. Thank you for your solutions. You have been very supportive and kind to me"
+        },
+        {
+          "source_id": "C:T039",
+          "quote": "I don't want to take up any more of your time. It has been a good conversation. "
+        }
+      ],
+      "reason": "The supporter appropriately acknowledged the thank you ('You're welcome') and agreed to end the conversation immediately ('We can stop here; take care'), respecting the user's explicit boundary request without adding unnecessary content or advice."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "/C:T038: supported, /C:T039: non_factual",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You're welcome. We can stop here; take care.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 44
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T038",
+      "quote": "This solves the problem in person, but it doesn't solve the talks over the phone, but it has been 15 minutes now and this has been helpful enough. Thank you for your solutions. You have been very supportive and kind to me",
+      "positions": [
+        {
+          "start": 0,
+          "end": 221
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T039",
+      "quote": "I don't want to take up any more of your time. It has been a good conversation. ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 80
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker explicitly stated they did not want to take up any more time and thanked the supporter, indicating a clear intent to conclude the session.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T038",
+        "C:T039"
+      ],
+      "reason": "The supporter appropriately acknowledged the thank you ('You're welcome') and agreed to end the conversation immediately ('We can stop here; take care'), respecting the user's explicit boundary request without adding unnecessary content or advice."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "/C:T038: supported, /C:T039: non_factual",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker explicitly stated they did not want to take up any more time and thanked the supporter, indicating a clear intent to conclude the session.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T038",
+        "C:T039"
+      ],
+      "reason": "The supporter appropriately acknowledged the thank you ('You're welcome') and agreed to end the conversation immediately ('We can stop here; take care'), respecting the user's explicit boundary request without adding unnecessary content or advice."
+    },
+    "assessments": [],
+    "coverage": "/C:T038: supported, /C:T039: non_factual",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker explicitly stated they did not want to take up any more time and thanked the supporter, indicating a clear intent to conclude the session.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T038",
+        "C:T039"
+      ],
+      "reason": "The supporter appropriately acknowledged the thank you ('You're welcome') and agreed to end the conversation immediately ('We can stop here; take care'), respecting the user's explicit boundary request without adding unnecessary content or advice."
+    },
+    "assessments": [],
+    "coverage": "/C:T038: supported, /C:T039: non_factual",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

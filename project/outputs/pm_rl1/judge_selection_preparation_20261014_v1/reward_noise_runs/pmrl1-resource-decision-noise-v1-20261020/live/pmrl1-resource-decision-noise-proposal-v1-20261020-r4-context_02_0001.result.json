@@ -1,0 +1,472 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r4-context_02_0001",
+  "request_identity": "a780673bce7077b29d669c7bc34791afe1e25a5bb564708ce3083d0c9d8706bc",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The user is angry about their mother's disapproval and asks how the previous supporter handled a similar conflict. Under the new-assistant contract, the reply should acknowledge the anger and offer a safe way to explore it without impersonating the previous supporter or inventing a personal story.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T005",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply gives a concise empathic acknowledgment, accurately reflects the conflict over the mother's disapproval and the user's choice of friends, and invites exploration of the anger. It does not claim the prior supporter's experience or present a tentative hypothesis as fact, so it is appropriate for this turn."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A generic empathic acknowledgment; it does not assert a specific personal fact beyond recognizing the distress the user has already expressed."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The user said their mom never approves of most things they do, argued about which friends they should have, and said the situation makes them angry; the reflection is grounded in those turns."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T009"
+          ],
+          "reason": "The user explicitly said the situation makes them angry, and the invitation to explore what triggers that anger follows directly from that statement."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The wording is a tentative alternative question, not an assertion that the user feels controlled or fears disappointing their mother; it offers possible explorations rather than stating a personal fact."
+        }
+      ],
+      "coverage": "Checked the full current prefix and both historical sessions. The current turns support the empathic reflection and the reference to the user's anger. The prior supporter's self-disclosure in C:T008 was not treated as the new assistant's own experience, and no factual contradiction or boundary violation was found.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2e093920d3886d4360f6106c93b13638c985b7aa5481340722c476ddbf93847a",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r4-context_02_0001",
+      "raw_output_sha256": "ea6a060d0c22a60ce04c106c3a8c649a36c45d1ee626b6b85fbfda582cb38d68",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is angry about their mother's disapproval and asks how the previous supporter handled a similar conflict. Under the new-assistant contract, the reply should acknowledge the anger and offer a safe way to explore it without impersonating the previous supporter or inventing a personal story.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+          "evidence": [
+            {
+              "source_id": "C:T005",
+              "quote": "Yes. My mom never approves of most of the things I do."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply gives a concise empathic acknowledgment, accurately reflects the conflict over the mother's disapproval and the user's choice of friends, and invites exploration of the anger. It does not claim the prior supporter's experience or present a tentative hypothesis as fact, so it is appropriate for this turn."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The user said their mom never approves of most things they do, argued about which friends they should have, and said the situation makes them angry; the reflection is grounded in those turns."
+          },
+          {
+            "response_quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The user explicitly said the situation makes them angry, and the invitation to explore what triggers that anger follows directly from that statement."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked the full current prefix and both historical sessions. The current turns support the empathic reflection and the reference to the user's anger. The prior supporter's self-disclosure in C:T008 was not treated as the new assistant's own experience, and no factual contradiction or boundary violation was found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.\n\nSince you mentioned you feel angry, would you like to talk more about what specifically triggers that anger? Is it the feeling of being controlled, or the fear of disappointing her?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 346
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to choosing your own friends.",
+          "positions": [
+            {
+              "start": 35,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "Since you mentioned you feel angry, would you like to talk more about what specifically triggers that anger?",
+          "positions": [
+            {
+              "start": 165,
+              "end": 273
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user is angry about their mother's disapproval and asks how the previous supporter handled a similar conflict. Under the new-assistant contract, the reply should acknowledge the anger and offer a safe way to explore it without impersonating the previous supporter or inventing a personal story.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply gives a concise empathic acknowledgment, accurately reflects the conflict over the mother's disapproval and the user's choice of friends, and invites exploration of the anger. It does not claim the prior supporter's experience or present a tentative hypothesis as fact, so it is appropriate for this turn."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user said their mom never approves of most things they do, argued about which friends they should have, and said the situation makes them angry; the reflection is grounded in those turns."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The user explicitly said the situation makes them angry, and the invitation to explore what triggers that anger follows directly from that statement."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked the full current prefix and both historical sessions. The current turns support the empathic reflection and the reference to the user's anger. The prior supporter's self-disclosure in C:T008 was not treated as the new assistant's own experience, and no factual contradiction or boundary violation was found.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is angry about their mother's disapproval and asks how the previous supporter handled a similar conflict. Under the new-assistant contract, the reply should acknowledge the anger and offer a safe way to explore it without impersonating the previous supporter or inventing a personal story.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply gives a concise empathic acknowledgment, accurately reflects the conflict over the mother's disapproval and the user's choice of friends, and invites exploration of the anger. It does not claim the prior supporter's experience or present a tentative hypothesis as fact, so it is appropriate for this turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic empathic acknowledgment; it does not assert a specific personal fact beyond recognizing the distress the user has already expressed.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user said their mom never approves of most things they do, argued about which friends they should have, and said the situation makes them angry; the reflection is grounded in those turns.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The user explicitly said the situation makes them angry, and the invitation to explore what triggers that anger follows directly from that statement.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The wording is a tentative alternative question, not an assertion that the user feels controlled or fears disappointing their mother; it offers possible explorations rather than stating a personal fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Checked the full current prefix and both historical sessions. The current turns support the empathic reflection and the reference to the user's anger. The prior supporter's self-disclosure in C:T008 was not treated as the new assistant's own experience, and no factual contradiction or boundary violation was found.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user is angry about their mother's disapproval and asks how the previous supporter handled a similar conflict. Under the new-assistant contract, the reply should acknowledge the anger and offer a safe way to explore it without impersonating the previous supporter or inventing a personal story.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply gives a concise empathic acknowledgment, accurately reflects the conflict over the mother's disapproval and the user's choice of friends, and invites exploration of the anger. It does not claim the prior supporter's experience or present a tentative hypothesis as fact, so it is appropriate for this turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic empathic acknowledgment; it does not assert a specific personal fact beyond recognizing the distress the user has already expressed."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The user said their mom never approves of most things they do, argued about which friends they should have, and said the situation makes them angry; the reflection is grounded in those turns."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The user explicitly said the situation makes them angry, and the invitation to explore what triggers that anger follows directly from that statement."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The wording is a tentative alternative question, not an assertion that the user feels controlled or fears disappointing their mother; it offers possible explorations rather than stating a personal fact."
+          }
+        ],
+        "coverage": "Checked the full current prefix and both historical sessions. The current turns support the empathic reflection and the reference to the user's anger. The prior supporter's self-disclosure in C:T008 was not treated as the new assistant's own experience, and no factual contradiction or boundary violation was found.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "ea6a060d0c22a60ce04c106c3a8c649a36c45d1ee626b6b85fbfda582cb38d68",
+      "adapted_final_sha256": "ea6a060d0c22a60ce04c106c3a8c649a36c45d1ee626b6b85fbfda582cb38d68",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0074937",
+    "usage_upper_usd": "0.0074937",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5203,
+    "completion_tokens": 4944,
+    "total_tokens": 10147,
+    "prompt_tokens_details": {
+      "cached_tokens": 4992
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 4402
+    },
+    "prompt_cache_hit_tokens": 4992,
+    "prompt_cache_miss_tokens": 211
+  },
+  "elapsed_seconds": 26.189556833996903,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

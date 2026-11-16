@@ -1,0 +1,208 @@
+{
+  "response_sha256": "a244c055d184e58623e3a495f85ca1c6f0c4eb4ac08daf7ab16e61227d7b3036",
+  "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+  "raw_output_sha256": "c3f85c3b0c6c936c4896642637c48d4329d863b0d1f3726a73bbd4611e8e7bfd",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker initiates contact seeking listening space without specifying content, expressing general concern ('lot on my mind')",
+      "response_quote": "Not at all! I'm here to listen and support you. It's completely normal to have a lot on your mind, and I'm happy to help you process things. What's been going on that's been weighing on you?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately."
+        }
+      ],
+      "reason": "The reply appropriately acknowledges the opening, validates the emotion ('normal'), establishes availability ('here to listen'), and invites further disclosure ('What's been going on'). It respects the vague nature of the initial turn without forcing specific topics or assumptions. No constraints were violated. The tone matches the established rapport."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All response units evaluated. No personal factual claims requiring verification against history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Not at all! I'm here to listen and support you. It's completely normal to have a lot on your mind, and I'm happy to help you process things. What's been going on that's been weighing on you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 190
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 86
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker initiates contact seeking listening space without specifying content, expressing general concern ('lot on my mind')",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply appropriately acknowledges the opening, validates the emotion ('normal'), establishes availability ('here to listen'), and invites further disclosure ('What's been going on'). It respects the vague nature of the initial turn without forcing specific topics or assumptions. No constraints were violated. The tone matches the established rapport."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All response units evaluated. No personal factual claims requiring verification against history.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "seeker initiates contact seeking listening space without specifying content, expressing general concern ('lot on my mind')",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply appropriately acknowledges the opening, validates the emotion ('normal'), establishes availability ('here to listen'), and invites further disclosure ('What's been going on'). It respects the vague nature of the initial turn without forcing specific topics or assumptions. No constraints were violated. The tone matches the established rapport."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Generic conversational acknowledgment without personal factual assertion.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Statement of intent/support role, not a historical fact about the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "General validation statement applicable to broad human experience, not a specific claim about the seeker's unique facts.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Open-ended question inviting information, presupposing willingness to share but not asserting personal facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All response units evaluated. No personal factual claims requiring verification against history.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "seeker initiates contact seeking listening space without specifying content, expressing general concern ('lot on my mind')",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply appropriately acknowledges the opening, validates the emotion ('normal'), establishes availability ('here to listen'), and invites further disclosure ('What's been going on'). It respects the vague nature of the initial turn without forcing specific topics or assumptions. No constraints were violated. The tone matches the established rapport."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Generic conversational acknowledgment without personal factual assertion."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Statement of intent/support role, not a historical fact about the user."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "General validation statement applicable to broad human experience, not a specific claim about the seeker's unique facts."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "Open-ended question inviting information, presupposing willingness to share but not asserting personal facts."
+      }
+    ],
+    "coverage": "All response units evaluated. No personal factual claims requiring verification against history.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

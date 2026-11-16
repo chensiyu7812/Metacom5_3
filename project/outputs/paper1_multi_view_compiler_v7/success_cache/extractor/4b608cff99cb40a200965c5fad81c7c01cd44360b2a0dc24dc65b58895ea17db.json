@@ -1,0 +1,127 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 3041,
+      "reserved_prompt_tokens": 3169,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 574
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "79c5339056faa6631e575a50c4d527598407e7955eda92d105105fe5cd84cb23",
+    "prior_profile_sha256": "172b24518b9f98b768a4a48fa3317479347a405e8f257bb2416ee098ff869502",
+    "request_payload_sha256": "6761e4a3a779dc23fa85736cfce73e18e6c41aa2a745c502255f0a16e723e0ab"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p16",
+      "s": "p16_conv_15",
+      "p": [
+        {
+          "i": "p16_p1",
+          "k": "current_relationship_status",
+          "t": "stable_relationship_role",
+          "v": "no longer in romantic relationship; recently broke up with boyfriend after 3 years",
+          "s": [
+            {
+              "i": "p16_conv_15:7"
+            }
+          ]
+        },
+        {
+          "i": "p16_p2",
+          "k": "relationship_expectation",
+          "t": "enduring_preference",
+          "v": "wants clear communication and aligned goals in a relationship; prioritizes stability and emotional safety",
+          "s": [
+            {
+              "i": "p16_conv_15:15"
+            }
+          ]
+        },
+        {
+          "i": "p16_p3",
+          "k": "current_coping_strategy",
+          "t": "enduring_interest",
+          "v": "focusing on self, career, and personal growth as a way to manage emotional challenges",
+          "s": [
+            {
+              "i": "p16_conv_15:9"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p16_e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "ex-partner Bill reached out, triggering mixed emotions and internal conflict about reconnection",
+          "s": [
+            {
+              "i": "p16_conv_15:3"
+            }
+          ]
+        },
+        {
+          "i": "p16_e2",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "reflected on personal growth since breakup, recognizing increased focus on self and career",
+          "s": [
+            {
+              "i": "p16_conv_15:9"
+            }
+          ]
+        },
+        {
+          "i": "p16_e3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "decided to talk to Bill openly to seek clarity or closure, prioritizing own well-being",
+          "s": [
+            {
+              "i": "p16_conv_15:19"
+            }
+          ]
+        },
+        {
+          "i": "p16_e4",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received emotional support and validation from supporter during discussion about reconnection with ex-partner",
+          "s": [
+            {
+              "i": "p16_conv_15:20"
+            },
+            {
+              "i": "p16_conv_15:22"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "b3ec2e102af9a53857409816bc69b721972db6390e66d3c9881c30d149b3c412",
+    "usage": {
+      "prompt_tokens": 3043,
+      "completion_tokens": 640,
+      "total_tokens": 3683
+    },
+    "latency_ms": 8377.335379977012,
+    "provider_finish_reason": "stop"
+  }
+}

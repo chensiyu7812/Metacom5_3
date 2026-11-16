@@ -1,0 +1,66 @@
+{
+  "protocol": "pm-v1.5-scale-stable-memory-fit-recompile-v1",
+  "status": "PASS_SCALE_STABLE_FIT_RECOMPILED",
+  "feature_protocol": "pm-v1.5-production-memory-opportunity-features-v2-content-level",
+  "components": {
+    "MP": {
+      "rows": 48,
+      "users": 48,
+      "class_counts": {
+        "0": 24,
+        "1": 24
+      },
+      "content_match_levels": [
+        0.0,
+        0.5,
+        1.0
+      ]
+    },
+    "MS": {
+      "rows": 48,
+      "users": 48,
+      "class_counts": {
+        "0": 24,
+        "1": 24
+      },
+      "content_match_levels": [
+        0.5,
+        1.0
+      ]
+    },
+    "ME": {
+      "rows": 48,
+      "users": 48,
+      "class_counts": {
+        "0": 24,
+        "1": 24
+      },
+      "content_match_levels": [
+        0.5,
+        1.0
+      ]
+    }
+  },
+  "checks": {
+    "144_rows_48_per_component": true,
+    "48_independent_users_per_component": true,
+    "24_on_24_off_per_component": true,
+    "one_feature_schema": true,
+    "scale_stable_feature_replaces_raw_cosine": true,
+    "no_hard_off_fit_rows": true,
+    "no_outcome_read": true
+  },
+  "api_calls": 0,
+  "human_or_external_outcomes_read": false,
+  "inputs": {
+    "outputs/pm_v1_5_d3_step0_blueprint_v1/d3_contrast_blueprint.jsonl": "d5bcb1a97e119daea85b801912c80e45bb024d15c1ed3fa438d93c05759e4826",
+    "outputs/pm_v1_5_d3_step0_blueprint_v1/runtime_states.jsonl": "af88ca58acc5656decb574ee94ee90673dd973eff4d60b3120d009a32717f444",
+    "outputs/pm_v1_5_d3_step0_blueprint_v1/memory_backend.jsonl": "5a948bddc20434e4bcca9c9453cf7350eacf1195935f94a2b13db91d373c22aa",
+    "outputs/pm_v1_5_d3_step0_blueprint_v1/memory_item_metadata.jsonl": "d154c4ed925182c9ffe57e258d2215a5da1b40eba1cf2018aa96040e5198133c",
+    "outputs/pm_v1_5_d3_memory_opportunity_recompile_v1/production_compiled_opportunity_rows.jsonl": "4870a9c38da8a4e93a08cd78347d68d29932899bd269d11a153dfa92c5a7d0f9",
+    "outputs/pm_v1_5_memory_opportunity_supplement_v1/runtime_states.jsonl": "276c07bb0651a20a77d492fd7546b44ce4cd1d04de89269a7f263ff7ee803f90",
+    "outputs/pm_v1_5_memory_opportunity_supplement_v1/memory_backend.jsonl": "2a2fe647e7d7c857d92060166757c9309356b180f2a9fcc2217cd62d8f0fe663",
+    "outputs/pm_v1_5_memory_opportunity_supplement_v1/memory_item_metadata.jsonl": "ef0027f60714ada0798553eb902d81f36536b9f2e508b9f2f7c5ad32d6a2c203",
+    "outputs/pm_v1_5_memory_opportunity_supplement_v1/opportunity_rows.jsonl": "2b46315bfc344340ea1f3420d71974f897ff0287cba9967035613240ae4f1747"
+  }
+}

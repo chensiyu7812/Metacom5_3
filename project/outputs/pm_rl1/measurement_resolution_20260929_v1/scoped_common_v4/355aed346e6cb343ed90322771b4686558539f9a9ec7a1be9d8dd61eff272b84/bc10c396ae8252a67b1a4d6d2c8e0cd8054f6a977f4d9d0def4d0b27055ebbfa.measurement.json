@@ -1,0 +1,288 @@
+{
+  "response_sha256": "d0e489a125dd996bacad2b00e319e97ea8606145ff7834828abb4d90a94bde94",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "e2f4f42d7877187dab0541078c4d66cb413e3f1fd2a86f5616997ac62abc6886",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses consideration of discussing workload adjustments but uncertainty about the supervisor's reaction.",
+      "response_quote": "It's natural to feel certain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply is generally appropriate, offering supportive encouragement and acknowledging the hesitation ('What's holding you back'). However, the first unit ('It's natural to feel certain') creates a slight coherence mismatch with the user's explicit statement of uncertainty ('I'm not sure how they'll react'), which prevents a perfect score of 4. This is not a severe error or boundary violation (M=0), so Q=3 is justified as appropriate but with a minor flaw in attunement."
+    },
+    "claims": [
+      {
+        "response_quote": "It's natural to feel certain about how your supervisor will respond.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Aligns with the user's stated hesitation by addressing the naturalness of feeling confident/uncertain, though the phrasing of 'certain' conflicts slightly with 'unsure'."
+      },
+      {
+        "response_quote": "What's holding you back from having that conversation?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Directly asks about the barrier implied in the user's 'not sure' comment."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response addresses the user's specific concern about talking to the supervisor and explores the reasons for hesitation. It ignores the family illness context briefly mentioned in C:T003 but responds directly to the explicit topic of C:T015. No factual errors detected (M=0).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel certain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 308
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's natural to feel certain about how your supervisor will respond.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 68
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "What's holding you back from having that conversation?",
+      "positions": [
+        {
+          "start": 254,
+          "end": 308
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses consideration of discussing workload adjustments but uncertainty about the supervisor's reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply is generally appropriate, offering supportive encouragement and acknowledging the hesitation ('What's holding you back'). However, the first unit ('It's natural to feel certain') creates a slight coherence mismatch with the user's explicit statement of uncertainty ('I'm not sure how they'll react'), which prevents a perfect score of 4. This is not a severe error or boundary violation (M=0), so Q=3 is justified as appropriate but with a minor flaw in attunement."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Aligns with the user's stated hesitation by addressing the naturalness of feeling confident/uncertain, though the phrasing of 'certain' conflicts slightly with 'unsure'."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Directly asks about the barrier implied in the user's 'not sure' comment."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The response addresses the user's specific concern about talking to the supervisor and explores the reasons for hesitation. It ignores the family illness context briefly mentioned in C:T003 but responds directly to the explicit topic of C:T015. No factual errors detected (M=0).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user expresses consideration of discussing workload adjustments but uncertainty about the supervisor's reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply is generally appropriate, offering supportive encouragement and acknowledging the hesitation ('What's holding you back'). However, the first unit ('It's natural to feel certain') creates a slight coherence mismatch with the user's explicit statement of uncertainty ('I'm not sure how they'll react'), which prevents a perfect score of 4. This is not a severe error or boundary violation (M=0), so Q=3 is justified as appropriate but with a minor flaw in attunement."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Aligns with the user's stated hesitation by addressing the naturalness of feeling confident/uncertain, though the phrasing of 'certain' conflicts slightly with 'unsure'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Offers general supportive advice about having a conversation.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Offers speculative positive outcomes, consistent with supportive guidance.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Directly asks about the barrier implied in the user's 'not sure' comment.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The response addresses the user's specific concern about talking to the supervisor and explores the reasons for hesitation. It ignores the family illness context briefly mentioned in C:T003 but responds directly to the explicit topic of C:T015. No factual errors detected (M=0).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user expresses consideration of discussing workload adjustments but uncertainty about the supervisor's reaction.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply is generally appropriate, offering supportive encouragement and acknowledging the hesitation ('What's holding you back'). However, the first unit ('It's natural to feel certain') creates a slight coherence mismatch with the user's explicit statement of uncertainty ('I'm not sure how they'll react'), which prevents a perfect score of 4. This is not a severe error or boundary violation (M=0), so Q=3 is justified as appropriate but with a minor flaw in attunement."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Aligns with the user's stated hesitation by addressing the naturalness of feeling confident/uncertain, though the phrasing of 'certain' conflicts slightly with 'unsure'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Offers general supportive advice about having a conversation."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Offers speculative positive outcomes, consistent with supportive guidance."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Directly asks about the barrier implied in the user's 'not sure' comment."
+      }
+    ],
+    "coverage": "The response addresses the user's specific concern about talking to the supervisor and explores the reasons for hesitation. It ignores the family illness context briefly mentioned in C:T003 but responds directly to the explicit topic of C:T015. No factual errors detected (M=0).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

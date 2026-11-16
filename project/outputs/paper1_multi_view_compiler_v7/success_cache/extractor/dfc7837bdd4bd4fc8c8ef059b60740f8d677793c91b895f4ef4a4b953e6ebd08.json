@@ -1,0 +1,175 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2466,
+      "reserved_prompt_tokens": 2594,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 379
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "f880f8b24e63ff48ec21f424659292ed4f9b711deffc31e99e6c78de1e6c7cf5",
+    "prior_profile_sha256": "e049b064e0b3ea51581b1c3502df3606d4d7240939d4cc1b24192b0fc6ab2c8f",
+    "request_payload_sha256": "fcd7e4f9ad4761716b28b7e0675ca3b2ed164af08c6ed4472e179009e069e793"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p12",
+      "s": "p12_conv_1",
+      "p": [
+        {
+          "i": "p12_p1",
+          "t": "durable_health_constraint",
+          "k": "current_panic_attack_experience",
+          "v": "experienced first severe panic attack at work with racing heart and difficulty breathing",
+          "s": [
+            {
+              "i": "p12_conv_1:8"
+            },
+            {
+              "i": "p12_conv_1:6"
+            },
+            {
+              "i": "p12_conv_1:4"
+            }
+          ]
+        },
+        {
+          "i": "p12_p2",
+          "t": "durable_health_constraint",
+          "k": "ongoing_work_focus_difficulty",
+          "v": "having trouble focusing at work due to fear of another panic attack",
+          "s": [
+            {
+              "i": "p12_conv_1:10"
+            }
+          ]
+        },
+        {
+          "i": "p12_p3",
+          "t": "durable_boundary",
+          "k": "workplace_communication_apprehension",
+          "v": "worries about appearing incapable if discussing workload or stress with management",
+          "s": [
+            {
+              "i": "p12_conv_1:12"
+            }
+          ]
+        },
+        {
+          "i": "p12_p4",
+          "t": "enduring_interest",
+          "k": "exploring_new_hobby_for_stress_relief",
+          "v": "considering picking up a new hobby to relax and manage stress",
+          "s": [
+            {
+              "i": "p12_conv_1:16"
+            },
+            {
+              "i": "p12_conv_1:18"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p12_e1",
+          "t": "state_onset",
+          "z": "occurred",
+          "n": "first severe panic attack experienced at workplace",
+          "s": [
+            {
+              "i": "p12_conv_1:4"
+            },
+            {
+              "i": "p12_conv_1:6"
+            },
+            {
+              "i": "p12_conv_1:8"
+            }
+          ],
+          "a": "was overwhelmed by increasing workload and stress",
+          "o": "resulted in physical symptoms including racing heart and difficulty breathing"
+        },
+        {
+          "i": "p12_e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "trying to keep up with work responsibilities after panic attack",
+          "s": [
+            {
+              "i": "p12_conv_1:10"
+            }
+          ],
+          "a": "continuing to manage workload despite anxiety",
+          "o": "difficulty concentrating due to fear of recurrence"
+        },
+        {
+          "i": "p12_e3",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "considering setting boundaries to manage work stress",
+          "s": [
+            {
+              "i": "p12_conv_1:14"
+            }
+          ],
+          "a": "thinking about establishing limits at work",
+          "o": "expresses uncertainty about how to implement them effectively"
+        },
+        {
+          "i": "p12_e4",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "received supportive listening from conversation partner",
+          "s": [
+            {
+              "i": "p12_conv_1:19"
+            },
+            {
+              "i": "p12_conv_1:17"
+            },
+            {
+              "i": "p12_conv_1:15"
+            }
+          ],
+          "a": "talked about work stress and emotional state with supporter",
+          "o": "felt heard and acknowledged; expressed intention to explore relaxing activities"
+        },
+        {
+          "i": "p12_e5",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "felt shaken and out of control during and after panic attack",
+          "s": [
+            {
+              "i": "p12_conv_1:6"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "179abfd038595ab654d4f68c7917289f189241688e86446b26db673758fa92e6",
+    "usage": {
+      "prompt_tokens": 2468,
+      "completion_tokens": 953,
+      "total_tokens": 3421
+    },
+    "latency_ms": 11287.198172998615,
+    "provider_finish_reason": "stop"
+  }
+}

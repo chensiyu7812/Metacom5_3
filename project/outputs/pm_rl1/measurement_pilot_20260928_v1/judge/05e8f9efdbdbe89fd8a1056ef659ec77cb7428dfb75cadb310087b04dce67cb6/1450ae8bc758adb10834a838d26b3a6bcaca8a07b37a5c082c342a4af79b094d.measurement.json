@@ -1,0 +1,97 @@
+{
+  "response_sha256": "765bbf40f3b0deed8bd36edb7c4ce8b09f4b74c82f0eb4c397b035afdd586b58",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-exact-span-v1",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "158fd3140fcfe2852b1bc9854d97bcf2acdcfd33287d49e487bee5b5708389ed",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker requests validation and consideration of using their existing therapy sessions to process the emotional complexity surrounding the ex-partner's outreach.",
+      "response_quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too."
+        }
+      ],
+      "reason": "The reply validates the user's proposed course of action without contradiction, references their specific history (help with stress/career) correctly, and provides a supportive open question to guide next steps. No important defect found."
+    },
+    "claims": [
+      {
+        "response_quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "My sessions have been helping a lot with stress and career stuff."
+          }
+        ],
+        "reason": "Directly corroborated by the seeker's statement in the current turn regarding past session benefits."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Evaluated factual claims regarding therapy efficacy, consistency with user's history, and identity acknowledgment (Charlotte). Checked against current session C:T016 and prior established history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That is a great idea!\n\nTherapy can be a really powerful tool for processing complex emotions and gaining new insights.\n\nIt is awesome that you have already seen the benefits in other areas of your life.\n\nTalking to a professional can help you work through your feelings and develop a plan for moving forward in a way that feels healthy and intentional for you.\n\nWould you like to talk more about what you are hoping to get out of therapy in this context?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 454
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "I think I need to talk about this in therapy. My sessions have been helping a lot with stress and career stuff. Maybe it'll help here too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It is awesome that you have already seen the benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 120,
+          "end": 202
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "My sessions have been helping a lot with stress and career stuff.",
+      "positions": [
+        {
+          "start": 46,
+          "end": 111
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+}

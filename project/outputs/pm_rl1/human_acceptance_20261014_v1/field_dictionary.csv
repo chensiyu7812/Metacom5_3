@@ -1,0 +1,8 @@
+﻿字段,尺度,处理规则
+item_id,固定题目ID,必须由packet_identity、form_identity及冻结map联合核对，不按题号猜配
+preference,A / B / tie / uncertain,平局是有效判断；无法判断单列；缺失不补为平局
+risk_A、risk_B,none_detected / local / severe / uncertain,逐侧检查；未检出问题不是事实全对；无法判断不是风险0
+quote_A、quote_B,对应候选回复的原文子串,非零风险必填；引用归属应随A/B可信换序映射检查
+source_ids,本题合法来源编号或ROLE/FULL_SOURCE的列表,必须唯一、属于本题；非零风险需依据；编号合法不等于语义支持
+reason,非空文字,保留原文；与选项矛盾或A/B指代不明时单列待确认，不据理由补出选项
+uncertainty,文字,任一判断为uncertain时必须说明原因

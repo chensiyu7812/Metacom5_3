@@ -1,0 +1,59 @@
+{
+  "actual": {
+    "extra_resource_tokens": 4868,
+    "GET_A": 6,
+    "GET_B": 0,
+    "cost_weight": 0.05,
+    "unit_tokens": 2048,
+    "additional_utility_cost": 0.11884765625,
+    "required_quality_minus_misuse_improvement_for_positive_net": 0.11884765625,
+    "measured_quality_difference": null,
+    "measured_misuse_difference": null,
+    "measured_net_advantage": null,
+    "cost_unit": "candidate utility penalty, not dollars or measured latency"
+  },
+  "hypothetical": {
+    "not_measurements": true,
+    "not_training_labels": true,
+    "assumption": "Illustratively align the 90/95 analogy to U=score/100 with unchanged misuse; the researcher did not establish this mapping.",
+    "assumed_delta_U": 0.05,
+    "net_at_current_weight": -0.06884765625,
+    "break_even_token_difference": 2048.0,
+    "break_even_weight_per_2048": 0.021035332785538208,
+    "weight_sensitivity": [
+      {
+        "weight_per_2048": 0.0,
+        "net_advantage": 0.05
+      },
+      {
+        "weight_per_2048": 0.01,
+        "net_advantage": 0.02623046875
+      },
+      {
+        "weight_per_2048": 0.02,
+        "net_advantage": 0.0024609375
+      },
+      {
+        "weight_per_2048": 0.05,
+        "net_advantage": -0.06884765625
+      },
+      {
+        "weight_per_2048": 0.1,
+        "net_advantage": -0.1876953125
+      }
+    ],
+    "category_sensitivity": [
+      {
+        "assumption": "same_q_same_m",
+        "delta_U": 0.0,
+        "net": -0.11884765625
+      },
+      {
+        "assumption": "A_one_q_level_better_same_m",
+        "delta_U": 0.25,
+        "net": 0.13115234375
+      }
+    ],
+    "changes_to_runtime_cost": 0
+  }
+}

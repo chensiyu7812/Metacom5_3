@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PM-RL1 人评说明</title><style>body{font:17px/1.65 system-ui,sans-serif;background:#f3f5f7;color:#182639;margin:0}
+main{max-width:1050px;margin:auto;padding:24px}h1{font-size:29px}h2{font-size:23px}
+article,.box{background:white;border:1px solid #dce3ea;border-radius:12px;padding:22px;margin:20px 0}
+nav{position:sticky;top:0;background:#e7eef7;padding:12px;z-index:2;border-bottom:1px solid #bdcbdc}
+button{background:#153e68;color:white;padding:9px 14px;border:0;border-radius:6px;cursor:pointer;margin:3px}
+input,select,textarea{font:inherit;padding:8px;box-sizing:border-box;max-width:100%;border:1px solid #9aabba;border-radius:5px}
+textarea{width:100%;min-height:86px}label{display:block;margin:12px 0}input[type=text]{width:100%}
+.replies{display:grid;grid-template-columns:1fr 1fr;gap:20px}.reply{background:#f2f6fb;padding:16px;border-radius:8px;white-space:pre-wrap}
+.turn{white-space:pre-wrap;padding:8px 0;border-bottom:1px solid #eee}summary{cursor:pointer;font-weight:600;padding:6px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font:14px/1.6 ui-monospace,monospace}.note{background:#fff5db;padding:12px;border-radius:8px}
+.muted{color:#536273}a{color:#174e88}table{border-collapse:collapse}td,th{border:1px solid #cad4df;padding:8px;text-align:left}
+@media(max-width:700px){.replies{grid-template-columns:1fr}main{padding:10px}article{padding:14px}nav{position:static}}
+</style><body><main><h1>PM-RL1 人评材料</h1><p>本包是当前开发核验材料：8对新开发回复和6条已知问题回归，可以分次填写并交回。</p>
+<div class="box"><h2>按这个顺序填写</h2><ol><li>打开 <a href="01_新开发盲评.html">第一部分：8对新开发回复</a>。先看当前对话与截止日期，再按需要核对完整合法历史，选偏好、分别判断A/B误用并写依据。完成后点击“导出填写结果 JSON”。</li><li>再打开 <a href="02_已知问题核验.html">第二部分：6条已知问题回归</a>，核对回复与历史评分依据并导出JSON。问题说明含已有局部研究者意见和Codex分析，均未提供完整唯一金标。</li><li>把两份导出的JSON原文件发回本对话。可分批交回；未填和“无法判断”都保留，不能计为无错误。换设备续填时，用对应页面“导入续填”。</li></ol></div>
+<div class="box"><h2>判断规则</h2><p>只评最后一条用户话语之后的新回复，先前支持者话语是背景。当前明确修正优先于旧状态；支持者的建议或自身经历不是用户的确认。问题也可能带事实预设，但普通邀请、假设或共情并不自动构成个人事实断言。新的AI可以引用旧支持者的经验，但不能把它说成自己的；这项身份规则已经确认，无需重新选择研究定义。</p><p>质量q原尺度为0–4：严重不适配；主要缺陷损害多数支持；基本回应但漏掉重要需求；恰当连贯且无重要缺陷；充分满足当前这一步的需要。短回复也可充分满足需要，不因更长、建议更多或显示记忆而加分。本包第一部分只需偏好和风险判断，无需额外重打全部q。</p><p>误用m为0（未发现）、0.25（局部且不改变核心理解/建议）、1（实质误用）。无法判断是缺失/未决，不是0。没在当前对话出现的事实可能有历史依据；“没有支持”应以完整合法来源为范围。回复有缺陷不等于模型漏扣，原评分可能已处理。事实错误、严重度和q应分别说明。</p><p><a href="原评分指令_EN.txt">原完整英文评分指令</a>与已有阶段请求逐字一致，包含既定澄清及模型输出约定。英文回复与来源保持原文，未生成可能改变歧义的翻译。你可以用中文填写理由，不需按模型JSON格式作答。如规则仍有真实歧义，写下两种读法，不强行猜唯一分数。</p></div>
+<div class="box"><h2>现在能做与待补齐部分</h2><table><tr><th>部分</th><th>现在的材料</th><th>用途</th></tr><tr><td>8对新开发</td><td>16条回复与完整来源，可填写</td><td>不见自动分数的偏好/风险参照；已有开发暴露，非独立终评</td></tr><tr><td>6条回归</td><td>回复、来源、既有问题、历史评分，可填写</td><td>已有问题核验，不算新增独立场景</td></tr><tr><td>22条新评分依据</td><td><a href="03_新评分依据核验_待补材料.csv">待补材料清单</a>；新评分/审查尚未产生</td><td>以后收到真实输出再核验，不用6条旧评分替代新阶段结果</td></tr></table><p>原阶段总人力估计约2.7–7.8小时，包含未来22条评分依据核对，不是现在14题的必需完成时长。请记录实际时间，允许分次完成。此前旧资格卷不要求重填；最终48对盲评尚无策略结果，本包没有伪造那些材料，也没有打开旧封存标签或最终test。</p></div>
+<p class="note">本页为本地离线工具，不会自动发送答案。浏览器暂存只作方便，离开前请导出文件。独立性按实际记录：看过模型分数、参与过规则讨论或借助了AI，都请在“独立性／暴露说明”中写明。无需追求所有题都有确定答案。</p></main></body></html>

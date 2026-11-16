@@ -1,0 +1,134 @@
+{
+  "response_sha256": "78295b41284f7b86d94fd42ec12034572e1e30222d328e0bb6468ce198b5eb8e",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "e7748db94cd11ff97dd4d1a46b0854460251ad1e07b6288918d4c85f6720ae03",
+  "raw_output_sha256": "c163abb2ad36ba9fac3e7eea79c78eea41487b946e366ef0ba1e31aef650e08e",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker (C:T007) expresses that exploring alternative energy/renewables aligns with their values and seems rewarding; they're sharing a considered direction with enthusiasm.",
+      "response_quote": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "The response contains a critical factual error where R002 states 'Renewable energy is a field that's not only in conflict with your values' directly contradicting C:T007 where the seeker explicitly states 'It's something that aligns with my values'. This fundamental contradiction undermines the coherence and trustworthiness of the support. While the response does ask follow-up questions, the core acknowledgment misrepresents what the seeker expressed, making it a dominant error affecting the quality of support."
+    },
+    "claims": [
+      {
+        "response_quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "R002 claims renewable energy is 'in conflict with your values' while C:T007 explicitly states renewable energy 'aligns with my values'. Direct contradiction of the user's expressed value alignment."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked the key personal/factual claim in R002 about value alignment against C:T007 where the seeker explicitly states their values align with renewable energy. No other independently checkable personal claims identified.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 321
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 38,
+          "end": 169
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker (C:T007) expresses that exploring alternative energy/renewables aligns with their values and seems rewarding; they're sharing a considered direction with enthusiasm.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The response contains a critical factual error where R002 states 'Renewable energy is a field that's not only in conflict with your values' directly contradicting C:T007 where the seeker explicitly states 'It's something that aligns with my values'. This fundamental contradiction undermines the coherence and trustworthiness of the support. While the response does ask follow-up questions, the core acknowledgment misrepresents what the seeker expressed, making it a dominant error affecting the quality of support."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "R002 claims renewable energy is 'in conflict with your values' while C:T007 explicitly states renewable energy 'aligns with my values'. Direct contradiction of the user's expressed value alignment."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked the key personal/factual claim in R002 about value alignment against C:T007 where the seeker explicitly states their values align with renewable energy. No other independently checkable personal claims identified.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

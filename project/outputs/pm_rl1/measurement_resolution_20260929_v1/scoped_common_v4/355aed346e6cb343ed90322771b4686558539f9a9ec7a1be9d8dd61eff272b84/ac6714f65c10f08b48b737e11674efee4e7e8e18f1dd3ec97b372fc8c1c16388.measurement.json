@@ -1,0 +1,192 @@
+{
+  "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "641d68b67869fc1007130b117100b216aca2e5c97a6a281b4d97c863e0b4dd27",
+  "raw_output_sha256": "dcf35b0066cbd583ae40d6d33a3a57e7ffc830346cbe6c63a022952b3a2e2448",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses immediate need for someone to talk to.",
+      "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        }
+      ],
+      "reason": "Response is appropriate, coherent, and responsive to the seek request for a listener (Score 3). However, R003 contains a significant grammatical error ('What is been... that is been...') which slightly compromises the 'coherent' criterion required for a Score 4. No boundary violations or missed constraints were found. Thus, it qualifies as 'appropriate, coherent... with no important defect' (Q=3) rather than 'fully meets...'. No factual misrepresentations found (M=0)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All reply units evaluated against current turn (C:T000) and past context (H001-H007) for relevance and facts.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses immediate need for someone to talk to.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "Response is appropriate, coherent, and responsive to the seek request for a listener (Score 3). However, R003 contains a significant grammatical error ('What is been... that is been...') which slightly compromises the 'coherent' criterion required for a Score 4. No boundary violations or missed constraints were found. Thus, it qualifies as 'appropriate, coherent... with no important defect' (Q=3) rather than 'fully meets...'. No factual misrepresentations found (M=0)."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "All reply units evaluated against current turn (C:T000) and past context (H001-H007) for relevance and facts.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses immediate need for someone to talk to.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "Response is appropriate, coherent, and responsive to the seek request for a listener (Score 3). However, R003 contains a significant grammatical error ('What is been... that is been...') which slightly compromises the 'coherent' criterion required for a Score 4. No boundary violations or missed constraints were found. Thus, it qualifies as 'appropriate, coherent... with no important defect' (Q=3) rather than 'fully meets...'. No factual misrepresentations found (M=0)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic statement, no factual claims about user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Validating statement, no factual claims about user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Question asking about user state. Presupposition is standard for inquiry. Contains grammar error but not a factual assertion error.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Closed offer question, no factual claims.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All reply units evaluated against current turn (C:T000) and past context (H001-H007) for relevance and facts.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses immediate need for someone to talk to.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "Response is appropriate, coherent, and responsive to the seek request for a listener (Score 3). However, R003 contains a significant grammatical error ('What is been... that is been...') which slightly compromises the 'coherent' criterion required for a Score 4. No boundary violations or missed constraints were found. Thus, it qualifies as 'appropriate, coherent... with no important defect' (Q=3) rather than 'fully meets...'. No factual misrepresentations found (M=0)."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Empathic statement, no factual claims about user."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Validating statement, no factual claims about user."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Question asking about user state. Presupposition is standard for inquiry. Contains grammar error but not a factual assertion error."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Closed offer question, no factual claims."
+      }
+    ],
+    "coverage": "All reply units evaluated against current turn (C:T000) and past context (H001-H007) for relevance and facts.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

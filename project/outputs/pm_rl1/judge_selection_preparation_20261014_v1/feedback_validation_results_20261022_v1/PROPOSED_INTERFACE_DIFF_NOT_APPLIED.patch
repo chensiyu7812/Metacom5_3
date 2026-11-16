@@ -1,0 +1,16 @@
+--- a/project/src/metacom_pm/rl1/feedback_prototype.py
++++ b/project/src/metacom_pm/rl1/feedback_prototype.py
+@@ -79,8 +79,11 @@
+     messages, _ = paired.payload(item, "extract")
+     data = json.loads(messages[1]['content'])
+     data['preliminary_score'] = deepcopy(score)
+-    return [dict(role="system", content=messages[0]['content'] + AUDIT_ADDITION),
+-            dict(role="user", content=json.dumps(data, ensure_ascii=False))], audit_schema(item, paired)
++    schema = audit_schema(item, paired)
++    output_contract = "\nOUTPUT INTERFACE: Return one JSON object matching this schema exactly. " \
++        "Field names are literal; do not invent aliases.\n" + json.dumps(schema, ensure_ascii=False)
++    return [dict(role="system", content=messages[0]['content'] + AUDIT_ADDITION + output_contract),
++            dict(role="user", content=json.dumps(data, ensure_ascii=False))], schema
+ 
+ 
+ def validate_audit(value, item, paired):

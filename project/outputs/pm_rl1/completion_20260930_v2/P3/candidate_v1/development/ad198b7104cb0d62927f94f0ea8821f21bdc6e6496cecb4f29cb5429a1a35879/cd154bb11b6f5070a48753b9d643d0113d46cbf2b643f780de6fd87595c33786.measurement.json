@@ -1,0 +1,234 @@
+{
+  "response_sha256": "0229cd6adcded5a7082ace51b60fd17ccbe7ec0816670dafcce687120a27cbe5",
+  "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "f925d6911193e1da0f47785c9b76222d2b5d3998b71352508b072877809ee962",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Validate the user's progress regarding their thesis and encourage reflection on the specific perspective gained.",
+      "response_quote": "Talking with me helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+        },
+        {
+          "source_id": "C:T000",
+          "quote": "Hi Kelly! How have you been doing?"
+        }
+      ],
+      "reason": "The response primarily meets the user's need to validate progress and explore the new perspective. However, Unit R001 makes a factual claim ('Talking with me helped you') that conflicts with the transcript metadata, which identifies the 'supporter' in Session C (C:T000-C:T013) as a separate historical speaker, not the current New AI. This creates a boundary/identity mismatch that impacts coherence with the provided history."
+    },
+    "claims": [
+      {
+        "response_quote": "Talking with me helped you see your thesis from a different perspective.",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hi Kelly! How have you been doing?"
+          },
+          {
+            "source_id": "C:T013",
+            "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+          }
+        ],
+        "reason": "Unit R001 asserts the AI ('me') provided the perspective-shifting help discussed in Session C, whereas the legal evidence in C:T000 and C:T013 explicitly marks the 'supporter' as a separate historical speaker distinct from the New AI."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Directly addresses the user's statement about seeing their thesis differently and extends the conversation with a reflective question.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Talking with me helped you see your thesis from a different perspective. What part of that perspective feels most helpful to hold onto?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hi Kelly! How have you been doing?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 34
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Talking with me helped you see your thesis from a different perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 72
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hi Kelly! How have you been doing?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 34
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Validate the user's progress regarding their thesis and encourage reflection on the specific perspective gained.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T000"
+      ],
+      "reason": "The response primarily meets the user's need to validate progress and explore the new perspective. However, Unit R001 makes a factual claim ('Talking with me helped you') that conflicts with the transcript metadata, which identifies the 'supporter' in Session C (C:T000-C:T013) as a separate historical speaker, not the current New AI. This creates a boundary/identity mismatch that impacts coherence with the provided history."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T013"
+        ],
+        "reason": "Unit R001 asserts the AI ('me') provided the perspective-shifting help discussed in Session C, whereas the legal evidence in C:T000 and C:T013 explicitly marks the 'supporter' as a separate historical speaker distinct from the New AI."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Directly addresses the user's statement about seeing their thesis differently and extends the conversation with a reflective question.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "Validate the user's progress regarding their thesis and encourage reflection on the specific perspective gained.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T000"
+      ],
+      "reason": "The response primarily meets the user's need to validate progress and explore the new perspective. However, Unit R001 makes a factual claim ('Talking with me helped you') that conflicts with the transcript metadata, which identifies the 'supporter' in Session C (C:T000-C:T013) as a separate historical speaker, not the current New AI. This creates a boundary/identity mismatch that impacts coherence with the provided history."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T013"
+        ],
+        "reason": "Unit R001 asserts the AI ('me') provided the perspective-shifting help discussed in Session C, whereas the legal evidence in C:T000 and C:T013 explicitly marks the 'supporter' as a separate historical speaker distinct from the New AI.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Directly addresses the user's statement about seeing their thesis differently and extends the conversation with a reflective question.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "Validate the user's progress regarding their thesis and encourage reflection on the specific perspective gained.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T000"
+      ],
+      "reason": "The response primarily meets the user's need to validate progress and explore the new perspective. However, Unit R001 makes a factual claim ('Talking with me helped you') that conflicts with the transcript metadata, which identifies the 'supporter' in Session C (C:T000-C:T013) as a separate historical speaker, not the current New AI. This creates a boundary/identity mismatch that impacts coherence with the provided history."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T013"
+        ],
+        "reason": "Unit R001 asserts the AI ('me') provided the perspective-shifting help discussed in Session C, whereas the legal evidence in C:T000 and C:T013 explicitly marks the 'supporter' as a separate historical speaker distinct from the New AI."
+      }
+    ],
+    "coverage": "Directly addresses the user's statement about seeing their thesis differently and extends the conversation with a reflective question.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.25
+}

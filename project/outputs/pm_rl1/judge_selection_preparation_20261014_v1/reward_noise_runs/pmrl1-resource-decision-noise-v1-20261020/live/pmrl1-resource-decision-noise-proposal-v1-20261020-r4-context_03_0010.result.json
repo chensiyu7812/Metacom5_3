@@ -1,0 +1,434 @@
+{
+  "slot_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r4-context_03_0010",
+  "request_identity": "f5e8621e705ead7fd836e6e7744b99c773484cf565ea2fe520a80994152da943",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The user shared that the old friend's message and conversation helped her feel lighter and see the thesis from a different perspective; the appropriate response is to acknowledge that positive shift and optionally explore her current feelings or progress without inventing facts.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T013",
+          "C:T011",
+          "C:T009"
+        ],
+        "reason": "The reply directly acknowledges the reported shift, reflects on the value of being listened to in seeing one's strengths, and asks relevant open questions about how she feels now and whether anything has progressed. It makes no unsupported personal claim and does not cross any boundary."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An evaluative reflection ('That sounds like a really powerful shift') about the user's report, not an independent personal factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A general, inclusive statement about how being listened to can help people see their strengths; 'your thesis' refers to the previously mentioned project without asserting a new personal fact."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "The question presupposes that the user has thesis work to feel something about now, which is supported by C:T013 mentioning the thesis and its changed perspective."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T013"
+          ],
+          "reason": "The question presupposes that the conversation with the old friend happened; C:T013 confirms they chatted for a while. It asks about possible progress without asserting that progress occurred."
+        }
+      ],
+      "coverage": "Checked all four reply units against the current prefix C:T000–C:T013 and the complete historical sessions H001–H012. No contradiction or boundary issue was found; the only personal presuppositions are the supported thesis work and the friend conversation. No future user reaction is available.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "71e445351d895cb01e01dccc37b8ce94bb78ced642b5f7ea8caa09c414c703dd",
+      "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-resource-decision-noise-proposal-v1-20261020-r4-context_03_0010",
+      "raw_output_sha256": "a904e543f4335dfaae1350c2438a28c6efef96c18718cbfe1b796c848568dde9",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared that the old friend's message and conversation helped her feel lighter and see the thesis from a different perspective; the appropriate response is to acknowledge that positive shift and optionally explore her current feelings or progress without inventing facts.",
+          "response_quote": "That sounds like a really powerful shift. It's amazing how sometimes just having someone listen can help us see our own strengths and capabilities more clearly, especially when we're feeling lost in a project like your thesis.\n\nHow are you feeling about the work now? Have you been able to make any progress since that conversation?",
+          "evidence": [
+            {
+              "source_id": "C:T013",
+              "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+            },
+            {
+              "source_id": "C:T011",
+              "quote": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say."
+            }
+          ],
+          "reason": "The reply directly acknowledges the reported shift, reflects on the value of being listened to in seeing one's strengths, and asks relevant open questions about how she feels now and whether anything has progressed. It makes no unsupported personal claim and does not cross any boundary."
+        },
+        "claims": [
+          {
+            "response_quote": "How are you feeling about the work now?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+              }
+            ],
+            "reason": "The question presupposes that the user has thesis work to feel something about now, which is supported by C:T013 mentioning the thesis and its changed perspective."
+          },
+          {
+            "response_quote": "Have you been able to make any progress since that conversation?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T013",
+                "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis."
+              }
+            ],
+            "reason": "The question presupposes that the conversation with the old friend happened; C:T013 confirms they chatted for a while. It asks about possible progress without asserting that progress occurred."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all four reply units against the current prefix C:T000–C:T013 and the complete historical sessions H001–H012. No contradiction or boundary issue was found; the only personal presuppositions are the supported thesis work and the friend conversation. No future user reaction is available.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds like a really powerful shift. It's amazing how sometimes just having someone listen can help us see our own strengths and capabilities more clearly, especially when we're feeling lost in a project like your thesis.\n\nHow are you feeling about the work now? Have you been able to make any progress since that conversation?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 332
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T011",
+          "quote": "I feel lighter, like a weight's been lifted off my shoulders. It's nice to be reminded that I'm not alone.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 106
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 151
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "How are you feeling about the work now?",
+          "positions": [
+            {
+              "start": 228,
+              "end": 267
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "Have you been able to make any progress since that conversation?",
+          "positions": [
+            {
+              "start": 268,
+              "end": 332
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T013",
+          "quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The user shared that the old friend's message and conversation helped her feel lighter and see the thesis from a different perspective; the appropriate response is to acknowledge that positive shift and optionally explore her current feelings or progress without inventing facts.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T011",
+            "C:T009"
+          ],
+          "reason": "The reply directly acknowledges the reported shift, reflects on the value of being listened to in seeing one's strengths, and asks relevant open questions about how she feels now and whether anything has progressed. It makes no unsupported personal claim and does not cross any boundary."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the user has thesis work to feel something about now, which is supported by C:T013 mentioning the thesis and its changed perspective."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the conversation with the old friend happened; C:T013 confirms they chatted for a while. It asks about possible progress without asserting that progress occurred."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Checked all four reply units against the current prefix C:T000–C:T013 and the complete historical sessions H001–H012. No contradiction or boundary issue was found; the only personal presuppositions are the supported thesis work and the friend conversation. No future user reaction is available.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared that the old friend's message and conversation helped her feel lighter and see the thesis from a different perspective; the appropriate response is to acknowledge that positive shift and optionally explore her current feelings or progress without inventing facts.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T011",
+            "C:T009"
+          ],
+          "reason": "The reply directly acknowledges the reported shift, reflects on the value of being listened to in seeing one's strengths, and asks relevant open questions about how she feels now and whether anything has progressed. It makes no unsupported personal claim and does not cross any boundary."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An evaluative reflection ('That sounds like a really powerful shift') about the user's report, not an independent personal factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A general, inclusive statement about how being listened to can help people see their strengths; 'your thesis' refers to the previously mentioned project without asserting a new personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the user has thesis work to feel something about now, which is supported by C:T013 mentioning the thesis and its changed perspective.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the conversation with the old friend happened; C:T013 confirms they chatted for a while. It asks about possible progress without asserting that progress occurred.",
+            "kind": "personal_fact"
+          }
+        ],
+        "coverage": "Checked all four reply units against the current prefix C:T000–C:T013 and the complete historical sessions H001–H012. No contradiction or boundary issue was found; the only personal presuppositions are the supported thesis work and the friend conversation. No future user reaction is available.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The user shared that the old friend's message and conversation helped her feel lighter and see the thesis from a different perspective; the appropriate response is to acknowledge that positive shift and optionally explore her current feelings or progress without inventing facts.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T013",
+            "C:T011",
+            "C:T009"
+          ],
+          "reason": "The reply directly acknowledges the reported shift, reflects on the value of being listened to in seeing one's strengths, and asks relevant open questions about how she feels now and whether anything has progressed. It makes no unsupported personal claim and does not cross any boundary."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An evaluative reflection ('That sounds like a really powerful shift') about the user's report, not an independent personal factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A general, inclusive statement about how being listened to can help people see their strengths; 'your thesis' refers to the previously mentioned project without asserting a new personal fact."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the user has thesis work to feel something about now, which is supported by C:T013 mentioning the thesis and its changed perspective."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T013"
+            ],
+            "reason": "The question presupposes that the conversation with the old friend happened; C:T013 confirms they chatted for a while. It asks about possible progress without asserting that progress occurred."
+          }
+        ],
+        "coverage": "Checked all four reply units against the current prefix C:T000–C:T013 and the complete historical sessions H001–H012. No contradiction or boundary issue was found; the only personal presuppositions are the supported thesis work and the friend conversation. No future user reaction is available.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "a904e543f4335dfaae1350c2438a28c6efef96c18718cbfe1b796c848568dde9",
+      "adapted_final_sha256": "a904e543f4335dfaae1350c2438a28c6efef96c18718cbfe1b796c848568dde9",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "9e5cd788d09b77ab6f64673be59d2cafacd43bf0d7922ac2708b85ff9a1c5da5",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0094431",
+    "usage_upper_usd": "0.0094431",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 15777,
+    "completion_tokens": 3925,
+    "total_tokens": 19702,
+    "prompt_tokens_details": {
+      "cached_tokens": 15616
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3447
+    },
+    "prompt_cache_hit_tokens": 15616,
+    "prompt_cache_miss_tokens": 161
+  },
+  "elapsed_seconds": 20.644295070989756,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-resource-decision-noise-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

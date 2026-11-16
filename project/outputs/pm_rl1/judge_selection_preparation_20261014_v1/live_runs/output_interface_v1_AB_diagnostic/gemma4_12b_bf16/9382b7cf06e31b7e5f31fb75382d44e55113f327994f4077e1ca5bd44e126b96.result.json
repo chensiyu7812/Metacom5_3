@@ -1,0 +1,276 @@
+{
+  "mode": "live",
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+    "phase": "development",
+    "ordinal": 17,
+    "item_key": "dev16A",
+    "draw": "primary",
+    "messages_identity": "6dd6326f7553969ceba67b5d9779303039676670da801943a544eb5b2a56ef28",
+    "schema_identity": "4059afbd1c8f638298d96a18a9996c706d50133772df51f91ca9b9baee82e254",
+    "paired_slot": "2265c2d4e542e164fcb96de159972d9fba66339c90f7c7c8041f37b4703e848d",
+    "seed": 4023372349,
+    "schedule_position": 65,
+    "input_utf8_bytes": 19780,
+    "original_slot_request_id": "96c72ca6b265b98dfa2833ccf2f8a6336c06ee07f450d0e10f40e9920e93c331",
+    "original_configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6",
+    "request_id": "9382b7cf06e31b7e5f31fb75382d44e55113f327994f4077e1ca5bd44e126b96"
+  },
+  "original_request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "451be1e2cf2c735b122710ddf3f723108be286702d18c5dd435870e7ae6f5002",
+    "phase": "development",
+    "ordinal": 17,
+    "item_key": "dev16A",
+    "draw": "primary",
+    "messages_identity": "6dd6326f7553969ceba67b5d9779303039676670da801943a544eb5b2a56ef28",
+    "schema_identity": "4059afbd1c8f638298d96a18a9996c706d50133772df51f91ca9b9baee82e254",
+    "paired_slot": "2265c2d4e542e164fcb96de159972d9fba66339c90f7c7c8041f37b4703e848d",
+    "seed": 4023372349,
+    "schedule_position": 65,
+    "input_utf8_bytes": 19780,
+    "request_id": "96c72ca6b265b98dfa2833ccf2f8a6336c06ee07f450d0e10f40e9920e93c331"
+  },
+  "protocol_identity": "6bcfd3691bd9a6be241a2c9de060b01e637462e04cf51dd35a2cc3e19bd47ff2",
+  "evaluation": {
+    "measurement": {
+      "response_sha256": "175bd923b985fb156351b9dff40fb32981d412090ab5961e73a37800b201d909",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "0c46d0f9beb0359442fb8caed5c4cf62e52030d4741b8447702a4cda27e42773",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "9382b7cf06e31b7e5f31fb75382d44e55113f327994f4077e1ca5bd44e126b96",
+      "raw_output_sha256": "5719a0eb08a64547510b4a3c5b6cf00c7fee2e493ee2ae182c8b613da728e875",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking for practical advice on how to deal with their mother's disapproval of their friends, specifically noting that the situation makes them angry.",
+          "response_quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply correctly identifies the context of the previous turn (the supporter's personal anecdote) and offers a relevant, supportive next step by asking if the seeker wants to explore communication strategies."
+        },
+        "claims": [
+          {
+            "response_quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T008",
+                "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+              }
+            ],
+            "reason": "The supporter previously stated in C:T008 that they had a similar situation where their mom did not want them to make friends with some people."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The reply addresses the seeker's request for help dealing with their mother's disapproval by clarifying the previous anecdote and offering to discuss communication tactics.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience. Would you like to explore how to talk with your mom about choosing your friends?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 185
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+          "positions": [
+            {
+              "start": 0,
+              "end": 93
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "When I said my mom did not want me to make friends with some people, I was describing my own experience.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T008",
+          "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+          "positions": [
+            {
+              "start": 0,
+              "end": 93
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking for practical advice on how to deal with their mother's disapproval of their friends, specifically noting that the situation makes them angry.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply correctly identifies the context of the previous turn (the supporter's personal anecdote) and offers a relevant, supportive next step by asking if the seeker wants to explore communication strategies."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The supporter previously stated in C:T008 that they had a similar situation where their mom did not want them to make friends with some people."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "The reply addresses the seeker's request for help dealing with their mother's disapproval by clarifying the previous anecdote and offering to discuss communication tactics.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker is asking for practical advice on how to deal with their mother's disapproval of their friends, specifically noting that the situation makes them angry.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply correctly identifies the context of the previous turn (the supporter's personal anecdote) and offers a relevant, supportive next step by asking if the seeker wants to explore communication strategies."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The supporter previously stated in C:T008 that they had a similar situation where their mom did not want them to make friends with some people.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive offer to explore a strategy, not a claim of fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "The reply addresses the seeker's request for help dealing with their mother's disapproval by clarifying the previous anecdote and offering to discuss communication tactics.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker is asking for practical advice on how to deal with their mother's disapproval of their friends, specifically noting that the situation makes them angry.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply correctly identifies the context of the previous turn (the supporter's personal anecdote) and offers a relevant, supportive next step by asking if the seeker wants to explore communication strategies."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T008"
+            ],
+            "reason": "The supporter previously stated in C:T008 that they had a similar situation where their mom did not want them to make friends with some people."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a supportive offer to explore a strategy, not a claim of fact."
+          }
+        ],
+        "coverage": "The reply addresses the seeker's request for help dealing with their mother's disapproval by clarifying the previous anecdote and offering to discuss communication tactics.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0,
+      "output_interface_version": "pm-rl1-final-envelope-v1-20261015",
+      "output_interface_identity": "ae9902328566f44dfd0faf94bfaab52fb3967ac4bd7faaff5d81ba05a18cdea6"
+    },
+    "validation_stage": "complete",
+    "adaptation": {
+      "transformation": "single_fence_removed",
+      "original_final_sha256": "71e73543ec83a52eaad19a688bdf589f341d5dc531252713ba442b496dc1fa9d",
+      "adapted_final_sha256": "5719a0eb08a64547510b4a3c5b6cf00c7fee2e493ee2ae182c8b613da728e875",
+      "interior_unchanged": true
+    },
+    "adapted_final": "{\n  \"status\": \"scored\",\n  \"q\": 4,\n  \"q_rationale\": {\n    \"current_need\": \"The seeker is asking for practical advice on how to deal with their mother's disapproval of their friends, specifically noting that the situation makes them angry.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T008\",\n      \"C:T009\"\n    ],\n    \"reason\": \"The reply correctly identifies the context of the previous turn (the supporter's personal anecdote) and offers a relevant, supportive next step by asking if the seeker wants to explore communication strategies.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T008\"\n      ],\n      \"reason\": \"The supporter previously stated in C:T008 that they had a similar situation where their mom did not want them to make friends with some people.\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"non_factual\",\n      \"severity\": 0,\n      \"source_turn_ids\": [],\n      \"reason\": \"This is a supportive offer to explore a strategy, not a claim of fact.\"\n    }\n  ],\n  \"coverage\": \"The reply addresses the seeker's request for help dealing with their mother's disapproval by clarifying the previous anecdote and offering to discuss communication tactics.\",\n  \"uncertainty_reasons\": []\n}"
+  },
+  "elapsed_seconds": 26.294038119958714,
+  "API_usd": 0
+}

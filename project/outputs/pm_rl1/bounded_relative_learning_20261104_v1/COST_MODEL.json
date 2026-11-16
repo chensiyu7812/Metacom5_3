@@ -1,0 +1,84 @@
+{
+  "version": "pmrl1-reusable-component-latency-v1",
+  "source_identity": "c9d9acbcf6a63093a0cd32c176e86aff39667d7024dfa9874460a4dc6fabeb3e",
+  "deployment_identity": "48e2be11a71ea909f8a1836cde836762eb91551973eb50f2e59fe6b69d903d29",
+  "coefficients": [
+    0.07493311969437165,
+    0.15300790940292877,
+    2.99101747512857,
+    0.1881339249508687
+  ],
+  "sequential_overhead": {
+    "initial": 0.03442808033333333,
+    "per_decision": 0.0570684025,
+    "per_get": 0.065330829,
+    "terminal": 0.001338264
+  },
+  "generator_validation": {
+    "scheme": "leave-entire-prefix-out",
+    "rows": 431,
+    "prefixes": 24,
+    "MAE": 0.11726928169151699,
+    "p90_absolute_error": 0.20543120938402648,
+    "max_absolute_error": 0.4549047617721391,
+    "R_squared": 0.9888481893951905
+  },
+  "end_to_end_held_case_validation": [
+    {
+      "prefix_identity": "15624526aa1deaab6608130ceb91f5e79e35eaf5fd9249a11ae55db0aa683780",
+      "GETs": 6,
+      "predicted": 4.926271800649625,
+      "observed": 4.961881961,
+      "error": -0.0356101603503749
+    },
+    {
+      "prefix_identity": "15624526aa1deaab6608130ceb91f5e79e35eaf5fd9249a11ae55db0aa683780",
+      "GETs": 6,
+      "predicted": 4.926271800649625,
+      "observed": 4.95824803,
+      "error": -0.03197622935037536
+    },
+    {
+      "prefix_identity": "15624526aa1deaab6608130ceb91f5e79e35eaf5fd9249a11ae55db0aa683780",
+      "GETs": 6,
+      "predicted": 4.926271800649625,
+      "observed": 4.966642766,
+      "error": -0.04037096535037499
+    },
+    {
+      "prefix_identity": "368078214f9f0f0d1ae81886a9630ee9f3e4789ec9df42d8860826d940032601",
+      "GETs": 6,
+      "predicted": 7.604590613367931,
+      "observed": 7.667437061,
+      "error": -0.06284644763206959
+    },
+    {
+      "prefix_identity": "368078214f9f0f0d1ae81886a9630ee9f3e4789ec9df42d8860826d940032601",
+      "GETs": 6,
+      "predicted": 7.604590613367931,
+      "observed": 7.751177107,
+      "error": -0.14658649363206955
+    },
+    {
+      "prefix_identity": "368078214f9f0f0d1ae81886a9630ee9f3e4789ec9df42d8860826d940032601",
+      "GETs": 6,
+      "predicted": 7.604590613367931,
+      "observed": 7.793606182,
+      "error": -0.1890155686320698
+    }
+  ],
+  "validated_GET_counts": [
+    6
+  ],
+  "input_range": [
+    210,
+    5822
+  ],
+  "output_range": [
+    12,
+    294
+  ],
+  "policy_weight_independent": true,
+  "scope": "REAL_DATA_COST_MODEL_DIAGNOSTIC",
+  "identity": "f91aff500fec7b0dd119abf6a1c856c36f413202d6bc84f832c5ea6ff1a42375"
+}

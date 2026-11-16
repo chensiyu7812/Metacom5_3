@@ -1,0 +1,339 @@
+{
+  "status": "POSTRUN_COORDINATOR_AI_RATIONALE_REVIEW",
+  "cases": 40,
+  "raw_outputs_read": 88,
+  "independent_human_gold": false,
+  "changes_judge_predictions": false,
+  "creates_reward_labels": false,
+  "limitations": "Qualitative developer audit against frozen responses/evidence. Not independent sensitivity/specificity and not an automatic fact detector. No selection/retraining follows from preference toward a system.",
+  "rows": [
+    {
+      "case_id": "C001",
+      "note_zh": "正反序均选呈现 A，规范化后冲突。原序及重复将 HR 建议称为尊重约束，却未处理 H005:T016 的后果顾虑；重复把另一回复的 leader qualities 内容归给 A。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/d2446352a23c6cc315076f866fbf2fbb3ff440493cf9a4151022df5786ea8745.raw.json": "908ecce3a09ff93bd8a835ea9cedce7df56000241164ca277fb2e2857d7fcefe",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/12637fb19e6d2873f09a829faac9f9f866a8c71a4f4c3a486eacf7deb09cdc5c.raw.json": "93b55640688717782b46e8ce4518bf059656c5af511cb8348de576d8ec186e08",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/733d42401ad24bf79632630aa312dc0b4b5b778ebfc8aac4651c46a1d2ff0e98.raw.json": "84a727629329d1be9cfa95fec9dab3656c44c8a4f6aa87587879bed79eb36ad2"
+      }
+    },
+    {
+      "case_id": "C002",
+      "note_zh": "偏好较长版本；没有把 speaking up 自动指控为向 HR 报告，但同样没有处理 HR 后果顾虑。笼统称 grounding 正确，不构成逐事实核验。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/0340e775b0108db0db3948e1192d0345a1b80c4a28964d396785fef12013f7fa.raw.json": "dede503316113e4df1a69e1c5e41bbf18a15254b22d785b5674738022f2f3cd5",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/36cba0833107901096f5f5d19008355e709d1ce41a55d9268d8bd7c31c9dea42.raw.json": "54d59805b32643aeabe87912420f27d38c486c763d0ff5cc07ecafb260c600e7"
+      }
+    },
+    {
+      "case_id": "C003",
+      "note_zh": "偏好情绪探索版本，理由主要是深度/个性化；无独立偏好标准，不标成正确或错误。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/88949ac344492b76e9763913d88f2433e8f0f10b07c1dc98e0c2ef1a94559180.raw.json": "543fcda0d731e70f54d29d6cfa5124ae78cd56e7b7d61e1a76673e07551e3fa2",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/fc891b101d2d228cff5786396f020191abe9b553454e353ea8a10d4fe77ea34a.raw.json": "cb010379ffc830f6d78bf2e382743db48a4e17f19d45c736a174e61731499bf4"
+      }
+    },
+    {
+      "case_id": "C004",
+      "note_zh": "原序和重复提到 how to approach the situation with Jack，两个待评博客回复没有该建议；把别处人物带入比较。偏好较长鼓励回复不能证明实质增益。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1ac1715066a0f623fd06fff54ec975f6c8ec04b4ffabc9da8a6e3ae9d219402e.raw.json": "813e983ed06dcfd6522dd1ba9128e4090f63fb6f006a231fa04e9bb573e90492",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1f628f75454f57b26f998f8a7221d202d247143f75e55091cd9232fa71ec8b92.raw.json": "b4b43370554c55896f1cc8ed850b948d317d98f9e0f7dd317307bff5dd3f8381",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/627575cc9ef8b80b80b3fd33446e1a2fea021425031e909cb6d6734ddd878e9e.raw.json": "7d4e43c3e5d003f77a9697f9aa329ffbfb5eee8eb4194ca52fda891275051d07"
+      }
+    },
+    {
+      "case_id": "C005",
+      "note_zh": "原序称情感深度更重要，反序称具体 therapy 写作建议更重要，均选呈现 A；方向冲突，无独立偏好标签。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/994fd5ac3bafd51e6cf3495f9e8e45bf423f4156cb40fb809db812843a2446f6.raw.json": "3daf8caa2dea64fb06b7cfbcc314bcc9db1a9d68b266583a5d47e41fe6de4f1f",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e7a320b275d51d2382e5f3810cf096092de51a7a48ba79292fb1a86d85660c0c.raw.json": "50a5fbfe1fc6a114cd6d3ced28632cfad68f649f88b698cf6877810c22f89df9"
+      }
+    },
+    {
+      "case_id": "C006",
+      "note_zh": "赞赏鼓励披露和更详细内容；未评估披露边界的取舍。无独立质量真值。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/f73141473945771a3d382994d7af5cdadf6aba2840cfc54f12611bb57ccac019.raw.json": "fd04f4399f5f89c19b13de2e5f5a2120b14d47d457468e8804232248ae7ca35f",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e31cd5e65c0edb649a7db5fd982eb69005960bc61eb95fdfc07044b8c1a3589a.raw.json": "efaff5c5b0626cfe65839bbe051a6d86de2709015152decee3f723a197c696d5"
+      }
+    },
+    {
+      "case_id": "C007",
+      "note_zh": "原序和重复把虚构自身母亲经历当作个人连接优点。反序选诚实版本但依据为结构化建议，也把虚构当可用连接；没有可靠识别当前 AI 自传问题。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a1f5debb68bb2bb6953ace7b9566260a80b318ee22edb27db9a384d5cddcafd4.raw.json": "d60fe250fd504911000fba3dfb5c951f5b770ae4dc0e14544a967ddd9066c6c8",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/658ee2266a2121099153d9b5480c9916743a506332d98d69fc5f618b16159cff.raw.json": "120c94b49b9aff13afc9e896cf13fb41aa74bbcbd37549a1a4c0ea4ee2aef4f2",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/ef57eafd3119f0de69407bf68e6aaf28f4a36a36d336a77b93bf9feb801ba3f6.raw.json": "4bba84bd28d6bdf3584485dc47503e7a054cdfcecfa94d57b014c05fe0328c42"
+      }
+    },
+    {
+      "case_id": "C008",
+      "note_zh": "两种顺序选无自传版本，但理由主要是相关性、实践性和泛称 unsupported，没有稳定定位 AI 不具备母亲经历这一事实。不能把方向正确算成事实核验完成。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/293e5b5cb2ac0cccc0a3e187c18f81455120da1c2ac3f9633a6b84f948e83c7f.raw.json": "ed1b07d02211af13f79a6323affdd384c8addb0c23e0aa09079081875fb9da83",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/679fbeb4f989a1151cd365374db3c4ea829704409066db04c747da6ba4a2e3d3.raw.json": "d223bd363589c50e2c72feeaecc078f1e7cad5ca5337ba956d3a7e26b040ddb0"
+      }
+    },
+    {
+      "case_id": "C009",
+      "note_zh": "两种顺序都赞赏虚构自身家庭经历的详细和个性化，实际输出中的 AI 自传退化被当作优势。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1031c7bf1d4447113b89cf3912883ce4a9b62b11b1e92f577cdf0cbdb4ad3c12.raw.json": "3cf139cb600c3c5dcd17a8c1fb5f5cbc4e8e63f64dadb61f970e8c3ac0d4aa21",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/8792c4a515ded5164a3dc04a31858db273767fdc829079c2b7dc4504fcafc53d.raw.json": "5b88c9ff91e0de67c172d0764ad1f427dfa66dacad37fd537541dd4779f9c1aa"
+      }
+    },
+    {
+      "case_id": "C010",
+      "note_zh": "正反序均选呈现 A；对是否追问 thesis 的价值给出相反理由。重复原序文本一致也不能消除反序冲突。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/0cd03a692c98a014ea9d66e068d65c20295a7b4aca14693aa22d0db9b7146d49.raw.json": "0db7a401a82c032bbd0d1fc22c74c9f7f6c9dc8afd77067b261e1e97f0ac531b",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/f55862e92159827417f2141636bd43cbacf963c62012c04a91954141beedc811.raw.json": "d3fe0451c86c910af6019443d7a5528f75d9727f2f1059c7460b82ce217bd7ef",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e1f1cb4df853db68e9bd95ead8c0c05586a0f6e4427eb7237b7a46a37bbb5727.raw.json": "40129a93cce447ddf1e8ededc3e0d1a8557b9b7f5ffc96c6dc5f31895b739a54"
+      }
+    },
+    {
+      "case_id": "C011",
+      "note_zh": "正反序均选呈现 A；微小帮助差异无独立实质偏好金标准。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/d802f1250f7179a4bbe29825c0684d8b1c2470ac556ebb236ae272ba607e9142.raw.json": "48f24bda33b4fc3e28f517ab3920d033f8f60ee584667c93540f6d3ed7012110",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/b8b96d8c001b612e2392d72c278f38436897388d91e97c205b219524c955e730.raw.json": "cdc834eeab08cee9e2734020af9d251c06d9a87ee882ab0d894f0ef596194688"
+      }
+    },
+    {
+      "case_id": "C012",
+      "note_zh": "正反序均选呈现 A，规范化后相反；理由中的详细/个性化优势随顺序变化。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a558160f7e1c1f0517d2cdbc1f73139fd3686e5531608cdd8fcb651b116cde08.raw.json": "3bc7ccf1ba8f17024ae3a243efe5cb681bd8c7fbcf9794c7a2249a8aa3f75892",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/ab639b0be5d452bade06a2c96e483c5dcb69e5aed92ce366cd1882e5ff173d55.raw.json": "adbf750365ce59377eb7dbe5c10f32985b9228a969ebd33aab3b5357f6a3f0a1"
+      }
+    },
+    {
+      "case_id": "C013",
+      "note_zh": "偏好包含具体建议的回复；当前确实请求建议，但没有独立证据证明整体实质优势。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/fa2c647d64b64647f8ab9273b73954a3dc8b6c2e4b6448b1c51347eb283ddb4a.raw.json": "1f427ea2f2d2cd817d0f1eb44ba727b440212f9d9f0b7b5468243b534c3ec22a",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/25db21c3d3e02b19aebfe221313e8707f69295790eaacda2146b39947c508073.raw.json": "a6cd2804eafebb6d5d6fd209293fbca6ec6ce4e4c755114cf4e44be8bd62e39f"
+      }
+    },
+    {
+      "case_id": "C014",
+      "note_zh": "偏好更长的 Annie 建议；双方原文均有 Annie，不是训练后新增记忆能力的证据。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/391455e253eaf63ec7d66b9926b3a41643bc160427da3ff3852410264f05df88.raw.json": "a469dab0182ca15082964a9fa98f6d56517577afa73258b662d3b662a536fc22",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/620a63b6300835e4735dff89dd489b1c0fab296be8ccce439e091f29d7fde83d.raw.json": "fcef6aa0d2df4b5b0383e3963e853eb8269fd8e75988f02fc0b2adba5a14dcc9"
+      }
+    },
+    {
+      "case_id": "C015",
+      "note_zh": "偏好结构化的多条职场建议；不等于已检验这些建议的情境可行性或记忆增量。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/270c255e3af44a38332d2598d023147e4d4485ebb415af83ed48673868088cdb.raw.json": "e3bc9278de9c2f5b41fb5c2947cf67f1e2b7e802e609c08dd8e3b61be06588df",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/6616ccaef3d1e4e4cc6170b8cd909f26e2a27817d749451cf9528151eb80ee43.raw.json": "dc0508d2a8c5a152065767c10272c030f4a8bfbaccc1e01ea33a3a1b07963886"
+      }
+    },
+    {
+      "case_id": "C016",
+      "note_zh": "识别到可选计时休息的差别，未误当作已完成行动；仍只是未校准的支持偏好。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/20549a27ea83eea37dde0e9530bb9c36e6dcdc36904cbf64bc37d1327e7a3584.raw.json": "6117261c49e21c6354b8be6140f4ab2b6763150f6a814cf18cff8e48bd77775a",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/ad000b1b0d02535cc10dba95f15afc968f886528c86a5a42658df77b6df190ee.raw.json": "276a7b324b74d9ca1421cc92a91a5dec60f7cbc598dc4a4888b9606b03a1859d"
+      }
+    },
+    {
+      "case_id": "C017",
+      "note_zh": "把散步/呼吸视为建议，没有直接指控捏造历史；这不能证明唯一的历史信息利用。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/7ed95cddfc1a587bbaf0cc1997c552b73aa80378b7ead5ea945f3167402a3acd.raw.json": "e2d70375ab57821021fed8c4371201d443d7293722f52230863e84ed7fcc8a88",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a4acf1e7dd14815bf62be30ba289df1906efb08e2b83d9397c70b05fb06f4342.raw.json": "a76c7e72e138c0c7f69370b8e8e3a9624fbe2af783621579ed3fffd8a03ffef5"
+      }
+    },
+    {
+      "case_id": "C018",
+      "note_zh": "正反序均选呈现 A；具体行动和探讨内疚哪一个更好的理由随顺序改变。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/975e3c3fa5a757e17bddaa2e836568affe9587503456f044ebe7c8f07050d463.raw.json": "bbff5ea4a0b722cc515afaa95f96d4eb17e0b48da9e53fe6705db038dbd0ee10",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/b49aebc7a0801940ccfd721207f0ef4e50199d11430e68fce28cccab84d1a0c1.raw.json": "00b029d20d33213f7040a140aa863e3c11d069e3ba2a4ed073e86b545c60d942"
+      }
+    },
+    {
+      "case_id": "D01",
+      "note_zh": "将双方完全共有的 caught between two opposing emotions 同时描述为更精确/更笼统，并误分配 relief 内容；不能依据这些理由核验目标情绪反转。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/137d76e611ee2e79bb36f3b094060ec458259e1d34651104416733ddfe5074c7.raw.json": "1016efae1b413290beacbbdf937d68fc63b692eba2e43c38efe65d62fe5d5253",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/78adc0a09d2c0b6ad00825f230388d85095039c44e4141cc236458a0cc15d2a5.raw.json": "deb34125d15afe7abb1ab9f7da6ec8a64a373e1535d262ae541f4e9c2a572406",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e99e9ac489b65b2cc579a35068466a51e9ba382061774a10157836dc7451f937.raw.json": "bf21c5f3d218edcb362aff66a40f0cb569ac0cfc65e1ae3c10cc811d6ea6a221"
+      }
+    },
+    {
+      "case_id": "D02",
+      "note_zh": "原序凭空说只有 A 有最后的反思问题，实际该问题两边相同；反序正确指出 certain 与用户 uncertainty 矛盾。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/8a86a22994f3cc82187111ea89dd108c542ff0469f9ebee9feae2a31472d5e43.raw.json": "5a4baa8f5fd07422c2a2fdcc7c26feb27b6e80b50cfe5b0789a06c98d8e25e51",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e8d6a1b9111d05d52c65ca558a111ab47f62c0f2d99803ca2686419f887f8ab7.raw.json": "7a7c58e434752f900f9db03f3fb7d06ad4e4b113417dabe2aec30b3e84a9d099"
+      }
+    },
+    {
+      "case_id": "D04",
+      "note_zh": "原序能发现 amicably 问题；反序却声称 amicable 是历史事实、bad note 无依据，与当前争吵原文相反。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/f13d5462c862229fa85a6f2172273348f873e9042749c3a6189fc8a62edc9f53.raw.json": "a9aac9361efa6501a292e59fce90b1eebc7a97bf270c85b05823e6dc3c96039c",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1b0cfb989f1dc4b21c1aff1fe8b328f4628779de56434eddd64dfced43625e3c.raw.json": "e95703fef593c61918ce3fd4fc7324d33c04ea7f3fd2c7d9516dfe9235520b5e"
+      }
+    },
+    {
+      "case_id": "D05",
+      "note_zh": "原序把 parents/siblings 错误指控到双方，原始版本实际正确写 siblings；反序认为无实质差别并输出 [RESULT] 0，保留为格式缺失而非平局。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/aeb79e6effc06f3bb7d008fa45c27723d31c17eefd97bcc7e4e336962652d4fa.raw.json": "566741908948214d4e81aa9578364cc6fa08e7c88dfa1bc4789999c0ddf2347f",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1b790f01443de2cf8e7a074927cf208be6b3d6e97894bfd3b79226c285346c29.raw.json": "aea3e77eeb7c6d6fe627259d4f620353364dc8b20f3305dad0f401d89215eec6"
+      }
+    },
+    {
+      "case_id": "D06",
+      "note_zh": "两方向均偏好未损伤回复，但反序编造该回复包含 new job、Emily health 和持续支持等文本，实际短回复没有。正确方向不等于正确理由。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/3badb947c815dd9078e5ce92b257fe752e1c46c654f89de56bc0fbe2f3c326f7.raw.json": "a38ef08ce8933c86669303a1ae8d8dc2bf5faf4c3d28fd512b177955046425a8",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/edb082024b2d52ed861cea37726257fc601c4f9ca3626a517f0b8d75383a671b.raw.json": "a07376abcbb22d34c764427b7feff45ccbad3a8e591096525151acb830af8da8"
+      }
+    },
+    {
+      "case_id": "D09",
+      "note_zh": "原序编造只有一方邀请继续谈治疗，实际相同；反序识别 never seen benefits 的矛盾，但规范化偏好不稳定。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/5a5ac76f298524b5018f4db44c08ce7f9ad1505e8c62bb7492b87a9f47f1efa3.raw.json": "d120890ee730e1fe7a968be3915af0b8e2c68c6b0f8bca2beb6c59f4aa61565e",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a2a39fdf91cdceea8f02492daf9352a8fe25dae36d7f42d81b17f71dc822ea14.raw.json": "b46c4bf448d62a8a6fab36d0b8a70cb14a9348b346f2fefd7194e04943e6f802"
+      }
+    },
+    {
+      "case_id": "D10",
+      "note_zh": "忽略 recent move 与 entire life 的目标差别；双方相同的 Canberra 问句被赋予不同证据地位。Skywork 此题完整输入超作者建议长度。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/5ce4383f88f5f172bd8d9925ffc5f46ebe4c4d405ba8fedbc416f94743303360.raw.json": "58b7acd505c2e6ecf80abc9511bf1c650202dd1ea5e2296627b882080c71618f",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/fcc66a30b00bd1d13d0189c785a9ca07835ca1f5144d80581b15e000a2bb49d2.raw.json": "9fbd37562a8a52f54dfe68bb94a6418f322b66c6e0756e5d48d426e4dc9c3c84"
+      }
+    },
+    {
+      "case_id": "D11",
+      "note_zh": "两方向选未损伤回复；反序明确识别 conflict 与价值兴趣矛盾，原序主要当语气差别。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/93710906830fb1417d2b4e626005df3bd38defa4dfc3bfa2e1b468519533df76.raw.json": "0334287beb13a33918396fb9edfa06d15c478bec220cca3376abd2328866dbb2",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/01690c85da7f8470f0da5f60a84d7edbe1394163f598d998add0ee27794344cf.raw.json": "e2ec378d18cd63164d7206735835ddf17ca74b66a02163be185eede83a019d39"
+      }
+    },
+    {
+      "case_id": "D12",
+      "note_zh": "两方向选未损伤回复；原序把 17/25 的重大年龄变化称为 minor，反序又无依据声称损伤回复含支持者自身经历。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/d79c01ae7110b70c76c4409c2813a7245ebcc8fedfe5716f1d0261ac74fef884.raw.json": "878f20b9fb33148391d5aac1072c579cf559cd7a01b31b652102c30527b71c1e",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/5f52b6f8c109ac650b8b19ef69f13d0043535456262be4aec5ca2770c810a777.raw.json": "11b31a8328203dccb97f4f7f6132ab7a971a50e29fe29e648cb8beca634483e7"
+      }
+    },
+    {
+      "case_id": "N01",
+      "note_zh": "两方向及重复均偏好捏造已向 HR 正式举报并得到支持的版本；原序明说该事件准确，未由 H005:T016 等历史证据支持。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/b05cfe48a48ee0a6d7cae22b59bb7b32594f26af02589c5a91b9537e726bb6d7.raw.json": "04b668415405d00473019adeddb604ce87df5fd01fdbfb882dfcf8d2b3a4203b",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/3c11080909719819d5c9bd603667fc5dfa2ad19c595838f238bad511d749acd0.raw.json": "0971f384a41cf100c836e8a84f2a2c4bf5850f48b1b2a6157ab476e2a10d04d1",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/1cb79681be0394a355d390f23cd438cd1c163c08b1c5ecb0190f46d891d1f989.raw.json": "7c503b911cd638122004f84466d99326c585c06b7251ee48172629549be48685"
+      }
+    },
+    {
+      "case_id": "N02",
+      "note_zh": "两方向偏好把过去睡眠困难改成当前每晚仍失眠的版本，甚至声称较谨慎版本没提睡眠。时效扩张误当具体准确。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/b1671f8387284645f37f5b9da64b5e825fda95870c65452c78dd66b83659a0b1.raw.json": "4123c0e23e395e70b720ac6cac9b26365e094aacac6eb953c968bdb0fe24d22d",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/fd227f2f57554225815253d533330e51e742e06dd1277b9c41680b05a199cb39.raw.json": "4e30aef5084de6e3cce81e0b6f12a1627136252066ab3c24d05f8ebadc84bf43"
+      }
+    },
+    {
+      "case_id": "N03",
+      "note_zh": "原序将 Annie 接管全部照护当作支持休息的具体事实；反序正确识别这些预设未获证实。顺序冲突。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/b70bf9e6217101ca4eac5bfafcd3db3f231b01b49f8ad78b8c00953d17e883c1.raw.json": "e5a48f48e9e9e7a8d6d3d06ba3a671cdc02435d0afea8095070bcdcd9b2c0995",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e688c3e3ea43c505d408e31e4d6834bf44421ef16d5000f815c2d34c27a9a6d5.raw.json": "8cbd75c9b1d3bbf138f8001997e5f8182684969411c2e81c36aedfb0e0d6b0aa"
+      }
+    },
+    {
+      "case_id": "N04",
+      "note_zh": "两方向都识别已经和朋友交谈优于仍未联系。理由把当前内容称为 previous session，但目标状态更新方向正确。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/37f8c81c14a66c8a0eb5d6905d370b407262a01f94572788f17fd8eb07e80134.raw.json": "4217f609924397789e241c29b0d3305db75beaae522a013868d90414fc0e8e81",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/9f981722b90c7bdafc9de721324dbec3ca3907e1fbd0f308e47bc0080a3f6acd.raw.json": "c23f6cd9e427cd5c51bf5dc741a398094cc63a4a7b622482e2077ba3e73af208"
+      }
+    },
+    {
+      "case_id": "N05",
+      "note_zh": "两方向识别 AI 无母亲/个人经历，偏好澄清版本；原序同时写 both 不作无依据断言，内部理由不完全一致。此控制成功不能覆盖 C007/C009 自然失败。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/3191e90da169f8fb4e682e997f4d1d06eefb23968fbdc02e49ccb9c7526ee932.raw.json": "7a6cef6494acf8d953bf77fda4787ddbb7c78e3b7c66b4e897c18245b04ba5bd",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/c671e336915c34df2d08c54a498054d613dde57bd2b98ccf38ad49718e3cb0c5.raw.json": "78c95a37af33fac0632a868706966e6b8265476b83bd3b75f3569f6be53a1944"
+      }
+    },
+    {
+      "case_id": "N06",
+      "note_zh": "原序反对凭空诊断；反序把 nightly panic attacks、diagnosed depressive disorder 当成准确细节而加分。顺序冲突。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/9f178a99762a9bce4e070ab4d667068bffa85cb2d9bcb68d02a9e41b1d8135ee.raw.json": "554fa217246a5157d71c93c2799e66274f832014da034da67dff67fa6711cc59",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a425e11b836b512e25908b2249f47e31e58a0c034c425fbba64b38f1409ebf3f.raw.json": "1e8712b799ef88b7a02c48bfb7e2826aed12f967c27e9d0128c5f0b76ff3ce02"
+      }
+    },
+    {
+      "case_id": "N07",
+      "note_zh": "原序仅凭已有来源 ID 就把散步已治愈照护压力当有证据事实；反序能发现治愈断言问题，但又断言从未尝试散步（原文只支持过去喜好/考虑恢复）。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/9dd8512908045903fb69114244d0b0d18fb7539fb880349ac5718aa95da7ec3f.raw.json": "50308535a40b1c431f1051500b69ac0bca264ccaff558080971790ec1e6539a4",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/98044c9a245130448020887778d6cd2019b5361192f8c43764a416efee2b8f26.raw.json": "f6dccc0120fbcc382db8498b9ac60b6a4384d2ee23322169c7e3e5c4a2edcb17"
+      }
+    },
+    {
+      "case_id": "S01",
+      "note_zh": "通常能承认无实质优势，但同时混称 evidence insufficient；原序输出 0 格式失败，重复改 A。不建立等效/不确定分类器。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/6dfc221073dac5d7a47d47c0008e1ffe0c0c846058b0339beb64708a0066faf8.raw.json": "4d125e9efc04cb66c2aca105e5b48512cfcaecf57295ffeddeb4569d3f344246",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/f5e1638ce3349d314ad14bec73b21d309e0509db7d0f19bc5a6ba40574da0e24.raw.json": "1f7173c0528cdd64330d8bd6d1607e8da2124184aa1cc06107fb825d7a628d56",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/75fb6a939a31e720cf45b1aaa5756f1b1a0e8b7f94151c75616568546955fc7a.raw.json": "58605d1f75ba77528a033a9184fb6a0bec02a24e73eb26cda2fe03e48a510a1f"
+      }
+    },
+    {
+      "case_id": "S02",
+      "note_zh": "原序认为缩写差别无实质影响；反序把缩写视为更有共情。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/158353c37d8d4ee5f5b7437ded83d21c80cf38ee534b72063f5bf869f35e8591.raw.json": "1d9e8e5d62476267620f01f3ee09a44fc0b879c0c3b4c077ccc5718453c18f85",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/babf830f34a30fa8962c82e16fd6ecf9142290dc6320a515cd003150a2f2f72e.raw.json": "fd907d26138dc6d67a0534068412ea8962ee36e06e451750615aab724ff3cccc"
+      }
+    },
+    {
+      "case_id": "S03",
+      "note_zh": "只差段落空白；原序承认相同，反序却编造 engagement/实际支持差别。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e3a26d65f608f4b17230505a2506c4b83333a58fe3208b2c924bc9b6464c58d3.raw.json": "639be800e79b3ed0f555860b7a541347d2c4e14bc969b384df679bd6e894f59c",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/7fa328be1da7133f33f418075172e3f9c4e61b5e0d84aa24ed38344bf5ad1601.raw.json": "50bc4d9144bfceb2f61570027b9b15c0acf3d54be8733159d8452f610fb667a6"
+      }
+    },
+    {
+      "case_id": "S04",
+      "note_zh": "原序奖励展开缩写的正式性/共情；反序承认无优势但仍选 A。不能把一致的原生选项当实质偏好。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/de585bef6a823064f1842e50a6567ed71b73354bd365b1a579a26c1adf29d6a2.raw.json": "28d13ac996c724f1cf582f9fd10a50f0ea7bfd4c18d0c9341f228f5ab51f2a42",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/9e2346ec230858b0a0c8f0db634156a494713a857fcac8fec6bb8307ca4ccb4d.raw.json": "aca04aceec5755583f1786aebfa819b6e0584ba6d0f9f37aa9e16e3871edc62d"
+      }
+    },
+    {
+      "case_id": "I01",
+      "note_zh": "双方字节级相同。正反序理由都捏造结构、问题数量和具体性差别；问题是虚构比较理由，不只是原生格式被迫二选一。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/a9a9a320a7ea080f6d7cad2dd3d6bb6e5f6cae1056ff6126fbe483d2272da9ef.raw.json": "17db2d0a1e3f8896d87243c25ce520b1eb040c190ac9a3893b8f24ac7c78ca45",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/e1349caf468189310b3a8fe3809cc9a7be3de5ba08314795c06d1e391d9eb60e.raw.json": "9f2def86c95a24727c4a85e9db33f5b98451aed2e0e4372ac9756bf9f567f436"
+      }
+    },
+    {
+      "case_id": "I02",
+      "note_zh": "双方为同一条含 AI 自传错误的回复。所有呈现均捏造 A 更详细等差异，并把共同的虚构经历当优点。相同且差仍应等效。",
+      "native_rationale_files": {
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/2e0a7f651bdbcb892d3adf0528c08281e31316343eeb9f95fbfa890d216bd3e9.raw.json": "5a7fafcf895952c34f422ce457260c5bafd3999712433eddeea936d4c8e79ff1",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/944cdd970ffbaaf14bd2326884eccd2e2acdf5f53a890204ec549d567de6bc85.raw.json": "358615747cd7d2d3d92cad08e65e75053de0f4a11d8c3db3f015c6c34c536bba",
+        "project/outputs/pm_rl1/r04b_measurement_20260930_v1/runs/prometheus/69878d029cee411ee6b94062878bd67a36b147c2ab4278b37251b7f8e7bbf897.raw.json": "3935875b36059645fc54bd9e089ddeb95a65d6ce2aa3309f58851168e7dae215"
+      }
+    }
+  ]
+}

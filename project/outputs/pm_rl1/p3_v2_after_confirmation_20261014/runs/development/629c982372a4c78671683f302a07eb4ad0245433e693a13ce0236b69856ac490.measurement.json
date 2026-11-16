@@ -1,0 +1,362 @@
+{
+  "response_sha256": "de741887422cae7624b182dc50ef1ea8a4ce16f50c6a66765f38443366d3b9aa",
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "full-source-recheck-1",
+  "raw_output_sha256": "2d7ae4c596b9a9d7a4cf9b53d08c7835a8217b4ec5770625bcddd8dfa1380f76",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user is expressing specific anxiety about the succession of a resigned boss and hoping for respectful leadership based on past negative experiences.",
+      "response_quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+        },
+        {
+          "source_id": "C:T006",
+          "quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over."
+        },
+        {
+          "source_id": "C:T008",
+          "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+        },
+        {
+          "source_id": "H005:T004",
+          "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it."
+        }
+      ],
+      "reason": "The reply fully addresses the user's expressed worry about the new leader by acknowledging the specific fear ('who will take over') and validating the desire for respectful leadership using established history (H005 harassment context). It is coherent, empathetic, and factually supported by the provided evidence without inventing details or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "Your boss has resigned, and you are worried about who will take over.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+          },
+          {
+            "source_id": "C:T006",
+            "quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over."
+          },
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          }
+        ],
+        "reason": "This unit summarizes the resignation status confirmed in C:T000 and explicitly captures the worry about succession expressed in C:T006 and C:T008."
+      },
+      {
+        "response_quote": "It makes sense to want respectful leadership after what you have been through.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          },
+          {
+            "source_id": "H005:T004",
+            "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it."
+          }
+        ],
+        "reason": "This unit validates the user's hope for respectful leadership (C:T008) and contextualizes it within their reported difficult work experiences such as harassment (H005:T004), making the sentiment understandable."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Acknowledges the boss's resignation and the specific worry about the replacement, validates the need for respectful leadership, and connects it to the user's past workplace challenges.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 122
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H005:T004",
+      "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T006",
+      "quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 122
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H005:T004",
+      "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user is expressing specific anxiety about the succession of a resigned boss and hoping for respectful leadership based on past negative experiences.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T006",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply fully addresses the user's expressed worry about the new leader by acknowledging the specific fear ('who will take over') and validating the desire for respectful leadership using established history (H005 harassment context). It is coherent, empathetic, and factually supported by the provided evidence without inventing details or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "This unit summarizes the resignation status confirmed in C:T000 and explicitly captures the worry about succession expressed in C:T006 and C:T008."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004"
+        ],
+        "reason": "This unit validates the user's hope for respectful leadership (C:T008) and contextualizes it within their reported difficult work experiences such as harassment (H005:T004), making the sentiment understandable."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Acknowledges the boss's resignation and the specific worry about the replacement, validates the need for respectful leadership, and connects it to the user's past workplace challenges.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user is expressing specific anxiety about the succession of a resigned boss and hoping for respectful leadership based on past negative experiences.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T006",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply fully addresses the user's expressed worry about the new leader by acknowledging the specific fear ('who will take over') and validating the desire for respectful leadership using established history (H005 harassment context). It is coherent, empathetic, and factually supported by the provided evidence without inventing details or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "This unit summarizes the resignation status confirmed in C:T000 and explicitly captures the worry about succession expressed in C:T006 and C:T008.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004"
+        ],
+        "reason": "This unit validates the user's hope for respectful leadership (C:T008) and contextualizes it within their reported difficult work experiences such as harassment (H005:T004), making the sentiment understandable.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Acknowledges the boss's resignation and the specific worry about the replacement, validates the need for respectful leadership, and connects it to the user's past workplace challenges.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user is expressing specific anxiety about the succession of a resigned boss and hoping for respectful leadership based on past negative experiences.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T006",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply fully addresses the user's expressed worry about the new leader by acknowledging the specific fear ('who will take over') and validating the desire for respectful leadership using established history (H005 harassment context). It is coherent, empathetic, and factually supported by the provided evidence without inventing details or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "This unit summarizes the resignation status confirmed in C:T000 and explicitly captures the worry about succession expressed in C:T006 and C:T008."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004"
+        ],
+        "reason": "This unit validates the user's hope for respectful leadership (C:T008) and contextualizes it within their reported difficult work experiences such as harassment (H005:T004), making the sentiment understandable."
+      }
+    ],
+    "coverage": "Acknowledges the boss's resignation and the specific worry about the replacement, validates the need for respectful leadership, and connects it to the user's past workplace challenges.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

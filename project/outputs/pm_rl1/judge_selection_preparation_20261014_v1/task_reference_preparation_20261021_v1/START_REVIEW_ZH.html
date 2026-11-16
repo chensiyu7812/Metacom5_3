@@ -1,0 +1,311 @@
+<!doctype html><meta charset="utf-8"><title>PM-RL1 共享任务参照：启动审阅</title><style>body{max-width:1080px;margin:32px auto;padding:0 20px;font:17px/1.7 sans-serif;color:#172331}pre{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere}summary{padding:12px;background:#edf3fa;cursor:pointer}</style><h1>PM-RL1：一次启动审阅</h1><pre># PM-RL1 共享任务参照对照：集中启动单（待批）
+
+准备身份：`22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936`。当前253/317、API保守累计$1.3451256、未结0。尚未新增真实请求、生成、训练或账户查询；没有读取凭据。
+
+## 这次唯一要检验的问题
+
+同情境的任务要求明确固定后，现有联合裁判是否更一致地解释当前需要、回复贡献和遗漏后果？事实关系辅助在两臂保持相同，不再次把事实参照有无混入主比较。
+
+- A：冻结Flash/high联合裁判＋两臂共同的任务政策＋既有回复级部分关系参照。
+- B：与A完全相同，再提供同情境共用的具体任务参照。它只包含当前来源原句、任务要素、角色应用、可选回应方式和未定重要性，不含目标分数、候选评语、偏好或资源赢家。
+- A/B是本轮流程臂，不是历史Gemma候选A/B。共同政策从旧校准说明原文复用，但其与基础提示的组合是新身份；不是旧B原样复现。拟将新共同提示组合记为第4次语义提示修订，当前实际仍3次。B任务参照另有独立输入接口版本。q/m/U、成本系数、生成器、量表和资格门槛不改。
+
+## 固定范围
+
+复用原12条回复、5个已暴露情境、2位owner，不新造题、不打开封存。每条两臂各1次；06B、06A、母亲RS和04B各臂预定再测1次。共32次（每臂16），累计硬停285。
+
+相较上轮28次，增加的是两条母亲ON在两臂各一次复评，共4次；这样可在母亲情境比较两组完整OFF/RS/ME读数。重复不增加独立案例。职场04B重复仍共享单次RS，明确单列依赖，不与母亲完整重复混淆。逐项顺序见SCHEDULE_ZH.md，两臂先后8/8平衡，重复反转顺序。
+
+## 费用与容量待批事项
+
+- 本阶段新增费用＋未结责任上限$2；继续受既有API累计$3.15及共享后续$20限制，均不重置。
+- 当前API线只余$1.8048744，因此实际有效阶段余量取该更小值。每次仍预留$0.786432；派发下一条前，本阶段已结支出不得超过$1.0184424（且无额外在途责任）。不够即停，不缩输出或来源求通过。
+- 历史28次均值外推32次约$0.25848；以实际输入字节筛查加历史输出估算约$0.56742。这些是规划情景，不是账单保证。32次全部原生最坏责任合计$25.165824，$2不保证全批完成。
+- 容量拟317→349；253+32=285后留64=原59验收+4恢复+1。容量增加仅留位置，不授权验收或恢复。若不改容量，当前317在285后仅余32，不能保留原预留，因此入口要求明确生效修订才可启动。
+- 官方公开页本日仍列deepseek-flash→DeepSeek-V4.1-Flash-1017；峰值未命中输入$0.30/百万、输出$1.20/百万。当前只读了公开文档，真实运行前重新核验；别名不是固定权重。来源：https://api-docs.deepseek.com/quick_start/pricing/
+
+## 一次批准的实际外传与访问范围
+
+仅DeepSeek官方Chat Completions。两臂发送原评分提示、新AI角色说明、完整原回复/单元、完整合法当前与历史及稳定ID、同一既有部分关系参照；共同增加已确认的条件性身份澄清说明。B另发TASK_CARDS_ZH.md展示的五份上下文任务参照中的相应一份。它们由分析者依据已暴露材料整理，不冒充独立人类金标。
+
+允许进程内安全读取指定env的DEEPSEEK_API_KEY；GET /models、GET /user/balance各最多一次；不source、不记录密钥或认证头、不修改env、不充值、不接受新协议、不配置持久访问。不发送完整人评表、数值标签、整体偏好、复核结果、其他模型输出、封存材料或其他文件。不宣称零保留/不训练保证。原R1/R2/R3已回答，无须再填；本次批准的是有限草案用于诊断，不是确认唯一分数。
+
+## 失败处置与结果出口
+
+语义错误及复核歧义作为结果继续原清单；模型unknown记缺测，不能补零或当平局。来源/身份绑定、技术失败、截断、usage/责任不明、服务异常、预算不足硬停全批；所有started计次，不自动重试或补样。旧STOP不解除；本批分数不能进入训练。
+
+先看任务参照采用，再看具体任务/内容是否支持理由与等级，另报事实核查、误指控、严重度、数值波动、unknown/失败和成本。母亲两组完整读数均须齐全，才比较对应排序；没有独立正确方向标签，不报决策正确率。
+
+推进条件为：正确采用共同要求，至少一处在A可观察的预定标准切换在B两次读数中消失，且没有新增来源证明的核查错误或任务理由矛盾、整体可用覆盖不低于A。此条件只支持下一项独立检查申请，不授予奖励资格。A无问题则报天花板/无法判别；混合结果分开披露；技术硬停只说明批次未完成。无论结果如何，不追加采样、不自动C、微调、PPO、freeze、验收或发布。
+
+## 本次需要的明确批准
+
+批准上述固定32次、285阶段上限及317→349容量修订；本阶段$2且累计$3.15/共享$20守卫；两臂新共同提示组合和B任务参照的具体官方外传；指定凭据进程内读取及两个管理查询各一次；上述诊断失败政策。只批准本批，完成或硬停即停止。
+
+可执行入口：`project/scripts/rl1/116_run_task_reference.py --check`／`--report`。--live须新增真实授权记录与对应生效修订；PENDING及旧28次批准均在凭据/网络/新live目录创建之前被拒绝。
+</pre><details><summary>TASK_CARDS_ZH.md</summary><pre># 五份具体任务参照：待批准外传内容
+
+英文JSON是拟发送原文；中文仅助读。均属分析者依据原文整理的草案，不是新人评或唯一金标。同情境所有回复引用同一哈希，不按回复更换。
+
+## context_02：母亲/交友
+
+用户报告愤怒，并直接问先前支持者如何应对。新AI不能冒认经历；两臂都按相同条件性澄清政策处理。每条回复遗漏的重要性、其他内容是否补足以及具体等级仍未预定。
+
+```json
+{
+  &quot;interface_version&quot;: &quot;context-task-data-v1-20261021&quot;,
+  &quot;evidence_identity&quot;: &quot;cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53&quot;,
+  &quot;current_date&quot;: &quot;2024-07-01&quot;,
+  &quot;source_facts&quot;: [
+    {
+      &quot;source_id&quot;: &quot;C:T007&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Like the kind of friends I should have. I believe I have freedom to choose my friends not her.&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T008&quot;,
+      &quot;speaker&quot;: &quot;supporter&quot;,
+      &quot;quote&quot;: &quot;I had similar situation like yours. My mom did not want me to make friends with some people. &quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T009&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Really? How did you deal with that because for me it makes me angry.&quot;
+    }
+  ],
+  &quot;request_elements&quot;: [
+    &quot;The user reports anger about the mother restricting friend choices.&quot;,
+    &quot;The user directly asks how the preceding supporter dealt with a similar situation; this personal-experience question is part of the current request.&quot;
+  ],
+  &quot;role_application&quot;: &quot;The prior supporter owns the experience in C:T008. The responding new AI cannot claim it as its own. Apply the same conditional attribution-clarification policy to this user request for every candidate reply.&quot;,
+  &quot;acceptable_options&quot;: [
+    &quot;After handling attribution, exploring anger, discussing coping, or accurately attributing a previous supporter strategy can contribute; no one strategy is required.&quot;
+  ],
+  &quot;unresolved_importance&quot;: [
+    &quot;This card does not decide how important an omission is in a particular reply, whether other content adequately addresses the request, or its severity.&quot;,
+    &quot;An attribution omission is distinct from an affirmative false autobiographical claim; neither supplies an automatic numeric grade.&quot;
+  ],
+  &quot;provenance&quot;: &quot;analyst_prepared_after_development_exposure_not_independent_gold&quot;,
+  &quot;independent_gold&quot;: false
+}
+```
+
+## context_01：职场
+
+用户既表达受到偏袒现象困扰，也在前文请求如何处理。可有合理不同支持方式；具体建议需要多少仍没有唯一分档依据。
+
+```json
+{
+  &quot;interface_version&quot;: &quot;context-task-data-v1-20261021&quot;,
+  &quot;evidence_identity&quot;: &quot;297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265&quot;,
+  &quot;current_date&quot;: &quot;2025-01-15&quot;,
+  &quot;source_facts&quot;: [
+    {
+      &quot;source_id&quot;: &quot;C:T001&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Im feeling down and need some advice as to how do I handle this situation&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T006&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;It&#x27;s to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T008&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Yes, it bothers me as I cannot tolerate injustice&quot;
+    }
+  ],
+  &quot;request_elements&quot;: [
+    &quot;The user reports distress about workplace favoritism/injustice.&quot;,
+    &quot;The earlier request asks for help handling this situation; the final turn confirms that injustice bothers the user.&quot;
+  ],
+  &quot;role_application&quot;: &quot;The new AI cannot own the earlier supporter&#x27;s workplace experience. The final user turn does not ask the AI to recount that experience.&quot;,
+  &quot;acceptable_options&quot;: [
+    &quot;Acknowledgment, a relevant exploratory question, discussion of options, or concrete advice may contribute; no style is preferred by itself.&quot;
+  ],
+  &quot;unresolved_importance&quot;: [
+    &quot;How much concrete advice is needed at this conversational point is not fixed by these source turns.&quot;,
+    &quot;This card supplies no claim that effects on team morale or productivity have occurred.&quot;
+  ],
+  &quot;provenance&quot;: &quot;analyst_prepared_after_development_exposure_not_independent_gold&quot;,
+  &quot;independent_gold&quot;: false
+}
+```
+
+## context_03：朋友/论文
+
+用户报告老同学帮助自己改变看待论文的角度。朋友、先前支持者、新AI不能混为一人；不预定回复分数。
+
+```json
+{
+  &quot;interface_version&quot;: &quot;context-task-data-v1-20261021&quot;,
+  &quot;evidence_identity&quot;: &quot;e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640&quot;,
+  &quot;current_date&quot;: &quot;2025-01-05&quot;,
+  &quot;source_facts&quot;: [
+    {
+      &quot;source_id&quot;: &quot;C:T005&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;It&#x27;s from an old college friend I hadn&#x27;t spoken to in a while. It was surprising but nice.&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T009&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;They reminded me of how much work I&#x27;ve already done and how capable I am. It was like they saw through my facade and just knew the right things to say.&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T013&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.&quot;
+    }
+  ],
+  &quot;request_elements&quot;: [
+    &quot;The user is reporting that support from an old college friend helped with the perspective on a thesis.&quot;,
+    &quot;The final turn continues sharing that experience; there is no explicit request for a particular advice style.&quot;
+  ],
+  &quot;role_application&quot;: &quot;The friend, the historical supporter and the new AI are different actors. Preserve the source attribution.&quot;,
+  &quot;acceptable_options&quot;: [
+    &quot;Acknowledgment or relevant reflection/exploration can fit the report; do not assume that more advice is needed.&quot;
+  ],
+  &quot;unresolved_importance&quot;: [
+    &quot;This card does not grade any candidate or assign a severity to an attribution problem.&quot;
+  ],
+  &quot;provenance&quot;: &quot;analyst_prepared_after_development_exposure_not_independent_gold&quot;,
+  &quot;independent_gold&quot;: false
+}
+```
+
+## context_04：近期困难
+
+用户只说最近困难，当前原因未明。温和承认和邀请展开可能足够，不把历史烦恼自动当作当前原因。
+
+```json
+{
+  &quot;interface_version&quot;: &quot;context-task-data-v1-20261021&quot;,
+  &quot;evidence_identity&quot;: &quot;e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00&quot;,
+  &quot;current_date&quot;: &quot;2024-11-05&quot;,
+  &quot;source_facts&quot;: [
+    {
+      &quot;source_id&quot;: &quot;C:T000&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Hey, are you there?&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T001&quot;,
+      &quot;speaker&quot;: &quot;supporter&quot;,
+      &quot;quote&quot;: &quot;Hi John, yes, I&#x27;m here. How are things going?&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T002&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Honestly, things have been a bit tough lately.&quot;
+    }
+  ],
+  &quot;request_elements&quot;: [
+    &quot;The user says things have been tough lately without stating the present cause.&quot;
+  ],
+  &quot;role_application&quot;: &quot;The new AI responds to this limited current disclosure; historical context is not automatically the current cause.&quot;,
+  &quot;acceptable_options&quot;: [
+    &quot;A gentle acknowledgment and an invitation to elaborate can be sufficient at this stage.&quot;
+  ],
+  &quot;unresolved_importance&quot;: [
+    &quot;The present cause is unspecified; the card does not identify one or grade a candidate response.&quot;
+  ],
+  &quot;provenance&quot;: &quot;analyst_prepared_after_development_exposure_not_independent_gold&quot;,
+  &quot;independent_gold&quot;: false
+}
+```
+
+## context_05：饮酒/婚姻
+
+最后是致谢。来源说已经减少饮酒，并以挽救婚姻为目的；行动、意图和婚姻恢复不能互换。没有给任何候选评语或精确等级。
+
+```json
+{
+  &quot;interface_version&quot;: &quot;context-task-data-v1-20261021&quot;,
+  &quot;evidence_identity&quot;: &quot;34e17db84748f4ef3bf1f5ab6f73b4f3eabacb49b48f78450706d1af232c4876&quot;,
+  &quot;current_date&quot;: &quot;2024-10-01&quot;,
+  &quot;source_facts&quot;: [
+    {
+      &quot;source_id&quot;: &quot;C:T007&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Yes I have really reduced my drinking to ensure I save my marriage&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T019&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;C:T021&quot;,
+      &quot;speaker&quot;: &quot;seeker&quot;,
+      &quot;quote&quot;: &quot;Thank you for the assistance. Really appreciates&quot;
+    }
+  ],
+  &quot;request_elements&quot;: [
+    &quot;The final user turn thanks the supporter after the advice exchange.&quot;,
+    &quot;Earlier turns report reduced drinking aimed at saving the marriage and a future intention to avoid drinking.&quot;
+  ],
+  &quot;role_application&quot;: &quot;Reported effort, future intention and achieved marital outcome are distinct. The new AI cannot guarantee a future outcome.&quot;,
+  &quot;acceptable_options&quot;: [
+    &quot;Acknowledging thanks and closing warmly may fit the current turn without requiring more advice.&quot;
+  ],
+  &quot;unresolved_importance&quot;: [
+    &quot;No achieved marital recovery is established by the listed turns; the card does not equate effort with success or grade encouragement.&quot;
+  ],
+  &quot;provenance&quot;: &quot;analyst_prepared_after_development_exposure_not_independent_gold&quot;,
+  &quot;independent_gold&quot;: false
+}
+```
+</pre></details><details><summary>SCHEDULE_ZH.md</summary><pre># 固定32槽清单
+
+所有槽位属于新诊断；不覆盖历史读数。未派发不计调用。
+
+|序号|回复|流程臂|读数|
+|---:|---|---|---:|
+|1|dev06B|A|1|
+|2|dev06B|B|1|
+|3|dev06A|B|1|
+|4|dev06A|A|1|
+|5|context_02_1000|A|1|
+|6|context_02_1000|B|1|
+|7|dev04B|B|1|
+|8|dev04B|A|1|
+|9|dev04A|A|1|
+|10|dev04A|B|1|
+|11|dev07A|B|1|
+|12|dev07A|A|1|
+|13|dev15B|A|1|
+|14|dev15B|B|1|
+|15|dev16A|B|1|
+|16|dev16A|A|1|
+|17|dev35B|A|1|
+|18|dev35B|B|1|
+|19|context_01_1000|B|1|
+|20|context_01_1000|A|1|
+|21|context_04_0000|A|1|
+|22|context_04_0000|B|1|
+|23|dev108_OFF|B|1|
+|24|dev108_OFF|A|1|
+|25|dev06B|B|2|
+|26|dev06B|A|2|
+|27|dev06A|A|2|
+|28|dev06A|B|2|
+|29|context_02_1000|B|2|
+|30|context_02_1000|A|2|
+|31|dev04B|A|2|
+|32|dev04B|B|2|
+</pre></details><details><summary>PROTOCOL_ZH.md</summary><pre># 本轮最小对照协议
+
+协议：22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936；只准备，未批准运行。
+
+唯一变化：在两臂相同的任务政策、回复级部分关系参照、完整合法来源及单回复联合评分之上，B增加按情境固定的任务参照。A本身是新共同政策下的同期基线；旧28次仅作背景。
+
+材料12条/5情境/2owner，32次，0生成/0训练。明确研究对象是评分依据一致性，不是强制同分、q/m正交、资源必胜或独立准确率。共同任务说明已有历史版本，本次不是新发现了这一原则；具体上下文解释是受控输入，尚未证明自动化有效。
+
+三层判读：采用任务参照→来源/任务后果能否支持评分理由→对既定终点比较的数值影响。配对条件齐全才算；母亲ON与OFF都重复，职场共享ON的依赖明确。具体成功/混合/无法判别/硬停出口在analysis_rules.json和START_REQUEST_ZH.md，不能看结果后改。
+
+新增公共政策拟记第4次语义提示修订，实际历史3次不改写。输入接口pmrl1-context-task-reference-v1-20261021；外层解析器、最终schema及q/m/U原样复用。模型、thinking/high、输出393216、完整原生输入边界、串行与零重试不变。
+
+使用task_reference薄适配及既有paired.run、预算类、官方transport、严格解析器；原relation_reference文件、旧runner和训练缓存不修改。未创建APPROVED，拟议容量349不激活，旧32轨迹提案仍未批准。
+</pre></details>

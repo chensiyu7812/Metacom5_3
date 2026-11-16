@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-14",
+  "access": "public official model cards/configs/API docs only; no weights or inference",
+  "gemma": {
+    "repo": "google/gemma-4-12B-it",
+    "sha": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+    "license": "apache-2.0",
+    "parameters": 11959730224,
+    "dtype": "BF16",
+    "context": 262144,
+    "architecture": "Gemma4UnifiedForConditionalGeneration"
+  },
+  "qwen": {
+    "repo": "Qwen/Qwen3.8-27B",
+    "sha": "1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0",
+    "license": "apache-2.0",
+    "parameters": 27781427952,
+    "dtype": "BF16",
+    "context": 262144,
+    "architecture": "Qwen3_5ForConditionalGeneration"
+  },
+  "glider": {
+    "repo": "PatronusAI/glider",
+    "sha": "5639434e21faee47a8d3a092cd3105ab051c8b01",
+    "license": "cc-by-nc-4.0",
+    "parameters": 3821079552,
+    "dtype": "F32",
+    "config_context": 131072,
+    "model_card_sequence_limit": 8192,
+    "author_tested_not_guaranteed": 12000
+  },
+  "deepseek": {
+    "model": "deepseek-flash",
+    "documented_mapping": "DeepSeek-V4.1-Flash",
+    "effort": "high",
+    "immutable_weights": false,
+    "context": 1048576,
+    "max_output": 393216,
+    "peak_input_miss_perM": 0.3,
+    "peak_output_perM": 1.2,
+    "offpeak_input_miss_perM": 0.15,
+    "offpeak_output_perM": 0.6
+  },
+  "official_urls": [
+    "https://huggingface.co/google/gemma-4-12B-it",
+    "https://huggingface.co/Qwen/Qwen3.8-27B",
+    "https://huggingface.co/PatronusAI/glider",
+    "https://api-docs.deepseek.com/quick_start/pricing/",
+    "https://api-docs.deepseek.com/zh-cn/api/create-chat-completion/",
+    "https://api-docs.deepseek.com/api/list-models/",
+    "https://api-docs.deepseek.com/guides/thinking_mode/",
+    "https://cdn.deepseek.com/policies/zh-CN/deepseek-open-platform-terms-of-service.html",
+    "https://cdn.deepseek.com/policies/zh-CN/deepseek-privacy-policy.html"
+  ],
+  "local_import_check": {
+    "interpreter": "/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python",
+    "transformers": "5.17.0",
+    "torch": "2.7.1+cu128",
+    "tokenizers": "0.23.2",
+    "safetensors": "0.8.0",
+    "accelerate": "not installed; selected explicit device path does not require it",
+    "successful_class_imports": [
+      "Gemma4UnifiedForConditionalGeneration",
+      "Gemma4UnifiedProcessor",
+      "AutoModelForMultimodalLM"
+    ],
+    "model_instantiated": false,
+    "forward_called": false
+  },
+  "current_GPU_snapshot": "GPU-bb27e322-0c2a-fe7f-35a8-3ec5944fd243, NVIDIA RTX A4500, 20470 MiB, 20054 MiB, 0 %\nGPU-ba5f65be-ecfa-7fda-b239-af9efd468db4, NVIDIA RTX A6000, 49140 MiB, 48551 MiB, 2 %\n"
+}

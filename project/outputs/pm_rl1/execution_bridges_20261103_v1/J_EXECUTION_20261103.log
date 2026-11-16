@@ -1,0 +1,31 @@
+{"status": "STATIC_CHECKED", "protocol_identity": "99ef5d00e257720ee58d2d4fa0f1bd9ed14a003b034d9a4249fb437e58b32ac9", "materials": 22, "max_attempts": 82, "trial_accounted_usd": "1.9058232", "unresolved_liabilities": 0, "network_requests": 0, "qualification_granted": false}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+{"status": "ATTEMPT_RECORDED", "component": "S", "outcome": "valid", "ordinal": 0}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/135_run_development_stage.py", line 58, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/135_run_development_stage.py", line 50, in main
+    result=stage.advance(transport)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_feedback.py", line 259, in advance
+    result = self.perform(transport, claim, request, self.items[key],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_dispatch.py", line 158, in perform
+    raw = transport.send(deepcopy(request), attempt_id=claim['attempt_id'])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/development_dispatch.py", line 222, in send
+    return collector.complete() | dict(adapter_identity=request['adapter_identity'], attempt_id=attempt_id,
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/strict_audit_delivery.py", line 136, in complete
+    if not self.done or self.finish is None:raise ValueError('incomplete stream')
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: incomplete stream

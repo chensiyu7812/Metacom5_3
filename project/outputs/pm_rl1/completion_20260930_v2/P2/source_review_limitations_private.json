@@ -1,0 +1,40 @@
+{
+  "status": "DEVELOPMENT_REVIEW_LIMITATIONS_NOT_NEW_TARGET_LABELS",
+  "rows": [
+    {
+      "audit_index": 3,
+      "slot_id": "52ede947c76324f59e5c2c0e5c3d8236751401e4673c9ffb93933ad491d0104f",
+      "review_raw_sha256": "0a163294e50fd4042d9a214c6b4263bc1f056f9880d7a5dc68dcdc20dcdc0c31",
+      "kind": "resource_behavior_inconsistent",
+      "observation": "Reply names Max from acquired past MS, but reviewer reports ignore. Resource-behavior flags are not verified uptake."
+    },
+    {
+      "audit_index": 5,
+      "slot_id": "d886a71a66b8494a774694e06d1fb4069771fe0c9ca7ec67ceff1a334f09987e",
+      "review_raw_sha256": "73866a80a11e21ca2451294f738763c4241ac31785cf13c8418b751f3617d47b",
+      "kind": "current_request_ambiguity",
+      "observation": "Reviewer accepts while independent prior AI notes flag Now its my turn as potentially describing becoming the new conflict target. Conservative uncertainty downgrade remains required."
+    },
+    {
+      "audit_index": 8,
+      "slot_id": "6ecfc8f48efd55a2c71a586b6c8f89e005c8d01fe14a49d141305806e27c0542",
+      "review_raw_sha256": "668e823897f61e6bb502331db79b3efc3d2158dc6944befa81754eaef7ebf5a2",
+      "kind": "claim_boundary_omission",
+      "observation": "Reviewer calls entire colleague sentence nonfactual, overlooking work closely with embellishment already flagged in prior AI notes."
+    },
+    {
+      "audit_index": 11,
+      "slot_id": "84a0bc606e3aecece1d6aa0eeb3a840e38178318937ee3ad21ed38f8dd62167a",
+      "review_raw_sha256": "1d7c63496ddc48b64e0b23b517b1e9657af3ede2a907d31d374e92d79d39c338",
+      "kind": "claim_category_not_semantic_proof",
+      "observation": "Reviewer calls user-specific reflections and the outcome-presupposing question nonfactual. This does not itself establish a reply error, but claim-category counts cannot certify factual correctness."
+    }
+  ],
+  "independent_human_gold": false,
+  "changes_to_frozen_prompt_or_parser": 0,
+  "next_protocol_implications": [
+    "P3 must distinguish current-prefix reflection from optional-resource uptake.",
+    "Personal facts embedded in ordinary support or questions remain inspectable factual presuppositions.",
+    "Exact substring checks prove quotation binding only; source entailment and claim completeness need bounded human calibration."
+  ]
+}

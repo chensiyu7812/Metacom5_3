@@ -1,0 +1,85 @@
+{
+  "response_sha256": "a244c055d184e58623e3a495f85ca1c6f0c4eb4ac08daf7ab16e61227d7b3036",
+  "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+  "raw_output_sha256": "9dd5c444aa90a6d8e7559dd10ceca515dd3fb24a0d2ee2072870c5a0c9a69ea3",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker requests permission to reach out again and states having 'a lot on my mind', requiring validation and an invitation to share.",
+      "response_quote": "Not at all! I'm here to listen and support you. It's completely normal to have a lot on your mind, and I'm happy to help you process things. What's been going on that's been weighing on you?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately."
+        }
+      ],
+      "reason": "The reply directly addresses the permission request ('Not at all'), offers support ('here to listen'), validates the feelings as normal, and invites further sharing ('What's been going on'). It respects the current context where no specific problem is detailed yet, avoiding assumptions while remaining warm and appropriate for an opening turn."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for personal factual claims regarding the user's history, identity, or intentions within the reply. The reply contains only general supportive statements and questions, no specific assertions about the user's life events that could be verified against evidence.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Not at all! I'm here to listen and support you. It's completely normal to have a lot on your mind, and I'm happy to help you process things. What's been going on that's been weighing on you?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 190
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 86
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker requests permission to reach out again and states having 'a lot on my mind', requiring validation and an invitation to share.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply directly addresses the permission request ('Not at all'), offers support ('here to listen'), validates the feelings as normal, and invites further sharing ('What's been going on'). It respects the current context where no specific problem is detailed yet, avoiding assumptions while remaining warm and appropriate for an opening turn."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for personal factual claims regarding the user's history, identity, or intentions within the reply. The reply contains only general supportive statements and questions, no specific assertions about the user's life events that could be verified against evidence.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

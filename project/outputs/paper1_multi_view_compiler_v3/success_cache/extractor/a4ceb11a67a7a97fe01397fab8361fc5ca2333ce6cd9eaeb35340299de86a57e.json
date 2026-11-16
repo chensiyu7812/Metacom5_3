@@ -1,0 +1,171 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v3",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 1280,
+      "maximum_prompt_tokens": 4928,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2389,
+      "reserved_prompt_tokens": 2517,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 172
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "86037dd67242e2b96603e14d490e4c5f47cd19c9c81174f19ced8f667b780eb4",
+    "source_sha256": "a240a3aa432e7ed6cdc4a12cf932b6f721878d314dbbb72a5512fcfb86af1526",
+    "prior_profile_sha256": "4d9c509d4bdbb7645370ddacd46b197dc1298c987adfa795b12d6f17f083d69f",
+    "request_payload_sha256": "7668497c652d1d637051c662189c4987fe72852e6c7c8b5fd98bb7f2d3e56354"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p1",
+      "s": "p1_conv_7",
+      "p": [
+        {
+          "i": "ppu_001",
+          "k": "occupation",
+          "v": "employee in a company with HR processes",
+          "t": "occupation",
+          "s": [
+            {
+              "i": "p1_conv_7:4",
+              "q": "it was really intense. The new boss seemed very critical, and it brought back a lot of anxiety about leadership at work after my previous boss resigned. I'm worried about the changes."
+            }
+          ]
+        },
+        {
+          "i": "ppu_002",
+          "k": "stable_relationship_role",
+          "v": "partner",
+          "t": "stable_relationship_role",
+          "s": [
+            {
+              "i": "p1_conv_7:16",
+              "q": "Things with my partner, Jack, have been a mix. We're still working on giving each other space, which is challenging."
+            }
+          ]
+        },
+        {
+          "i": "ppu_003",
+          "k": "stable_relationship_role",
+          "v": "close friend",
+          "t": "stable_relationship_role",
+          "s": [
+            {
+              "i": "p1_conv_7:16",
+              "q": "With my friend, it's been hard because I worry about her a lot."
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "peu_001",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "previous boss resigned",
+          "s": [
+            {
+              "i": "p1_conv_7:4",
+              "q": "it brought back a lot of anxiety about leadership at work after my previous boss resigned"
+            }
+          ]
+        },
+        {
+          "i": "peu_002",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "experienced harassment at work",
+          "s": [
+            {
+              "i": "p1_conv_7:6",
+              "q": "especially since I'm still trying to process everything that happened before, including the harassment issues"
+            }
+          ]
+        },
+        {
+          "i": "peu_003",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "attending therapy to manage past trauma and anxiety",
+          "s": [
+            {
+              "i": "p1_conv_7:8",
+              "q": "Therapy has been helpful, but sometimes it feels like progress is slow. My therapist says I need to be patient, but it's tough when these feelings keep resurfacing."
+            }
+          ]
+        },
+        {
+          "i": "peu_004",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "avoiding confrontation with new boss due to fear of negative outcomes",
+          "s": [
+            {
+              "i": "p1_conv_7:10",
+              "q": "Not really, I'm afraid of confrontation. Every time I think about bringing it up, I worry it might make things worse or be misunderstood."
+            }
+          ]
+        },
+        {
+          "i": "peu_005",
+          "t": "relationship_event",
+          "z": "ongoing_stage",
+          "n": "working on giving each other space in romantic relationship",
+          "s": [
+            {
+              "i": "p1_conv_7:16",
+              "q": "Things with my partner, Jack, have been a mix. We're still working on giving each other space, which is challenging."
+            }
+          ]
+        },
+        {
+          "i": "peu_006",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "feeling anxious after tense meeting with new boss",
+          "s": [
+            {
+              "i": "p1_conv_7:2",
+              "q": "Hi, I'm feeling pretty anxious after a tense meeting with my new boss."
+            }
+          ]
+        },
+        {
+          "i": "peu_007",
+          "t": "meaningful_experience",
+          "z": "ongoing_stage",
+          "n": "receiving emotional support from conversation partner",
+          "s": [
+            {
+              "i": "p1_conv_7:19",
+              "q": "You're showing a lot of resilience, Sarah. I believe in your ability to manage these challenges. Please reach out anytime you need to talk more."
+            },
+            {
+              "i": "p1_conv_7:18",
+              "q": "Thanks for the encouragement. I'm trying to find balance in all these areas. It's just that some days are harder than others."
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "d2063b5b38d1b1525229d27757627f7c6188533c52582b6865c9354f1d2ba08e",
+    "usage": {
+      "prompt_tokens": 2391,
+      "completion_tokens": 1100,
+      "total_tokens": 3491
+    },
+    "latency_ms": 13294.522676995257,
+    "provider_finish_reason": "stop"
+  }
+}

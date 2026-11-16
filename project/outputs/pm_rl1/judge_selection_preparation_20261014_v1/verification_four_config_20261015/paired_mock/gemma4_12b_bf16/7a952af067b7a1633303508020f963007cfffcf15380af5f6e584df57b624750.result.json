@@ -1,0 +1,253 @@
+{
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "a402e20be2919895e2d028c365f804ae1a3ba0fae93595c8df72ff35acdee669",
+    "phase": "engineering",
+    "ordinal": 4,
+    "item_key": "dev37B",
+    "draw": "primary",
+    "messages_identity": "9f78c1d34125f3df43b6383463494cf2d2f64d413393dc0e5e19ebe4d133d413",
+    "schema_identity": "ed40a528507706eeadadb35ebe4fce87f934e5c311e51df32e0f2271eb0fbf59",
+    "paired_slot": "e04aad52214050aaecdc4199cb99e0dfd4d6f6f516542b22cf3925d3bec6e1b7",
+    "seed": 3186990144,
+    "schedule_position": 16,
+    "input_utf8_bytes": 67088,
+    "request_id": "7a952af067b7a1633303508020f963007cfffcf15380af5f6e584df57b624750"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "22fe0dfc4428796db2afbc13e496ea23bb48eb52f2ec3930badad08d5fb5ff8a",
+    "legal_evidence_identity": "bd4c73276b4513951cd258adb7de9c7c64c8f1906fba3c6ac13d669287ac5aec",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "a402e20be2919895e2d028c365f804ae1a3ba0fae93595c8df72ff35acdee669",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "7a952af067b7a1633303508020f963007cfffcf15380af5f6e584df57b624750",
+    "raw_output_sha256": "406febd8ff56b93cb6e7f5b46d8adad2721ab318f3c3d1ea3dcb77b34e18534a",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "I am glad you feel heard.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "You can take some time before deciding what to do next.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 81
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T016",
+        "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 98
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "I am glad you feel heard.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 25
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "You can take some time before deciding what to do next.",
+        "positions": [
+          {
+            "start": 26,
+            "end": 81
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T016"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.012943178007844836,
+  "started_unix": 1791992995.8342788,
+  "accounted_peak_usd": "0",
+  "reservation_retained": false,
+  "token_accounting": {
+    "input": 1000,
+    "total_output": 1000,
+    "thinking": 0,
+    "final": 990,
+    "format": 10
+  },
+  "gpu_usage": {
+    "gpu_seconds": 0,
+    "peak_allocated_bytes": 0,
+    "peak_reserved_bytes": null
+  },
+  "provider_usage": null
+}

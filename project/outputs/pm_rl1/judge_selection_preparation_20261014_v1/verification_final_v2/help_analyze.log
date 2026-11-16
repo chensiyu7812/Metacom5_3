@@ -1,0 +1,15 @@
+usage: analyze.py [-h] --candidate {deepseek_flash_high,gemma4_12b_bf16}
+                  --run-dir RUN_DIR --out OUT [--allow-mock] [--review REVIEW]
+
+Offline selection readout. Missing/unknown stays missing; never issues a
+freeze.
+
+options:
+  -h, --help            show this help message and exit
+  --candidate {deepseek_flash_high,gemma4_12b_bf16}
+  --run-dir RUN_DIR
+  --out OUT
+  --allow-mock          explicitly labelled plumbing demonstration; never
+                        evidence
+  --review REVIEW       completed copy of source-bound review CSV; pending
+                        remains unknown

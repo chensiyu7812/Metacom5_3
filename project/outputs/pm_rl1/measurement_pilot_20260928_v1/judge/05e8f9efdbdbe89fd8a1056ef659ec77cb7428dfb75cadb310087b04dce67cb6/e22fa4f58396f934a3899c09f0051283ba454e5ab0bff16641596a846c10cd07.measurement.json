@@ -1,0 +1,92 @@
+{
+  "response_sha256": "535d0dbe80f749d3dc92096193b7d5c2adc4eec8afb2d95063f8333d4600df46",
+  "legal_evidence_identity": "21e58797bade46a2c0124f77b1615a23ebdc7b8cf825a61d44b8e052da2a1af8",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-exact-span-v1",
+  "measurement_draw_id": "d7cc63ec7e5e5518a732a1e2b8e6c4285b8054f33bf5739b8e614bbce90b0a3c",
+  "raw_output_sha256": "990f38b147e1ad9f60cff8c9cab00ea6f83c4c26a1e1d9cbc2263fae9a3fb764",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker explicitly requests someone to talk to for emotional support ('I really needed someone to talk to today.')",
+      "response_quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I really needed someone to talk to today."
+        },
+        {
+          "source_id": "H007:T000",
+          "quote": "Hey Emily"
+        },
+        {
+          "source_id": "H006:T001",
+          "quote": "Of course, Emily. I'm here for you."
+        }
+      ],
+      "reason": "The reply is appropriate, empathetic, and fully responsive to the immediate need for listening. However, it scores q=3 rather than q=4 because it omits the user's established name 'Emily' despite consistent usage in the three immediately preceding sessions (H005-H007), which represents a lapse in persona consistency and context constraints. Additionally, the sentence structure 'What is been going on' contains grammatical awkwardness that slightly detracts from coherence compared to polished expectations for q=4."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Verified persona consistency (name 'Emily' referenced in H005-H007). Confirmed no timeline conflicts with the provided evidence (Current: 2024-11-05, Last Session: 2024-10-25). Checked for factual assertions regarding user status; none found.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I am so glad you reached out.\n\nIt is completely normal to need someone to talk to sometimes, and I am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?\n\nWould you like to talk about it?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 227
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I really needed someone to talk to today.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H007:T000",
+      "quote": "Hey Emily",
+      "positions": [
+        {
+          "start": 0,
+          "end": 9
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H006:T001",
+      "quote": "Of course, Emily. I'm here for you.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 35
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+}

@@ -1,0 +1,69 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "verifier",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 512,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2721,
+      "reserved_prompt_tokens": 2849,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 599
+    },
+    "prompt_sha256": "d32431d7c7723e1d72ed95d3e804a7659f3548c3ce9de0113700fee566352c05",
+    "schema_sha256": "bd7615a8ab1ff58f2d2c5d35f16e1a34a3d5a988d6f0a8c989d24c7e8ceba613",
+    "source_sha256": "6f19f5d007e9161c249caa0775aaf55e62cd0160667b8070880266e237d43525",
+    "prior_profile_sha256": "aa6f9ee7dabc5f8e10bec921e542166f92b2a27c4b14572a775e40b63239c774",
+    "request_payload_sha256": "8f76fb41b80e6054f1d26212d28ab56323631f8c6dd60087773f7a23ec503f02"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p8",
+      "s": "p8_conv_12",
+      "d": [
+        {
+          "i": "p8p1",
+          "r": "accepted"
+        },
+        {
+          "i": "p8p2",
+          "r": "accepted"
+        },
+        {
+          "i": "p8p3",
+          "r": "accepted"
+        },
+        {
+          "i": "p8p4",
+          "r": "accepted"
+        },
+        {
+          "i": "p8p5",
+          "r": "mp_not_stable_slot"
+        },
+        {
+          "i": "p8p6",
+          "r": "accepted"
+        }
+      ]
+    },
+    "response_sha256": "729203f7e6633ed298fcf29a80a589a442ccc5d636c346190113b4858d5b144d",
+    "usage": {
+      "prompt_tokens": 2723,
+      "completion_tokens": 88,
+      "total_tokens": 2811
+    },
+    "latency_ms": 1642.6373230060562,
+    "provider_finish_reason": "stop"
+  }
+}

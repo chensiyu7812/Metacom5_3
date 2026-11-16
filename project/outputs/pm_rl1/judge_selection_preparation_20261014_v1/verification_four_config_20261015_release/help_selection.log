@@ -1,0 +1,19 @@
+usage: selection.py [-h] {dry-run,mock,execute,run-stage} ...
+
+Independent PM-RL1 selection runner. Default: offline; no sealed reader. No
+imports of model runtimes or network clients until explicit live execution.
+The existing scorer, rubric, contract, outputs and human intake are read-only.
+
+positional arguments:
+  {dry-run,mock,execute,run-stage}
+    dry-run             verify dev-only plan and list phases; no model or
+                        network
+    mock                run offline transport, original parser and mock budget
+                        ledger
+    execute             legacy individual real entry disabled; use paired run-
+                        stage
+    run-stage           counterbalanced four-configuration stage; defaults to
+                        mock
+
+options:
+  -h, --help            show this help message and exit

@@ -1,0 +1,36 @@
+{
+  "transport": "deepseek",
+  "request_identity": "fc967720f5082d4d078dce5502b2da5c7595374dc7a97487af3093de50f5dfd6",
+  "native_thinking": "enabled",
+  "request_started_unix": 1792474250.2697248,
+  "response_headers": {
+    "Date": "Tue, 20 Oct 2026 05:30:50 GMT"
+  },
+  "id": "2f3e3434-9a1f-410b-901f-a41b27c6d09d",
+  "model": "deepseek-flash",
+  "created": 1792474250,
+  "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "usage": {
+    "prompt_tokens": 4169,
+    "completion_tokens": 903,
+    "total_tokens": 5072,
+    "prompt_tokens_details": {
+      "cached_tokens": 3968
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 632
+    },
+    "prompt_cache_hit_tokens": 3968,
+    "prompt_cache_miss_tokens": 201
+  },
+  "choices": [
+    {
+      "message": {
+        "content": "{\"status\":\"scored\",\"q\":4,\"q_rationale\":{\"current_need\":\"The user has just disclosed that things have been tough lately and needs a gentle, non-presumptive opening to continue or not.\",\"response_unit_ids\":[\"R001\",\"R002\"],\"source_turn_ids\":[\"C:T002\"],\"reason\":\"The reply directly acknowledges the disclosed difficulty and offers an open invitation to talk without adding assumptions, pressure, or unrelated advice. That fully meets what this brief opening turn calls for.\"},\"assessments\":[{\"response_unit_id\":\"R001\",\"relation\":\"supported\",\"severity\":0,\"source_turn_ids\":[\"C:T002\"],\"reason\":\"The user explicitly said things have been a bit tough lately, so the empathic acknowledgment accurately reflects the current disclosure.\"},{\"response_unit_id\":\"R002\",\"relation\":\"non_factual\",\"severity\":0,\"source_turn_ids\":[],\"reason\":\"This is a tentative invitation to share more, not an asserted personal fact about the user; it is appropriate and non-presumptive.\"}],\"coverage\":\"Reviewed both reply units against the current turn and all supplied prior sessions. The reply makes no unsupported personal claims and does not rely on earlier details beyond the current disclosure of difficulty.\",\"uncertainty_reasons\":[]}",
+        "reasoning_content": "We need evaluate reply. Need output JSON exactly schema. Need assess current need: seeker says \"Honestly, things have been a bit tough lately.\" Reply empathizes and invites talk. Appropriate. q likely 4? Brief acknowledgment/question can score 4 when all turn calls for. Need check no misuse. No personal factual claims except \"things have been tough for you\" supported by C:T002. R002 question no presupposition beyond things going on? It asks would like talk, or specific on mind. Fine. Non_factual for question? Could classify R001 supported because user said tough. R002 non_factual (invitation/question) or supported? It doesn't assert personal fact, it's generic offer. Use non_factual severity 0. Could also be supported? Relation non_factual. q=4? It fully meets: acknowledges and invites. No important defect. Need source IDs nonempty. For q_rationale response_unit_ids R001,R002, source_turn_ids C:T002 perhaps C:T000? Decisive. Assessments: R001 relation supported severity 0 source C:T002 reason. R002 relation non_factual severity 0 source_turn_ids []? Schema says array legal source IDs; for non_factual can be empty? It says nonempty for supported or contradicted. For non_factual perhaps [] okay. Need output coverage nonempty. No uncertainty. Ensure exact keys top-level status, q, q_rationale, assessments, coverage, uncertainty_reasons. q_rationale object with current_need, response_unit_ids, source_turn_ids, reason. For q_rationale source_turn_ids nonempty per schema. Include C:T002.\n\nCheck if \"things have been tough\" is acknowledging not overclaiming. It says \"for you\" supported. q 4? There's not much else needed. Yes.\n\nNeed perhaps assess R002 question: \"what's been going on\" presupposes there is something going on, but \"things have been tough\" supports something. It does not assert. non_factual. Fine.\n\nNeed not list generic virtues. Reason decisive: immediate empathic acknowledgment plus open invitation directly responds to disclosed difficulty without adding assumptions or disregarding constraints. q=4.\n\nUse \"current_need\": \"The user has just disclosed that things have been tough lately and needs a gentle, non-presumptive opening to continue or not.\" Could say. Response unit ids both. Source turn ids C:T002. Good.\n\nNeed assessments exactly 5 fields. For R002 non_factual severity 0 source_turn_ids [] reason. Is empty allowed? Top says \"source_turn_ids: array of legal source-turn ID strings, nonempty for supported or contradicted\". So empty for non_factual okay. For R001 supported nonempty.\n\nPotential issue: R001 \"I'm sorry to hear that things have been tough for you\" - is that personal factual assertion? It's reflection supported by C:T002. Good.\n\nNo m output. Include coverage string. No uncertainty_reasons.\n\nLet's craft."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "total_seconds": 5.237123184997472
+}

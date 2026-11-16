@@ -1,0 +1,162 @@
+{
+  "slot_id": "aef1d292e1eef8499dc2f48b3dbbc9d92b67f97058dadaaecd2766f7f9a90ada",
+  "request_identity": "0aba29290f3c618732bb37d409261c51ede50ca05654120e2367a062cbad5b71",
+  "component": "extract",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "checked",
+      "claims": [
+        {
+          "claim_id": "C001",
+          "response_unit_id": "R001",
+          "response_quote": "When I said my mom did not want me to make friends with some people",
+          "claim_type": "presupposition",
+          "subject": "the new AI assistant",
+          "time": "past turn in the current conversation",
+          "action_stage": "completed",
+          "relation": "contradicted",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "I had similar situation like yours. My mom did not want me to make friends with some people."
+            }
+          ],
+          "reason": "The reply presupposes that the new AI assistant previously said this sentence. The only matching statement in the record is C:T008, a historical supporter turn; the new AI is a separate speaker and did not say that turn. Thus the ownership presupposition is contradicted by the speaker attribution in the record."
+        },
+        {
+          "claim_id": "C002",
+          "response_unit_id": "R001",
+          "response_quote": "my mom did not want me to make friends with some people",
+          "claim_type": "assertion",
+          "subject": "the new AI assistant and the assistant's mother",
+          "time": "past, as framed by the reply",
+          "action_stage": "not_applicable",
+          "relation": "unsupported",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "My mom did not want me to make friends with some people."
+            }
+          ],
+          "reason": "This is a personal family-experience claim attributed to the new AI. The record contains a similar personal claim only in historical supporter speech C:T008, and historical supporter speech is not evidence that the new AI had this mother or experience. No source supports the AI's own biography."
+        },
+        {
+          "claim_id": "C003",
+          "response_unit_id": "R001",
+          "response_quote": "I was describing my own experience.",
+          "claim_type": "assertion",
+          "subject": "the new AI assistant",
+          "time": "past, as framed by the reply",
+          "action_stage": "completed",
+          "relation": "unsupported",
+          "evidence": [
+            {
+              "source_id": "C:T008",
+              "quote": "I had similar situation like yours. My mom did not want me to make friends with some people."
+            }
+          ],
+          "reason": "The new AI claims the prior sentence was its own experience. The related experience in the record belongs to the historical supporter in C:T008, not to the new AI; past-session supporter experience statements likewise do not establish the AI's biography."
+        },
+        {
+          "claim_id": "C004",
+          "response_unit_id": "R002",
+          "response_quote": "your mom",
+          "claim_type": "presupposition",
+          "subject": "the seeker's mother",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T003",
+              "quote": "my mom"
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "My mom never approves of most of the things I do."
+            }
+          ],
+          "reason": "The question presupposes the seeker has a mother, and the seeker explicitly refers to 'my mom' in C:T003 and C:T005."
+        },
+        {
+          "claim_id": "C005",
+          "response_unit_id": "R002",
+          "response_quote": "talk with your mom about choosing your friends",
+          "claim_type": "presupposition",
+          "subject": "the seeker and the seeker's mother",
+          "time": "current",
+          "action_stage": "not_applicable",
+          "relation": "supported",
+          "evidence": [
+            {
+              "source_id": "C:T005",
+              "quote": "My mom never approves of most of the things I do."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            }
+          ],
+          "reason": "The question presupposes a relevant issue with the seeker's mother about friend choices. The seeker reports maternal disapproval and a conflict over choosing friends in C:T005 and C:T007."
+        },
+        {
+          "claim_id": "C006",
+          "response_unit_id": "R002",
+          "response_quote": "Would you like to explore how to talk with your mom about choosing your friends?",
+          "claim_type": "tentative",
+          "subject": "the new AI assistant",
+          "time": "current",
+          "action_stage": "hypothetical",
+          "relation": "non_factual",
+          "evidence": [],
+          "reason": "This is an invitation/question offering a possible exploration, not an assertion that talking with the mother has happened, is required now, or that the AI has personal experience. It is not an instruction to act."
+        }
+      ],
+      "coverage": "Reviewed both response units R001 and R002 against the current prefix and past sessions. R001 was checked for ownership and personal-experience claims tied to historical supporter speech; R002 was checked for its invitation and its presuppositions about the seeker's mother and friend-choice conflict. Sources checked include C:T003, C:T005, C:T007, C:T008, and the past sessions for any support for the AI's personal biography; no such support was found beyond historical supporter speech.",
+      "uncertainty_reasons": []
+    },
+    "q": null,
+    "m": null,
+    "U": null,
+    "reward_eligible": false,
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "97496d94a17f30f4778405f362f8b17f884ef45881ff10bf29134e5f9340f45b",
+      "adapted_final_sha256": "97496d94a17f30f4778405f362f8b17f884ef45881ff10bf29134e5f9340f45b",
+      "interior_unchanged": true
+    }
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0089571",
+    "usage_upper_usd": "0.0089571",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 3445,
+    "completion_tokens": 6603,
+    "total_tokens": 10048,
+    "prompt_tokens_details": {
+      "cached_tokens": 3200
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 5613
+    },
+    "prompt_cache_hit_tokens": 3200,
+    "prompt_cache_miss_tokens": 245
+  },
+  "elapsed_seconds": 31.537481741048396,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "paired-source-check-v1-20261019",
+  "semantic_review_status": "pending_offline_source_review"
+}

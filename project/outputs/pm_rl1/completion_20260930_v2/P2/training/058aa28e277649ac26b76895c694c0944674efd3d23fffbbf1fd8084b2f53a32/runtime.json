@@ -1,0 +1,58 @@
+{
+  "protocol": "pm-rl1-p2-response-only-lora-v1",
+  "base_model": "/opt/tokkio-data0/tokkio_models/huggingface/hub/models--NousResearch--Meta-Llama-3.1-8B-Instruct/snapshots/d10aef7999a2b5ba950ab3974312feeedbfe0b77",
+  "base_files": {
+    "config.json": "29e4c210b0d6ac178b16b2a255a568bdb23b581e50ca1ef6a6d071dd85704e6e",
+    "generation_config.json": "189fb0c0d7fd8a527db217c0a60a0e013f0394cd8800f9697a666a9e75e5f7fd",
+    "model-00001-of-00004.safetensors": "2b1879f356aed350030bb40eb45ad362c89d9891096f79a3ab323d3ba5607668",
+    "model-00002-of-00004.safetensors": "09d433f650646834a83c580877bd60c6d1f88f7755305c12576b5c7058f9af15",
+    "model-00003-of-00004.safetensors": "fc1cdddd6bfa91128d6e94ee73d0ce62bfcdb7af29e978ddcab30c66ae9ea7fa",
+    "model-00004-of-00004.safetensors": "92ecfe1a2414458b4821ac8c13cf8cb70aed66b5eea8dc5ad9eeb4ff309d6d7b",
+    "model.safetensors.index.json": "146776fce3f6db1103aa6f249e65ee5544c5923ce6f971b092eee79aa6e5d37b",
+    "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+    "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4",
+    "tokenizer_config.json": "24e8a6dc2547164b7002e3125f10b415105644fcf02bf9ad8b674c87b1eaaed6"
+  },
+  "packages": {
+    "torch": "2.3.1+cu121",
+    "transformers": "4.57.6",
+    "tokenizers": "0.22.2",
+    "peft": "0.17.1",
+    "accelerate": "1.10.1"
+  },
+  "gpu": "NVIDIA RTX A6000",
+  "cuda_visible_devices": "1",
+  "cuda_version": "12.1",
+  "dtype": "bfloat16",
+  "attention": "sdpa",
+  "hyperparameters": {
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "dropout": 0,
+    "lr": 0.0001,
+    "microbatch": 1,
+    "accumulation": 16,
+    "epochs": 3,
+    "seed": 17,
+    "reload_nll_absolute_tolerance": 0.0001,
+    "optimizer": "AdamW betas .9/.999 eps1e-8 weight_decay0; grad_clip1",
+    "selection": "Exclude source-confirmed severe behavior regressions, then lowest response+EOT dev NLL, earlier epoch tie; else base"
+  },
+  "dataset_sha256": "267a5fcb22decd9b3a720bc05bee46dcd3739e552a06cb5a9136a3bcf9ca6590",
+  "contract_sha256": "fccc28f6f014782876a0083a346129558abf62e64923b4021825e56463104b60",
+  "chat_template_identity": "e972ba9b49dec86ff9e86f45ce09d347e043bb853bf8d1b6469779aaf95ae41b",
+  "train_examples": 413,
+  "dev_examples": 80,
+  "train_target_tokens": 30591,
+  "dev_target_tokens": 6166,
+  "max_sequence_tokens": 2975,
+  "runner_sha256": "f7b48ad30c4f41073ce250c1386d81122e2b0a6a41cc5344069b9ea69aca2fd9",
+  "encoding_sha256": "172374002f130020721492842bc3a32364c2db819304b282c319bb95fdd1c3dd",
+  "admission_sha256": "d6099dfd6bebfd8877c8fedb9ecd5a87aa9400adec49f4c412315772d041883e",
+  "dataset_freeze_sha256": "48842984f4db794f3b613f183147fd0a90c4da9372c3ccd865c4a3c2b30919ca",
+  "identity": "058aa28e277649ac26b76895c694c0944674efd3d23fffbbf1fd8084b2f53a32"
+}

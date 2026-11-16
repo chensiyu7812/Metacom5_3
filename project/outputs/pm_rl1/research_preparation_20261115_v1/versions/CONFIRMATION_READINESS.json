@@ -1,0 +1,184 @@
+{
+  "version": "pmrl1-confirmation-readiness-metadata-review-20261115-v1",
+  "scope": "Narrow offline metadata review, not exhaustive exposure reconciliation",
+  "execution": {
+    "models": 0,
+    "API_calls": 0,
+    "test_text_read": false,
+    "gold_read": false,
+    "exhaustive_exposure_join": false
+  },
+  "sources": [
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/source_and_capacity_20260928_v1/source_exposure_v2.json",
+      "sha256": "4ead10896bd4eee8d946da31988cf2644449b8e2ef1435a28f1254c9b050494a"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/source_and_capacity_20260928_v1/additional_source_family_checks.json",
+      "sha256": "08add0f8110553ae22cb2d25764cd420a724e82f945c7d69b3e1f6d03da40732"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/data/paper1_authority/paper1_structural_split_fold_freeze_20260820_v1.json",
+      "sha256": "a9f62d305b82ff04cc986b02bdb840e59838405caf00913998988b8f8c5e92f8"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/data/paper1_authority/paper1_esc_split_large52_frozen_v1.jsonl",
+      "sha256": "fbc689d59f8bf25a36ce3e2cd76dfbb7506a2a7b8d7adebc927f004bf7479941"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/outputs/pm_rl1/organized_interface_handoff_20261102_v1/DEVELOPMENT_EXPOSURE_OVERLAP_PRIVATE.json",
+      "sha256": "81a83c2c112555aed57eca67ac6e79acf407bf6f70e5498a166b712eadf51034"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/docs/reviews/20261115/pm_rl1_research_audit_and_route/DATA_TOOLS_AUDIT_ZH.md",
+      "sha256": "7f34600dda82bd09aa8a4a5345018f34206ae519a1d23656324824edd5ec05fe"
+    },
+    {
+      "path": "/home/tokkio/Metacom5_3/project/docs/reviews/20261115/pm_rl1_research_audit_and_route/RELATED_WORK_AUDIT_ZH.md",
+      "sha256": "89abdbc67ad1b23b3e8abe53f18ecd5032b1d6de96f177771fe27c4eeef6698f"
+    },
+    {
+      "path": "/opt/tokkio-data0/tokkio_runs/claude_esc_pilot_20261111/SUMMARY_20261113_ZH.md",
+      "sha256": "d1f755edbe3fca2d730852bda79affc20162d11a79a3c5bcf8923afb0a29d6df"
+    }
+  ],
+  "EvoEmo": {
+    "owners": 18,
+    "sessions": 401,
+    "split_counts_from_exposure_metadata": {
+      "train": {
+        "prefixes": 96,
+        "owners": [
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p16",
+          "p17",
+          "p2",
+          "p3",
+          "p5",
+          "p6",
+          "p8",
+          "p9"
+        ],
+        "verified_prior_full_history_exposure_prefixes": 56,
+        "owners_with_verified_full_history_exposure": [
+          "p10",
+          "p11",
+          "p13",
+          "p17",
+          "p2",
+          "p5",
+          "p8"
+        ],
+        "owners_with_old_QA_Summary_pair_refs": [
+          "p10",
+          "p11",
+          "p12",
+          "p13",
+          "p16",
+          "p17",
+          "p2",
+          "p3",
+          "p5",
+          "p6",
+          "p8",
+          "p9"
+        ]
+      },
+      "dev": {
+        "prefixes": 18,
+        "owners": [
+          "p1",
+          "p15",
+          "p18"
+        ],
+        "verified_prior_full_history_exposure_prefixes": 0,
+        "owners_with_verified_full_history_exposure": [],
+        "owners_with_old_QA_Summary_pair_refs": [
+          "p1",
+          "p18"
+        ]
+      },
+      "test": {
+        "prefixes": 48,
+        "owners": [
+          "p14",
+          "p4",
+          "p7"
+        ],
+        "verified_prior_full_history_exposure_prefixes": 32,
+        "owners_with_verified_full_history_exposure": [
+          "p14",
+          "p7"
+        ],
+        "owners_with_old_QA_Summary_pair_refs": [
+          "p14",
+          "p4",
+          "p7"
+        ]
+      }
+    },
+    "currently_development_eligible": {
+      "owners": 15,
+      "prefixes": 114,
+      "note": "12 train + 3 dev owners, 96 + 18 selected prefixes; further legal train/dev prefixes may be sampled without increasing independent owners"
+    },
+    "existing_test_roster": {
+      "owners": 3,
+      "prefixes": 48,
+      "note": "Held out from new parameter optimization only; not researcher-unseen confirmation"
+    },
+    "verified_untouched_confirmation_count": null,
+    "status": "PENDING; no nonzero untouched set certified",
+    "known_prior_full_history_exposure_in_test": {
+      "owners": 2,
+      "prefixes": 32
+    },
+    "remaining_16_test_prefixes_unexposed": false,
+    "reason": "All 3 test owners have old QA/Summary pair reference links; fact-family/exposure analysis is not exhaustive. Metadata explicitly prohibits researcher-unseen confirmatory claim.",
+    "known_source_overlap": "p13/train and p18/dev share esc1198; branch cutoffs were quarantined, not a new independent family",
+    "coverage_gap": "No certified new independent English longitudinal natural-support confirmation source established"
+  },
+  "ESC_Eval_English": {
+    "all_cards": 331,
+    "ESConv_source_cards": 158,
+    "external_source_cards": 173,
+    "external_source_counts": {
+      "EPITOME": 5,
+      "ExTES": 70,
+      "MHP": 73,
+      "Psych": 25
+    },
+    "existing_frozen_allocation": {
+      "calibration": 52,
+      "confirmatory": 121
+    },
+    "development_available_allocation": 52,
+    "development_available_allocation_is_unexposed": false,
+    "verified_untouched_confirmation_count": null,
+    "Claude_known_development_cards_from_report": 12,
+    "Claude_cards_join_to_frozen_split": null,
+    "status": "PENDING historical and Claude card-key exposure join; do not subtract 12 from 121 without actual overlap",
+    "scope": "External simulated interaction/transfer, not longitudinal same-owner memory confirmation"
+  },
+  "AnnoMI": {
+    "published_demonstrations_from_prior_source_audit": 133,
+    "local_ready_corpus_count": null,
+    "local_ready_corpus_count_reason": "No AnnoMI-named file/directory in project/data/external or /opt/tokkio-data0/tokkio_external top-level checks; not an exhaustive filesystem absence claim",
+    "verified_untouched_confirmation_count": null,
+    "status": "CANDIDATE_PENDING_IMPORT_SOURCE_GROUPING_LICENSE_AND_TASK_FIT_REVIEW",
+    "fit": "Method/action examples and low-quality counterexamples; does not supply English same-owner longitudinal memory ground truth",
+    "exposure_guarantee": "No exhaustive current-project or pretrained-model exposure claim",
+    "this_preparation_accepted_development_items": 0,
+    "this_preparation_accepted_confirmatory_items": 0,
+    "project_wide_accepted_items": null,
+    "project_wide_accepted_items_status": "Not exhaustively inventoried; no import manifest found in inspected sources"
+  },
+  "next_minimum_actions": [
+    "For existing EvoEmo report known prior exposure and owner-grouped held-out-new-training results; do not relabel remaining prefixes as untouched.",
+    "Join ESC frozen card_key/role_card_sha256 with all historical and Claude development manifests before choosing confirmatory roles; keep original frozen identities.",
+    "If independent natural-support memory confirmation is a required claim, identify a new lawful longitudinal source family or explicitly limit claims; AnnoMI and ESC-Role do not by themselves fill this gap."
+  ]
+}

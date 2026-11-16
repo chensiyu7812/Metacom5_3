@@ -1,0 +1,84 @@
+{
+  "response_sha256": "e7aa3e174b0f258bfd77635f006710ebd1fe76c1f0a03e0f7412addc880bfabf",
+  "legal_evidence_identity": "96d35b455b8e8fc6b14e61860c517813f30f15171f7748a45b35b66d01e2b594",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "747b203cde0ab42535b07c3d9bb6a3648829eaaef35560374076664ed8b69cae",
+  "raw_output_sha256": "5312eb2fe7db3a9563c5e89715cfdec0d8d7e24ca1d24864178ceb584b695835",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker acknowledges a recent move to Sydney intended as a fresh start from Canberra, but reveals ambivalence by noting they 'miss some things too'.",
+      "response_quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too."
+        }
+      ],
+      "reason": "The reply effectively mirrors the seeker's ambivalence described in C:T007 ('wanted a fresh start, but I miss some things too'), validating the emotional complexity of the move (R001, R002) and prompting a specific, low-pressure question to explore the positive connections retained (R003). This aligns with the supportive role without introducing unsound assumptions."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked user identity (Jimmy), temporal context (recent move to Sydney from Canberra), emotional state (ambivalence about leaving familiar surroundings), and lack of safety concerns.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you're still navigating the complexities of your decision to move. It's not always easy to leave behind what's familiar, even if it's not serving you well. What are some of the things you miss about Canberra?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 223
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Well, my recent move to Sydney was partly because I felt trapped by my past here in Canberra. Wanted a fresh start, but I miss some things too.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 143
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker acknowledges a recent move to Sydney intended as a fresh start from Canberra, but reveals ambivalence by noting they 'miss some things too'.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply effectively mirrors the seeker's ambivalence described in C:T007 ('wanted a fresh start, but I miss some things too'), validating the emotional complexity of the move (R001, R002) and prompting a specific, low-pressure question to explore the positive connections retained (R003). This aligns with the supportive role without introducing unsound assumptions."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked user identity (Jimmy), temporal context (recent move to Sydney from Canberra), emotional state (ambivalence about leaving familiar surroundings), and lack of safety concerns.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

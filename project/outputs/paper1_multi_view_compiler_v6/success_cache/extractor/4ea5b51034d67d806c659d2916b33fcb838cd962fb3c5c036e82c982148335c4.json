@@ -1,0 +1,149 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v6",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 5760,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2653,
+      "reserved_prompt_tokens": 2781,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 523
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "22636fe8b50a478e16af5903d1076c25d39b0d3c1cc0fe9baf2af67654721541",
+    "prior_profile_sha256": "b157f03dfe6dbe6d753a1739aa0c47a786f1506d73f61d3b7a0affa8f2cbfd2e",
+    "request_payload_sha256": "af39af8407bea0a8e4dbfe5f0640d9260876a849a171f16217738e88c6fc2bca"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p1",
+      "s": "p1_conv_11",
+      "p": [
+        {
+          "i": "p1p1",
+          "t": "durable_boundary",
+          "k": "performance_review_outcome",
+          "v": "received 'adequate' rating in recent performance review",
+          "s": [
+            {
+              "i": "p1_conv_11:5"
+            }
+          ]
+        },
+        {
+          "i": "p1p2",
+          "t": "durable_boundary",
+          "k": "work_performance_self_doubt",
+          "v": "experiencing self-doubt about job performance after review",
+          "s": [
+            {
+              "i": "p1_conv_11:7"
+            }
+          ]
+        },
+        {
+          "i": "p1p3",
+          "t": "durable_boundary",
+          "k": "relationship_with_jack_communication_plan",
+          "v": "plans to talk to Jack about feelings to support relationship",
+          "s": [
+            {
+              "i": "p1_conv_11:15"
+            }
+          ]
+        },
+        {
+          "i": "p1p4",
+          "t": "enduring_interest",
+          "k": "painting_hobby_therapeutic_value",
+          "v": "finds painting helpful as a creative and emotional outlet",
+          "s": [
+            {
+              "i": "p1_conv_11:17"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p1e1",
+          "t": "life_event",
+          "z": "occurred",
+          "n": "completed performance review with underwhelming feedback",
+          "a": "attended performance review",
+          "o": "received 'adequate' rating, leading to self-doubt",
+          "s": [
+            {
+              "i": "p1_conv_11:3"
+            },
+            {
+              "i": "p1_conv_11:5"
+            }
+          ]
+        },
+        {
+          "i": "p1e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "using painting as a way to manage emotional stress",
+          "a": "engaging in painting hobby",
+          "o": "feels it helps provide emotional relief",
+          "s": [
+            {
+              "i": "p1_conv_11:16"
+            },
+            {
+              "i": "p1_conv_11:17"
+            }
+          ]
+        },
+        {
+          "i": "p1e3",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "decided to communicate openly with romantic partner about emotional state",
+          "a": "planning to talk to Jack about current struggles",
+          "o": "anticipates improved connection through openness",
+          "s": [
+            {
+              "i": "p1_conv_11:15"
+            }
+          ]
+        },
+        {
+          "i": "p1e4",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "received emotional validation and encouragement from supporter",
+          "a": "shared concerns about work and relationships",
+          "o": "felt heard and affirmed, expressed gratitude for presence",
+          "s": [
+            {
+              "i": "p1_conv_11:19"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "3930959e72286a637f4240961544b113b4a4e7011be6e164a3860ae580bebc8f",
+    "usage": {
+      "prompt_tokens": 2655,
+      "completion_tokens": 766,
+      "total_tokens": 3421
+    },
+    "latency_ms": 10220.195150002837,
+    "provider_finish_reason": "stop"
+  }
+}

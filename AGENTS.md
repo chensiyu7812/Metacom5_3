@@ -1,10 +1,20 @@
 # Repository Research Authority for Codex / Agents
 
-## Current successor scope (PM-RL1, 2026-09-30)
+## Current successor scope (PM-RL1, updated 2026-11-16)
 
 For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/` and the current
-single-turn research, start with `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md`
-and `project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md`.
+single-turn research, start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`
+and `project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` (V2 supersedes the
+P00–P17 work packages of `PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md`; its §0 defines
+the execution loop, the only researcher touchpoints T1–T5, and pre-written branch rules).
+Use `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md` for evidence history and
+`project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md` for original goals.
+The user requested the consolidated execution plan and a new completed-session
+summary candidate. New MS-SUM and historical MS-RAW keep separate identities;
+the preserved Paper-1 raw-only clause below does not prohibit this candidate.
+The new plan's schemas, adapters and experiments are not already implemented
+merely because their work packages exist. Follow their actual dependency and
+acceptance records; do not reopen direction approval or invent model results.
 The user authorized this successor on September 28. Existing Paper-1 contracts,
 outcome locks and result identities below remain preserved; do not reinterpret
 their four-head route as a prohibition on the separately authorized RL1 work.

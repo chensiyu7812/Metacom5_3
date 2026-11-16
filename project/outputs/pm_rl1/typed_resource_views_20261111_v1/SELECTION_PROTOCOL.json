@@ -1,0 +1,56 @@
+{
+  "API_cost_usd": 0,
+  "authorization": "2026-11-11 user agrees to try compact conditional strategies and structured/source-expandable memory.",
+  "candidates": 24,
+  "decision": "No promotion, new reward, broad retriever rebuild or PPO from this pilot. No post-output prompt tuning or replacement examples. Record all failures and observations. Only consider a later bounded utility test if a reproducible source/mechanism improvement is identified; otherwise stop this candidate. New subjective judgments are not requested automatically.",
+  "exclusions": [],
+  "identity": "22d6d82bdea8ddfbe62b5062660e90f070050bc75ff385eaa701ede51decfbaa",
+  "interpretation": "Mechanism/feasibility comparison only. Do not score helpfulness by citation, length, question absence, or conformity to these new instructions.",
+  "latency": "Single local G component timings only; not Tokkio useful-speech latency or a 3-second pass.",
+  "maximum_calls": 42,
+  "maximum_loads": 1,
+  "mechanically_admitted": 24,
+  "new_training": false,
+  "old_human_labels_copied": false,
+  "planned_arms": [
+    "B_basic",
+    "R_retrieved_RS",
+    "S_conditional",
+    "M_old_records",
+    "V_source_view",
+    "F_full_sources",
+    "VS_source_and_strategy"
+  ],
+  "retries": 0,
+  "rule": "Existing 24 train prefixes. Initial prefix-only top1 MP and top1 ME where available. Require complete source/quote bindings. SHA256 typed-resource-v1|owner order; one smallest hashed prefix per owner, first six owners. No replacement after generation.",
+  "sample_exposure": "Previously inspected train development pool; not independent confirmatory data.",
+  "scope": "TRAIN_DEVELOPMENT_MECHANISM_PROBE_NOT_REOPENED_HELPFULNESS_GATE",
+  "selected": [
+    {
+      "owner": "p13",
+      "prefix": "e3d5cb2c94c86de49bc0302415357600c54c39d81e07ffea6b87cab942062e43"
+    },
+    {
+      "owner": "p8",
+      "prefix": "eb13e96a641034348ac14eec54cb7ec2ee53ee389e30a8fb1d19127616dc586d"
+    },
+    {
+      "owner": "p3",
+      "prefix": "91de30c0d25cc5435c9f032169dd93f5a9f4fef199c26daafbacc20ba7e85949"
+    },
+    {
+      "owner": "p2",
+      "prefix": "333be2d57c880b19e0bf6e7d5d768b0946ca6f3056d4d803b1e05aa88bfb8b37"
+    },
+    {
+      "owner": "p9",
+      "prefix": "368078214f9f0f0d1ae81886a9630ee9f3e4789ec9df42d8860826d940032601"
+    },
+    {
+      "owner": "p6",
+      "prefix": "f0fd455f529e2b05f0f8f375baa0bd398836da611b015e130a4329571a746ba1"
+    }
+  ],
+  "source_view": "Every old cited span is retained within complete source turns +/- one adjacent turn. Old normalized claims are audit-only; other source turns are explicitly omitted. Full parents remain a separate arm. Not a lossless summary or full MP/ME rebuild.",
+  "strategy_origin": "Assistant-designed conditional guidelines based on existing eight family names; not verified ESConv applicability labels, expert recommendations or new human preferences."
+}

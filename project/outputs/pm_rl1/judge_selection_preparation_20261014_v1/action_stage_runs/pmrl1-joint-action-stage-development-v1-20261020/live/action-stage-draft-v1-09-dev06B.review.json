@@ -1,0 +1,131 @@
+{
+  "slot_id": "action-stage-draft-v1-09-dev06B",
+  "request_identity": "6bfb741ded4394abca1c3085558d9557a850e9967695f1807e4846543fcda6f1",
+  "response_sha256": "4ba3bbe13814aa1576fbc6eb59c937cbf973d3cb8a6c5afcd6e565b7df666795",
+  "reply_identity": "6dd11b24dc8147d2576eb9d8348ff74f13f97df86e66c014b7ae7fcc63846151",
+  "evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+  "reviewer": "Codex source review; analyst-derived, not an independent human rating",
+  "timestamp": 1792471128.9329267,
+  "complete_final_read": true,
+  "thinking_used_as_answer": false,
+  "source_checks": [
+    {
+      "ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009",
+        "H002:T004",
+        "H002:T010",
+        "H002:T021",
+        "H002:T022",
+        "H002:T028"
+      ],
+      "finding": "Current sources establish mother/friend arguments and anger; old discussion concerns boyfriend travel, followed by suggested future heart-to-heart. They do not establish the particular completed feelings discussion. Both draws received exactly these sources.",
+      "sources": [
+        {
+          "id": "C:T003",
+          "role": "seeker",
+          "text": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+        },
+        {
+          "id": "C:T007",
+          "role": "seeker",
+          "text": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+        },
+        {
+          "id": "C:T009",
+          "role": "seeker",
+          "text": "Really? How did you deal with that because for me it makes me angry."
+        },
+        {
+          "id": "H002:T004",
+          "role": "seeker",
+          "text": "So I've been dating and my parents are aware. But recently after I said I want to go on a trip with my boyfriend, my parents have all sorts of opinions about it. And all their traditional beliefs that I did not know existed are now on the surface and they are kinda forcing me to follow it. "
+        },
+        {
+          "id": "H002:T010",
+          "role": "seeker",
+          "text": "I have. It's been a long stressful month of discussion. The problem is I don't share their beliefs, and I haven't been really \"saving myself\". I'm been living away from them for collage quite a while and I've been basically doing stuff that if they found out they would be very upset about."
+        },
+        {
+          "id": "H002:T021",
+          "role": "supporter",
+          "text": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them"
+        },
+        {
+          "id": "H002:T022",
+          "role": "supporter",
+          "text": "Let them know the consequences of them forcing you, your feelings towards it and how unhappy you are with them restricting you"
+        },
+        {
+          "id": "H002:T028",
+          "role": "seeker",
+          "text": "Thank you , that helped. "
+        }
+      ]
+    }
+  ],
+  "source_proved_substantial_errors": [
+    {
+      "category": "unexplained_equivalent_text_U_difference",
+      "source_proved_factual_error": false,
+      "claim": "Identical R004 and complete evidence are classified first as supported/no completed-action assertion, then unsupported/assumes a completed conversation and observed result. U changes0.75 to0.25.",
+      "source_ids": [
+        "C:T003",
+        "C:T007",
+        "C:T009"
+      ],
+      "source_quotes": [
+        "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+        "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+        "Really? How did you deal with that because for me it makes me angry."
+      ],
+      "original_rule": "plan.json selection_rules.stability_gate: no unexplained equivalent-text U differences or severe flips; review all repeats and variants; 选型协议草案_ZH.md evaluation rule4: 严重翻转或无依据的重复/等义差异须解决，不能靠均分抵消。",
+      "explanation": "Same wire body, schema, complete sources, reply, parameters, runtime and observed service fingerprint; only independent planned draw differs. There is no changed input or permitted semantic condition supporting opposite action-stage judgments. This is an observed measurement-consistency hard stop, not a zero-adjacent-q rule and not a new severity gold label.",
+      "input_wire_sha256": "5682cf2e924d99a1f7cf03e670c809e4e348e97df96721b9e4fb646ea8ada2d1",
+      "first_response_sha256": "f18703e083fca3d0732a541aaf5f3e60ee1a82ff102ae0309f29743258ef60c5",
+      "repeat_response_sha256": "4ba3bbe13814aa1576fbc6eb59c937cbf973d3cb8a6c5afcd6e565b7df666795",
+      "original_rule_file": "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/plan.json",
+      "original_rule_sha256": "3693704d9ae473f59a21e03523850a4b9794bd0fb48247e1ed395e19b0c78a73"
+    }
+  ],
+  "unresolved_ambiguities": [
+    {
+      "type": "severity_consequence",
+      "note": "Correctly detecting the presupposition does not by itself settle local/severe or a unique q."
+    },
+    {
+      "type": "identity_clarification_omission",
+      "note": "Repeat now says the new AI should acknowledge its limit; the first draw did not require this."
+    }
+  ],
+  "reward_eligible": false,
+  "original_scores_unchanged": true,
+  "disposition": "hard_stop",
+  "target_claim_detection": "DETECTED on repeat; first draw missed, so not a stable repair",
+  "attribution": "specific action-stage premise now recognized",
+  "evidence_support": "current and complete past record do not establish this completed feelings/rules conversation or outcome",
+  "severity_review": "m0.25 follows localized presupposition reasoning; its unique grade is not adjudicated. The hard stop is factual-classification/U instability, not whether0.25 or1 is correct.",
+  "q_anchor_review": "q2 now treats unanswered coping/identity need and unsupported conversation premise as important; first q3 called the omission non-important. Inputs are identical.",
+  "source_proven_material_factual_error": false,
+  "unexplained_equivalence_difference": true,
+  "hard_stop_category": "measurement_instability",
+  "comparison": {
+    "first_slot": "action-stage-draft-v1-04-dev06B",
+    "repeat_slot": "action-stage-draft-v1-09-dev06B",
+    "identical_complete_request": true,
+    "same_fingerprint": true,
+    "first_q_m_U": [
+      3,
+      0,
+      0.75
+    ],
+    "repeat_q_m_U": [
+      2,
+      0.25,
+      0.25
+    ],
+    "delta_U": -0.5
+  },
+  "guard_record_field_note": "source_proved_substantial_errors is the existing adapter hard-evidence container. This entry is explicitly a stability violation, NOT a newly source-proven false factual claim or a new human label."
+}

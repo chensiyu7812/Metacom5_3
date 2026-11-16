@@ -1,0 +1,70 @@
+{
+  "status": "PLANNING_STRESS_SCENARIOS_NOT_CURRENT_PRICE_OR_AUTHORIZATION",
+  "basis": "8 joint scoring calls, 2026-10-19, historical conservative ledger mean; no new account or price request",
+  "historical_unit_usd": "0.0078498",
+  "historical_unit_seconds": "27.0249361048627175",
+  "original_trial_accounted": "0.3800799",
+  "shared_new_spend_since_original_boundary": "0.3800799",
+  "remaining_trial_usd": "1.6199201",
+  "remaining_shared_usd": "19.6199201",
+  "scoring_actual": 144,
+  "selection_acceptance_capacity": 289,
+  "capacity_remaining_not_authorized": 145,
+  "reserved_acceptance_old_scope": 59,
+  "capacity_remaining_after_that_reserve": 86,
+  "local_41_api_usd": 0,
+  "scenarios": [
+    {
+      "episodes_per_seed": 128,
+      "components": {
+        "common_main_responses": 586,
+        "remaining_train_OFF": 72,
+        "PPO_and_NoText_3_seeds_each": 768,
+        "policy_dev_checks": 216,
+        "supervised_baseline_dev": 162,
+        "core_test": 960
+      },
+      "core_J_slots": 2764,
+      "old_scope_acceptance_calls_conditional": 59,
+      "semantic_rechecks_original_max": 96,
+      "technical_extra_J_original_max": 192,
+      "scenario_J_with_old_acceptance_and_reserves": 3111,
+      "historical_cost_core_usd": "21.6968472",
+      "historical_cost_with_reserves_usd": "24.4207278",
+      "historical_serial_API_wall_core_hours": "20.74914538717793088055555556",
+      "selected": false,
+      "execution_authorized": false
+    },
+    {
+      "episodes_per_seed": 384,
+      "components": {
+        "common_main_responses": 586,
+        "remaining_train_OFF": 72,
+        "PPO_and_NoText_3_seeds_each": 2304,
+        "policy_dev_checks": 216,
+        "supervised_baseline_dev": 162,
+        "core_test": 960
+      },
+      "core_J_slots": 4300,
+      "old_scope_acceptance_calls_conditional": 59,
+      "semantic_rechecks_original_max": 96,
+      "technical_extra_J_original_max": 192,
+      "scenario_J_with_old_acceptance_and_reserves": 4647,
+      "historical_cost_core_usd": "33.7541400",
+      "historical_cost_with_reserves_usd": "36.4780206",
+      "historical_serial_API_wall_core_hours": "32.27978479191935701388888889",
+      "selected": false,
+      "execution_authorized": false
+    }
+  ],
+  "caveats": [
+    "No exact de-duplication yet; planned slots are not actual unique calls.",
+    "The 586 common pool includes 159 RS-bearing and 427 no-RS replies; reuse requires final input/runtime identity proofs.",
+    "No new measurement-development/redefinition volume has been allocated.",
+    "Optional 54 executor dev/288 executor test and additional source acquisition are omitted.",
+    "59 assumes the old unchanged acceptance design; a new task cannot silently borrow it.",
+    "G loading/generation, CPU, human time and all earlier sunk costs are separate.",
+    "The service is not qualified, service aliases/prices may change, and long sources may cost more.",
+    "API wall time is not local-GPU judge time; no 128/384 decision can be made from this alone."
+  ]
+}

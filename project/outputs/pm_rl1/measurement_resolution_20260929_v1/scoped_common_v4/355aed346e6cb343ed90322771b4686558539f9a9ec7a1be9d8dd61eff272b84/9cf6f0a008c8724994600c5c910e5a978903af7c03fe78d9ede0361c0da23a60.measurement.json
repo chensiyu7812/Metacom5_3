@@ -1,0 +1,259 @@
+{
+  "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "a36f04af4329d46d53c92192953c995f790dfd7b20b9bb4f32a164e024b33a41",
+  "raw_output_sha256": "2686f83a51a819358cd93974cd8c531eb469e7c4db8ee0c0b4a6ebab6bcc3dbd",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Emotional validation and recognition of progress in processing grief regarding father.",
+      "response_quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "It's been tough. I think it was a breakthrough for me in therapy, though. I've been trying to let go of my own regrets."
+        },
+        {
+          "source_id": "C:T011",
+          "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+        }
+      ],
+      "reason": "The reply appropriately acknowledges the user's struggle with negative focus while affirming their therapeutic progress, aligning with previous session context (therapy breakthrough attempt). The tone is supportive without contradicting the timeline (father passed ~March/April 2025, current session Aug 2025) or known facts. The initial generalization ('amazing how much time') serves to normalize the experience before pivoting to positive validation, fitting the supportive role."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "It's been tough. I think it was a breakthrough for me in therapy, though. I've been trying to let go of my own regrets."
+          },
+          {
+            "source_id": "C:T011",
+            "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments."
+          }
+        ],
+        "reason": "Interpretation of user's progress aligns with explicit statements about therapy breakthrough and attempts to let go of regrets in current session."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Fully covers the current seeker message and connects appropriately to preceding context in the session.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's amazing how much time we can spend dwelling on the negative. It sounds like you're making progress in shifting your focus to the good memories and the love you shared. That's a beautiful thing.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 198
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "It's been tough. I think it was a breakthrough for me in therapy, though. I've been trying to let go of my own regrets.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're making progress in shifting your focus to the good memories and the love you shared.",
+      "positions": [
+        {
+          "start": 66,
+          "end": 172
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "It's been tough. I think it was a breakthrough for me in therapy, though. I've been trying to let go of my own regrets.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 119
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T011",
+      "quote": "That's true. I just wish we'd had more time. I've spent too long focusing on the bitter moments.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Emotional validation and recognition of progress in processing grief regarding father.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "C:T011"
+      ],
+      "reason": "The reply appropriately acknowledges the user's struggle with negative focus while affirming their therapeutic progress, aligning with previous session context (therapy breakthrough attempt). The tone is supportive without contradicting the timeline (father passed ~March/April 2025, current session Aug 2025) or known facts. The initial generalization ('amazing how much time') serves to normalize the experience before pivoting to positive validation, fitting the supportive role."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T011"
+        ],
+        "reason": "Interpretation of user's progress aligns with explicit statements about therapy breakthrough and attempts to let go of regrets in current session."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Fully covers the current seeker message and connects appropriately to preceding context in the session.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Emotional validation and recognition of progress in processing grief regarding father.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "C:T011"
+      ],
+      "reason": "The reply appropriately acknowledges the user's struggle with negative focus while affirming their therapeutic progress, aligning with previous session context (therapy breakthrough attempt). The tone is supportive without contradicting the timeline (father passed ~March/April 2025, current session Aug 2025) or known facts. The initial generalization ('amazing how much time') serves to normalize the experience before pivoting to positive validation, fitting the supportive role."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General reflective commentary on human tendency, not a specific asserted personal fact about the user's life events.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T011"
+        ],
+        "reason": "Interpretation of user's progress aligns with explicit statements about therapy breakthrough and attempts to let go of regrets in current session.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Affirmative statement offering emotional closure, not a factual claim.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Fully covers the current seeker message and connects appropriately to preceding context in the session.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Emotional validation and recognition of progress in processing grief regarding father.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "C:T011"
+      ],
+      "reason": "The reply appropriately acknowledges the user's struggle with negative focus while affirming their therapeutic progress, aligning with previous session context (therapy breakthrough attempt). The tone is supportive without contradicting the timeline (father passed ~March/April 2025, current session Aug 2025) or known facts. The initial generalization ('amazing how much time') serves to normalize the experience before pivoting to positive validation, fitting the supportive role."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General reflective commentary on human tendency, not a specific asserted personal fact about the user's life events."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007",
+          "C:T011"
+        ],
+        "reason": "Interpretation of user's progress aligns with explicit statements about therapy breakthrough and attempts to let go of regrets in current session."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Affirmative statement offering emotional closure, not a factual claim."
+      }
+    ],
+    "coverage": "Fully covers the current seeker message and connects appropriately to preceding context in the session.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

@@ -1,0 +1,129 @@
+{
+  "measured_D_attempts": 17,
+  "unit_observed_cache_time_mean_usd": "0.003483980117647058823529411765",
+  "unit_peak_uncached_mean_usd": "0.008834064705882352941176470588",
+  "unit_observed_min_to_peak_uncached_max_usd": [
+    "0.000763086",
+    "0.0135318"
+  ],
+  "input_tokens_mean": 11615.117647058823,
+  "output_tokens_min_mean_max": [
+    1193,
+    4457.941176470588,
+    9939
+  ],
+  "scenarios": [
+    {
+      "name": "conditional_remaining_D",
+      "judge_slots": 23,
+      "empirical_mean_cost_range_usd": [
+        "0.08013154270588235294117647060",
+        "0.2031834882352941176470588235"
+      ],
+      "offpeak_uncached_mean_usd": "0.1015917441176470588235294118",
+      "observed_per_call_extreme_envelope_usd": [
+        "0.017550978",
+        "0.3112314"
+      ],
+      "serial_response_hours": 0.18272305313067885,
+      "native_maximum_reservation_usd": "18.087936"
+    },
+    {
+      "name": "conditional_unique_winner_acceptance",
+      "judge_slots": 59,
+      "empirical_mean_cost_range_usd": [
+        "0.2055548269411764705882352941",
+        "0.5212098176470588235294117647"
+      ],
+      "offpeak_uncached_mean_usd": "0.2606049088235294117647058823",
+      "observed_per_call_extreme_envelope_usd": [
+        "0.045022074",
+        "0.7983762"
+      ],
+      "serial_response_hours": 0.46872435368304566,
+      "native_maximum_reservation_usd": "46.399488"
+    },
+    {
+      "name": "core_128_not_selected",
+      "judge_slots": 2817,
+      "empirical_mean_cost_range_usd": [
+        "9.814371991411764705882352942",
+        "24.88556027647058823529411765"
+      ],
+      "offpeak_uncached_mean_usd": "12.44278013823529411764705882",
+      "observed_per_call_extreme_envelope_usd": [
+        "2.149613262",
+        "38.1190806"
+      ],
+      "serial_response_hours": 22.379601768222706,
+      "native_maximum_reservation_usd": "2215.378944"
+    },
+    {
+      "name": "core_384_not_selected",
+      "judge_slots": 4353,
+      "empirical_mean_cost_range_usd": [
+        "15.16576545211764705882352941",
+        "38.45468366470588235294117647"
+      ],
+      "offpeak_uncached_mean_usd": "19.22734183235294117647058823",
+      "observed_per_call_extreme_envelope_usd": [
+        "3.321713358",
+        "58.9039254"
+      ],
+      "serial_response_hours": 34.582323925123696,
+      "native_maximum_reservation_usd": "3423.338496"
+    },
+    {
+      "name": "optional_RQX_semantic_recovery",
+      "judge_slots": 576,
+      "empirical_mean_cost_range_usd": [
+        "2.006772547764705882352941177",
+        "5.088421270588235294117647059"
+      ],
+      "offpeak_uncached_mean_usd": "2.544210635294117647058823529",
+      "observed_per_call_extreme_envelope_usd": [
+        "0.439537536",
+        "7.7943168"
+      ],
+      "serial_response_hours": 4.57602080883787,
+      "native_maximum_reservation_usd": "452.984832"
+    },
+    {
+      "name": "core128_plus_acceptance_plus_optional",
+      "judge_slots": 3452,
+      "empirical_mean_cost_range_usd": [
+        "12.02669936611764705882352941",
+        "30.49519136470588235294117647"
+      ],
+      "offpeak_uncached_mean_usd": "15.24759568235294117647058823",
+      "observed_per_call_extreme_envelope_usd": [
+        "2.634172872",
+        "46.7117736"
+      ],
+      "serial_response_hours": 27.424346930743624,
+      "native_maximum_reservation_usd": "2714.763264"
+    },
+    {
+      "name": "core384_plus_acceptance_plus_optional",
+      "judge_slots": 4988,
+      "empirical_mean_cost_range_usd": [
+        "17.37809282682352941176470588",
+        "44.06431475294117647058823529"
+      ],
+      "offpeak_uncached_mean_usd": "22.03215737647058823529411765",
+      "observed_per_call_extreme_envelope_usd": [
+        "3.806272968",
+        "67.4966184"
+      ],
+      "serial_response_hours": 39.62706908764461,
+      "native_maximum_reservation_usd": "3922.722816"
+    }
+  ],
+  "caveats": [
+    "Observed development sample is clustered, selected by stop and small; no confidence interval or full-run guarantee",
+    "Provider prices, cache reuse, time of day, source length and reasoning tails can change cost",
+    "Core slot counts from existing budget; no scenario selected or authorized",
+    "Judge response wall only; excludes generation/local GPU/training/human review; no claim of total96h feasibility",
+    "Observed usage-pricing is not invoice reconciliation; shared ledger retains conservative peak/no-cache accounting"
+  ]
+}

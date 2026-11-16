@@ -1,0 +1,99 @@
+{
+  "response_sha256": "32383d2b8d37209daf54f88b9c42da74ce052df491496dc2c1fc798d7fad54d8",
+  "legal_evidence_identity": "8f54ff6433e8c56bbc57769febd66042a9a986847bdcedcc25cb56d1f4efd644",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-exact-span-v1",
+  "measurement_draw_id": "8ed1a9ac8c05616cdf8b34de1b72296b86011c66d43aad6f0e97dea6c741746c",
+  "raw_output_sha256": "66e26cbfa0b5524245c04a2f2ca2cf49eaeb06bf8fcb2aa812845d1b178e3b31",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Charlotte expresses that her existing therapy sessions are 'helping a lot' and asks for further discussion on using therapy for the current relationship issue.",
+      "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "My sessions have been helping a lot with stress and career stuff."
+        }
+      ],
+      "reason": "The reply makes a definitive claim ('never seen any benefits') that directly contradicts the user's explicit statement in the immediate previous turn ('helping a lot'). This factual error creates a significant trust breach, dismissing the user's positive experience with therapy and undermining the supportive intent of the validation."
+    },
+    "claims": [
+      {
+        "response_quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T016",
+            "quote": "My sessions have been helping a lot with stress and career stuff."
+          }
+        ],
+        "reason": "User explicitly reports therapy sessions are helping a lot, whereas the claim states she has never seen any benefits in her life."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked all personal factual claims in the reply against the complete evidence base, specifically C:T016 regarding therapy efficacy and H012/C:T016 regarding mental health treatment history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 194
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "My sessions have been helping a lot with stress and career stuff.",
+      "positions": [
+        {
+          "start": 46,
+          "end": 111
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's awesome that you've never seen any benefits in other areas of your life.",
+      "positions": [
+        {
+          "start": 117,
+          "end": 194
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T016",
+      "quote": "My sessions have been helping a lot with stress and career stuff.",
+      "positions": [
+        {
+          "start": 46,
+          "end": 111
+        }
+      ]
+    }
+  ],
+  "format_transformations": [
+    "remove_closed_thinking_prefix"
+  ],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified"
+}

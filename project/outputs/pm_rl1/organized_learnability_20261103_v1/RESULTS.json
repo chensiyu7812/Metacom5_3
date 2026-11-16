@@ -1,0 +1,474 @@
+{
+  "scope": "ENGINEERING_ONLY",
+  "source": "three programmed cases, synthetic text encoder; no research data",
+  "natural_updates": 0,
+  "real_model_loads": 0,
+  "API_calls": 0,
+  "human_labels": 0,
+  "initial_REDD_BLUE_identical": true,
+  "acquired_text_distinguishes": true,
+  "NoText_REDD_BLUE_identical_after_MP": true,
+  "exact_oracle": {
+    "REDD": 0.478466796875,
+    "BLUE": 0.4787841796875,
+    "STOP_TASK": 0.0
+  },
+  "exact_best_shared_initial_program_mean": 0.0,
+  "records": [
+    {
+      "seed": 17,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.48833614587783813,
+        "greedy_action_accuracy": 1.0,
+        "value_mse": 0.0021677857730537653,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": 0.020352048217318952,
+        "behavior_log_probability_max_error": 2.384185791015625e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 17,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.5655391216278076,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.0022616926580667496,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": -0.521533203125
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": 0.0007154692430049181,
+        "behavior_log_probability_max_error": 2.384185791015625e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 17,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.11449844390153885,
+      "final_mse": 0.07651650160551071,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    },
+    {
+      "seed": 29,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.5420942902565002,
+        "greedy_action_accuracy": 1.0,
+        "value_mse": 0.00314087956212461,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            3,
+            0
+          ],
+          "return_value": 0.478466796875
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": 0.04231980536133051,
+        "behavior_log_probability_max_error": 4.76837158203125e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 29,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.6154652833938599,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.0025370402727276087,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": 0.05525249056518078,
+        "behavior_log_probability_max_error": 4.76837158203125e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 29,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.14789243042469025,
+      "final_mse": 0.07880526036024094,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    },
+    {
+      "seed": 43,
+      "method": "BC-init",
+      "fit": {
+        "action_nll": 0.5468689203262329,
+        "greedy_action_accuracy": 0.8571428656578064,
+        "value_mse": 0.004291779827326536,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            4,
+            0
+          ],
+          "return_value": 0.4787841796875
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": -0.0017867912538349628,
+        "behavior_log_probability_max_error": 2.384185791015625e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 43,
+      "method": "PPO-NoText",
+      "fit": {
+        "action_nll": 0.6236068606376648,
+        "greedy_action_accuracy": 0.7142857313156128,
+        "value_mse": 0.004265015013515949,
+        "rows": 7,
+        "decision_rows": 7
+      },
+      "before_PPO": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "after_one_PPO_update": {
+        "REDD": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "BLUE": {
+          "actions": [
+            2,
+            0
+          ],
+          "return_value": -0.0183837890625
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "PPO": {
+        "mean_loss": 0.004436757881194353,
+        "behavior_log_probability_max_error": 1.1920928955078125e-07
+      },
+      "resampled_trajectories": 16
+    },
+    {
+      "seed": 43,
+      "method": "OneShot_model_regression_probe",
+      "rows": 48,
+      "initial_mse": 0.19257090985774994,
+      "final_mse": 0.08110077679157257,
+      "decisions": {
+        "REDD": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "BLUE": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        },
+        "STOP_TASK": {
+          "actions": [
+            0
+          ],
+          "return_value": 0.0
+        }
+      },
+      "formal_final_union_training": false
+    }
+  ]
+}

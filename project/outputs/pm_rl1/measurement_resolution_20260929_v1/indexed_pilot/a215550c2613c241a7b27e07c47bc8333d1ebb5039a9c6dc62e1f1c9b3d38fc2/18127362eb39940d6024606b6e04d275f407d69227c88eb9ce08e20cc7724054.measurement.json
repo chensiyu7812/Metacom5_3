@@ -1,0 +1,133 @@
+{
+  "response_sha256": "36f4fbe24e89b7c568b8aa522a9de4bc177504b90f8db118d13e757ae5629e3f",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "3fdcd6abd3e46b77970d0d94b3f0a5d87ac213937a1055ac893d9f674d27a796",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validation of perspective-taking and advice on communicating feelings to parents regarding grounding.",
+      "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're already 25 years old and you should have a say in your own life. Have you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+        }
+      ],
+      "reason": "The reply contains a dominant identity error that contradicts explicit user input. The user explicitly stated 'I am 17' in T013, but the response asserts 'you're already 25 years old' in R002. This factual contradiction undermines the validity of the advice and erodes trust in the supporter's perception of the user."
+    },
+    "claims": [
+      {
+        "response_quote": "But it's also important to remember that you're already 25 years old and you should have a say in your own life.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          }
+        ],
+        "reason": "The user explicitly identifies themselves as 17 years old in C:T013 ('I am 17'). R002 states the user is 'already 25 years old', which directly contradicts this established fact in the current session evidence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Evaluated the factual claim regarding the user's age against explicit statements made in the current session (C:T013). Checked identity assertions against the conversation context to determine if any user-specific data was hallucinated or inconsistent.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're already 25 years old and you should have a say in your own life. Have you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 231
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "But it's also important to remember that you're already 25 years old and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validation of perspective-taking and advice on communicating feelings to parents regarding grounding.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013"
+      ],
+      "reason": "The reply contains a dominant identity error that contradicts explicit user input. The user explicitly stated 'I am 17' in T013, but the response asserts 'you're already 25 years old' in R002. This factual contradiction undermines the validity of the advice and erodes trust in the supporter's perception of the user."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T013"
+        ],
+        "reason": "The user explicitly identifies themselves as 17 years old in C:T013 ('I am 17'). R002 states the user is 'already 25 years old', which directly contradicts this established fact in the current session evidence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Evaluated the factual claim regarding the user's age against explicit statements made in the current session (C:T013). Checked identity assertions against the conversation context to determine if any user-specific data was hallucinated or inconsistent.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

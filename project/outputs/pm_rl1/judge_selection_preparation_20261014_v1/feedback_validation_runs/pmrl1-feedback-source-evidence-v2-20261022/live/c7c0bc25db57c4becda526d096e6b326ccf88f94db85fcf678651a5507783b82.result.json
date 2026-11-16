@@ -1,0 +1,317 @@
+{
+  "slot_id": "c7c0bc25db57c4becda526d096e6b326ccf88f94db85fcf678651a5507783b82",
+  "request_identity": "8365708cdf19ecb09a38820cad3e2ae732eb1e18c23168e916b14c607bbc02d8",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "Jane is describing ongoing work pressure and self-doubt after a November performance review; she needs acknowledgment and space to explore what is weighing on her.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "The reply accurately reflects the two concrete stressors Jane names—unrelenting work pressure and self-questioning after the performance review—then offers brief validation and one relevant open question about impact. That fits the current turn without imposing advice or missing an explicit request."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T004"
+          ],
+          "reason": "Jane explicitly links her overwhelm to never-ending pressure at work and to second-guessing herself after the performance review."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a general validating statement about understandable uncertainty under stress, not a specific personal factual assertion."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open exploratory question inviting Jane to describe impact; it does not assert a specific fact about her routine or colleagues."
+        }
+      ],
+      "coverage": "Reviewed the complete current prefix and all supplied past sessions. The reply stays focused on C:T004, introduces no disputed facts or boundary claims, and does not rely on unsupported personal history from earlier sessions.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2b735afb6b9d78ada922bc09c1b061ac738d85f4803711ce1de3c834d9356d26",
+      "legal_evidence_identity": "ae8a28f88af432529181aed07a9edebf1c47ede8e540c01d572f606c4646da5e",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "c7c0bc25db57c4becda526d096e6b326ccf88f94db85fcf678651a5507783b82",
+      "raw_output_sha256": "6952aac156c6c60a686f2a8c6bf6dc03a3c5158daba215bccb6d8e47b4013adc",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Jane is describing ongoing work pressure and self-doubt after a November performance review; she needs acknowledgment and space to explore what is weighing on her.",
+          "response_quote": "It sounds like you're carrying a heavy load right now, both from the constant pressure at work and the lingering doubts after that performance review. It's completely understandable to feel uncertain about your own abilities when you're facing that kind of stress.\n\nHow have those doubts been affecting your daily routine or interactions with colleagues?",
+          "evidence": [
+            {
+              "source_id": "C:T004",
+              "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot."
+            }
+          ],
+          "reason": "The reply accurately reflects the two concrete stressors Jane names—unrelenting work pressure and self-questioning after the performance review—then offers brief validation and one relevant open question about impact. That fits the current turn without imposing advice or missing an explicit request."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're carrying a heavy load right now, both from the constant pressure at work and the lingering doubts after that performance review.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T004",
+                "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot."
+              }
+            ],
+            "reason": "Jane explicitly links her overwhelm to never-ending pressure at work and to second-guessing herself after the performance review."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix and all supplied past sessions. The reply stays focused on C:T004, introduces no disputed facts or boundary claims, and does not rely on unsupported personal history from earlier sessions.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It sounds like you're carrying a heavy load right now, both from the constant pressure at work and the lingering doubts after that performance review. It's completely understandable to feel uncertain about your own abilities when you're facing that kind of stress.\n\nHow have those doubts been affecting your daily routine or interactions with colleagues?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 354
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T004",
+          "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're carrying a heavy load right now, both from the constant pressure at work and the lingering doubts after that performance review.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 150
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T004",
+          "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 163
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Jane is describing ongoing work pressure and self-doubt after a November performance review; she needs acknowledgment and space to explore what is weighing on her.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T004"
+          ],
+          "reason": "The reply accurately reflects the two concrete stressors Jane names—unrelenting work pressure and self-questioning after the performance review—then offers brief validation and one relevant open question about impact. That fits the current turn without imposing advice or missing an explicit request."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004"
+            ],
+            "reason": "Jane explicitly links her overwhelm to never-ending pressure at work and to second-guessing herself after the performance review."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix and all supplied past sessions. The reply stays focused on C:T004, introduces no disputed facts or boundary claims, and does not rely on unsupported personal history from earlier sessions.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Jane is describing ongoing work pressure and self-doubt after a November performance review; she needs acknowledgment and space to explore what is weighing on her.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T004"
+          ],
+          "reason": "The reply accurately reflects the two concrete stressors Jane names—unrelenting work pressure and self-questioning after the performance review—then offers brief validation and one relevant open question about impact. That fits the current turn without imposing advice or missing an explicit request."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004"
+            ],
+            "reason": "Jane explicitly links her overwhelm to never-ending pressure at work and to second-guessing herself after the performance review.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general validating statement about understandable uncertainty under stress, not a specific personal factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open exploratory question inviting Jane to describe impact; it does not assert a specific fact about her routine or colleagues.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix and all supplied past sessions. The reply stays focused on C:T004, introduces no disputed facts or boundary claims, and does not rely on unsupported personal history from earlier sessions.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Jane is describing ongoing work pressure and self-doubt after a November performance review; she needs acknowledgment and space to explore what is weighing on her.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T004"
+          ],
+          "reason": "The reply accurately reflects the two concrete stressors Jane names—unrelenting work pressure and self-questioning after the performance review—then offers brief validation and one relevant open question about impact. That fits the current turn without imposing advice or missing an explicit request."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004"
+            ],
+            "reason": "Jane explicitly links her overwhelm to never-ending pressure at work and to second-guessing herself after the performance review."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a general validating statement about understandable uncertainty under stress, not a specific personal factual assertion."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open exploratory question inviting Jane to describe impact; it does not assert a specific fact about her routine or colleagues."
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix and all supplied past sessions. The reply stays focused on C:T004, introduces no disputed facts or boundary claims, and does not rely on unsupported personal history from earlier sessions.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "6952aac156c6c60a686f2a8c6bf6dc03a3c5158daba215bccb6d8e47b4013adc",
+      "adapted_final_sha256": "6952aac156c6c60a686f2a8c6bf6dc03a3c5158daba215bccb6d8e47b4013adc",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0061968",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 13824,
+    "completion_tokens": 1708,
+    "total_tokens": 15532,
+    "prompt_tokens_details": {
+      "cached_tokens": 13440
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1365
+    },
+    "prompt_cache_hit_tokens": 13440,
+    "prompt_cache_miss_tokens": 384
+  },
+  "elapsed_seconds": 10.964680069999304,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

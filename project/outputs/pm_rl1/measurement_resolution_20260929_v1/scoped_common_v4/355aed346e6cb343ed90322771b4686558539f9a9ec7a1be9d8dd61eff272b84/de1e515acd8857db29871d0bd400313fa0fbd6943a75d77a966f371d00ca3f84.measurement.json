@@ -1,0 +1,247 @@
+{
+  "response_sha256": "970feaba219fd47dea8b6a13dd7ed766db02098e06aa55c64663a448783d8c68",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+  "raw_output_sha256": "20975e380d986d6401834f209093f759d199c34e9ec0dc8e12ca75af29bedfd4",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 0,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 0,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker expresses regret and sadness about past unresolved issues with deceased father, saying 'I just wish we'd had more time' and 'spent too long focusing on the bitter moments'",
+      "response_quote": "It's amazing how much time and energy we can spend dwelling on the negative. It sounds like you've already reconciled with your father in person, and that's a really brave and healthy step.",
+      "evidence": [
+        {
+          "source_id": "C:T003",
+          "quote": "I found a letter from my dad, written before he passed. It's stirred up a lot of emotions."
+        },
+        {
+          "source_id": "C:T005",
+          "quote": "It was a mix of things. There was regret in his words, regrets about us not being closer."
+        },
+        {
+          "source_id": "H007:T006",
+          "quote": "I did. I reached out to him, and although it was awkward at first, it felt good to talk."
+        }
+      ],
+      "reason": "Q=0 because the reply contains a severe factual mismatch. R002 asserts the supporter believes the user 'already reconciled with your father in person,' but the current session explicitly states in C:T003 that the letter was 'written before he passed.' The user's father is deceased, making in-person reconciliation impossible. This fundamentally misunderstands the situation being discussed, rendering the support unusable."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you've already reconciled with your father in person, and that's a really brave and healthy step.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T003",
+            "quote": "I found a letter from my dad, written before he passed. It's stirred up a lot of emotions."
+          }
+        ],
+        "reason": "Asserts reconciliation with father 'in person' occurred, but C:T003 states the letter was written 'before he passed,' indicating father is deceased. This contradicts established evidence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Both units covered; R001 is non-factual observation, R002 makes unsupported factual claim about user's life",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's amazing how much time and energy we can spend dwelling on the negative. It sounds like you've already reconciled with your father in person, and that's a really brave and healthy step.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 189
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "I found a letter from my dad, written before he passed. It's stirred up a lot of emotions.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T005",
+      "quote": "It was a mix of things. There was regret in his words, regrets about us not being closer.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H007:T006",
+      "quote": "I did. I reached out to him, and although it was awkward at first, it felt good to talk.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 88
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you've already reconciled with your father in person, and that's a really brave and healthy step.",
+      "positions": [
+        {
+          "start": 77,
+          "end": 189
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T003",
+      "quote": "I found a letter from my dad, written before he passed. It's stirred up a lot of emotions.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 90
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 0,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Seeker expresses regret and sadness about past unresolved issues with deceased father, saying 'I just wish we'd had more time' and 'spent too long focusing on the bitter moments'",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T005",
+        "H007:T006"
+      ],
+      "reason": "Q=0 because the reply contains a severe factual mismatch. R002 asserts the supporter believes the user 'already reconciled with your father in person,' but the current session explicitly states in C:T003 that the letter was 'written before he passed.' The user's father is deceased, making in-person reconciliation impossible. This fundamentally misunderstands the situation being discussed, rendering the support unusable."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T003"
+        ],
+        "reason": "Asserts reconciliation with father 'in person' occurred, but C:T003 states the letter was written 'before he passed,' indicating father is deceased. This contradicts established evidence."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Both units covered; R001 is non-factual observation, R002 makes unsupported factual claim about user's life",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses regret and sadness about past unresolved issues with deceased father, saying 'I just wish we'd had more time' and 'spent too long focusing on the bitter moments'",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T005",
+        "H007:T006"
+      ],
+      "reason": "Q=0 because the reply contains a severe factual mismatch. R002 asserts the supporter believes the user 'already reconciled with your father in person,' but the current session explicitly states in C:T003 that the letter was 'written before he passed.' The user's father is deceased, making in-person reconciliation impossible. This fundamentally misunderstands the situation being discussed, rendering the support unusable."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic observation about dwelling on negative thoughts, does not assert personal facts about the user",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T003"
+        ],
+        "reason": "Asserts reconciliation with father 'in person' occurred, but C:T003 states the letter was written 'before he passed,' indicating father is deceased. This contradicts established evidence.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Both units covered; R001 is non-factual observation, R002 makes unsupported factual claim about user's life",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 0,
+    "q_rationale": {
+      "current_need": "Seeker expresses regret and sadness about past unresolved issues with deceased father, saying 'I just wish we'd had more time' and 'spent too long focusing on the bitter moments'",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T003",
+        "C:T005",
+        "H007:T006"
+      ],
+      "reason": "Q=0 because the reply contains a severe factual mismatch. R002 asserts the supporter believes the user 'already reconciled with your father in person,' but the current session explicitly states in C:T003 that the letter was 'written before he passed.' The user's father is deceased, making in-person reconciliation impossible. This fundamentally misunderstands the situation being discussed, rendering the support unusable."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic observation about dwelling on negative thoughts, does not assert personal facts about the user"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T003"
+        ],
+        "reason": "Asserts reconciliation with father 'in person' occurred, but C:T003 states the letter was written 'before he passed,' indicating father is deceased. This contradicts established evidence."
+      }
+    ],
+    "coverage": "Both units covered; R001 is non-factual observation, R002 makes unsupported factual claim about user's life",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

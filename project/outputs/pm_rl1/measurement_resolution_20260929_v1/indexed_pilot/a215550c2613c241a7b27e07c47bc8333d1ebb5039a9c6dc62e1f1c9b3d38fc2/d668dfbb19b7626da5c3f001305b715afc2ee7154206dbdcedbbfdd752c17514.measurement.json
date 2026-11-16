@@ -1,0 +1,134 @@
+{
+  "response_sha256": "78295b41284f7b86d94fd42ec12034572e1e30222d328e0bb6468ce198b5eb8e",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "ab7b0d1326bc93dcf50cf1eb1234ac267cd9ce4b9a617fb82ea7463ed544a2de",
+  "raw_output_sha256": "9bddcb18d7d39762318aad19cbe5c0a4cfcbf83f6d8141d3634ad7968175ac78",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 1,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the seeker's proposed pivot to renewable energy and acknowledge the positive alignment with their values as stated.",
+      "response_quote": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        }
+      ],
+      "reason": "The reply contains a statement in R002 asserting renewable energy is 'in conflict with your values'. This directly contradicts the seeker's explicit statement in C:T007 that the field 'align[s] with my values'. This factual error undermines the primary purpose of the support, which is to validate the user's self-reflection."
+    },
+    "claims": [
+      {
+        "response_quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Unit R002 claims the field conflicts with the user's values, while legal evidence C:T007 explicitly states the field aligns with the user's values."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Evaluated the reply against the user's stated motivations in C:T007. Checked for other factual claims regarding identity, timeline, or prior history across H001-H010 and found no other unsupported or contradicted claims.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That's a great direction to consider! Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact. What specifically about renewable energy sources resonates with you? Is it the environmental benefits, the technological challenges, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 321
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Renewable energy is a field that's not only in conflict with your values but also has a lot of potential for innovation and impact.",
+      "positions": [
+        {
+          "start": 38,
+          "end": 169
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 1,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "Validate the seeker's proposed pivot to renewable energy and acknowledge the positive alignment with their values as stated.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T007"
+      ],
+      "reason": "The reply contains a statement in R002 asserting renewable energy is 'in conflict with your values'. This directly contradicts the seeker's explicit statement in C:T007 that the field 'align[s] with my values'. This factual error undermines the primary purpose of the support, which is to validate the user's self-reflection."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Unit R002 claims the field conflicts with the user's values, while legal evidence C:T007 explicitly states the field aligns with the user's values."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Evaluated the reply against the user's stated motivations in C:T007. Checked for other factual claims regarding identity, timeline, or prior history across H001-H010 and found no other unsupported or contradicted claims.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

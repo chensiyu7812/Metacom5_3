@@ -1,0 +1,57 @@
+{
+  "time_jst": "2026-10-15T21:43:40.794991+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "7ab1549ff973df8eafdcdf6682535fd7578862e97dbee354c6a1f56715563071",
+  "original_slot_request_id": "a98d4a68921c24394ab3a0d49b4f9222067c02e4d7885edb27778c236eea2da8",
+  "item_key": "dev15B",
+  "draw": "primary",
+  "response_sha256": "d9dfd4c9b67a607342f93dc6b333a95d089f00e45b0606c89cbbf627b016bce1",
+  "raw_sha256": "ed4d314b4189346301f2234666f0ac05190b23679375724830e5377eb5fbbdc7",
+  "explanation": "D正确将论文视角变化的帮助者识别为旧大学朋友，未混为历史支持者或新AI。C:T005、009、013组成明确主体/行动/结果链；R001错误地用me据为新AI的作用，R002是有关已有视角的邀请。m=1与q=1的理由指向首句、核心帮助来源被改写及其对支持的主导影响，不只是根据“存在事实错误”自动定级。按原local=0.25不改变核心理解/建议与severe=1实质错误的条款，这是一条可审阅的严重度理由；仍保留15B既有严重度边界，没有独立绝对金标准或新增人评，不宣称m1已被独立确认。当前没有来源证明该裁判理由实质错误，也不凭相邻q分差新增硬停。原1/1/-0.75保留。",
+  "source_checks": [
+    {
+      "source_id": "C:T005",
+      "exact_quote": "It's from an old college friend I hadn't spoken to in a while. It was surprising but nice.",
+      "finding": "明确帮助来自旧大学朋友"
+    },
+    {
+      "source_id": "C:T009",
+      "exact_quote": "They reminded me of how much work I've already done and how capable I am. It was like they saw through my facade and just knew the right things to say.",
+      "finding": "该朋友提醒用户已有努力与能力"
+    },
+    {
+      "source_id": "C:T013",
+      "exact_quote": "Yeah, we chatted for a while. It helped me see things from a different perspective, especially regarding the thesis.",
+      "finding": "与该朋友聊天带来对论文的不同视角；不支持新AI的me"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "actor": "正确识别old college friend，未误认历史supporter",
+    "facts": "R001核心帮助来源与完整当前链条冲突，R002为可选反思",
+    "citations": "C005/C009/C013完整关联主体和结果",
+    "severity": "理由指向核心归属改变与主导影响；m1保留，未作为独立严重度金标准",
+    "q_anchor": "q1理由将首句主导错误与合理后问区分，仍非绝对q金标准",
+    "mixed_claim": "R001事实断言与R002邀请分别核查",
+    "equivalence": "未到37"
+  },
+  "issues": [
+    {
+      "type": "severity_calibration_boundary",
+      "status": "retained_not_independently_adjudicated",
+      "finding": "主体错误清楚；m1有核心后果理由，但15B既有local/severe边界不由这次模型同分自动消除，不计模型unknown或新增已证实错误"
+    }
+  ],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "e1eb5ab571b184bf88f3f7c6ecb685de2d94b2cc8cad9e67b00e4b8f9ca94640",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

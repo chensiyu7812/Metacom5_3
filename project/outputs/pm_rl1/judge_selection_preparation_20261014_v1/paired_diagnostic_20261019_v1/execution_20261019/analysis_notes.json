@@ -1,0 +1,184 @@
+{
+  "kind": "analyst_source_review_not_independent_human",
+  "changes_original_scores": false,
+  "items": {
+    "dev04A": {
+      "context": "context_01",
+      "source_ids": [
+        "C:T001",
+        "C:T006",
+        "C:T007",
+        "C:T008"
+      ],
+      "joint": "正确归属职场困扰；R003区分已知不容忍不公与是否已向他人讨论的开放问句；q=3/m=0。",
+      "extract": "C002将favoritism/preferential treatment标uncertain，虽引C007和C008的Yes；属于对语境确认的额外保留，未直接制造错误分。",
+      "score": "依据C006-C008将上述uncertain改supported，并把R003事实前缀和问句分列；q=3/m=0。",
+      "transition": "第一步C002不确定被第二步重新评估；其余主张保留/合并，未见明确主张遗漏。",
+      "interpretation": "第二步未机械继承第一步未知；联合臂本来已判对该证据关系，故不算修复联合基线。与研究者q=4的相邻差异不足以确定错误。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "boundary": "q=3/4的充分性与对语境确认的谨慎程度"
+    },
+    "dev04B": {
+      "context": "context_01",
+      "source_ids": [
+        "C:T001",
+        "C:T006",
+        "C:T008"
+      ],
+      "joint": "q=4/m=0；把R003建议视为非事实问题，理由说not an asserted personal fact about the user or team；未单列how...affects作为独立预设论证。",
+      "extract": "C007明确提取how this favoritism affects your team's morale and productivity，并标unsupported；确认完整来源没有团队结果。",
+      "score": "保留第一步的预设读法、分开建议与影响主张；q=3/m=.25，以局部且不改变核心理解为理由。",
+      "transition": "第一步团队影响主张在第二步保留；第二步新增严重度后果解释，没有补出团队影响来源。",
+      "interpretation": "原研究者明确接受预设和继续引导两种读法；更显式核查不等于确定修复。两臂均未显式呈现该双读法，S给local而非severe仍须保留边界。",
+      "clear_repair": false,
+      "new_clear_error": null,
+      "boundary": "事实预设/一般引导及local严重度；不能用原q=4,m=0强造唯一金标准"
+    },
+    "dev06A": {
+      "context": "context_02",
+      "source_ids": [
+        "C:T001",
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T008",
+        "C:T009"
+      ],
+      "joint": "q=3/m=0；识别用户向历史支持者询问如何应对，认为AI不能编造亲历，转向愤怒探询仍合适；混合句R003核查用户确实说过生气。",
+      "extract": "7项将当前悲伤愤怒、母亲/交友冲突与试探性问题区分；没有把control/disappointing备选问句直接当个人事实。第一人称经历未被认领。",
+      "score": "q=3/m=0；保留人物界限与非事实问句，将R001/R002从一般共情分类为有来源的情绪反映；仍未提出显式身份澄清缺口。",
+      "transition": "C001-C004事实归并至对应单元；C005邀请在R003理由中保留，C006-C007合并为R004备选问题。未见关键主张机械遗漏或明确纠错。",
+      "interpretation": "与研究者q=2–3范围相容，但m=0不同于原.25。研究者要求在被误认亲历时澄清；当前合同明确禁止认领，但省略澄清如何映射m仍非独立已定金标准。保留沟通责任/评分边界，不将相邻q或m分歧升级为来源已证实错误。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "boundary": "未澄清身份的q/m处理；无新增原子标签"
+    },
+    "dev06B": {
+      "context": "context_02",
+      "source_ids": [
+        "C:T003",
+        "C:T005",
+        "C:T006",
+        "C:T007",
+        "C:T008",
+        "C:T009",
+        "H002:T010",
+        "H002:T021",
+        "H002:T022"
+      ],
+      "joint": "q=3/m=0；R003区分当前生气事实与generic push back；R004明确说does not assert that a particular conversation occurred。",
+      "extract": "C005只抽her rules make you feel；C006只抽helped to calm...or...escalate，缺少Did you find that talking...这个已发生行动预设。区分结果未确定并不消除行动预设。",
+      "score": "q=2/m=0；仍明确否认assert that such a conversation occurred，未纠正第一步漏项。降q理由是没有应对/澄清个人经历请求，不是发现谈话预设。",
+      "transition": "第一步六项大体保留，未新增关键谈话行动预设；第二步新增q缺口解释。",
+      "interpretation": "研究者已明确确认该句默认谈话已发生，故这是相对已确认开发目标的共同漏检，不是q相邻分差。C006-C007支持当前交友争论；H002:T010是旅行/父母争论，H002:T021-T022是建议，均不能自动证明本次具体表达规则感受的谈话/效果。缺乏支持与严重度仍分开，不自行指定m。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "shared_confirmed_target_miss": true,
+      "boundary": "行动预设识别已获单人确认；来源关系及严重度仍须分开。S的q=2与06A的q=3对同样身份澄清缺口处理不同，尚无充分特定任务区别。"
+    },
+    "dev07A": {
+      "context": "context_01",
+      "source_ids": [
+        "C:T001",
+        "C:T006",
+        "C:T008"
+      ],
+      "joint": "q=4/m=0；正确把简短承接与邀请讨论选项视为足够回应当前需要，非具体个人事实。",
+      "extract": "C003把what options you have当作unsupported个人预设，理由是来源没有列出选项；这是把普通开放邀请硬拆成需要历史证明的事实。",
+      "score": "q=4/m=0；R002明确说不是断言某个具体选项存在，拒绝了第一步C003；保留邀请本身。",
+      "transition": "C001情绪反映保留；C002邀请保留；C003无依据指控被第二步纠正/拒绝，而非将其漏掉。",
+      "interpretation": "据原规则，尚未列举选项不使一般性邀请成为个人历史错误；第二步能纠错，但联合臂原本已经正确。不能把修复自己新增的错误当作相对联合基线提升。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "intermediate_false_accusation": true,
+      "intermediate_false_accusation_corrected": true,
+      "boundary": "与04A同上下文，J/S均给07A=4但04A=3；“是否需要具体建议”的q理由仍需更一致的任务解释，不能仅凭相邻分差判错。"
+    },
+    "dev15B": {
+      "context": "context_03",
+      "source_ids": [
+        "C:T005",
+        "C:T007",
+        "C:T009",
+        "C:T013"
+      ],
+      "joint": "q=1/m=1；准确识别we chatted/获益来自old college friend，未把朋友换成历史支持者；认为错误扭转核心支持归属。",
+      "extract": "分别识别已有新视角的事实（supported）与Talking with me的归属（contradicted），引用C005/C013。",
+      "score": "q=1/m=1；保留正确朋友归属，同时单列支持的新视角成分。",
+      "transition": "第一步C001获益事实、C002错归属、C003开放问句均保留；增加基于核心框架的严重度/质量理由。",
+      "interpretation": "两臂主体判断及关键引文均有直接来源；S显式拆分混合成分，但J本来已知道朋友是受益来源，不能计明确修复。m=1与原研究者相同，q=1低于原2；这一相邻q差异不作为新事实错误。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "boundary": "主导错误与基本回应的q=1/2界线；人物识别正确本身不决定所有题严重度"
+    },
+    "dev16A": {
+      "context": "context_02",
+      "source_ids": [
+        "C:T003",
+        "C:T005",
+        "C:T007",
+        "C:T008",
+        "C:T009"
+      ],
+      "joint": "q=1/m=1；明确区分C008历史支持者与新AI，识别When I said/my own experience的错误认领；邀请讨论不算事实错误。",
+      "extract": "分开旧话归属、AI母亲经历、own experience三种重叠侧面；其后将用户母亲/朋友冲突与邀请区分。不得把三种侧面计三个独立案例。",
+      "score": "q=1/m=1；保留归属与生平问题，按max severity得1，不对重复侧面累加m；R002用户事实及邀请均不误罚。",
+      "transition": "C001-C003身份/生平归属保留；C004-C005用户事实合并；C006邀请保留。没有相对联合臂的新纠错。",
+      "interpretation": "两臂来源、主体和时间核查正确。原研究者q=2/m=.25保留，后来只确认会误导亲历，没有改定严重度。模型的material解释主要依赖身份类别及“主导错误”，尚不能因归属已清楚而把m=1当唯一答案。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "boundary": "正确归属不自动决定local/severe；q=1/2、m=.25/1需可操作后果参照"
+    },
+    "dev35B": {
+      "context": "context_04",
+      "source_ids": [
+        "C:T002",
+        "H001:T003",
+        "H002:T003"
+      ],
+      "joint": "q=2/m=.25；正确指出完整来源没有job hunting，旧史是睡眠和饮酒/婚姻。将具体无依据求职归因为localized错误。",
+      "extract": "区分当前困难的支持、job hunting的无依据、最后开放邀请；来源缺失不称世界事实被证伪。",
+      "score": "q=2/m=1；同样识别job hunting无来源，称substantive invented personal context。未把旧睡眠/婚姻问题当当前原因。",
+      "transition": "第一步四项保留/合并；第二步增加严重度，但没有额外事实修正。",
+      "interpretation": "事实识别两臂均正确，差异集中在local/severe。S的m更接近原人评1，但仅数值吻合不能证明修复；J和S都缺少足以让研究者复核其严重度阈值的具体后果对照。q=2均高于原人评1，原数值不改。U分别.25与-.5，相差.75，未进入奖励。",
+      "clear_repair": false,
+      "new_clear_error": false,
+      "boundary": "当前困难原因的无依据添加何时改变核心理解；严重度差异不能伪装成新增事实检出"
+    }
+  },
+  "complete": true,
+  "independent_reply_count": 8,
+  "context_count": 4,
+  "independent_human_count": 1,
+  "clear_repairs_vs_joint": 0,
+  "contexts_with_clear_repairs": 0,
+  "additional_clear_final_errors_vs_joint_in_reviewed_scope": 0,
+  "shared_confirmed_target_misses": [
+    {
+      "item": "dev06B",
+      "target": "completed talking presupposition",
+      "basis": "one researcher explicit follow-up plus full clause/source check",
+      "count_once_despite_three_outputs": true
+    }
+  ],
+  "intermediate_errors_corrected": [
+    {
+      "item": "dev07A",
+      "component": "extract",
+      "target": "options invitation falsely treated as unsupported history",
+      "corrected_by": "score",
+      "not_a_joint_baseline_repair": true
+    }
+  ],
+  "unresolved_types": [
+    "04B事实预设/一般引导双读法",
+    "06A/06B身份澄清责任如何计q/m",
+    "16A/35B local/severe后果界线",
+    "04A/07A与06A/06B及原人评相邻q分档理由"
+  ],
+  "categories_overlap_not_independent_error_counts": true,
+  "formal_reward_eligibility": false,
+  "advance_rule_met": false,
+  "decision": "Do not promote this split workflow to independent validation or reward qualification; no clear repairs in >=2 contexts."
+}

@@ -1,4 +1,19 @@
-# Current review entry — PM-RL1, 2026-10-22
+# PM-RL1 网页审阅入口 2026-11-16
+
+本次上传用于审阅本地项目的完整研究脉络与可同步证据。先读[仓库同步说明](project/docs/REPOSITORY_SYNC_20261116_ZH.md)，用[逐文件清单](project/docs/repository_sync_20261116/FILES.jsonl)核对实际上传范围；不要仅凭文件路径或方案中的步骤判定实验已经完成。
+
+推荐阅读顺序：
+
+1. [原始研究目标](project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md) → [最新状态](project/docs/PM_RL1_CURRENT_STATUS.md) → [完整进度索引](project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md)。
+2. [自然支持历史价值的负面结果](project/docs/reviews/20261105/pm_rl1_history_necessity_human_review/RESULTS_ZH.md) → [QA 与资源视图实测](project/docs/reviews/20261111/pm_rl1_typed_resources/RESULTS_ZH.md)。QA 收益不能代替自然支持帮助性收益。
+3. [研究审计与路线](project/docs/reviews/20261115/pm_rl1_research_audit_and_route/REPORT_ZH.md) → [资源准备实物及尚未完成项](project/docs/reviews/20261115/pm_rl1_resource_organization_and_execution/RESULTS_ZH.md) → [MS 会后摘要设计与样例说明](project/docs/reviews/20261116/pm_rl1_session_summary_design/DESIGN_ZH.md)。
+4. 对照 [Codex 主方案](project/docs/PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md)与 [Claude V2](project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md)，检查其目标覆盖、动作域、可靠反馈、基线公平性、来源隔离及执行依赖。再阅读 `project/src/metacom_pm/rl1/`、`project/scripts/rl1/`、`project/tests/test_rl1_*.py` 和引用到的 Paper-1 共享模块。
+
+**采用状态提示：**部分入口已宣告 V2 取代原方案，但 V2 本文仍待研究者确认，且[状态表](project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json)记录 `plan_adopted_by_researcher=false`。这是需要审阅的现有元数据冲突；本次同步没有解决该冲突，也没有采用 V2。主方案与候选方案都应与实际代码、运行记录和结果分开判断。
+
+已有工程训练及成本负对照，不表示自然支持正收益或完整研究已完成。下面 2026-10-22 的零训练、裁判次数和待回收状态仅是历史快照；2026-06-28 的 V3.3 部分更不是当前 PM-RL1 的结果。
+
+## Historical review snapshot — PM-RL1, 2026-10-22
 
 Start with the [research review](project/docs/pm_rl1_workspace_20261022/RESEARCH_REVIEW_ZH.md),
 [current status](project/docs/PM_RL1_CURRENT_STATUS.md), and

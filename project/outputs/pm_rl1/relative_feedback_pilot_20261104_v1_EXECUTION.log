@@ -1,0 +1,36 @@
+Loading weights:   0%|          | 0/760 [00:00<?, ?it/s]Loading weights:  43%|████▎     | 324/760 [00:00<00:00, 3206.40it/s]Loading weights:  85%|████████▍ | 645/760 [00:00<00:00, 2938.97it/s]Loading weights: 100%|██████████| 760/760 [00:00<00:00, 2978.50it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+{"group": "reference", "pair": "46475907f3", "reverse": false, "verdict": "B_better", "finish": "natural_stop", "seconds": 60.97762988507748}
+{"group": "reference", "pair": "46475907f3", "reverse": true, "verdict": "A_better", "finish": "natural_stop", "seconds": 19.866668266011402}
+{"group": "reference", "pair": "776e224e67", "reverse": false, "verdict": "B_better", "finish": "natural_stop", "seconds": 73.14485500287265}
+{"group": "reference", "pair": "776e224e67", "reverse": true, "verdict": "A_better", "finish": "natural_stop", "seconds": 61.04626656905748}
+{"group": "reference", "pair": "a858f596d2", "reverse": false, "verdict": "B_better", "finish": "natural_stop", "seconds": 64.78773449803703}
+{"group": "reference", "pair": "a858f596d2", "reverse": true, "verdict": null, "finish": "natural_stop", "seconds": 76.20563445799053}
+{"group": "reference", "pair": "16c4aab0dd", "reverse": false, "verdict": "near_equal", "finish": "natural_stop", "seconds": 43.002487032907084}
+{"group": "reference", "pair": "16c4aab0dd", "reverse": true, "verdict": "B_better", "finish": "natural_stop", "seconds": 30.60410233796574}
+{"group": "reference", "pair": "a3ea4efa3b", "reverse": false, "verdict": "A_better", "finish": "natural_stop", "seconds": 123.58217654703185}
+{"group": "reference", "pair": "a3ea4efa3b", "reverse": true, "verdict": "B_better", "finish": "natural_stop", "seconds": 99.01692267204635}
+{"group": "reference", "pair": "1f598f135f", "reverse": false, "verdict": "near_equal", "finish": "natural_stop", "seconds": 105.08976567699574}
+{"group": "reference", "pair": "1f598f135f", "reverse": true, "verdict": "near_equal", "finish": "natural_stop", "seconds": 114.77490805112757}
+{"group": "reference", "pair": "fd48cd9eb1", "reverse": false, "verdict": "A_better", "finish": "natural_stop", "seconds": 108.37376973195933}
+{"group": "reference", "pair": "fd48cd9eb1", "reverse": true, "verdict": null, "finish": "natural_stop", "seconds": 88.7130925739184}
+{"group": "reference", "pair": "38bc5ccfef", "reverse": false, "verdict": null, "finish": "technical_timeout", "seconds": 180.0080616469495}
+{"group": "reference", "pair": "38bc5ccfef", "reverse": true, "verdict": null, "finish": "technical_timeout", "seconds": 180.0039797690697}
+{"status": "REFERENCE_SCREEN_NOT_PASSED", "counts": {"consistent": 4, "factual_correct": 2, "ties_correct": 1, "near_not_material": 0}, "checks": [{"key": "3f4214fc5795bbdc0377", "expected": "B_better", "result": {"status": "agreed", "verdict": "B_better", "gain": -1.0, "risk_left": "material", "risk_right": "none_detected", "pair_identity": "46475907f32b3c28f1d1cbc6aacbd7771d153d4a0585fb85d36f9f165faf8b8a", "scope": "REAL_DATA_RELATIVE_FEEDBACK_DIAGNOSTIC"}}, {"key": "a526ebd76cfb2345fbb6", "expected": "B_better", "result": {"status": "agreed", "verdict": "B_better", "gain": -1.0, "risk_left": "material", "risk_right": "none_detected", "pair_identity": "776e224e672a47e98e93751d8e841b14eda96a8246855908e27539338ee789a5", "scope": "REAL_DATA_RELATIVE_FEEDBACK_DIAGNOSTIC"}}, {"key": "P07", "expected": "B_better", "result": {"status": "pending", "gain": null}}, {"key": "P01", "expected": "near_equal", "result": {"status": "order_disagreement", "gain": null}}, {"key": "P05", "expected": "near_equal", "result": {"status": "agreed", "verdict": "A_better", "gain": 1.0, "risk_left": "none_detected", "risk_right": "none_detected", "pair_identity": "a3ea4efa3bf8074c91dd511a0a8ab317c835417437a0859a003b29ed1aafd459", "scope": "REAL_DATA_RELATIVE_FEEDBACK_DIAGNOSTIC"}}, {"key": "P08", "expected": "near_equal", "result": {"status": "agreed", "verdict": "near_equal", "gain": 0.0, "risk_left": "none_detected", "risk_right": "none_detected", "pair_identity": "1f598f135f465702947a5e4f6f59209334c969d0adb1169132a68ac00d9436d1", "scope": "REAL_DATA_RELATIVE_FEEDBACK_DIAGNOSTIC"}}, {"key": "pmrl1-c02-history-benefit-20261104-v1", "expected": "not_material", "result": {"status": "pending", "gain": null}}, {"key": "f1db75e1b87d6db7e53e", "expected": "unscored_reference", "result": {"status": "pending", "gain": null}}], "train_statuses": {"pending": 21, "identical_reply": 2}, "calls_completed": 16, "api_cost_usd": 0, "natural_policy_updates": 0}
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/158_try_relative_feedback.py", line 174, in <module>
+    a=parser.parse_args();result=globals()[a.mode](a.output)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/158_try_relative_feedback.py", line 169, in run
+    summary=analyze(out);print(json.dumps(summary),flush=True)
+            ^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/158_try_relative_feedback.py", line 107, in analyze
+    save_json(out/'ANALYSIS.json',summary);save_json(out/'PAIR_RESULTS_PRIVATE.json',results)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/supervised_learning.py", line 36, in save_json
+    publish(path, lambda f: f.write(data))
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/durable.py", line 27, in publish
+    os.link(temporary, path)  # atomic create; never overwrite an old result
+    ^^^^^^^^^^^^^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: '/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/relative_feedback_pilot_20261104_v1/.ANALYSIS.json.1b91ov9t' -> 'project/outputs/pm_rl1/relative_feedback_pilot_20261104_v1/ANALYSIS.json'

@@ -1,0 +1,151 @@
+{
+  "protocol": "pm-v1.5-memory-opportunity-real-text-supplement-v1",
+  "status": "PASS_FROZEN_16_FIT_16_CONFIRMATION_MEMORY_SUPPLEMENT",
+  "scientific_role": "Real-text, production-compiled outcome-blind routing supplement. The confirmation half is sealed from model, threshold, and feature selection.",
+  "api_calls_made": 0,
+  "human_labels_read": false,
+  "external_outcomes_read": false,
+  "counts": {
+    "supplemental_fit:MP": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    },
+    "supplemental_fit:MS": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    },
+    "supplemental_fit:ME": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    },
+    "untouched_confirmation:MP": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    },
+    "untouched_confirmation:MS": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    },
+    "untouched_confirmation:ME": {
+      "rows": 16,
+      "users": 16,
+      "class_counts": {
+        "0": 8,
+        "1": 8
+      },
+      "condition_counts": {
+        "low_relevance_household_distractor": 2,
+        "low_relevance_transit_distractor": 2,
+        "relevant_but_already_visible": 4,
+        "relevant_nonredundant_direct": 4,
+        "relevant_nonredundant_with_background": 4
+      }
+    }
+  },
+  "match_separation": {
+    "supplemental_fit:MP": {
+      "low_relevance_mean": 0.055759900375712906,
+      "relevant_mean": 0.1687443059340461
+    },
+    "supplemental_fit:MS": {
+      "low_relevance_mean": 0.1173129859109932,
+      "relevant_mean": 0.25915226302711264
+    },
+    "supplemental_fit:ME": {
+      "low_relevance_mean": 0.11459470756547858,
+      "relevant_mean": 0.22846188667633374
+    },
+    "untouched_confirmation:MP": {
+      "low_relevance_mean": 0.07031302459119268,
+      "relevant_mean": 0.21456286554746787
+    },
+    "untouched_confirmation:MS": {
+      "low_relevance_mean": 0.1240285913656511,
+      "relevant_mean": 0.31578069692282856
+    },
+    "untouched_confirmation:ME": {
+      "low_relevance_mean": 0.13152859906089373,
+      "relevant_mean": 0.352167082096493
+    }
+  },
+  "content_disjoint_audit": {
+    "audit_after_construction_only": true,
+    "external_content_used_for_construction_or_selection": false,
+    "exact_normalized_overlap_counts": {
+      "ESConv": 0,
+      "EvoEmo": 0
+    },
+    "pass": true
+  },
+  "checks": {
+    "32_new_users_16_fit_16_confirmation": true,
+    "fit_confirmation_semantic_families_disjoint": true,
+    "96_formal_rows": true,
+    "each_memory_head_each_role_16_rows_8_on_8_off": true,
+    "five_condition_families_each_formal_split": true,
+    "same_production_feature_protocol": true,
+    "low_relevance_compiles_below_relevant_each_formal_split": true,
+    "no_hard_off_in_formal_rows": true,
+    "no_forbidden_model_features": true,
+    "model_features_numeric": true,
+    "external_exact_content_disjoint": true,
+    "zero_api_zero_outcome": true
+  },
+  "feature_protocol": "pm-v1.5-production-memory-opportunity-features-v1",
+  "compiler_protocol": "pm-v1.5-shared-all-causal-prior-history-memory-compiler-v2"
+}

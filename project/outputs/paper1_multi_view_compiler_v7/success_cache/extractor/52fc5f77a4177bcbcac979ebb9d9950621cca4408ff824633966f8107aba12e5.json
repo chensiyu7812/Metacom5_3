@@ -1,0 +1,96 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2173,
+      "reserved_prompt_tokens": 2301,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 21
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "ecc97760367d2174c84da757731f823099f72867606a8d34ab54d82b876d1057",
+    "prior_profile_sha256": "4cddc3e1c8ae6c3597928892049750444a3ebc2ddfe418a0291b4e369d6878dd",
+    "request_payload_sha256": "a9174334428e9681436cb1f6d7d370183562d81d66100b08cf2827deb777ed12"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p18",
+      "s": "esc1252",
+      "p": [
+        {
+          "i": "prop-p1",
+          "t": "durable_health_constraint",
+          "k": "alcohol_use_problem",
+          "v": "has a history of drinking that has affected marriage",
+          "s": [
+            {
+              "i": "esc1252:4"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "prop-e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "drinking issue caused marital problems",
+          "s": [
+            {
+              "i": "esc1252:4"
+            }
+          ]
+        },
+        {
+          "i": "prop-e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "reduced drinking to save marriage",
+          "a": "reduced drinking",
+          "o": "attempting to improve marital relationship",
+          "s": [
+            {
+              "i": "esc1252:8"
+            }
+          ]
+        },
+        {
+          "i": "prop-e3",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "received encouragement and advice to strengthen marriage and avoid drinking",
+          "s": [
+            {
+              "i": "esc1252:17"
+            },
+            {
+              "i": "esc1252:19"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "60dbabbe08f6febb9669036ba4a9e3cf9dfa47a1e25f7d8e37eb8d07314145ea",
+    "usage": {
+      "prompt_tokens": 2175,
+      "completion_tokens": 364,
+      "total_tokens": 2539
+    },
+    "latency_ms": 4827.439893997507,
+    "provider_finish_reason": "stop"
+  }
+}

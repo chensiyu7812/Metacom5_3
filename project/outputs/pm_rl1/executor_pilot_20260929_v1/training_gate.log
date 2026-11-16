@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/39_train_executor_pilot.py", line 161, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/39_train_executor_pilot.py", line 44, in main
+    rows=admitted_rows(contract,jobs,requests,raws,{r['request_identity']:r for r in review_doc['rows']})
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/executor_pilot.py", line 43, in admitted_rows
+    raise ValueError('at least one admitted reply per prefix-condition is required')
+ValueError: at least one admitted reply per prefix-condition is required

@@ -1,0 +1,63 @@
+PM-RL1 实际作答开发验收：复现说明（2026-10-14）
+
+工作目录：/home/tokkio/Metacom5_3
+基线提交：0c85538ad9a5f6065a7bc31ee0769cb76eaa0f28
+分支：work/paper1-rq1-integration-20260816
+脚本目录：project/outputs/pm_rl1/human_acceptance_20261014_v2
+
+输入真实导出：/home/tokkio/PM_RL1_Chen_Du_标注导出包.zip
+SHA256：630d09d7d275febb802e922fab182da9244af36d8388aef26ff6721ba684e7ee
+原题包：/home/tokkio/PM_RL1_40对人工校准包_20261001.zip
+原题包SHA256：1c769f2ebd8d4cbdb19fcdf36c74a13996bdd77f43453c68344975db7146660d
+原方案/表单/私有映射/冻结身份由 audit_original_packet.py 只读复核。
+私钥在原位置使用；以下命令不打印私钥、不生成密钥、不重新生成题包。
+
+1. 在全新目录重复开发审计（不覆盖本次 intake；如目录已存在请使用其他新名字）：
+
+cd /home/tokkio/Metacom5_3
+python project/outputs/pm_rl1/human_acceptance_20261014_v2/audit_development.py --repo /home/tokkio/Metacom5_3 --export /home/tokkio/PM_RL1_Chen_Du_标注导出包.zip --original-packet /home/tokkio/PM_RL1_40对人工校准包_20261001.zip --out /home/tokkio/Metacom5_3/project/outputs/pm_rl1/human_acceptance_20261014_v2/reproduction_intake
+
+需要 Python 3.11+ 和 cryptography。本次实际使用本机 python（3.13，cryptography 44.0.1）。
+脚本没有validation参数；分组守卫在原decrypt_item之前执行。别用python -O关闭断言。
+原始输入必须仍匹配既有冻结；如将来存在合法最终 measurement freeze，前置检查会停下，不能把此工具用于正式开封。
+
+2. 只读已打开的开发产物，重复统计（不再解密）：
+
+python project/outputs/pm_rl1/human_acceptance_20261014_v2/analyze_development.py --intake project/outputs/pm_rl1/human_acceptance_20261014_v2/intake --out project/outputs/pm_rl1/human_acceptance_20261014_v2/reproduction_analysis
+
+核对 reproduction_analysis/statistics.json 与 analysis/statistics.json 相同。
+
+3. 新审计器的7项必要测试：
+
+python -m unittest discover -s project/outputs/pm_rl1/human_acceptance_20261014_v2 -p test_audit_development.py -v
+
+4. 既有协议与准入的28项测试（独立环境，不需要GPU或调用API）：
+
+cd /home/tokkio/Metacom5_3/project
+PYTHONPATH=src PYTHONNOUSERSITE=1 CUDA_VISIBLE_DEVICES='' /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q tests/test_rl1_human_calibration.py tests/test_rl1_calibration_decision.py
+
+5. 重新渲染本目录报告、清单、表格、伴随notebook：
+
+cd /home/tokkio/Metacom5_3
+python project/outputs/pm_rl1/human_acceptance_20261014_v2/write_deliverables.py
+
+此命令只读开发intake；写当前审计目录下的衍生产物，不写原始ZIP/JSON、既有P3结果或私钥。
+development_analysis.ipynb 的2个代码单元已在全新Python命名空间按顺序运行并保存输出。
+本机没有nbformat/nbclient/nbconvert/ipykernel；没有声称完成原生Jupyter执行或视觉验收。
+若在已有Jupyter环境中复验：
+python -m jupyter nbconvert --execute --to notebook --output development_analysis_reexecuted.ipynb project/outputs/pm_rl1/human_acceptance_20261014_v2/development_analysis.ipynb
+
+边界：
+- 本次仅16个唯一开发题对；Du为派生核对，不作为第二独立样本。
+- 24个验证题对未解密；封存7条browser pending的字段问题未解释、未定性。
+- 0标签修复。缺项、中文非原句引用、事实分歧均待人类补充/确认，不由程序补答。
+- 只做描述统计，不计独立样本CI/显著性/独立评审一致率。
+- 未创建最终measurement freeze，未执行正式intake、裁判qualification或RL训练。
+- 未执行101_verify_p3_calibration_packet.py；它会写既有verification文件，本次使用只读前置检查。
+
+执行中间产物：
+首次映射检查在解密前识别一条封存等文回复的A/B名义位差异。
+intake_partial_01：开发答案均已读取，评分文件定位使用job_id错误而停止。
+intake_partial_02：开发答案均已读取，控制题不存在自然策略sides字段而停止。
+修正后 intake 完整成功。三次只读取相同32个开发envelope，共96次密码解密，0验证解密。
+中间产物不是额外样本或正式结果，保留用于执行审计。

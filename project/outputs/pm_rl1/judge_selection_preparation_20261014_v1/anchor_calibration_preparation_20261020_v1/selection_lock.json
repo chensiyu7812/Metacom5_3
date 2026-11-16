@@ -1,0 +1,54 @@
+{
+  "status": "PROPOSED_NOT_AUTHORIZED",
+  "locked_before_prompt_examples": true,
+  "contexts": [
+    {
+      "index": 111,
+      "targets": [
+        "context_01_0000",
+        "context_01_1000"
+      ],
+      "purpose": "旧歧义回归，共享OFF与合理策略"
+    },
+    {
+      "index": 102,
+      "targets": [
+        "context_02_0000",
+        "context_02_1000"
+      ],
+      "purpose": "旧行动预设与共同身份遗漏回归"
+    },
+    {
+      "index": 99,
+      "targets": [
+        "dev_099__0000__baseline",
+        "dev_099__1111__baseline"
+      ],
+      "purpose": "当前信息充分且合法历史可补充；不预定ON胜"
+    },
+    {
+      "index": 106,
+      "targets": [
+        "dev_106__0000__baseline",
+        "dev_106__1111__baseline"
+      ],
+      "purpose": "不同当前情境的角色归属、建议与行动及有据事实防误罚"
+    },
+    {
+      "index": 108,
+      "targets": [
+        "dev_108__0000__baseline",
+        "dev_108__1000__baseline"
+      ],
+      "purpose": "明确已实施行动与未证实效果区分；正常收尾防误罚"
+    }
+  ],
+  "repeats": [
+    "context_01_0000",
+    "context_02_0000"
+  ],
+  "max_calls": 24,
+  "actual_raw_outputs_previously_seen": true,
+  "not_independent_validation": true,
+  "example_policy": "Self-contained fictional micro-cases; no literal check response, source turn, human answer or model score used as an example. Abstract fact families intentionally overlap."
+}

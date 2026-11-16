@@ -1,0 +1,344 @@
+{
+  "response_sha256": "a3455fbed4ec0f95f00d576c908c286ccb948a47fa174dfd041b2944ccd12fc8",
+  "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "0d0d81d769885b29a260528c1b512b80d1d912ba3c9377f63c641f92a4ced28a",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker requests advice on handling workplace favoritism and injustice that causes distress.",
+      "response_quote": "It sounds like you are deeply troubled by the unfairness you see happening around you, especially when it involves favoritism towards certain peers who don't pull their weight but receive preferential treatment from your manager. That kind of situation can be really frustrating and demotivating.\n\nSince you mentioned you cannot tolerate injustice, have you already discussed this situation with anyone else, such as a colleague, a supervisor, or even a family member? Sometimes talking through what you're experiencing with someone who cares about you can help clarify your next steps or give you a different perspective on how to handle it.",
+      "evidence": [
+        {
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+        },
+        {
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice"
+        },
+        {
+          "source_id": "C:T001",
+          "quote": "Im feeling down and need some advice as to how do I handle this situation"
+        }
+      ],
+      "reason": "The reply appropriately validates the user's feelings regarding workplace fairness (supported by C:T006/C:T008) and offers constructive next steps (discussing with others), fulfilling the request for handling advice without violating identity boundaries or fabricating facts. While it does not provide a detailed strategic plan, offering the option to talk to others is a valid supportive intervention for 'feelings down' contexts, resulting in no important defect."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you are deeply troubled by the unfairness you see happening around you, especially when it involves favoritism towards certain peers who don't pull their weight but receive preferential treatment from your manager.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T006",
+            "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+          },
+          {
+            "source_id": "C:T008",
+            "quote": "Yes, it bothers me as I cannot tolerate injustice"
+          }
+        ],
+        "reason": "Accurately reflects the user's description of peers working little and receiving favorability from the manager from C:T006, while acknowledging the feeling of injustice from C:T008."
+      },
+      {
+        "response_quote": "Since you mentioned you cannot tolerate injustice, have you already discussed this situation with anyone else, such as a colleague, a supervisor, or even a family member?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "Yes, it bothers me as I cannot tolerate injustice"
+          }
+        ],
+        "reason": "Question references the explicit statement of intolerance for injustice made by the user in C:T008 to frame the inquiry."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Response addresses the emotional impact of the workplace situation (validation) and responds to the request for advice by suggesting consultation with others (exploratory guidance). It respects the seeker's context of peer favoritism and manager dynamics without assuming unverified details.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like you are deeply troubled by the unfairness you see happening around you, especially when it involves favoritism towards certain peers who don't pull their weight but receive preferential treatment from your manager. That kind of situation can be really frustrating and demotivating.\n\nSince you mentioned you cannot tolerate injustice, have you already discussed this situation with anyone else, such as a colleague, a supervisor, or even a family member? Sometimes talking through what you're experiencing with someone who cares about you can help clarify your next steps or give you a different perspective on how to handle it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 642
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "Im feeling down and need some advice as to how do I handle this situation",
+      "positions": [
+        {
+          "start": 0,
+          "end": 73
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you are deeply troubled by the unfairness you see happening around you, especially when it involves favoritism towards certain peers who don't pull their weight but receive preferential treatment from your manager.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 229
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T006",
+      "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Since you mentioned you cannot tolerate injustice, have you already discussed this situation with anyone else, such as a colleague, a supervisor, or even a family member?",
+      "positions": [
+        {
+          "start": 298,
+          "end": 468
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T008",
+      "quote": "Yes, it bothers me as I cannot tolerate injustice",
+      "positions": [
+        {
+          "start": 0,
+          "end": 49
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker requests advice on handling workplace favoritism and injustice that causes distress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T008",
+        "C:T001"
+      ],
+      "reason": "The reply appropriately validates the user's feelings regarding workplace fairness (supported by C:T006/C:T008) and offers constructive next steps (discussing with others), fulfilling the request for handling advice without violating identity boundaries or fabricating facts. While it does not provide a detailed strategic plan, offering the option to talk to others is a valid supportive intervention for 'feelings down' contexts, resulting in no important defect."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "Accurately reflects the user's description of peers working little and receiving favorability from the manager from C:T006, while acknowledging the feeling of injustice from C:T008."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Question references the explicit statement of intolerance for injustice made by the user in C:T008 to frame the inquiry."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Response addresses the emotional impact of the workplace situation (validation) and responds to the request for advice by suggesting consultation with others (exploratory guidance). It respects the seeker's context of peer favoritism and manager dynamics without assuming unverified details.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker requests advice on handling workplace favoritism and injustice that causes distress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T008",
+        "C:T001"
+      ],
+      "reason": "The reply appropriately validates the user's feelings regarding workplace fairness (supported by C:T006/C:T008) and offers constructive next steps (discussing with others), fulfilling the request for handling advice without violating identity boundaries or fabricating facts. While it does not provide a detailed strategic plan, offering the option to talk to others is a valid supportive intervention for 'feelings down' contexts, resulting in no important defect."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "Accurately reflects the user's description of peers working little and receiving favorability from the manager from C:T006, while acknowledging the feeling of injustice from C:T008.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathetic reflection on the nature of the situation described, does not assert specific personal facts.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Question references the explicit statement of intolerance for injustice made by the user in C:T008 to frame the inquiry.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggestive general advice on communication benefits, does not make assertions about personal facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Response addresses the emotional impact of the workplace situation (validation) and responds to the request for advice by suggesting consultation with others (exploratory guidance). It respects the seeker's context of peer favoritism and manager dynamics without assuming unverified details.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker requests advice on handling workplace favoritism and injustice that causes distress.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T008",
+        "C:T001"
+      ],
+      "reason": "The reply appropriately validates the user's feelings regarding workplace fairness (supported by C:T006/C:T008) and offers constructive next steps (discussing with others), fulfilling the request for handling advice without violating identity boundaries or fabricating facts. While it does not provide a detailed strategic plan, offering the option to talk to others is a valid supportive intervention for 'feelings down' contexts, resulting in no important defect."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "Accurately reflects the user's description of peers working little and receiving favorability from the manager from C:T006, while acknowledging the feeling of injustice from C:T008."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathetic reflection on the nature of the situation described, does not assert specific personal facts."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "Question references the explicit statement of intolerance for injustice made by the user in C:T008 to frame the inquiry."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Suggestive general advice on communication benefits, does not make assertions about personal facts."
+      }
+    ],
+    "coverage": "Response addresses the emotional impact of the workplace situation (validation) and responds to the request for advice by suggesting consultation with others (exploratory guidance). It respects the seeker's context of peer favoritism and manager dynamics without assuming unverified details.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.75
+}

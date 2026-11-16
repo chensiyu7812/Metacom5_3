@@ -1,0 +1,129 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2829,
+      "reserved_prompt_tokens": 2957,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 432
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "3685e49735822de9379b6ccef56e9bbcf9d1b57960cc6f11dbae57dbf196b7e1",
+    "prior_profile_sha256": "33f1bf344897deb0e7c72dc3cfff16fdc407cc364a40b907379f4e1380417c57",
+    "request_payload_sha256": "44d5c9ba3ea12bcf4f9e40c939c1441dc904bb6d876dfeaa54f7f24051c7c31c"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p16",
+      "s": "p16_conv_7",
+      "p": [
+        {
+          "i": "p16_p1",
+          "t": "durable_health_constraint",
+          "k": "emotional_response_to_workplace_stress",
+          "v": "experiencing emotional distress and feeling drained due to ongoing strained relationship with supervisor who dismisses contributions",
+          "s": [
+            {
+              "i": "p16_conv_7:11"
+            },
+            {
+              "i": "p16_conv_7:7"
+            },
+            {
+              "i": "p16_conv_7:9"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p16_e1",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "attempted to discuss feelings of being undervalued with supervisor in a meeting",
+          "a": "tried to bring up how I've been feeling undervalued and how it's affecting my motivation at work",
+          "o": "supervisor dismissed concerns again, similar to previous interactions",
+          "s": [
+            {
+              "i": "p16_conv_7:5"
+            },
+            {
+              "i": "p16_conv_7:7"
+            }
+          ]
+        },
+        {
+          "i": "p16_e2",
+          "t": "support_experience",
+          "z": "ongoing_stage",
+          "n": "has an improved and supportive working relationship with a coworker who provides partial emotional support",
+          "s": [
+            {
+              "i": "p16_conv_7:15"
+            },
+            {
+              "i": "p16_conv_7:17"
+            }
+          ]
+        },
+        {
+          "i": "p16_e3",
+          "t": "transient_state",
+          "z": "occurred",
+          "n": "felt emotionally drained and questioned self-worth after unproductive meeting with supervisor",
+          "s": [
+            {
+              "i": "p16_conv_7:11"
+            }
+          ]
+        },
+        {
+          "i": "p16_e4",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "considered looking for a new job as a way to escape current workplace stress",
+          "a": "thought about looking for a new job",
+          "o": "decided against active pursuit due to lack of energy",
+          "s": [
+            {
+              "i": "p16_conv_7:19"
+            }
+          ]
+        },
+        {
+          "i": "p16_e5",
+          "t": "state_change",
+          "z": "occurred",
+          "n": "shifted mindset from feeling stuck to intending to build confidence and explore job options more lightheartedly",
+          "s": [
+            {
+              "i": "p16_conv_7:21"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "2c9cc0f8cc270a9de1442f973965833a2ff6e17409aff8dff098e7ba044abf1e",
+    "usage": {
+      "prompt_tokens": 2831,
+      "completion_tokens": 666,
+      "total_tokens": 3497
+    },
+    "latency_ms": 8311.499683011789,
+    "provider_finish_reason": "stop"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "status": "PENDING",
+  "protocol_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+  "study": "pmrl1-eight-paired-diagnostic-20261019",
+  "baseline_cumulative": 120,
+  "new_request_limit": 24,
+  "cumulative_cap": 144,
+  "capacity": 289,
+  "stage_cap_usd": "1",
+  "trial_cap_usd": "2",
+  "shared_cap_usd": "20",
+  "failure_policy": {
+    "version": "paired-diagnostic-failures-v1-20261019",
+    "singleton_semantic_error_continue": true,
+    "singleton_mechanical_failure_continue": true,
+    "mechanical_extract_failure_skips_score": true,
+    "valid_uncertain_extract_continues": true,
+    "global_consecutive_technical_stop": 2,
+    "component_consecutive_technical_stop": 2,
+    "component_success_resets_only_own_streak": true,
+    "retries": 0,
+    "integrity_service_or_data_violation_stop_immediately": true,
+    "insufficient_budget_stop": true,
+    "reward_eligible": false
+  },
+  "official_research_payload_authorized": false,
+  "intermediate_final_authorized": false,
+  "credential_process_read_authorized": false,
+  "management_requests": {
+    "models": 1,
+    "user/balance": 1
+  },
+  "old_stops_released": false,
+  "qualifies_reward": false,
+  "exact_egress": [
+    "original v2 joint prompt and NEW AI contract",
+    "versioned extraction or scoring-step instruction",
+    "bound English reply and stable unit IDs",
+    "complete legal current/past sources and stable turn IDs",
+    "score step only: validated final JSON from this item extraction; never thinking"
+  ],
+  "forbidden_egress": [
+    "human labels",
+    "analyst findings",
+    "expected answers",
+    "other-arm outputs",
+    "private notes",
+    "sealed data",
+    "credential files"
+  ],
+  "credential_file": "/home/tokkio/metacom5_3.env",
+  "credential_variable": "DEEPSEEK_API_KEY",
+  "endpoint": "https://api.deepseek.com/chat/completions",
+  "new_terms_acceptance": false,
+  "approval_source": null
+}

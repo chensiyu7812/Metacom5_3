@@ -1,0 +1,87 @@
+{
+  "response_sha256": "918a240e26dffdf34a13d35c1e6ad96044405cfe6a560ce168d49cadecfd767b",
+  "legal_evidence_identity": "4563088b51d8dcc8528d48646dfa101d51e8173df8f2ecfd06911515bf0bbee0",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "4230e91c43c1578ee4b4481eb832c0445648b887517829910acc88d85db323b0",
+  "raw_output_sha256": "aeef778b22f469de1e22c54696645c4a7b7d58d5f90ec8ab833ffe11179fcd1d",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User seeks validation for reaching out and wants to discuss vague feelings of mental burden ('a lot on my mind lately').",
+      "response_quote": "Not at all!\n\nI am here to listen and help in any way I can.\n\nIt is completely normal to have a lot on your mind, and it is great that you are reaching out for support.\n\nTake a deep breath and feel free to share as much or as little as you'd like.\n\nI am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately."
+        }
+      ],
+      "reason": "The reply fully meets the turn's requirements by directly answering the 'do you mind' question (R001), validating the user's outreach (R003), and providing a non-judgmental space (R005) before asking an open-ended follow-up (R006) that aligns precisely with the user's stated need. Despite minor grammatical phrasing in R006, the intent is clear and appropriate for an opening emotional support interaction."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated against the supplied evidence for personal factual claims, temporal accuracy, and identity consistency. No specific assertions about the user's history or status were made that could be verified or contradicted.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Not at all!\n\nI am here to listen and help in any way I can.\n\nIt is completely normal to have a lot on your mind, and it is great that you are reaching out for support.\n\nTake a deep breath and feel free to share as much or as little as you'd like.\n\nI am here to listen without judgment.\n\nWhat is been going on that is been weighing on your mind?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 344
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you don't mind me reaching out again. I just have a lot on my mind lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 86
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "User seeks validation for reaching out and wants to discuss vague feelings of mental burden ('a lot on my mind lately').",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004",
+        "R005",
+        "R006"
+      ],
+      "source_turn_ids": [
+        "C:T000"
+      ],
+      "reason": "The reply fully meets the turn's requirements by directly answering the 'do you mind' question (R001), validating the user's outreach (R003), and providing a non-judgmental space (R005) before asking an open-ended follow-up (R006) that aligns precisely with the user's stated need. Despite minor grammatical phrasing in R006, the intent is clear and appropriate for an opening emotional support interaction."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated against the supplied evidence for personal factual claims, temporal accuracy, and identity consistency. No specific assertions about the user's history or status were made that could be verified or contradicted.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

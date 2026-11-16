@@ -1,0 +1,259 @@
+{
+  "response_sha256": "2aa2e80835eb5c802e80d17d91615192819c7a299e8400a2e3d312d5f95dd99d",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "57bdeaf241212cd831b47b24429c6d22fe74fe10b19b99d1c2796efaffc5c076",
+  "raw_output_sha256": "af8f2a442be6e2a0bfb487b54434c8755ab183d2cfdf30a75b0db50c617ba1cb",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker expresses difficulty getting over breakup after explaining it resulted from mutual fighting/disagreements",
+      "response_quote": "That sounds painful. You said the two of you kept fighting, and you're having trouble getting over the breakup. We can take this slowly; what feels hardest right now?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "Reply shows empathy and reflects user's stated situation accurately. R001 validates feelings appropriately. R002 correctly references the user's explanation from C:T007 about keeping fighting. R003 invites exploration without pushing. Minor point: Previous support turned (C:T006) mentioned wondering about infidelity, creating slight tonal shift, but response honors user's clarified explanation rather than contradicting it. No major constraint violation or misunderstanding."
+    },
+    "claims": [
+      {
+        "response_quote": "You said the two of you kept fighting, and you're having trouble getting over the breakup.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+          },
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Accurately reflects user's reported breakup due to fighting"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses emotional validation, reflects user's stated situation from C:T001/C:T007, and offers continued support. Response stays within emotional support boundaries and respects the user's current expression.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That sounds painful. You said the two of you kept fighting, and you're having trouble getting over the breakup. We can take this slowly; what feels hardest right now?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 166
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You said the two of you kept fighting, and you're having trouble getting over the breakup.",
+      "positions": [
+        {
+          "start": 21,
+          "end": 111
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "seeker expresses difficulty getting over breakup after explaining it resulted from mutual fighting/disagreements",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "Reply shows empathy and reflects user's stated situation accurately. R001 validates feelings appropriately. R002 correctly references the user's explanation from C:T007 about keeping fighting. R003 invites exploration without pushing. Minor point: Previous support turned (C:T006) mentioned wondering about infidelity, creating slight tonal shift, but response honors user's clarified explanation rather than contradicting it. No major constraint violation or misunderstanding."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Accurately reflects user's reported breakup due to fighting"
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses emotional validation, reflects user's stated situation from C:T001/C:T007, and offers continued support. Response stays within emotional support boundaries and respects the user's current expression.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "seeker expresses difficulty getting over breakup after explaining it resulted from mutual fighting/disagreements",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "Reply shows empathy and reflects user's stated situation accurately. R001 validates feelings appropriately. R002 correctly references the user's explanation from C:T007 about keeping fighting. R003 invites exploration without pushing. Minor point: Previous support turned (C:T006) mentioned wondering about infidelity, creating slight tonal shift, but response honors user's clarified explanation rather than contradicting it. No major constraint violation or misunderstanding."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic phrase without personal factual assertion",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Accurately reflects user's reported breakup due to fighting",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Gentle guidance question without personal factual claims",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Addresses emotional validation, reflects user's stated situation from C:T001/C:T007, and offers continued support. Response stays within emotional support boundaries and respects the user's current expression.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "seeker expresses difficulty getting over breakup after explaining it resulted from mutual fighting/disagreements",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "Reply shows empathy and reflects user's stated situation accurately. R001 validates feelings appropriately. R002 correctly references the user's explanation from C:T007 about keeping fighting. R003 invites exploration without pushing. Minor point: Previous support turned (C:T006) mentioned wondering about infidelity, creating slight tonal shift, but response honors user's clarified explanation rather than contradicting it. No major constraint violation or misunderstanding."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic phrase without personal factual assertion"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Accurately reflects user's reported breakup due to fighting"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Gentle guidance question without personal factual claims"
+      }
+    ],
+    "coverage": "Addresses emotional validation, reflects user's stated situation from C:T001/C:T007, and offers continued support. Response stays within emotional support boundaries and respects the user's current expression.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

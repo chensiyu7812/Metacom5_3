@@ -1,0 +1,115 @@
+{
+  "_id": "685cc731cbd6ee8587e1cd59",
+  "id": "Skywork/Skywork-Reward-V2-Llama-3.1-8B",
+  "private": false,
+  "pipeline_tag": "text-classification",
+  "library_name": "transformers",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "llama",
+    "text-classification",
+    "arxiv:2507.01352",
+    "base_model:meta-llama/Llama-3.1-8B-Instruct",
+    "base_model:finetune:meta-llama/Llama-3.1-8B-Instruct",
+    "license:llama3.1",
+    "text-embeddings-inference",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 11691,
+  "likes": 50,
+  "modelId": "Skywork/Skywork-Reward-V2-Llama-3.1-8B",
+  "author": "Skywork",
+  "sha": "cba2f842f3f1af2f1b2f0d35e794d789976390c5",
+  "lastModified": "2025-07-06T18:12:50.000Z",
+  "gated": false,
+  "disabled": false,
+  "widgetData": [
+    {
+      "text": "I like you. I love you"
+    }
+  ],
+  "model-index": null,
+  "config": {
+    "architectures": [
+      "LlamaForSequenceClassification"
+    ],
+    "model_type": "llama",
+    "tokenizer_config": {
+      "bos_token": "<|begin_of_text|>",
+      "eos_token": "<|eot_id|>",
+      "pad_token": "<|finetune_right_pad_id|>"
+    },
+    "chat_template_jinja": "{% set loop_messages = messages %}{% for message in loop_messages %}{% set content = '<|start_header_id|>' + message['role'] + '<|end_header_id|>\n\n'+ message['content'] | trim + '<|eot_id|>' %}{% if loop.index0 == 0 %}{% set content = bos_token + content %}{% endif %}{{ content }}{% endfor %}{% if add_generation_prompt %}{{ '<|start_header_id|>assistant<|end_header_id|>\n\n' }}{% endif %}"
+  },
+  "cardData": {
+    "base_model": [
+      "meta-llama/Llama-3.1-8B-Instruct"
+    ],
+    "license": "llama3.1",
+    "pipeline_tag": "text-classification",
+    "library_name": "transformers"
+  },
+  "transformersInfo": {
+    "auto_model": "AutoModelForSequenceClassification",
+    "pipeline_tag": "text-classification",
+    "processor": "AutoTokenizer"
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes"
+    },
+    {
+      "rfilename": "LICENSE"
+    },
+    {
+      "rfilename": "README.md"
+    },
+    {
+      "rfilename": "assets/skywork_logo.png"
+    },
+    {
+      "rfilename": "chat_template.jinja"
+    },
+    {
+      "rfilename": "config.json"
+    },
+    {
+      "rfilename": "model-00001-of-00004.safetensors"
+    },
+    {
+      "rfilename": "model-00002-of-00004.safetensors"
+    },
+    {
+      "rfilename": "model-00003-of-00004.safetensors"
+    },
+    {
+      "rfilename": "model-00004-of-00004.safetensors"
+    },
+    {
+      "rfilename": "model.safetensors.index.json"
+    },
+    {
+      "rfilename": "special_tokens_map.json"
+    },
+    {
+      "rfilename": "tokenizer.json"
+    },
+    {
+      "rfilename": "tokenizer_config.json"
+    }
+  ],
+  "spaces": [
+    "DearSloth/RoleRMBench",
+    "SabaPivot/repro-calibrated-preference-learning-the-case-of-label-ranking"
+  ],
+  "createdAt": "2025-06-26T04:06:09.000Z",
+  "safetensors": {
+    "parameters": {
+      "BF16": 7504928768
+    },
+    "total": 7504928768
+  },
+  "usedStorage": 15031359027
+}

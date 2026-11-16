@@ -1,0 +1,60 @@
+{
+  "time_jst": "2026-10-15T22:25:48.362441+09:00",
+  "reviewer": "Codex source-bound diagnostic review; not independent human rater",
+  "request_id": "62a5c7c8f868f71b574f5ad91af9f790447cba5691744129aa8e524efe7bf23d",
+  "original_slot_request_id": "9d9994370cf1775ebb1c656c6ff0fbe3dd6d0dde4b8a50c93ecea9f510665d02",
+  "item_key": "dev10A",
+  "draw": "primary",
+  "response_sha256": "cf18ba6830c8e2f689cdaa9ca372391a2201ecf91cfefbf378b97feae24c65ff",
+  "raw_sha256": "87f78057b7ef75ca5d0c9e1307e4157fdd4ef0106a229a8d5523445ee6d46bd9",
+  "explanation": "当前T000辞职/T006继任担忧/T008希望尊重员工直接支持R001及R002；H005/006用户本人受骚扰与崩溃，并非同事经历偷换。q4适合分享担忧场景，无绝对金标准。第10题人类映射按回复哈希，不按旧显示侧。",
+  "source_checks": [
+    {
+      "source_id": "C:T000",
+      "exact_quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "finding": "老板已辞职"
+    },
+    {
+      "source_id": "C:T006",
+      "exact_quote": "Thank you for saying that. It helps me not feel so alone in this. I guess I'm also worried about who's going to take over.",
+      "finding": "担忧继任者"
+    },
+    {
+      "source_id": "C:T008",
+      "exact_quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "finding": "希望尊重员工"
+    },
+    {
+      "source_id": "H005:T004",
+      "exact_quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "finding": "用户本人报告持续骚扰"
+    },
+    {
+      "source_id": "H006:T008",
+      "exact_quote": "I keep thinking about the harassment at work. Ignoring it for so long just made me feel so powerless.",
+      "finding": "用户回顾工作骚扰和无力感"
+    }
+  ],
+  "material_source_proven_error": false,
+  "critical_unknown": false,
+  "unexplained_equivalence_difference": false,
+  "other_hard_stop_reasons": [],
+  "hard_stop_evidence": [],
+  "dimensions": {
+    "actor": "用户经历与同事经历区分",
+    "citation": "完整当前与历史支持",
+    "severity": "m0未见实质错",
+    "quality": "q4简短回应当前担忧",
+    "temporal": "新状态辞职被正确采纳",
+    "human_binding": "回复哈希映射10A，不使用旧Du位置联结"
+  },
+  "issues": [],
+  "model_score_unchanged": true,
+  "complete_final_only": true,
+  "thinking_used_as_answer": false,
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "complete_evidence_reviewed": true,
+  "independent_human_observations": 0,
+  "qualification": "NOT_EVALUATED",
+  "diagnostic_policy_version": "unresolved-review-diagnostic-continuation-v1-20261015"
+}

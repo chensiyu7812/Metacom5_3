@@ -1,0 +1,207 @@
+{
+  "response_sha256": "b9d81463a761d9fcf484bf92731488398dda36dd0edbc061e438ad03b6b51a49",
+  "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "0159f862995effb18bf98a42f3b281797d1965e0d3870b7fe032693d182742c4",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker indicates things are 'a bit tough lately' and seeks an attentive listener to explore the difficulties.",
+      "response_quote": "You can take your time. Would you like to tell me more about what has been tough?",
+      "evidence": [
+        {
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately."
+        }
+      ],
+      "reason": "The reply appropriately validates the user's distress ('tough') and encourages elaboration without overstepping boundaries or making unsupported claims. It respects the user's agency while inviting disclosure."
+    },
+    "claims": [
+      {
+        "response_quote": "Would you like to tell me more about what has been tough?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T002",
+            "quote": "Honestly, things have been a bit tough lately."
+          }
+        ],
+        "reason": "Question directly references the user's stated condition in C:T002 ('things have been a bit tough'), correctly framing the inquiry."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the initial expression of struggle, offers space for pacing, and invites deeper sharing relevant to the current session.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You can take your time. Would you like to tell me more about what has been tough?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Would you like to tell me more about what has been tough?",
+      "positions": [
+        {
+          "start": 24,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Seeker indicates things are 'a bit tough lately' and seeks an attentive listener to explore the difficulties.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply appropriately validates the user's distress ('tough') and encourages elaboration without overstepping boundaries or making unsupported claims. It respects the user's agency while inviting disclosure."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Question directly references the user's stated condition in C:T002 ('things have been a bit tough'), correctly framing the inquiry."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses the initial expression of struggle, offers space for pacing, and invites deeper sharing relevant to the current session.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker indicates things are 'a bit tough lately' and seeks an attentive listener to explore the difficulties.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply appropriately validates the user's distress ('tough') and encourages elaboration without overstepping boundaries or making unsupported claims. It respects the user's agency while inviting disclosure."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic supportive statement offering patience; does not assert specific personal facts about the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Question directly references the user's stated condition in C:T002 ('things have been a bit tough'), correctly framing the inquiry.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses the initial expression of struggle, offers space for pacing, and invites deeper sharing relevant to the current session.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Seeker indicates things are 'a bit tough lately' and seeks an attentive listener to explore the difficulties.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T002"
+      ],
+      "reason": "The reply appropriately validates the user's distress ('tough') and encourages elaboration without overstepping boundaries or making unsupported claims. It respects the user's agency while inviting disclosure."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic supportive statement offering patience; does not assert specific personal facts about the user."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Question directly references the user's stated condition in C:T002 ('things have been a bit tough'), correctly framing the inquiry."
+      }
+    ],
+    "coverage": "Addresses the initial expression of struggle, offers space for pacing, and invites deeper sharing relevant to the current session.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

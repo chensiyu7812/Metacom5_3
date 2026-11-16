@@ -1,0 +1,73 @@
+{
+  "response_sha256": "eb97700dda6eaa3a40c40f6cf149f6070fde09391614c3e03e07aec6533d51fe",
+  "legal_evidence_identity": "3120efd8797395cabba09ce15a0e7440dd4bff93111822308f895d05bfc12676",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "95b7af0dbfa85ca57aa4ea48f49a7fa15925625614da576b4d74ee4185e6774b",
+  "raw_output_sha256": "1fbde5b412fe3740fbae9ce834eb11cdd09da02963e15e7a9310b707ca03b9f5",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "findings do not exactly index the declared errors",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Charles is expressing regret and sadness about not having more time with his father who passed away, and mentions spending too long focusing on bitter moments. He wants to share raw grief about unresolved feelings.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T011"
+      ],
+      "reason": "The reply fundamentally mismatches the user's stated emotions. In C:T011, Charles explicitly says 'I've spent too long focusing on the bitter moments' and 'wishing we'd had more time.' The support response claims he's 'making progress in shifting your focus to the good memories' which contradicts what Charles just disclosed about his current state. A matching response would acknowledge the pain of bitterness, express empathy for his grief about lost time, and validate that processing these feelings is part of healing. Instead, the reply prematurely frames his experience as positive progress when he's still in the midst of grieving loss and unfinished business."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T010",
+          "C:T011"
+        ],
+        "reason": "No evidence that Charles recognizes or addresses dwelling on negatives; in C:T011 he admits spending time on bitter moments without indicating he's overcome them."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T010",
+          "C:T011"
+        ],
+        "reason": "Claims 'making progress' toward good memories contradicts C:T011's explicit statement about having 'spent too long focusing on the bitter moments' and wishing for more time with his father—suggesting unresolved grief rather than progress."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "C:T010",
+          "C:T011"
+        ],
+        "reason": "Declaring 'That's a beautiful thing' about his situation lacks evidence from C:T011 where he expresses sorrow and regret about loss and unresolved feelings, not beauty or positive transformation."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Checked the reply against C:T010-T011 to verify alignment with Charles's expressed emotions about his father's passing, grief, and focus on bitter moments versus positive memories. Evaluated claims about progress, reframing, and positivity for support/contradiction against supplied evidence.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

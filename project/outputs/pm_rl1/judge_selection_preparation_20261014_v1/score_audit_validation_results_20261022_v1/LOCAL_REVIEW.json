@@ -1,0 +1,49 @@
+{
+  "author": "Codex evidence review, not independent human labels",
+  "valid_audit_reference": {
+    "item": "V3_OFF",
+    "source_ids": [
+      "C:T006",
+      "H009:T001"
+    ],
+    "score_path": "/assessments/2/reason",
+    "finding": "already_accounted",
+    "observation": "Explicit same-claim linkage is supported by the historical initial score; quality/severity support remains a machine judgment, not new human gold."
+  },
+  "failed_final_text_only": {
+    "item": "dev06B",
+    "observation": "The final text discusses the prior-discussion presupposition separately from its possible effects, and criticizes the original non_factual classification.",
+    "limitation": "Invalid JSON; no recovered object or formal valid audit; cannot count as target repair, passing repeat, or new numeric score."
+  },
+  "planned_controls_not_observed": [
+    "V4_OFF",
+    "V3_ON",
+    "dev04B",
+    "dev35B"
+  ],
+  "complete_repeat_pairs": 0,
+  "valid_delivery_denominator": {
+    "valid": 1,
+    "started": 2,
+    "planned": 8,
+    "distinct_replies_with_valid_audit": 1,
+    "planned_distinct_replies": 6
+  },
+  "model_unknown": {
+    "count": 0,
+    "denominator_valid": 1,
+    "failed_status": null,
+    "not_dispatched_status": null
+  },
+  "semantic_disputes": "No adjudication of pre-existing q/severity boundaries; unmeasured is not resolved.",
+  "same_output_routing": {
+    "comparable_outputs": 1,
+    "old_trigger": true,
+    "new_action": "retain_numeric_candidate",
+    "actual_repairs": 0,
+    "actual_savings_usd": "0",
+    "not_independent_two_arm_experiment": true
+  },
+  "decision": "INCONCLUSIVE_TECHNICAL_STOP: local prior-accounting behavior observed once; true-miss repeated target and controls not completed.",
+  "next_step": "Address output delivery in a separately approved engineering continuation, before another semantic modification. Preserve the two attempts, allow no automatic retry or brace repair; remaining six slots need explicit continuation scope. No C/PPO/qualification."
+}

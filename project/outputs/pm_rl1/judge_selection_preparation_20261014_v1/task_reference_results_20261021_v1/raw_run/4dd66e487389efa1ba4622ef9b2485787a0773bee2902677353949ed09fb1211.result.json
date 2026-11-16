@@ -1,0 +1,438 @@
+{
+  "slot_id": "4dd66e487389efa1ba4622ef9b2485787a0773bee2902677353949ed09fb1211",
+  "request_identity": "260c7e4826dda6a893dcef0dcd3042dd534d14bcb53160cf96d2b8f4c478fc76",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "The seeker is asking the previous supporter how they dealt with a similar conflict with their mother about friends, because the situation makes the seeker angry. Under the new-AI contract, the reply should clarify that the prior supporter's experience is not the AI's own and then continue helping with the seeker's situation.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T007",
+          "C:T008",
+          "C:T009"
+        ],
+        "reason": "The reply is empathetic and relevantly reflects the conflict over choosing friends, but it does not clarify the attribution of the previous supporter's self-disclosure at C:T008 and does not answer or address the direct question at C:T009 about how that person dealt with the situation. This is an important missed need, though the reply still offers some supportive engagement and a potentially useful question about talking to friends."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T009"
+          ],
+          "reason": "This is an empathic acknowledgment of the seeker's feelings, not a specific factual claim about the seeker's life or the prior supporter's experience."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The seeker reported that the mother does not approve of most things, that they disagree over the kind of friends the seeker should have, and that the situation makes the seeker angry. The reply's summary is consistent with those reports."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The question leaves open whether the seeker has talked to friends about this; it does not assert that such a conversation occurred. It references the seeker's anger and the friend-related conflict already in the current prefix."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is general advice or encouragement about sharing feelings with supportive people, not an assertion of a specific personal event or fact."
+        }
+      ],
+      "coverage": "Reviewed the complete current prefix C:T000-C:T009, including the prior supporter's self-disclosure at C:T008 and the seeker's direct follow-up at C:T009, as well as the supplied past sessions H001 and H002 for context. The reply makes no personal factual claim about the prior supporter's experience and no claim requiring past-session support; its main defect is the omitted attribution clarification and direct response to the seeker's question.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 0,
+    "U": 0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "614bf9883a6e2ecd503692fd7e390350663388a0a7a53af55f1b54dea8c9aafd",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "4dd66e487389efa1ba4622ef9b2485787a0773bee2902677353949ed09fb1211",
+      "raw_output_sha256": "47fd074ad3f929bc8c568750ee5af7b91ff9b0ebf6f214b784c5f37772449ae4",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking the previous supporter how they dealt with a similar conflict with their mother about friends, because the situation makes the seeker angry. Under the new-AI contract, the reply should clarify that the prior supporter's experience is not the AI's own and then continue helping with the seeker's situation.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.\n\nSince you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them? Sometimes sharing those feelings with people who care about you can help lighten the load.",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T008",
+              "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. "
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply is empathetic and relevantly reflects the conflict over choosing friends, but it does not clarify the attribution of the previous supporter's self-disclosure at C:T008 and does not answer or address the direct question at C:T009 about how that person dealt with the situation. This is an important missed need, though the reply still offers some supportive engagement and a potentially useful question about talking to friends."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The seeker reported that the mother does not approve of most things, that they disagree over the kind of friends the seeker should have, and that the situation makes the seeker angry. The reply's summary is consistent with those reports."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T009, including the prior supporter's self-disclosure at C:T008 and the seeker's direct follow-up at C:T009, as well as the supplied past sessions H001 and H002 for context. The reply makes no personal factual claim about the prior supporter's experience and no claim requiring past-session support; its main defect is the omitted attribution clarification and direct response to the seeker's question.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.\n\nSince you mentioned it makes you angry, I want to ask: Have you talked to any of your friends about how you feel when your mom disapproves of them? Sometimes sharing those feelings with people who care about you can help lighten the load.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 429
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "I had similar situation like yours. My mom did not want me to make friends with some people. ",
+          "positions": [
+            {
+              "start": 0,
+              "end": 93
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the situation with your mom is really frustrating for you, especially when it comes to something as important as choosing your own friends.",
+          "positions": [
+            {
+              "start": 35,
+              "end": 189
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking the previous supporter how they dealt with a similar conflict with their mother about friends, because the situation makes the seeker angry. Under the new-AI contract, the reply should clarify that the prior supporter's experience is not the AI's own and then continue helping with the seeker's situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and relevantly reflects the conflict over choosing friends, but it does not clarify the attribution of the previous supporter's self-disclosure at C:T008 and does not answer or address the direct question at C:T009 about how that person dealt with the situation. This is an important missed need, though the reply still offers some supportive engagement and a potentially useful question about talking to friends."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reported that the mother does not approve of most things, that they disagree over the kind of friends the seeker should have, and that the situation makes the seeker angry. The reply's summary is consistent with those reports."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T009, including the prior supporter's self-disclosure at C:T008 and the seeker's direct follow-up at C:T009, as well as the supplied past sessions H001 and H002 for context. The reply makes no personal factual claim about the prior supporter's experience and no claim requiring past-session support; its main defect is the omitted attribution clarification and direct response to the seeker's question.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker is asking the previous supporter how they dealt with a similar conflict with their mother about friends, because the situation makes the seeker angry. Under the new-AI contract, the reply should clarify that the prior supporter's experience is not the AI's own and then continue helping with the seeker's situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and relevantly reflects the conflict over choosing friends, but it does not clarify the attribution of the previous supporter's self-disclosure at C:T008 and does not answer or address the direct question at C:T009 about how that person dealt with the situation. This is an important missed need, though the reply still offers some supportive engagement and a potentially useful question about talking to friends."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "This is an empathic acknowledgment of the seeker's feelings, not a specific factual claim about the seeker's life or the prior supporter's experience.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reported that the mother does not approve of most things, that they disagree over the kind of friends the seeker should have, and that the situation makes the seeker angry. The reply's summary is consistent with those reports.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The question leaves open whether the seeker has talked to friends about this; it does not assert that such a conversation occurred. It references the seeker's anger and the friend-related conflict already in the current prefix.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is general advice or encouragement about sharing feelings with supportive people, not an assertion of a specific personal event or fact.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T009, including the prior supporter's self-disclosure at C:T008 and the seeker's direct follow-up at C:T009, as well as the supplied past sessions H001 and H002 for context. The reply makes no personal factual claim about the prior supporter's experience and no claim requiring past-session support; its main defect is the omitted attribution clarification and direct response to the seeker's question.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "The seeker is asking the previous supporter how they dealt with a similar conflict with their mother about friends, because the situation makes the seeker angry. Under the new-AI contract, the reply should clarify that the prior supporter's experience is not the AI's own and then continue helping with the seeker's situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T008",
+            "C:T009"
+          ],
+          "reason": "The reply is empathetic and relevantly reflects the conflict over choosing friends, but it does not clarify the attribution of the previous supporter's self-disclosure at C:T008 and does not answer or address the direct question at C:T009 about how that person dealt with the situation. This is an important missed need, though the reply still offers some supportive engagement and a potentially useful question about talking to friends."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "This is an empathic acknowledgment of the seeker's feelings, not a specific factual claim about the seeker's life or the prior supporter's experience."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reported that the mother does not approve of most things, that they disagree over the kind of friends the seeker should have, and that the situation makes the seeker angry. The reply's summary is consistent with those reports."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The question leaves open whether the seeker has talked to friends about this; it does not assert that such a conversation occurred. It references the seeker's anger and the friend-related conflict already in the current prefix."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is general advice or encouragement about sharing feelings with supportive people, not an assertion of a specific personal event or fact."
+          }
+        ],
+        "coverage": "Reviewed the complete current prefix C:T000-C:T009, including the prior supporter's self-disclosure at C:T008 and the seeker's direct follow-up at C:T009, as well as the supplied past sessions H001 and H002 for context. The reply makes no personal factual claim about the prior supporter's experience and no claim requiring past-session support; its main defect is the omitted attribution clarification and direct response to the seeker's question.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "47fd074ad3f929bc8c568750ee5af7b91ff9b0ebf6f214b784c5f37772449ae4",
+      "adapted_final_sha256": "47fd074ad3f929bc8c568750ee5af7b91ff9b0ebf6f214b784c5f37772449ae4",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0075294",
+    "usage_upper_usd": "0.0075294",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 6150,
+    "completion_tokens": 4737,
+    "total_tokens": 10887,
+    "prompt_tokens_details": {
+      "cached_tokens": 6016
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 4092
+    },
+    "prompt_cache_hit_tokens": 6016,
+    "prompt_cache_miss_tokens": 134
+  },
+  "elapsed_seconds": 24.80551610699331,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-context-task-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 4,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-context-task-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

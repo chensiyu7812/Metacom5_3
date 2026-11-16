@@ -1,0 +1,14 @@
+usage: runtime_receipts.py [-h] {local,api} ...
+
+Future readiness receipts. No weight download/install/inference commands.
+local: hashes pre-existing files and tokenizes complete development inputs.
+api: explicit approved account READ only; never sends project conversations.
+
+positional arguments:
+  {local,api}
+    local      validate already downloaded exact revision and complete-input
+               tokens; no inference
+    api        future approved GET /models and GET /user/balance; no J call
+
+options:
+  -h, --help   show this help message and exit

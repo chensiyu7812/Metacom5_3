@@ -1,0 +1,418 @@
+{
+  "slot_id": "b9103e82c01e9c7e7452f1ffa1df3072898b909181b373ba8bc578e525c0e011",
+  "request_identity": "0d1d2e01c636e1fc2d8f1360ca0d9759bebe15a875b1662767e3815697868a6d",
+  "component": "score",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The seeker has described a workplace situation involving perceived favoritism and has said it bothers him because he cannot tolerate injustice. He needs validation and a constructive opening toward handling the situation.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T001",
+          "C:T006",
+          "C:T008"
+        ],
+        "reason": "The reply directly validates the sense of unfairness the seeker has just expressed and then invites collaborative discussion of possible options. That is responsive to both the immediate emotional statement and the earlier request for advice, without asserting unsupported personal facts or pushing the seeker to act."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "C:T006 describes peers who hardly work but are favored by the manager, and C:T008 says this bothers the seeker because he cannot tolerate injustice. The reply's empathic reflection that this feels unfair is supported by those reports. 'Understandable' is supportive framing rather than a separate factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an invitation to discuss options, not an assertion that the seeker has already taken any action or that a specific option exists. It is a tentative, collaborative question rather than a personal factual claim."
+        }
+      ],
+      "coverage": "Reviewed both reply units against the current prefix and all supplied past sessions. The past sessions concern sleep, drinking/marriage, and the seeker's mother, not workplace favoritism. R001 was checked against C:T006 and C:T008; R002 was treated as a non-factual invitation rather than as a historical assertion. No material ambiguity remains.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "f5f533c575b97b31ad07208ad08a1750684dbb463c4ee12af4476d07a551d26d",
+      "legal_evidence_identity": "297ba9c63e64523d810597a4cdfeffda8afd9fd4eee8cd023698562a8d5dd265",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "b9103e82c01e9c7e7452f1ffa1df3072898b909181b373ba8bc578e525c0e011",
+      "raw_output_sha256": "6cc92c445bc2f90b3c06b69a3ff24a542cd2d93462b5371840ced5e3ba04ee82",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker has described a workplace situation involving perceived favoritism and has said it bothers him because he cannot tolerate injustice. He needs validation and a constructive opening toward handling the situation.",
+          "response_quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+          "evidence": [
+            {
+              "source_id": "C:T001",
+              "quote": "Im feeling down and need some advice as to how do I handle this situation"
+            },
+            {
+              "source_id": "C:T006",
+              "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+            },
+            {
+              "source_id": "C:T008",
+              "quote": "Yes, it bothers me as I cannot tolerate injustice"
+            }
+          ],
+          "reason": "The reply directly validates the sense of unfairness the seeker has just expressed and then invites collaborative discussion of possible options. That is responsive to both the immediate emotional statement and the earlier request for advice, without asserting unsupported personal facts or pushing the seeker to act."
+        },
+        "claims": [
+          {
+            "response_quote": "It's understandable that this feels unfair.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T006",
+                "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word."
+              },
+              {
+                "source_id": "C:T008",
+                "quote": "Yes, it bothers me as I cannot tolerate injustice"
+              }
+            ],
+            "reason": "C:T006 describes peers who hardly work but are favored by the manager, and C:T008 says this bothers the seeker because he cannot tolerate injustice. The reply's empathic reflection that this feels unfair is supported by those reports. 'Understandable' is supportive framing rather than a separate factual assertion."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed both reply units against the current prefix and all supplied past sessions. The past sessions concern sleep, drinking/marriage, and the seeker's mother, not workplace favoritism. R001 was checked against C:T006 and C:T008; R002 was treated as a non-factual invitation rather than as a historical assertion. No material ambiguity remains.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "It's understandable that this feels unfair. Would you like to talk through what options you have?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 97
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "Im feeling down and need some advice as to how do I handle this situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 73
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It's understandable that this feels unfair.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 43
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T006",
+          "quote": "It's to do with some of my peers who hardly work but are favorable to my Manager as they always say yes to his word.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 116
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T008",
+          "quote": "Yes, it bothers me as I cannot tolerate injustice",
+          "positions": [
+            {
+              "start": 0,
+              "end": 49
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker has described a workplace situation involving perceived favoritism and has said it bothers him because he cannot tolerate injustice. He needs validation and a constructive opening toward handling the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The reply directly validates the sense of unfairness the seeker has just expressed and then invites collaborative discussion of possible options. That is responsive to both the immediate emotional statement and the earlier request for advice, without asserting unsupported personal facts or pushing the seeker to act."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "C:T006 describes peers who hardly work but are favored by the manager, and C:T008 says this bothers the seeker because he cannot tolerate injustice. The reply's empathic reflection that this feels unfair is supported by those reports. 'Understandable' is supportive framing rather than a separate factual assertion."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed both reply units against the current prefix and all supplied past sessions. The past sessions concern sleep, drinking/marriage, and the seeker's mother, not workplace favoritism. R001 was checked against C:T006 and C:T008; R002 was treated as a non-factual invitation rather than as a historical assertion. No material ambiguity remains.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker has described a workplace situation involving perceived favoritism and has said it bothers him because he cannot tolerate injustice. He needs validation and a constructive opening toward handling the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The reply directly validates the sense of unfairness the seeker has just expressed and then invites collaborative discussion of possible options. That is responsive to both the immediate emotional statement and the earlier request for advice, without asserting unsupported personal facts or pushing the seeker to act."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "C:T006 describes peers who hardly work but are favored by the manager, and C:T008 says this bothers the seeker because he cannot tolerate injustice. The reply's empathic reflection that this feels unfair is supported by those reports. 'Understandable' is supportive framing rather than a separate factual assertion.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an invitation to discuss options, not an assertion that the seeker has already taken any action or that a specific option exists. It is a tentative, collaborative question rather than a personal factual claim.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed both reply units against the current prefix and all supplied past sessions. The past sessions concern sleep, drinking/marriage, and the seeker's mother, not workplace favoritism. R001 was checked against C:T006 and C:T008; R002 was treated as a non-factual invitation rather than as a historical assertion. No material ambiguity remains.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker has described a workplace situation involving perceived favoritism and has said it bothers him because he cannot tolerate injustice. He needs validation and a constructive opening toward handling the situation.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T006",
+            "C:T008"
+          ],
+          "reason": "The reply directly validates the sense of unfairness the seeker has just expressed and then invites collaborative discussion of possible options. That is responsive to both the immediate emotional statement and the earlier request for advice, without asserting unsupported personal facts or pushing the seeker to act."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T006",
+              "C:T008"
+            ],
+            "reason": "C:T006 describes peers who hardly work but are favored by the manager, and C:T008 says this bothers the seeker because he cannot tolerate injustice. The reply's empathic reflection that this feels unfair is supported by those reports. 'Understandable' is supportive framing rather than a separate factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an invitation to discuss options, not an assertion that the seeker has already taken any action or that a specific option exists. It is a tentative, collaborative question rather than a personal factual claim."
+          }
+        ],
+        "coverage": "Reviewed both reply units against the current prefix and all supplied past sessions. The past sessions concern sleep, drinking/marriage, and the seeker's mother, not workplace favoritism. R001 was checked against C:T006 and C:T008; R002 was treated as a non-factual invitation rather than as a historical assertion. No material ambiguity remains.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "6cc92c445bc2f90b3c06b69a3ff24a542cd2d93462b5371840ced5e3ba04ee82",
+      "adapted_final_sha256": "6cc92c445bc2f90b3c06b69a3ff24a542cd2d93462b5371840ced5e3ba04ee82",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "f871e7eaacab4382a322646f915f3103e3674816ffba44f4bf095e2041f33e0c",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0063885",
+    "usage_upper_usd": "0.0063885",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 6943,
+    "completion_tokens": 3588,
+    "total_tokens": 10531,
+    "prompt_tokens_details": {
+      "cached_tokens": 6144
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 3156
+    },
+    "prompt_cache_hit_tokens": 6144,
+    "prompt_cache_miss_tokens": 799
+  },
+  "elapsed_seconds": 20.087869639042765,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "paired-source-check-v1-20261019",
+  "old_selection_semantic_revisions_used": 1,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "paired-source-check-v1-20261019",
+  "semantic_review_status": "pending_offline_source_review",
+  "transitions": {
+    "first_claims": [
+      {
+        "first_claim_id": "C001",
+        "response_unit_id": "R001",
+        "candidates": [
+          0
+        ],
+        "signature_retained": [
+          0
+        ],
+        "candidate_class": "retained_signature",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      },
+      {
+        "first_claim_id": "C002",
+        "response_unit_id": "R002",
+        "candidates": [
+          1
+        ],
+        "signature_retained": [
+          1
+        ],
+        "candidate_class": "retained_signature",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      },
+      {
+        "first_claim_id": "C003",
+        "response_unit_id": "R002",
+        "candidates": [
+          1
+        ],
+        "signature_retained": [],
+        "candidate_class": "changed_or_omitted_within_unit",
+        "reviewed_transition": null,
+        "correction_confirmed": null,
+        "source_checks": [],
+        "allowed_review": [
+          "retained",
+          "corrected",
+          "omitted",
+          "changed_uncertain"
+        ],
+        "semantic_review_required": true
+      }
+    ],
+    "new_judgment_candidates": [],
+    "warning": "Signatures and reply units do not prove semantic identity or correction; no automatic gold labels."
+  }
+}

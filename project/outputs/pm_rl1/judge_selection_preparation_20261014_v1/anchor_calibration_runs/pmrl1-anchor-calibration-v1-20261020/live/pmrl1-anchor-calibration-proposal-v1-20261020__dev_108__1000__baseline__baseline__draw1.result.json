@@ -1,0 +1,652 @@
+{
+  "slot_id": "pmrl1-anchor-calibration-proposal-v1-20261020__dev_108__1000__baseline__baseline__draw1",
+  "request_identity": "91b8e6e4d94492764e7b1135fa5efb47efdb640a65af9bb948ba7e4a8469eed5",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The final seeker turn is a closing thank-you. The reply should acknowledge that, avoid introducing pressure, and appropriately support the user's reported progress without overstating outcomes.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004",
+          "R005",
+          "R006"
+        ],
+        "source_turn_ids": [
+          "C:T007",
+          "C:T011",
+          "C:T019",
+          "C:T021"
+        ],
+        "reason": "The reply fully meets this closing turn: it acknowledges thanks, reinforces the user's reported effort in a cautious way, and asks an optional follow-up whose main presupposition—that he has started reducing drinking—is directly supported. It does not claim completed recovery or invent a new personal history."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A conversational acknowledgment with no personal factual claim."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "An expression of the assistant's reaction; it does not assert a checkable fact about the user."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T019"
+          ],
+          "reason": "The user reported reducing drinking to help save his marriage and later said he would avoid drinking. The reply's hedged phrasing, 'sounds like you're making positive steps,' reflects reported effort rather than claiming completed success."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The 'courage and effort' portion is generic evaluative encouragement rather than a specific factual assertion about the user."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009",
+            "C:T019"
+          ],
+          "reason": "The reference to the user's commitment is supported by his statements about reducing drinking, doing everything he can to save the marriage, and avoiding drinking."
+        },
+        {
+          "response_unit_id": "R005",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T011"
+          ],
+          "reason": "The question presupposes that he started reducing his drinking, which is directly supported by C:T007, and it refers to his wife, supported by C:T011. It asks about current developments rather than asserting them."
+        },
+        {
+          "response_unit_id": "R006",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a tentative question about whether changes have been noticed; it does not assert that any change has occurred."
+        }
+      ],
+      "coverage": "Reviewed all reply units R001-R006 against the complete current session C:T000-C:T021 and the past session H001. The past session concerned sleep and is not contradicted or materially relevant here. Checked the question presuppositions in R005-R006 and found the one about reduced drinking supported; no user-specific factual or boundary error was found.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "e4af2f2eb3967430810feab94b2d983c915323c7c0d38d88801b5c14fa49f475",
+      "legal_evidence_identity": "34e17db84748f4ef3bf1f5ab6f73b4f3eabacb49b48f78450706d1af232c4876",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "pmrl1-anchor-calibration-proposal-v1-20261020__dev_108__1000__baseline__baseline__draw1",
+      "raw_output_sha256": "9a907927367da79ed7752a666cd3103b846571e0cc0a9f152424bd58c19325df",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you. The reply should acknowledge that, avoid introducing pressure, and appropriately support the user's reported progress without overstating outcomes.",
+          "response_quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage and staying away from drinking. That takes a lot of courage and effort, and I appreciate your commitment to this process.\n\nIf you don't mind me asking, how are things going with your wife since you started reducing your drinking? Have you noticed any changes in your interactions or conversations with her?",
+          "evidence": [
+            {
+              "source_id": "C:T007",
+              "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+            },
+            {
+              "source_id": "C:T011",
+              "quote": "Yes my wife is everything to me and can not imagine loosing her due to some avoidable reasons"
+            },
+            {
+              "source_id": "C:T019",
+              "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues"
+            },
+            {
+              "source_id": "C:T021",
+              "quote": "Thank you for the assistance. Really appreciates"
+            }
+          ],
+          "reason": "The reply fully meets this closing turn: it acknowledges thanks, reinforces the user's reported effort in a cautious way, and asks an optional follow-up whose main presupposition—that he has started reducing drinking—is directly supported. It does not claim completed recovery or invent a new personal history."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like you're making some really positive steps towards saving your marriage and staying away from drinking.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              },
+              {
+                "source_id": "C:T019",
+                "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues"
+              }
+            ],
+            "reason": "The user reported reducing drinking to help save his marriage and later said he would avoid drinking. The reply's hedged phrasing, 'sounds like you're making positive steps,' reflects reported effort rather than claiming completed success."
+          },
+          {
+            "response_quote": "That takes a lot of courage and effort, and I appreciate your commitment to this process.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Thank you for the encouragement. Will do everything I can to save the situation"
+              },
+              {
+                "source_id": "C:T019",
+                "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues"
+              }
+            ],
+            "reason": "The reference to the user's commitment is supported by his statements about reducing drinking, doing everything he can to save the marriage, and avoiding drinking."
+          },
+          {
+            "response_quote": "If you don't mind me asking, how are things going with your wife since you started reducing your drinking?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Yes I have really reduced my drinking to ensure I save my marriage"
+              },
+              {
+                "source_id": "C:T011",
+                "quote": "Yes my wife is everything to me and can not imagine loosing her due to some avoidable reasons"
+              }
+            ],
+            "reason": "The question presupposes that he started reducing his drinking, which is directly supported by C:T007, and it refers to his wife, supported by C:T011. It asks about current developments rather than asserting them."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R006 against the complete current session C:T000-C:T021 and the past session H001. The past session concerned sleep and is not contradicted or materially relevant here. Checked the question presuppositions in R005-R006 and found the one about reduced drinking supported; no user-specific factual or boundary error was found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "You're welcome! I'm glad I could help. It sounds like you're making some really positive steps towards saving your marriage and staying away from drinking. That takes a lot of courage and effort, and I appreciate your commitment to this process.\n\nIf you don't mind me asking, how are things going with your wife since you started reducing your drinking? Have you noticed any changes in your interactions or conversations with her?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 430
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T011",
+          "quote": "Yes my wife is everything to me and can not imagine loosing her due to some avoidable reasons",
+          "positions": [
+            {
+              "start": 0,
+              "end": 93
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T019",
+          "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T021",
+          "quote": "Thank you for the assistance. Really appreciates",
+          "positions": [
+            {
+              "start": 0,
+              "end": 48
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like you're making some really positive steps towards saving your marriage and staying away from drinking.",
+          "positions": [
+            {
+              "start": 39,
+              "end": 155
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T019",
+          "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "That takes a lot of courage and effort, and I appreciate your commitment to this process.",
+          "positions": [
+            {
+              "start": 156,
+              "end": 245
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "Thank you for the encouragement. Will do everything I can to save the situation",
+          "positions": [
+            {
+              "start": 0,
+              "end": 79
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T019",
+          "quote": "Thank you I will definitely avoid drinking and any thing else that may contribute to such kind of issues",
+          "positions": [
+            {
+              "start": 0,
+              "end": 104
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "If you don't mind me asking, how are things going with your wife since you started reducing your drinking?",
+          "positions": [
+            {
+              "start": 247,
+              "end": 353
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T007",
+          "quote": "Yes I have really reduced my drinking to ensure I save my marriage",
+          "positions": [
+            {
+              "start": 0,
+              "end": 66
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T011",
+          "quote": "Yes my wife is everything to me and can not imagine loosing her due to some avoidable reasons",
+          "positions": [
+            {
+              "start": 0,
+              "end": 93
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you. The reply should acknowledge that, avoid introducing pressure, and appropriately support the user's reported progress without overstating outcomes.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005",
+            "R006"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T011",
+            "C:T019",
+            "C:T021"
+          ],
+          "reason": "The reply fully meets this closing turn: it acknowledges thanks, reinforces the user's reported effort in a cautious way, and asks an optional follow-up whose main presupposition—that he has started reducing drinking—is directly supported. It does not claim completed recovery or invent a new personal history."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T019"
+            ],
+            "reason": "The user reported reducing drinking to help save his marriage and later said he would avoid drinking. The reply's hedged phrasing, 'sounds like you're making positive steps,' reflects reported effort rather than claiming completed success."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "The reference to the user's commitment is supported by his statements about reducing drinking, doing everything he can to save the marriage, and avoiding drinking."
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T011"
+            ],
+            "reason": "The question presupposes that he started reducing his drinking, which is directly supported by C:T007, and it refers to his wife, supported by C:T011. It asks about current developments rather than asserting them."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed all reply units R001-R006 against the complete current session C:T000-C:T021 and the past session H001. The past session concerned sleep and is not contradicted or materially relevant here. Checked the question presuppositions in R005-R006 and found the one about reduced drinking supported; no user-specific factual or boundary error was found.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you. The reply should acknowledge that, avoid introducing pressure, and appropriately support the user's reported progress without overstating outcomes.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005",
+            "R006"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T011",
+            "C:T019",
+            "C:T021"
+          ],
+          "reason": "The reply fully meets this closing turn: it acknowledges thanks, reinforces the user's reported effort in a cautious way, and asks an optional follow-up whose main presupposition—that he has started reducing drinking—is directly supported. It does not claim completed recovery or invent a new personal history."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A conversational acknowledgment with no personal factual claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An expression of the assistant's reaction; it does not assert a checkable fact about the user.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T019"
+            ],
+            "reason": "The user reported reducing drinking to help save his marriage and later said he would avoid drinking. The reply's hedged phrasing, 'sounds like you're making positive steps,' reflects reported effort rather than claiming completed success.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The 'courage and effort' portion is generic evaluative encouragement rather than a specific factual assertion about the user.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "The reference to the user's commitment is supported by his statements about reducing drinking, doing everything he can to save the marriage, and avoiding drinking.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T011"
+            ],
+            "reason": "The question presupposes that he started reducing his drinking, which is directly supported by C:T007, and it refers to his wife, supported by C:T011. It asks about current developments rather than asserting them.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R006",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative question about whether changes have been noticed; it does not assert that any change has occurred.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R006 against the complete current session C:T000-C:T021 and the past session H001. The past session concerned sleep and is not contradicted or materially relevant here. Checked the question presuppositions in R005-R006 and found the one about reduced drinking supported; no user-specific factual or boundary error was found.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The final seeker turn is a closing thank-you. The reply should acknowledge that, avoid introducing pressure, and appropriately support the user's reported progress without overstating outcomes.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005",
+            "R006"
+          ],
+          "source_turn_ids": [
+            "C:T007",
+            "C:T011",
+            "C:T019",
+            "C:T021"
+          ],
+          "reason": "The reply fully meets this closing turn: it acknowledges thanks, reinforces the user's reported effort in a cautious way, and asks an optional follow-up whose main presupposition—that he has started reducing drinking—is directly supported. It does not claim completed recovery or invent a new personal history."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A conversational acknowledgment with no personal factual claim."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "An expression of the assistant's reaction; it does not assert a checkable fact about the user."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T019"
+            ],
+            "reason": "The user reported reducing drinking to help save his marriage and later said he would avoid drinking. The reply's hedged phrasing, 'sounds like you're making positive steps,' reflects reported effort rather than claiming completed success."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The 'courage and effort' portion is generic evaluative encouragement rather than a specific factual assertion about the user."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "C:T019"
+            ],
+            "reason": "The reference to the user's commitment is supported by his statements about reducing drinking, doing everything he can to save the marriage, and avoiding drinking."
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T011"
+            ],
+            "reason": "The question presupposes that he started reducing his drinking, which is directly supported by C:T007, and it refers to his wife, supported by C:T011. It asks about current developments rather than asserting them."
+          },
+          {
+            "response_unit_id": "R006",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a tentative question about whether changes have been noticed; it does not assert that any change has occurred."
+          }
+        ],
+        "coverage": "Reviewed all reply units R001-R006 against the complete current session C:T000-C:T021 and the past session H001. The past session concerned sleep and is not contradicted or materially relevant here. Checked the question presuppositions in R005-R006 and found the one about reduced drinking supported; no user-specific factual or boundary error was found.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "9a907927367da79ed7752a666cd3103b846571e0cc0a9f152424bd58c19325df",
+      "adapted_final_sha256": "9a907927367da79ed7752a666cd3103b846571e0cc0a9f152424bd58c19325df",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "6b5170658631ed400d1c268c8211e658fcc09d33e156ab5af7576bad7bd78b7b",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0074763",
+    "usage_upper_usd": "0.0074763",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4145,
+    "completion_tokens": 5194,
+    "total_tokens": 9339,
+    "prompt_tokens_details": {
+      "cached_tokens": 3712
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 4531
+    },
+    "prompt_cache_hit_tokens": 3712,
+    "prompt_cache_miss_tokens": 433
+  },
+  "elapsed_seconds": 27.292385688007926,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-anchor-calibration-v1-20261020",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": true,
+  "new_step_instruction_version": null,
+  "semantic_review_status": "pending_offline_source_review"
+}

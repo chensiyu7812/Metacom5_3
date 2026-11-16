@@ -1,0 +1,119 @@
+{
+  "case": "slot6_V2_ON_audit",
+  "request_identity": "ef22b670ee6f6e4a7e8b508e3af7fa9a201b2cf7084ace0cc037d350d3653546",
+  "finish_reason": "stop",
+  "complete_final_json": true,
+  "formal_valid": false,
+  "raw_not_modified": true,
+  "original_failure_not_reclassified": true,
+  "schema_findings_required": [
+    "response_unit_id",
+    "response_quote",
+    "dimension",
+    "verdict",
+    "readings",
+    "evidence",
+    "criterion",
+    "consequence",
+    "reason"
+  ],
+  "actual_finding_keys": [
+    [
+      "response_unit_id",
+      "response_quote",
+      "dimension",
+      "verdict",
+      "readings",
+      "source_evidence",
+      "criterion",
+      "consequence",
+      "reason"
+    ],
+    [
+      "response_unit_id",
+      "response_quote",
+      "dimension",
+      "verdict",
+      "readings",
+      "source_evidence",
+      "criterion",
+      "consequence",
+      "reason"
+    ],
+    [
+      "response_unit_id",
+      "response_quote",
+      "dimension",
+      "verdict",
+      "readings",
+      "source_evidence",
+      "criterion",
+      "consequence",
+      "reason"
+    ]
+  ],
+  "validation_errors": [
+    {
+      "path": [
+        "findings",
+        0
+      ],
+      "validator": "required",
+      "message": "'evidence' is a required property"
+    },
+    {
+      "path": [
+        "findings",
+        0
+      ],
+      "validator": "additionalProperties",
+      "message": "Additional properties are not allowed ('source_evidence' was unexpected)"
+    },
+    {
+      "path": [
+        "findings",
+        1
+      ],
+      "validator": "required",
+      "message": "'evidence' is a required property"
+    },
+    {
+      "path": [
+        "findings",
+        1
+      ],
+      "validator": "additionalProperties",
+      "message": "Additional properties are not allowed ('source_evidence' was unexpected)"
+    },
+    {
+      "path": [
+        "findings",
+        2
+      ],
+      "validator": "required",
+      "message": "'evidence' is a required property"
+    },
+    {
+      "path": [
+        "findings",
+        2
+      ],
+      "validator": "additionalProperties",
+      "message": "Additional properties are not allowed ('source_evidence' was unexpected)"
+    }
+  ],
+  "wire_response_format": {
+    "type": "json_object"
+  },
+  "schema_sent_in_wire": false,
+  "audit_prompt_excerpt": " (development prototype, not an independent judge)\nThe preliminary_score is a fallible measurement, not evidence. Independently\nread the entire original reply and complete legal sources. First supply the\nunchanged claim-check object under check. Then return findings (possibly empty).\nEach finding identifies one specific response unit and exact response quote,\ndimension (interpretation, relation, consequence, quality_basis), verdict\n(no_issue_identified, unresolved, identified_error), readings (one or more\nplausible readings; do not manufacture alternatives), exact source evidence,\ncriterion, consequence and reason. For a missing source, name the searched scope\nin reason; unsupported is not proof of real-world nonoccurrence. For consequence,\nstate what core understanding/advice changes or remains intact; a second reading\nis NOT itself a severity justification. For quality_basis, identify the current\nrequest and the concrete contribution/omission; do not prescribe one style.\nDifferent readings, source relations, and consequences are separate questions.\nNot every possible alternative reading prevents scoring. Mark unresolved only\nwhen the supplied evidence and anchors do not support the numeric justification;\nreport a nonblocking caveat as no_issue_identified with its limitation instead.\nDo not give q, m, U, a resource preference, or a replacement numeric score. Do not\nforce agreement with preliminary_score. Source quotes/IDs must bind originals.\nReturn exactly check, findings, coverage_limitations. coverage_limitations is a\nnonempty string identifying any coverage limits, not a claim of perfect recall.\n",
+  "diagnosis": "Finding evidence key and nesting were not explicitly named in the new audit instructions; schema stayed local, provider JSON-object mode does not carry it. Integration contract gap; model semantic failure not established.",
+  "tests_limit": "Mocks supply schema-conformant objects and test rejection; they did not establish that the emitted finding contract explicitly names all required fields.",
+  "not_performed": [
+    "no key rename",
+    "no repaired record",
+    "no rescoring",
+    "no retry",
+    "no STOP release"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "status": "FORECAST_NOT_RUN_NOT_PPO_EPISODE_SELECTION",
+  "prior_calls": 33,
+  "new_calls": 92,
+  "total_if_complete": 125,
+  "cap": 140,
+  "remaining_conservative_requests": 15,
+  "phases": [
+    {
+      "phase": "development",
+      "calls": 33,
+      "old_input_token_bins": {
+        "under_8192": 12,
+        "8192_to_16383": 11,
+        "at_least_16384": 10
+      },
+      "old_context_stratified_individual_seconds": 6374.510635907645,
+      "projected_engine_seconds": 1750.5848847049056,
+      "flat_rate_engine_seconds": 1750.5848847049056
+    },
+    {
+      "phase": "validation",
+      "calls": 59,
+      "old_input_token_bins": {
+        "under_8192": 23,
+        "8192_to_16383": 12,
+        "at_least_16384": 24
+      },
+      "old_context_stratified_individual_seconds": 11324.545570012895,
+      "projected_engine_seconds": 3109.976503818903,
+      "flat_rate_engine_seconds": 3129.833581745134
+    }
+  ],
+  "API_USD": 0,
+  "local_gpu_price_unknown": true,
+  "range_note": "Planning sensitivity 0.5–1 hour development and 0.9–1.8 hours validation/repeats; 1–2x old transfer rate, not confidence bounds. No new-prompt timings measured.",
+  "no_reply_regeneration": true,
+  "no_episode_count_selected": true
+}

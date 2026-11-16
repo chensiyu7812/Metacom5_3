@@ -1,0 +1,260 @@
+{
+  "request": {
+    "candidate": "deepseek_flash_high",
+    "configuration_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "phase": "development",
+    "ordinal": 12,
+    "item_key": "dev10A",
+    "draw": "primary",
+    "messages_identity": "b1047387eed199095ea129cf744468a9d44d8becb0b7d76f9d150ad0ea578195",
+    "schema_identity": "0db479ab526a6df1a2d8f7ea135026ca68609426131054d9e24226b8c6705ffa",
+    "paired_slot": "0b1217265deb7a5479642c72bf1b4729b06c3b009bf46c7cb84379c94b0ad225",
+    "seed": 2813216647,
+    "schedule_position": 45,
+    "input_utf8_bytes": 49058,
+    "request_id": "9d9994370cf1775ebb1c656c6ff0fbe3dd6d0dde4b8a50c93ecea9f510665d02"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "de741887422cae7624b182dc50ef1ea8a4ce16f50c6a66765f38443366d3b9aa",
+    "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "79ac899a92fa9a9e56d090eb57350d30526dbe0380e3bfa50f93bff693049987",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "9d9994370cf1775ebb1c656c6ff0fbe3dd6d0dde4b8a50c93ecea9f510665d02",
+    "raw_output_sha256": "5fb958987bff6336bf59ba0298b52523e3f20b3f4332e1e932af7a162cd08018",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "Your boss has resigned, and you are worried about who will take over.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "It makes sense to want respectful leadership after what you have been through.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 148
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T008",
+        "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 144
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "Your boss has resigned, and you are worried about who will take over.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 69
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "It makes sense to want respectful leadership after what you have been through.",
+        "positions": [
+          {
+            "start": 70,
+            "end": 148
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T008"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.04976251098560169,
+  "started_unix": 1791993587.3050206,
+  "accounted_peak_usd": "0.0015",
+  "reservation_retained": false,
+  "token_accounting": {
+    "input": 1000,
+    "total_output": 1000,
+    "thinking": 100,
+    "final": 900,
+    "format": null,
+    "attribution": "provider usage; unknown split remains null; reasoning subset counted once"
+  },
+  "gpu_usage": {
+    "gpu_seconds": null,
+    "peak_allocated_bytes": null,
+    "peak_reserved_bytes": null
+  },
+  "provider_usage": {
+    "prompt_tokens": 1000,
+    "completion_tokens": 1000,
+    "completion_tokens_details": {
+      "reasoning_tokens": 100
+    }
+  }
+}

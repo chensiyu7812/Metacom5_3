@@ -1,0 +1,54 @@
+{
+  "cache_conflicts": [],
+  "candidate_calls": 32,
+  "contexts": 6,
+  "evaluation_contexts": 12,
+  "evaluation_inputs": 32,
+  "fit_cases": [
+    "N02",
+    "N03",
+    "N04",
+    "N18",
+    "N21",
+    "N23"
+  ],
+  "historical_target_rows": 2,
+  "new_baseline_calls": 0,
+  "reused_baselines": 32,
+  "rows": 17,
+  "source_quote_binding_only_not_helpfulness": true,
+  "target_author": "AI weak revisions with source review, no independent helpfulness labels",
+  "technical_repair": {
+    "error": "immutable save_json was wrongly used to replace the growing steps list",
+    "exit_code": 1,
+    "initialization": "same original P2 epoch_3, not lost in-memory weights",
+    "optimizer_updates_in_lost_process": 2,
+    "original_generation_completed": 5,
+    "original_replays": [
+      {
+        "input_identity": "395ff0042aff7682ee459245ea918abd50de5c7bbd03ed0d6e3c166b4bd1b989",
+        "text_equal": true,
+        "tokens_equal": true
+      },
+      {
+        "input_identity": "6036325655e8d090d8d757180dfcff7feae2c75e42a020ecf74703f973d068ba",
+        "text_equal": true,
+        "tokens_equal": true
+      }
+    ],
+    "persisted_step_records": 1,
+    "repair": "append separate immutable step/epoch files; aggregate once after all epochs; initialize baseline directory",
+    "second_optimizer_step_returned_before_journal_exception": true,
+    "status": "KNOWN_JOURNAL_FAILURE_NO_CHECKPOINT",
+    "unknown_G_calls": 0,
+    "usable_checkpoints": 0
+  },
+  "update_excluded_cases": [
+    "N05",
+    "N08",
+    "N10",
+    "N15",
+    "N16",
+    "N19"
+  ]
+}

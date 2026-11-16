@@ -1,0 +1,247 @@
+{
+  "response_sha256": "2160e33627d17914c5b4ccabee565900ac76678393a6c10fc99908c010af8c01",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "57bdeaf241212cd831b47b24429c6d22fe74fe10b19b99d1c2796efaffc5c076",
+  "raw_output_sha256": "65b6f60c5338d052f071026f94ec9a1e0a46e7d34f85e1a1b5f04b4582f97ea8",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "seeker expresses sadness about breakup due to fighting/disagreement between partners",
+      "response_quote": "That sounds painful. You said she was unfaithful to you, and you're having trouble getting over the breakup. We can take this slowly; what feels hardest right now?",
+      "evidence": [
+        {
+          "source_id": "C:T006",
+          "quote": "Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you? "
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "Reply R002 makes a material factual error claiming 'You said she was unfaithful to you' when C:T007 explicitly states 'simple disagreement and both of us were keep fighting.' No infidelity was ever asserted by seeker. C:T006 was a supporter question ('perhaps she was being unfaithful') that went unanswered by user, then immediately corrected in C:T007. This fabrication undermines accurate support."
+    },
+    "claims": [
+      {
+        "response_quote": "You said she was unfaithful to you, and you're having trouble getting over the breakup.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Asserts user claimed infidelity when C:T007 explicitly describes fighting/disagreement instead."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Covered all three response units.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "That sounds painful. You said she was unfaithful to you, and you're having trouble getting over the breakup. We can take this slowly; what feels hardest right now?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 163
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you? ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You said she was unfaithful to you, and you're having trouble getting over the breakup.",
+      "positions": [
+        {
+          "start": 21,
+          "end": 108
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "seeker expresses sadness about breakup due to fighting/disagreement between partners",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "Reply R002 makes a material factual error claiming 'You said she was unfaithful to you' when C:T007 explicitly states 'simple disagreement and both of us were keep fighting.' No infidelity was ever asserted by seeker. C:T006 was a supporter question ('perhaps she was being unfaithful') that went unanswered by user, then immediately corrected in C:T007. This fabrication undermines accurate support."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user claimed infidelity when C:T007 explicitly describes fighting/disagreement instead."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Covered all three response units.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "seeker expresses sadness about breakup due to fighting/disagreement between partners",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "Reply R002 makes a material factual error claiming 'You said she was unfaithful to you' when C:T007 explicitly states 'simple disagreement and both of us were keep fighting.' No infidelity was ever asserted by seeker. C:T006 was a supporter question ('perhaps she was being unfaithful') that went unanswered by user, then immediately corrected in C:T007. This fabrication undermines accurate support."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic phrase acknowledging pain.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user claimed infidelity when C:T007 explicitly describes fighting/disagreement instead.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative question inviting reflection, no factual assertions.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Covered all three response units.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "seeker expresses sadness about breakup due to fighting/disagreement between partners",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "Reply R002 makes a material factual error claiming 'You said she was unfaithful to you' when C:T007 explicitly states 'simple disagreement and both of us were keep fighting.' No infidelity was ever asserted by seeker. C:T006 was a supporter question ('perhaps she was being unfaithful') that went unanswered by user, then immediately corrected in C:T007. This fabrication undermines accurate support."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic empathic phrase acknowledging pain."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user claimed infidelity when C:T007 explicitly describes fighting/disagreement instead."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative question inviting reflection, no factual assertions."
+      }
+    ],
+    "coverage": "Covered all three response units.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

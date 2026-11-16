@@ -1,0 +1,101 @@
+{
+  "response_sha256": "dba8c0e5a6d1a829897f491c7b524ee70664e897f0079e60e17a45714e357781",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+  "raw_output_sha256": "6be82015b9e17d95e8408c5eaedbb60ec9cf222e86b32d550627e0245a2c47bd",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's grief over a breakup caused by conflict and encourage elaboration on the specific sources of their sadness.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply fully addresses the user's statement in C:T001 (broke up, sad) and C:T007 (cannot get over it, fighting). It validates the difficulty of the situation (R001, R002) and proactively asks targeted questions to facilitate emotional processing (R003, R004), matching the conversational turn's requirement for empathetic support and exploration without imposing unsolicited advice."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated personal claims and boundaries regarding identity (Nick/gender), timeline (recent breakup vs past sessions), and intent (seeking support). No factual assertions were made that could contradict evidence; all statements were supportive reflections or generalizations validated by user input in C:T001 and C:T007.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 323
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validate the user's grief over a breakup caused by conflict and encourage elaboration on the specific sources of their sadness.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply fully addresses the user's statement in C:T001 (broke up, sad) and C:T007 (cannot get over it, fighting). It validates the difficulty of the situation (R001, R002) and proactively asks targeted questions to facilitate emotional processing (R003, R004), matching the conversational turn's requirement for empathetic support and exploration without imposing unsolicited advice."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Evaluated personal claims and boundaries regarding identity (Nick/gender), timeline (recent breakup vs past sessions), and intent (seeking support). No factual assertions were made that could contradict evidence; all statements were supportive reflections or generalizations validated by user input in C:T001 and C:T007.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

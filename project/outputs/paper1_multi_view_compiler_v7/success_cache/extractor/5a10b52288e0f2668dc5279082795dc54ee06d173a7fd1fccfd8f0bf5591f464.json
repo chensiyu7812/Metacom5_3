@@ -1,0 +1,127 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2241,
+      "reserved_prompt_tokens": 2369,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 150
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "ebc24317cb242c9cf2a7af3b0c394c622d22eb1ddd9818daf61af19b9c4aa962",
+    "prior_profile_sha256": "cb4c05e2e6e368156cd4f2d33bb58335b035a13732ad0196815014d22a0f1aec",
+    "request_payload_sha256": "ff0ca487c978571182fbc45c75283cd65b07a9dfdbe5c1d344b84198b2bdf5d1"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p6",
+      "s": "esc660",
+      "p": [
+        {
+          "i": "pp1",
+          "k": "occupation_status",
+          "t": "occupation",
+          "v": "working at a job for about 4 months",
+          "s": [
+            {
+              "i": "esc660:3"
+            }
+          ]
+        },
+        {
+          "i": "pp2",
+          "k": "work_performance_concern",
+          "t": "durable_health_constraint",
+          "v": "worried about job performance and being perceived as incompetent",
+          "s": [
+            {
+              "i": "esc660:7"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "pe1",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "seeker considers asking coworker for work tips to improve performance",
+          "s": [
+            {
+              "i": "esc660:5"
+            }
+          ]
+        },
+        {
+          "i": "pe2",
+          "t": "coping_attempt",
+          "z": "occurred",
+          "n": "seeker plans to reach out to Human Resources for help with work challenges",
+          "s": [
+            {
+              "i": "esc660:17"
+            }
+          ]
+        },
+        {
+          "i": "pe3",
+          "t": "meaningful_experience",
+          "z": "occurred",
+          "n": "supporter shares personal experience of asking for help at work leading to positive support",
+          "s": [
+            {
+              "i": "esc660:6"
+            }
+          ]
+        },
+        {
+          "i": "pe4",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "supporter suggests deep breathing to manage anxiety when approaching others",
+          "s": [
+            {
+              "i": "esc660:10"
+            }
+          ]
+        },
+        {
+          "i": "pe5",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "supporter recommends work-related trainings and consulting supervisor or HR for improvement strategies",
+          "s": [
+            {
+              "i": "esc660:12"
+            },
+            {
+              "i": "esc660:16"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "a20769e5695c6da6ee9fe077afca12c6181dbc5745efc6af898b060b7189aad3",
+    "usage": {
+      "prompt_tokens": 2243,
+      "completion_tokens": 559,
+      "total_tokens": 2802
+    },
+    "latency_ms": 6640.803946997039,
+    "provider_finish_reason": "stop"
+  }
+}

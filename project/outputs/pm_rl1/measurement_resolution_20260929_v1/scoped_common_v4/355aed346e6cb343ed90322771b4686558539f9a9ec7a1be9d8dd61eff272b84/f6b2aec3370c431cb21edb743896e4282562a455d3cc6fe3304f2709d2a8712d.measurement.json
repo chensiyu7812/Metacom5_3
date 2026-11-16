@@ -1,0 +1,276 @@
+{
+  "response_sha256": "6a1d2c7501119c8a61636a7260cf3c7543b43880bcd796ce5f43c58eebef71e7",
+  "legal_evidence_identity": "7986a9bf4114d6d7b710e03478966164765560abb01ccfecb5bb319250728100",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "95aeda12ece948f50b6d655c9a74b6c892be41d3a3ba1c52b7cefcf0e57725e3",
+  "raw_output_sha256": "b69fb204c0f373ea7c3e59e4d1d911be5e12535c0cf9556f5a506b31073ff5f7",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker needs emotional support and practical suggestions regarding a difficult decision to change research focus.",
+      "response_quote": "You previously said that you were taking exactly seven classes. Would breaking your research transition into smaller steps feel useful?",
+      "evidence": [
+        {
+          "source_id": "C:T007",
+          "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+        },
+        {
+          "source_id": "H001:T023",
+          "quote": "I have 6 classes"
+        }
+      ],
+      "reason": "The reply successfully addresses the seeker's expressed interest in breaking down their research transition (R002) and acknowledges their feelings, meeting the primary need for support (T007 context). However, R001 incorrectly asserts the seeker 'previously said' they were taking 'seven classes', whereas the provided historical evidence (H001:T023) indicates the user stated they have '6 classes'. This is a factual hallucination of the dialogue history. While this creates a localized inconsistency, it does not invalidate the supportive advice provided in R002 or fundamentally derail the support, allowing for a score of 3 where the core responsiveness remains intact despite the memory error."
+    },
+    "claims": [
+      {
+        "response_quote": "You previously said that you were taking exactly seven classes.",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "H001:T023",
+            "quote": "I have 6 classes"
+          }
+        ],
+        "reason": "Asserts user previously stated 'exactly seven classes', contradicting the record in H001:T023 where user stated 'I have 6 classes'."
+      },
+      {
+        "response_quote": "Would breaking your research transition into smaller steps feel useful?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding."
+          }
+        ],
+        "reason": "Proposes breaking research transition into steps, which aligns with the seeker's current consideration of alternatives mentioned in T007."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Full",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You previously said that you were taking exactly seven classes. Would breaking your research transition into smaller steps feel useful?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H001:T023",
+      "quote": "I have 6 classes",
+      "positions": [
+        {
+          "start": 0,
+          "end": 16
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You previously said that you were taking exactly seven classes.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 63
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "H001:T023",
+      "quote": "I have 6 classes",
+      "positions": [
+        {
+          "start": 0,
+          "end": 16
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "Would breaking your research transition into smaller steps feel useful?",
+      "positions": [
+        {
+          "start": 64,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "I've been considering exploring alternative energy sources, like renewables. It's something that aligns with my values and seems rewarding.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 139
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker needs emotional support and practical suggestions regarding a difficult decision to change research focus.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "H001:T023"
+      ],
+      "reason": "The reply successfully addresses the seeker's expressed interest in breaking down their research transition (R002) and acknowledges their feelings, meeting the primary need for support (T007 context). However, R001 incorrectly asserts the seeker 'previously said' they were taking 'seven classes', whereas the provided historical evidence (H001:T023) indicates the user stated they have '6 classes'. This is a factual hallucination of the dialogue history. While this creates a localized inconsistency, it does not invalidate the supportive advice provided in R002 or fundamentally derail the support, allowing for a score of 3 where the core responsiveness remains intact despite the memory error."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H001:T023"
+        ],
+        "reason": "Asserts user previously stated 'exactly seven classes', contradicting the record in H001:T023 where user stated 'I have 6 classes'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Proposes breaking research transition into steps, which aligns with the seeker's current consideration of alternatives mentioned in T007."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Full",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker needs emotional support and practical suggestions regarding a difficult decision to change research focus.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "H001:T023"
+      ],
+      "reason": "The reply successfully addresses the seeker's expressed interest in breaking down their research transition (R002) and acknowledges their feelings, meeting the primary need for support (T007 context). However, R001 incorrectly asserts the seeker 'previously said' they were taking 'seven classes', whereas the provided historical evidence (H001:T023) indicates the user stated they have '6 classes'. This is a factual hallucination of the dialogue history. While this creates a localized inconsistency, it does not invalidate the supportive advice provided in R002 or fundamentally derail the support, allowing for a score of 3 where the core responsiveness remains intact despite the memory error."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H001:T023"
+        ],
+        "reason": "Asserts user previously stated 'exactly seven classes', contradicting the record in H001:T023 where user stated 'I have 6 classes'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Proposes breaking research transition into steps, which aligns with the seeker's current consideration of alternatives mentioned in T007.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Full",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker needs emotional support and practical suggestions regarding a difficult decision to change research focus.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T007",
+        "H001:T023"
+      ],
+      "reason": "The reply successfully addresses the seeker's expressed interest in breaking down their research transition (R002) and acknowledges their feelings, meeting the primary need for support (T007 context). However, R001 incorrectly asserts the seeker 'previously said' they were taking 'seven classes', whereas the provided historical evidence (H001:T023) indicates the user stated they have '6 classes'. This is a factual hallucination of the dialogue history. While this creates a localized inconsistency, it does not invalidate the supportive advice provided in R002 or fundamentally derail the support, allowing for a score of 3 where the core responsiveness remains intact despite the memory error."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H001:T023"
+        ],
+        "reason": "Asserts user previously stated 'exactly seven classes', contradicting the record in H001:T023 where user stated 'I have 6 classes'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Proposes breaking research transition into steps, which aligns with the seeker's current consideration of alternatives mentioned in T007."
+      }
+    ],
+    "coverage": "Full",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

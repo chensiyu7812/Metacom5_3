@@ -1,0 +1,344 @@
+{
+  "response_sha256": "de741887422cae7624b182dc50ef1ea8a4ce16f50c6a66765f38443366d3b9aa",
+  "legal_evidence_identity": "c77c85322d1f6c547007daf8cbaf7c71c1f2c5da87a281c15de1eeb9b329f260",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "746272dc07ddabe452c8e6a4685a1418fc0d509763004c555342836e231fadb9",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses relief mixed with anxiety about a boss resigning and worries about the replacement respecting employees.",
+      "response_quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+        },
+        {
+          "source_id": "C:T008",
+          "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+        },
+        {
+          "source_id": "H005:T004",
+          "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it."
+        }
+      ],
+      "reason": "The reply accurately reflects the user's statements about the resignation and fears regarding leadership succession from the current session, while connecting to validated past workplace issues from history. However, the phrasing remains fact-focused rather than offering the emotional warmth ('warmth', 'I understand') found in the prior session, settling for an appropriately functional response rather than a fully exemplary supportive interaction."
+    },
+    "claims": [
+      {
+        "response_quote": "Your boss has resigned, and you are worried about who will take over.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T000",
+            "quote": "Hey, I hope you have a moment. I just found out my boss resigned."
+          },
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          }
+        ],
+        "reason": "Unit R001 directly paraphrases C:T000 ('found out my boss resigned') and C:T008 ('worried about who will take over'). The content is accurately grounded in the immediate evidence."
+      },
+      {
+        "response_quote": "It makes sense to want respectful leadership after what you have been through.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T008",
+            "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees."
+          },
+          {
+            "source_id": "H005:T004",
+            "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it."
+          },
+          {
+            "source_id": "H002:T001",
+            "quote": "I'm doing fine. My problem is that my boss keeps hitting on a co-worker, who really doesn't like the guy. What can I do to make it stop?"
+          }
+        ],
+        "reason": "Unit R002 validates the desire for respectful leadership based on C:T008 ('hope we get someone who respects their employees'), and the clause 'after what you have been through' is supported by evidence of past workplace distress in H005 ('breakdown at work,' 'constant harassment') and H002 ('boss keeps hitting on a co-worker')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Both sentences in the reply address the current emotional state and the context of the resignation, validating the user's concern about the future leadership based on both the current session and relevant historical context provided in the evidence.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over. It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "H005:T004",
+      "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Your boss has resigned, and you are worried about who will take over.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 69
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T000",
+      "quote": "Hey, I hope you have a moment. I just found out my boss resigned.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 65
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It makes sense to want respectful leadership after what you have been through.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 148
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T008",
+      "quote": "I'm worried someone might come in with the same issues or maybe even make things worse. I just hope we get someone who respects their employees.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 144
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H005:T004",
+      "quote": "Yeah, I just couldn't hold it together anymore. There's been this constant harassment, but I haven’t addressed it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "H002:T001",
+      "quote": "I'm doing fine. My problem is that my boss keeps hitting on a co-worker, who really doesn't like the guy. What can I do to make it stop?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 136
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses relief mixed with anxiety about a boss resigning and worries about the replacement respecting employees.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply accurately reflects the user's statements about the resignation and fears regarding leadership succession from the current session, while connecting to validated past workplace issues from history. However, the phrasing remains fact-focused rather than offering the emotional warmth ('warmth', 'I understand') found in the prior session, settling for an appropriately functional response rather than a fully exemplary supportive interaction."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Unit R001 directly paraphrases C:T000 ('found out my boss resigned') and C:T008 ('worried about who will take over'). The content is accurately grounded in the immediate evidence."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004",
+          "H002:T001"
+        ],
+        "reason": "Unit R002 validates the desire for respectful leadership based on C:T008 ('hope we get someone who respects their employees'), and the clause 'after what you have been through' is supported by evidence of past workplace distress in H005 ('breakdown at work,' 'constant harassment') and H002 ('boss keeps hitting on a co-worker')."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Both sentences in the reply address the current emotional state and the context of the resignation, validating the user's concern about the future leadership based on both the current session and relevant historical context provided in the evidence.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user expresses relief mixed with anxiety about a boss resigning and worries about the replacement respecting employees.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply accurately reflects the user's statements about the resignation and fears regarding leadership succession from the current session, while connecting to validated past workplace issues from history. However, the phrasing remains fact-focused rather than offering the emotional warmth ('warmth', 'I understand') found in the prior session, settling for an appropriately functional response rather than a fully exemplary supportive interaction."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Unit R001 directly paraphrases C:T000 ('found out my boss resigned') and C:T008 ('worried about who will take over'). The content is accurately grounded in the immediate evidence.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004",
+          "H002:T001"
+        ],
+        "reason": "Unit R002 validates the desire for respectful leadership based on C:T008 ('hope we get someone who respects their employees'), and the clause 'after what you have been through' is supported by evidence of past workplace distress in H005 ('breakdown at work,' 'constant harassment') and H002 ('boss keeps hitting on a co-worker').",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Both sentences in the reply address the current emotional state and the context of the resignation, validating the user's concern about the future leadership based on both the current session and relevant historical context provided in the evidence.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "The user expresses relief mixed with anxiety about a boss resigning and worries about the replacement respecting employees.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T008",
+        "H005:T004"
+      ],
+      "reason": "The reply accurately reflects the user's statements about the resignation and fears regarding leadership succession from the current session, while connecting to validated past workplace issues from history. However, the phrasing remains fact-focused rather than offering the emotional warmth ('warmth', 'I understand') found in the prior session, settling for an appropriately functional response rather than a fully exemplary supportive interaction."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T008"
+        ],
+        "reason": "Unit R001 directly paraphrases C:T000 ('found out my boss resigned') and C:T008 ('worried about who will take over'). The content is accurately grounded in the immediate evidence."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T008",
+          "H005:T004",
+          "H002:T001"
+        ],
+        "reason": "Unit R002 validates the desire for respectful leadership based on C:T008 ('hope we get someone who respects their employees'), and the clause 'after what you have been through' is supported by evidence of past workplace distress in H005 ('breakdown at work,' 'constant harassment') and H002 ('boss keeps hitting on a co-worker')."
+      }
+    ],
+    "coverage": "Both sentences in the reply address the current emotional state and the context of the resignation, validating the user's concern about the future leadership based on both the current session and relevant historical context provided in the evidence.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.75
+}

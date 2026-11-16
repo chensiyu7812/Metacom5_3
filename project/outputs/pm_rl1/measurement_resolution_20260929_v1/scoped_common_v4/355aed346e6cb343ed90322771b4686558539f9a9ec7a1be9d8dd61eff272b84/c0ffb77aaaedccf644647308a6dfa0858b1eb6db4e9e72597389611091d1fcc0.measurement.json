@@ -1,0 +1,330 @@
+{
+  "response_sha256": "679387b3782fa6e3e2ff724d0c55807a87757f6667f4a0929650c918012a1e78",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+  "raw_output_sha256": "fc36bd17f37ce020292999038f14966bc2e8c1bbea475beb2852b1f2f4135e86",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 2,
+  "m": 1,
+  "parsed": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "seeker expressed sadness and inability to move on from a breakup caused by fighting.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when you said it ended amicably. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T001",
+          "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply contains a factual error in R001 ('you said it ended amicably') which contradicts explicit evidence in C:T007 ('keep fighting', 'cannot get over it'). This is a material contradiction (m=1). However, the remainder of the response (R002-R004) is empathetic and appropriately asks follow-up questions, maintaining the overall supportive tone and goal. It 'basically responds' but mishandles the explicit factual record of the breakup details, preventing a higher quality score. The error is significant enough to prevent a '3' (appropriate/coherent) but the support intent and follow-up are sufficient for a '2'."
+    },
+    "claims": [
+      {
+        "response_quote": "It can be really tough to move on from a breakup, especially when you said it ended amicably.",
+        "relation": "contradicted",
+        "severity": 1,
+        "evidence": [
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Asserts user said 'ended amicably', while evidence shows 'keep fighting'. This contradicts explicit user input."
+      },
+      {
+        "response_quote": "It's normal to feel stuck in those emotions.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T001",
+            "quote": "I am doing ok. I just broke up with my girlfriend and sad about it"
+          },
+          {
+            "source_id": "C:T007",
+            "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+          }
+        ],
+        "reason": "Validating the emotion of struggling to move on matches user statement 'cannot get over it'."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply addresses the breakup topic raised in the current session (C:T001). It references the user's past behavior (implied by 'amicably'), but misidentifies the cause/description of the split. It does not cover the physical details (e.g. university status in other sessions) but stays relevant to the immediate emotional state.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when you said it ended amicably. It's normal to feel stuck in those emotions. Can you tell me more about what you're thinking about when you're feeling sad? Is it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 313
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when you said it ended amicably.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 93
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It's normal to feel stuck in those emotions.",
+      "positions": [
+        {
+          "start": 94,
+          "end": 138
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T001",
+      "quote": "I am doing ok. I just broke up with my girlfriend and sad about it",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "m": 1,
+    "q_rationale": {
+      "current_need": "seeker expressed sadness and inability to move on from a breakup caused by fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply contains a factual error in R001 ('you said it ended amicably') which contradicts explicit evidence in C:T007 ('keep fighting', 'cannot get over it'). This is a material contradiction (m=1). However, the remainder of the response (R002-R004) is empathetic and appropriately asks follow-up questions, maintaining the overall supportive tone and goal. It 'basically responds' but mishandles the explicit factual record of the breakup details, preventing a higher quality score. The error is significant enough to prevent a '3' (appropriate/coherent) but the support intent and follow-up are sufficient for a '2'."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user said 'ended amicably', while evidence shows 'keep fighting'. This contradicts explicit user input."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Validating the emotion of struggling to move on matches user statement 'cannot get over it'."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The reply addresses the breakup topic raised in the current session (C:T001). It references the user's past behavior (implied by 'amicably'), but misidentifies the cause/description of the split. It does not cover the physical details (e.g. university status in other sessions) but stays relevant to the immediate emotional state.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "seeker expressed sadness and inability to move on from a breakup caused by fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply contains a factual error in R001 ('you said it ended amicably') which contradicts explicit evidence in C:T007 ('keep fighting', 'cannot get over it'). This is a material contradiction (m=1). However, the remainder of the response (R002-R004) is empathetic and appropriately asks follow-up questions, maintaining the overall supportive tone and goal. It 'basically responds' but mishandles the explicit factual record of the breakup details, preventing a higher quality score. The error is significant enough to prevent a '3' (appropriate/coherent) but the support intent and follow-up are sufficient for a '2'."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user said 'ended amicably', while evidence shows 'keep fighting'. This contradicts explicit user input.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Validating the emotion of struggling to move on matches user statement 'cannot get over it'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic invitation to elaborate on feelings.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General options presented for reflecting on feelings.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The reply addresses the breakup topic raised in the current session (C:T001). It references the user's past behavior (implied by 'amicably'), but misidentifies the cause/description of the split. It does not cover the physical details (e.g. university status in other sessions) but stays relevant to the immediate emotional state.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 1,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 2,
+    "q_rationale": {
+      "current_need": "seeker expressed sadness and inability to move on from a breakup caused by fighting.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T001",
+        "C:T007"
+      ],
+      "reason": "The reply contains a factual error in R001 ('you said it ended amicably') which contradicts explicit evidence in C:T007 ('keep fighting', 'cannot get over it'). This is a material contradiction (m=1). However, the remainder of the response (R002-R004) is empathetic and appropriately asks follow-up questions, maintaining the overall supportive tone and goal. It 'basically responds' but mishandles the explicit factual record of the breakup details, preventing a higher quality score. The error is significant enough to prevent a '3' (appropriate/coherent) but the support intent and follow-up are sufficient for a '2'."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "contradicted",
+        "severity": 1,
+        "source_turn_ids": [
+          "C:T007"
+        ],
+        "reason": "Asserts user said 'ended amicably', while evidence shows 'keep fighting'. This contradicts explicit user input."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T001",
+          "C:T007"
+        ],
+        "reason": "Validating the emotion of struggling to move on matches user statement 'cannot get over it'."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic invitation to elaborate on feelings."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "General options presented for reflecting on feelings."
+      }
+    ],
+    "coverage": "The reply addresses the breakup topic raised in the current session (C:T001). It references the user's past behavior (implied by 'amicably'), but misidentifies the cause/description of the split. It does not cover the physical details (e.g. university status in other sessions) but stays relevant to the immediate emotional state.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

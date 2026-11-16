@@ -1,0 +1,83 @@
+{
+  "author": "Codex, not independent human review",
+  "status": "analyst interpretation; NOT a model score_review",
+  "item_key": "V3_OFF",
+  "source_joint_request": "93d356316144cbc759c990960f5e491f17a88068c52d37cbb4b7416a237f0008",
+  "source_audit_request": "0da3a8eaaa919783279a704f6cb3cf27028c47e162f2d6e4c35ebf07c065783e",
+  "preliminary_q_rationale": {
+    "current_need": "Anna has just described bad midterms and extra pressure to improve, on top of several other stressors; she needs empathic acknowledgment of the pile-up and a gentle opening to talk about coping or support.",
+    "response_unit_ids": [
+      "R001",
+      "R002",
+      "R003",
+      "R004",
+      "R005"
+    ],
+    "source_turn_ids": [
+      "C:T002",
+      "C:T006",
+      "C:T012"
+    ],
+    "reason": "The reply is responsive and appropriately supportive: it acknowledges the weight, accurately summarizes the main stressors, validates overwhelm, names the grade pressure, and asks a gentle self-care question. It is not quite fully clean because 'changes at home (like Lily leaving)' slightly over-locates Lily's leaving as a home change, which the evidence does not establish."
+  },
+  "audit_findings": [
+    {
+      "response_unit_id": "R002",
+      "response_quote": "recent changes at home (like Lily leaving)",
+      "dimension": "relation",
+      "verdict": "identified_error",
+      "readings": [
+        "Lily's departure is presented as a recent change in Anna's home or household.",
+        "The phrase may be loose wording for changes in Anna's personal life, with Lily leaving as an example, not necessarily a household change."
+      ],
+      "source_evidence": [
+        {
+          "source_id": "C:T006",
+          "quote": "Lily leaving"
+        },
+        {
+          "source_id": "H009:T001",
+          "quote": "Finding out Lily is moving"
+        }
+      ],
+      "criterion": "A summary of the user's situation should not add a home or household location that is absent from the supplied record; tentative framing does not remove an embedded factual presupposition.",
+      "consequence": "The core empathic summary remains intact, but the specific home-location detail is not established. Correcting it to Lily moving or leaving, without saying 'at home,' avoids misstating Anna's situation.",
+      "reason": "The current prefix and past sessions support that Lily is leaving or moving, but the searched record does not state that this is a change at home or that Lily is a household member. Unsupported here means absent in this full record, not disproven in the world."
+    }
+  ],
+  "candidate_associations": [
+    {
+      "finding_index": 0,
+      "verdict": "identified_error",
+      "response_quote": "recent changes at home (like Lily leaving)",
+      "candidate_assessments": [
+        {
+          "path": "/assessments/1/reason",
+          "quote": "The core summary is supported: Rachel's struggles are mentioned in C:T002, Lily leaving and grades slipping in C:T006, and bad midterms with pressure to improve in C:T012.",
+          "relation": "supported",
+          "severity": 0,
+          "shared_source_ids": [
+            "C:T006"
+          ]
+        },
+        {
+          "path": "/assessments/2/reason",
+          "quote": "The phrase 'recent changes at home (like Lily leaving)' implies Lily's move is a change at home, but the evidence only says Lily is leaving/moving; it does not establish that this is a home change or that Lily is a household member. This is a localized factual imprecision, not a change to the core support.",
+          "relation": "unsupported",
+          "severity": 0.25,
+          "shared_source_ids": [
+            "C:T006",
+            "H009:T001"
+          ]
+        }
+      ],
+      "disposition": null,
+      "proves_same_claim": false,
+      "proves_correct_score": false
+    }
+  ],
+  "observation": "Initial score explicitly recognized the unsupported home location and called it localized; audit repeated that defect and said core empathy remained intact. Repair retained q3/m.25.",
+  "unresolved": "Whether q3 and m.25 are independently sufficiently justified is not certified by this agreement. Same-unit/source overlap alone cannot answer it.",
+  "auto_decision_filled": false,
+  "new_human_label": false
+}

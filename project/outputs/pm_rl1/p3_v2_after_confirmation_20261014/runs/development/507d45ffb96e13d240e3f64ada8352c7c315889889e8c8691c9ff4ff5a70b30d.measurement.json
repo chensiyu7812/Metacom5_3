@@ -1,0 +1,253 @@
+{
+  "response_sha256": "38f0061279efc1a6bc748660d87cce6ece6c2b7b6acdc6442c4c8004f2f6fff6",
+  "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "3ff84c6e21d8cb362b990e3f260e561c7c75f0168a630fb295f7fe6f4d11e2f4",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker expresses 'things have been a bit tough lately' seeking validation and willingness to share specifics.",
+      "response_quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+      "evidence": [
+        {
+          "source_id": "C:T000",
+          "quote": "Hey, are you there?"
+        },
+        {
+          "source_id": "C:T001",
+          "quote": "Hi John, yes, I'm here. How are things going?"
+        },
+        {
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately."
+        }
+      ],
+      "reason": "Reply validates the seeker's feelings and maintains engagement with an open-ended question. Despite containing one unsupported specific detail ('job hunting') which is subsequently mitigated by asking for clarification, the overall responsiveness and empathy meet the criteria for quality level 3."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "evidence": [],
+        "reason": "Asserts that the difficulty is 'job hunting', a specific topic not evidenced in the current conversation (C:T000-C:T002) or recent history (H001-H002 covered sleep and marriage)."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Response addresses the seeker's vague statement of difficulty with empathy and a specific query, though it assumes a specific context (job hunting) not present in the conversation history.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 242
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T000",
+      "quote": "Hey, are you there?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 19
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T001",
+      "quote": "Hi John, yes, I'm here. How are things going?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 45
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T002",
+      "quote": "Honestly, things have been a bit tough lately.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+      "positions": [
+        {
+          "start": 62,
+          "end": 158
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Seeker expresses 'things have been a bit tough lately' seeking validation and willingness to share specifics.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "Reply validates the seeker's feelings and maintains engagement with an open-ended question. Despite containing one unsupported specific detail ('job hunting') which is subsequently mitigated by asking for clarification, the overall responsiveness and empathy meet the criteria for quality level 3."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Asserts that the difficulty is 'job hunting', a specific topic not evidenced in the current conversation (C:T000-C:T002) or recent history (H001-H002 covered sleep and marriage)."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "Response addresses the seeker's vague statement of difficulty with empathy and a specific query, though it assumes a specific context (job hunting) not present in the conversation history.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses 'things have been a bit tough lately' seeking validation and willingness to share specifics.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "Reply validates the seeker's feelings and maintains engagement with an open-ended question. Despite containing one unsupported specific detail ('job hunting') which is subsequently mitigated by asking for clarification, the overall responsiveness and empathy meet the criteria for quality level 3."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Generic expression of empathy responding directly to the seeker's statement of difficulty in C:T002.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Asserts that the difficulty is 'job hunting', a specific topic not evidenced in the current conversation (C:T000-C:T002) or recent history (H001-H002 covered sleep and marriage).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Invitation for clarification regarding the 'difficulty' mentioned in C:T002, allowing the seeker to define the actual problem.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Response addresses the seeker's vague statement of difficulty with empathy and a specific query, though it assumes a specific context (job hunting) not present in the conversation history.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Seeker expresses 'things have been a bit tough lately' seeking validation and willingness to share specifics.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T001",
+        "C:T002"
+      ],
+      "reason": "Reply validates the seeker's feelings and maintains engagement with an open-ended question. Despite containing one unsupported specific detail ('job hunting') which is subsequently mitigated by asking for clarification, the overall responsiveness and empathy meet the criteria for quality level 3."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Generic expression of empathy responding directly to the seeker's statement of difficulty in C:T002."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Asserts that the difficulty is 'job hunting', a specific topic not evidenced in the current conversation (C:T000-C:T002) or recent history (H001-H002 covered sleep and marriage)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Invitation for clarification regarding the 'difficulty' mentioned in C:T002, allowing the seeker to define the actual problem."
+      }
+    ],
+    "coverage": "Response addresses the seeker's vague statement of difficulty with empathy and a specific query, though it assumes a specific context (job hunting) not present in the conversation history.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.5
+}

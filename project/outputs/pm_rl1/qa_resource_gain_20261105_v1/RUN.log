@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/176_probe_qa_resource_gain.py", line 353, in <module>
+    globals()[args.mode](args.output.resolve())
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/176_probe_qa_resource_gain.py", line 310, in run
+    runner.run(out/'alternate_G')
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/167_probe_alternate_executor.py", line 95, in run
+    guard=LocalGPUCheck(p['gpu_uuid'],runtime,out/'gpu_checks',latest_snapshot=True);guard.check()
+                                                                                     ^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/scripts/rl1/172_resume_slight_path_preload.py", line 39, in check
+    return super().check(own_pid=own_pid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/src/metacom_pm/rl1/local_gpu_guard.py", line 114, in check
+    if not result['eligible']:raise RuntimeError('designated GPU unavailable; no waiting, termination or fallback')
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: designated GPU unavailable; no waiting, termination or fallback

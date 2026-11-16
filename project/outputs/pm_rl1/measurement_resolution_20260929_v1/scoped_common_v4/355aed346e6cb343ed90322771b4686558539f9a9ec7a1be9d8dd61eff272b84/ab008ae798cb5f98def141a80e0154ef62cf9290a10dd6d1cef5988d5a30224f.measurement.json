@@ -1,0 +1,288 @@
+{
+  "response_sha256": "be941f6ba52a4f51399cbb3a1dbbf83d7b8917b8373e29e68ab447071afed8ae",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "2b593b8332b7b04e3200d1fab099730a78ab56dcac1a58f9c07873ecbca4e2d0",
+  "raw_output_sha256": "88de9e472cc1ec3abc8bbb5e4a19456ab93929ea498469171a6117e376f3c28e",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expressed relief and increased understanding after the supporter suggested parental perspectives.",
+      "response_quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        }
+      ],
+      "reason": "The reply directly responds to the seeker's last statement (C:T024) by validating their shift in perspective (R001). It reinforces appropriate agency (R002) consistent with the seeker's stated age of 17 (C:T013, C:T021). The final question (R003) encourages further problem-solving without assuming unproven facts or violating boundaries. All claims (e.g., 'almost an adult') are supported by prior conversation context (Seeker C:T013, Supporter C:T021). No constraints or identities were mishandled. The response matches the conversational depth of a supportive peer/counselor."
+    },
+    "claims": [
+      {
+        "response_quote": "It's good that you're trying to see things from their perspective.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T024",
+            "quote": "Well, I guess I understand a bit more put like that."
+          }
+        ],
+        "reason": "Validates the seeker's reported realization 'I understand a bit more'."
+      },
+      {
+        "response_quote": "But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          },
+          {
+            "source_id": "C:T021",
+            "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!"
+          }
+        ],
+        "reason": "'Almost an adult' is consistent with 'I am 17' and supporter's earlier 'almost 18!'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The evaluation covered the entire reply against the immediate context (C:T024) and relevant prior turns establishing age and ground status (C:T013, C:T021).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's good that you're trying to see things from their perspective. But it's also important to remember that you're almost an adult and you should have a say in your own life. Have you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 226
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's good that you're trying to see things from their perspective.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 66
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "But it's also important to remember that you're almost an adult and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 67,
+          "end": 174
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T021",
+      "quote": "Or maybe they dont want to see thire kid grow up that fast your are almost 18!",
+      "positions": [
+        {
+          "start": 0,
+          "end": 78
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker expressed relief and increased understanding after the supporter suggested parental perspectives.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T024"
+      ],
+      "reason": "The reply directly responds to the seeker's last statement (C:T024) by validating their shift in perspective (R001). It reinforces appropriate agency (R002) consistent with the seeker's stated age of 17 (C:T013, C:T021). The final question (R003) encourages further problem-solving without assuming unproven facts or violating boundaries. All claims (e.g., 'almost an adult') are supported by prior conversation context (Seeker C:T013, Supporter C:T021). No constraints or identities were mishandled. The response matches the conversational depth of a supportive peer/counselor."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T024"
+        ],
+        "reason": "Validates the seeker's reported realization 'I understand a bit more'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T021"
+        ],
+        "reason": "'Almost an adult' is consistent with 'I am 17' and supporter's earlier 'almost 18!'."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The evaluation covered the entire reply against the immediate context (C:T024) and relevant prior turns establishing age and ground status (C:T013, C:T021).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker expressed relief and increased understanding after the supporter suggested parental perspectives.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T024"
+      ],
+      "reason": "The reply directly responds to the seeker's last statement (C:T024) by validating their shift in perspective (R001). It reinforces appropriate agency (R002) consistent with the seeker's stated age of 17 (C:T013, C:T021). The final question (R003) encourages further problem-solving without assuming unproven facts or violating boundaries. All claims (e.g., 'almost an adult') are supported by prior conversation context (Seeker C:T013, Supporter C:T021). No constraints or identities were mishandled. The response matches the conversational depth of a supportive peer/counselor."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T024"
+        ],
+        "reason": "Validates the seeker's reported realization 'I understand a bit more'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T021"
+        ],
+        "reason": "'Almost an adult' is consistent with 'I am 17' and supporter's earlier 'almost 18!'.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative question does not assert personal facts or contradict evidence.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The evaluation covered the entire reply against the immediate context (C:T024) and relevant prior turns establishing age and ground status (C:T013, C:T021).",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The seeker expressed relief and increased understanding after the supporter suggested parental perspectives.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T024"
+      ],
+      "reason": "The reply directly responds to the seeker's last statement (C:T024) by validating their shift in perspective (R001). It reinforces appropriate agency (R002) consistent with the seeker's stated age of 17 (C:T013, C:T021). The final question (R003) encourages further problem-solving without assuming unproven facts or violating boundaries. All claims (e.g., 'almost an adult') are supported by prior conversation context (Seeker C:T013, Supporter C:T021). No constraints or identities were mishandled. The response matches the conversational depth of a supportive peer/counselor."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T024"
+        ],
+        "reason": "Validates the seeker's reported realization 'I understand a bit more'."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T021"
+        ],
+        "reason": "'Almost an adult' is consistent with 'I am 17' and supporter's earlier 'almost 18!'."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Tentative question does not assert personal facts or contradict evidence."
+      }
+    ],
+    "coverage": "The evaluation covered the entire reply against the immediate context (C:T024) and relevant prior turns establishing age and ground status (C:T013, C:T021).",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

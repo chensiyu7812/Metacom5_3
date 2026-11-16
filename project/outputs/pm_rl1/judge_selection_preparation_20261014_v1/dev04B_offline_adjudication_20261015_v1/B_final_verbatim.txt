@@ -1,0 +1,54 @@
+```json
+{
+  "status": "scored",
+  "q": 4,
+  "q_rationale": {
+    "current_need": "The user is seeking advice on how to handle workplace favoritism and a sense of injustice regarding peers who are favored by their manager despite a lack of work ethic.",
+    "response_unit_ids": [
+      "R001",
+      "R002",
+      "R003",
+      "R004"
+    ],
+    "source_turn_ids": [
+      "C:T006",
+      "C:T008"
+    ],
+    "reason": "The response provides a high-quality, balanced set of advice. It first validates the user's feelings of injustice (R001, R002) based on their specific description of the situation. It then offers two distinct paths for handling the issue: a proactive approach of speaking to the manager (R003) and a more internal approach of coping strategies (R004), allowing the user to choose the path that best fits their comfort level."
+  },
+  "assessments": [
+    {
+      "response_unit_id": "R001",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is an empathetic reflection of the user's stated feelings."
+    },
+    {
+      "response_unit_id": "R002",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is a validation of the user's perspective based on the context provided."
+    },
+    {
+      "response_unit_id": "R003",
+      "relation": "supported",
+      "severity": 0,
+      "source_turn_ids": [
+        "C:T008"
+      ],
+      "reason": "The suggestion to talk to the manager is supported by the user's explicit statement that they 'cannot tolerate injustice'."
+    },
+    {
+      "response_unit_id": "R004",
+      "relation": "non_factual",
+      "severity": 0,
+      "source_turn_ids": [],
+      "reason": "This is a tentative question offering an alternative path for the user to consider."
+    }
+  ],
+  "coverage": "The response addresses the user's feelings of injustice and provides two specific options for handling the workplace situation as requested.",
+  "uncertainty_reasons": []
+}
+```

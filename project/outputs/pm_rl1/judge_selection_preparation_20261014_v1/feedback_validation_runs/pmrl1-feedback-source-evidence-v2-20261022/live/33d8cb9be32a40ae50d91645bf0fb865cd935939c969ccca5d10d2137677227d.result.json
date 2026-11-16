@@ -1,0 +1,266 @@
+{
+  "slot_id": "33d8cb9be32a40ae50d91645bf0fb865cd935939c969ccca5d10d2137677227d",
+  "request_identity": "0aaa26f44defe18c381fc4b1bc019af1f3704f2e78bf23b1104259cf306ec049",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T000"
+        ],
+        "reason": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share. This fully fits the simple opening turn without adding unsupported personal claims or missing a constraint."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open invitation for the seeker to share, not a factual claim about the user or the assistant."
+        }
+      ],
+      "coverage": "Reviewed the single current seeker turn and all three reply units. The prior sessions provide context about the user's preferred topics, but this turn only calls for a brief, supportive opening; no user-specific factual claims were made.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "8dafa889682aa08a860a047cf9309cd8250bb42fe699ca300a686dbba9e41552",
+      "legal_evidence_identity": "2a6a552522073a550cda10ad2f6ffc94258181d217c1834632c1340d5ddfe700",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "33d8cb9be32a40ae50d91645bf0fb865cd935939c969ccca5d10d2137677227d",
+      "raw_output_sha256": "a6ab1214440293156d7e5e779f1fb35a7552b51e3c0e252b1564a71c8981fe02",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin.",
+          "response_quote": "That sounds completely okay. I'm here to listen. What's on your mind?",
+          "evidence": [
+            {
+              "source_id": "C:T000",
+              "quote": "Hey, I just need to talk to someone. Is that okay?"
+            }
+          ],
+          "reason": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share. This fully fits the simple opening turn without adding unsupported personal claims or missing a constraint."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Reviewed the single current seeker turn and all three reply units. The prior sessions provide context about the user's preferred topics, but this turn only calls for a brief, supportive opening; no user-specific factual claims were made.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds completely okay. I'm here to listen. What's on your mind?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 69
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T000",
+          "quote": "Hey, I just need to talk to someone. Is that okay?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 50
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": null,
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T000"
+          ],
+          "reason": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share. This fully fits the simple opening turn without adding unsupported personal claims or missing a constraint."
+        },
+        "claims": [],
+        "misuse_findings": [],
+        "coverage": "Reviewed the single current seeker turn and all three reply units. The prior sessions provide context about the user's preferred topics, but this turn only calls for a brief, supportive opening; no user-specific factual claims were made.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T000"
+          ],
+          "reason": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share. This fully fits the simple opening turn without adding unsupported personal claims or missing a constraint."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open invitation for the seeker to share, not a factual claim about the user or the assistant.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the single current seeker turn and all three reply units. The prior sessions provide context about the user's preferred topics, but this turn only calls for a brief, supportive opening; no user-specific factual claims were made.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "The seeker is asking for permission and reassurance to talk to someone, and needs a gentle opening to begin.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T000"
+          ],
+          "reason": "The reply directly reassures the seeker that talking is okay, states availability to listen, and invites them to share. This fully fits the simple opening turn without adding unsupported personal claims or missing a constraint."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an evaluative reassurance in response to the seeker's request for permission, not a personal factual assertion."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a conversational statement of availability appropriate to the assistant role, not a specific personal-history claim."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open invitation for the seeker to share, not a factual claim about the user or the assistant."
+          }
+        ],
+        "coverage": "Reviewed the single current seeker turn and all three reply units. The prior sessions provide context about the user's preferred topics, but this turn only calls for a brief, supportive opening; no user-specific factual claims were made.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "a6ab1214440293156d7e5e779f1fb35a7552b51e3c0e252b1564a71c8981fe02",
+      "adapted_final_sha256": "a6ab1214440293156d7e5e779f1fb35a7552b51e3c0e252b1564a71c8981fe02",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "c251ed74a5626ba3b0802c8ff4879cf762a4eada103c41efd7d49aa70f5e9196",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0040662",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 10554,
+    "completion_tokens": 750,
+    "total_tokens": 11304,
+    "prompt_tokens_details": {
+      "cached_tokens": 10368
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 422
+    },
+    "prompt_cache_hit_tokens": 10368,
+    "prompt_cache_miss_tokens": 186
+  },
+  "elapsed_seconds": 4.702342943986878,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-source-evidence-v2-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

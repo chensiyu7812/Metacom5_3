@@ -1,0 +1,562 @@
+{
+  "slot_id": "83a50462d73161e01075b108a1f21e6e36e68959b4102e1ade9cd70bf157222e",
+  "request_identity": "d077ead6e8b2f0855a0819c04ac358e6d2412ca08014e3508ca2fe3f90cb8b8c",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004",
+          "R005"
+        ],
+        "source_turn_ids": [
+          "C:T002",
+          "C:T004",
+          "H011:T007"
+        ],
+        "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is a generic empathic acknowledgment rather than an assertion of a specific personal fact."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002",
+            "C:T004",
+            "H011:T007"
+          ],
+          "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "Jane explicitly said she is considering switching jobs in C:T002."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T004",
+            "H011:T007"
+          ],
+          "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact."
+        },
+        {
+          "response_unit_id": "R005",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "The reply offers possible factors as a question; it does not assert that workload or lack of support is definitely the cause."
+        }
+      ],
+      "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "2050c4c4dc2893f8b4005948ff3253498051f1b7179c3a69bb843668a158605a",
+      "legal_evidence_identity": "ae8a28f88af432529181aed07a9edebf1c47ede8e540c01d572f606c4646da5e",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "4716dc29954cee8d4bfbd49648f3c806dd2e7ba9d2d6387f9a7e3b53b6b2b211",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "83a50462d73161e01075b108a1f21e6e36e68959b4102e1ade9cd70bf157222e",
+      "raw_output_sha256": "eaa25ef5b8a6e9ddd56742a4cb38b397ae3465a0ec90f452d63ba50696480180",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+          "response_quote": "That sounds incredibly heavy to carry. It makes sense that the constant pressure at work, combined with the uncertainty after the performance review, would leave you feeling stuck and questioning your own abilities.\n\nYou mentioned considering a job switch. Have you thought about what specific aspects of your current job or work environment are driving this feeling of being \"stuck\"? Is it the workload, the lack of support, or something else entirely?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs."
+            },
+            {
+              "source_id": "C:T004",
+              "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot."
+            },
+            {
+              "source_id": "H011:T007",
+              "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck."
+            }
+          ],
+          "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+        },
+        "claims": [
+          {
+            "response_quote": "It makes sense that the constant pressure at work, combined with the uncertainty after the performance review, would leave you feeling stuck and questioning your own abilities.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs."
+              },
+              {
+                "source_id": "C:T004",
+                "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot."
+              },
+              {
+                "source_id": "H011:T007",
+                "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck."
+              }
+            ],
+            "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007."
+          },
+          {
+            "response_quote": "You mentioned considering a job switch.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs."
+              }
+            ],
+            "reason": "Jane explicitly said she is considering switching jobs in C:T002."
+          },
+          {
+            "response_quote": "Have you thought about what specific aspects of your current job or work environment are driving this feeling of being \"stuck\"?",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T004",
+                "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot."
+              },
+              {
+                "source_id": "H011:T007",
+                "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck."
+              }
+            ],
+            "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "That sounds incredibly heavy to carry. It makes sense that the constant pressure at work, combined with the uncertainty after the performance review, would leave you feeling stuck and questioning your own abilities.\n\nYou mentioned considering a job switch. Have you thought about what specific aspects of your current job or work environment are driving this feeling of being \"stuck\"? Is it the workload, the lack of support, or something else entirely?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 453
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T004",
+          "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "H011:T007",
+          "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 152
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It makes sense that the constant pressure at work, combined with the uncertainty after the performance review, would leave you feeling stuck and questioning your own abilities.",
+          "positions": [
+            {
+              "start": 39,
+              "end": 215
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T004",
+          "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "H011:T007",
+          "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 152
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "You mentioned considering a job switch.",
+          "positions": [
+            {
+              "start": 217,
+              "end": 256
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "I've been feeling really overwhelmed lately. I'm actually considering switching jobs.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "Have you thought about what specific aspects of your current job or work environment are driving this feeling of being \"stuck\"?",
+          "positions": [
+            {
+              "start": 257,
+              "end": 384
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T004",
+          "quote": "It’s just a combination of things. The pressure at work never seems to end, and after the performance review last November, I’ve been second-guessing myself a lot.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 163
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H011:T007",
+          "quote": "Yeah, I thought it might help calm my anxieties. But with my job performance not being where it's supposed to be, and money problems, I just feel stuck.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 152
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T004",
+            "H011:T007"
+          ],
+          "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Jane explicitly said she is considering switching jobs in C:T002."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T004",
+            "H011:T007"
+          ],
+          "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic empathic acknowledgment rather than an assertion of a specific personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Jane explicitly said she is considering switching jobs in C:T002.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The reply offers possible factors as a question; it does not assert that workload or lack of support is definitely the cause.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Jane is describing feeling overwhelmed, ongoing work pressure, self-doubt after a November performance review, and considering a job switch; she needs acknowledgment and focused exploration of what is driving this.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004",
+            "R005"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "C:T004",
+            "H011:T007"
+          ],
+          "reason": "The reply accurately reflects Jane's current overwhelm, work pressure, post-review self-doubt, and job-switch consideration, then asks a relevant exploratory question about what is driving the difficulty. It makes no boundary violation or unsupported personal claim and fits this turn's need for empathic reflection and clarification."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is a generic empathic acknowledgment rather than an assertion of a specific personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002",
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The reply reflects Jane's reported ongoing work pressure and self-questioning after the November performance review from C:T004, her consideration of switching jobs from C:T002, and her earlier use of 'stuck' about work in H011:T007."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "Jane explicitly said she is considering switching jobs in C:T002."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T004",
+              "H011:T007"
+            ],
+            "reason": "The question builds on Jane's reported self-doubt and pressure from C:T004 and her prior description of feeling stuck about work in H011:T007; it is an exploratory question rather than an asserted new fact."
+          },
+          {
+            "response_unit_id": "R005",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "The reply offers possible factors as a question; it does not assert that workload or lack of support is definitely the cause."
+          }
+        ],
+        "coverage": "Reviewed the full current prefix and all supplied past sessions. Checked the reply's references to work pressure, the November performance review, job-switch consideration, and 'stuck' against the user's statements. No unsupported personal history, boundary violation, or misuse of the previous supporter's experiences was found.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "eaa25ef5b8a6e9ddd56742a4cb38b397ae3465a0ec90f452d63ba50696480180",
+      "adapted_final_sha256": "eaa25ef5b8a6e9ddd56742a4cb38b397ae3465a0ec90f452d63ba50696480180",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "4716dc29954cee8d4bfbd49648f3c806dd2e7ba9d2d6387f9a7e3b53b6b2b211",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0081468",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 13892,
+    "completion_tokens": 3316,
+    "total_tokens": 17208,
+    "prompt_tokens_details": {
+      "cached_tokens": 2304
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 2653
+    },
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 11588
+  },
+  "elapsed_seconds": 17.785061136004515,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "workflow_version": "pmrl1-feedback-validation-v1-20261022",
+  "new_step_instruction_version": "pmrl1-feedback-validation-v1-20261022",
+  "reward_eligible": false,
+  "natural_updates": 0,
+  "semantic_review_status": "not_adjudicated"
+}

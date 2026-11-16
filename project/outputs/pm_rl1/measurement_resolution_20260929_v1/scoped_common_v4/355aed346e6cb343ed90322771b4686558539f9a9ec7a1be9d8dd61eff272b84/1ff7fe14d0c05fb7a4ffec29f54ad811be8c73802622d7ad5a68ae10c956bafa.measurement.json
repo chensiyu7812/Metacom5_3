@@ -1,0 +1,277 @@
+{
+  "response_sha256": "b17b7f6a75519403ad366a59e815360f59299c1c65b88e0ca0260a9485de1228",
+  "legal_evidence_identity": "21d8ba6082115ed4b34cbc78ca51c001e8f4faa8b2b6353b7006332679e47001",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "063c8f68905d5f871fc775ad08e5382b68e945d8bcb042d157768a0b211e7c57",
+  "raw_output_sha256": "40ccf372a2710e55ba809523050dcb4cfc70b66fe60a162d6b606cd1d730056c",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of shifting perspective and invitation toward communication",
+      "response_quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "evidence": [
+        {
+          "source_id": "C:T013",
+          "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+        },
+        {
+          "source_id": "C:T023",
+          "quote": "Parents worry about thire kids all the time. you know pedophiles, kidnappers and a a lot of other dangerous people out there. it is only natural for parents to worry"
+        },
+        {
+          "source_id": "C:T024",
+          "quote": "Well, I guess I understand a bit more put like that."
+        }
+      ],
+      "reason": "Fully responsive to the seeker's reported understanding (C:T024) following the supporter's safety framing (C:T023). Validates autonomy accurately based on provided age (17). The question (R003) opens a constructive path without violating boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T013",
+            "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now"
+          },
+          {
+            "source_id": "C:T020",
+            "quote": "I understand, Parents are complicated creatures. As an adult maybr your parents are worried about your saftey?"
+          }
+        ],
+        "reason": "Asserts the user is 'almost an adult', supported by explicit user report of age 17 (C:T013)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Complete coverage of the emotional transition and actionable query.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is good that you are trying to see things from their perspective.\n\nBut it is also important to remember that you are almost an adult and you should have a say in your own life.\n\nHave you talked to your parents about how you feel?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 232
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T023",
+      "quote": "Parents worry about thire kids all the time. you know pedophiles, kidnappers and a a lot of other dangerous people out there. it is only natural for parents to worry",
+      "positions": [
+        {
+          "start": 0,
+          "end": 165
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T024",
+      "quote": "Well, I guess I understand a bit more put like that.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 52
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "But it is also important to remember that you are almost an adult and you should have a say in your own life.",
+      "positions": [
+        {
+          "start": 70,
+          "end": 179
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T013",
+      "quote": "I got grounded becuase my parents found out that I recently started dating before age 18. I am 17 and feel like I should be able to have a boyfriend now",
+      "positions": [
+        {
+          "start": 0,
+          "end": 152
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T020",
+      "quote": "I understand, Parents are complicated creatures. As an adult maybr your parents are worried about your saftey?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 110
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validation of shifting perspective and invitation toward communication",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T023",
+        "C:T024"
+      ],
+      "reason": "Fully responsive to the seeker's reported understanding (C:T024) following the supporter's safety framing (C:T023). Validates autonomy accurately based on provided age (17). The question (R003) opens a constructive path without violating boundaries."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T020"
+        ],
+        "reason": "Asserts the user is 'almost an adult', supported by explicit user report of age 17 (C:T013)."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Complete coverage of the emotional transition and actionable query.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of shifting perspective and invitation toward communication",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T023",
+        "C:T024"
+      ],
+      "reason": "Fully responsive to the seeker's reported understanding (C:T024) following the supporter's safety framing (C:T023). Validates autonomy accurately based on provided age (17). The question (R003) opens a constructive path without violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Evaluative/empathic statement reflecting the seeker's reported shift in understanding.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T020"
+        ],
+        "reason": "Asserts the user is 'almost an adult', supported by explicit user report of age 17 (C:T013).",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question proposing next steps.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "Complete coverage of the emotional transition and actionable query.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Validation of shifting perspective and invitation toward communication",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T013",
+        "C:T023",
+        "C:T024"
+      ],
+      "reason": "Fully responsive to the seeker's reported understanding (C:T024) following the supporter's safety framing (C:T023). Validates autonomy accurately based on provided age (17). The question (R003) opens a constructive path without violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Evaluative/empathic statement reflecting the seeker's reported shift in understanding."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T013",
+          "C:T020"
+        ],
+        "reason": "Asserts the user is 'almost an adult', supported by explicit user report of age 17 (C:T013)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Open-ended question proposing next steps."
+      }
+    ],
+    "coverage": "Complete coverage of the emotional transition and actionable query.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

@@ -1,0 +1,79 @@
+{
+  "response_sha256": "5e9bdb1153a68819ada0bbfa942b35ccac625593753b42992a804379ef7d9301",
+  "legal_evidence_identity": "99c4181727aadb11e9f11d8811c581dfe3390e273b511c497f5d6791aaa51b53",
+  "rubric_identity": "6dd63f58e476a8a2bfc5518bee670ff98e882f66dbfd5d2f2117e6a420ae5807",
+  "judge_runtime_identity": "a215550c2613c241a7b27e07c47bc8333d1ebb5039a9c6dc62e1f1c9b3d38fc2",
+  "parser_version": "pm-rl1-qm-indexed-span-v2",
+  "measurement_draw_id": "578bb19652ec83f958cc8c8fd90877b4e46c0fa97e5d207c9de787c81d4a29b0",
+  "raw_output_sha256": "7753a56cb185e2dc55dc1258f13e635ab544fe7997a9219c570de32b63a31ebd",
+  "reward_eligible": false,
+  "measurement_status": "parse_or_evidence_failure",
+  "error": "relation/severity conflict",
+  "q": null,
+  "m": null,
+  "format_transformations": [],
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The seeker has shared details about a supportive conversation with siblings, specifically mentioning discussing study pressures and parental arguments. The need is validation of the supportive nature of this connection and exploration of the siblings' feedback.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T000",
+        "C:T002",
+        "C:T004"
+      ],
+      "reason": "The reply validates the positive experience (R001, R002) and acknowledges the emotional impact of the parents' argument (R003), aligning directly with C:T002's description of feeling safe to open up and C:T004's disclosure of parental conflict. It invites further elaboration (R004) without making unsupported assumptions or repeating questions."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T000",
+          "C:T002",
+          "C:T004"
+        ],
+        "reason": "Seeker states 'talked to my siblings' (C:T000) and 'felt I could open up to them' (C:T002) regarding feelings/concerns about studies/life (C:T004)."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "Seeker explicitly states 'I felt I could open up to them' indicating comfort (C:T002)."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T004"
+        ],
+        "reason": "Seeker reports bringing up 'how the argument between Mom and Dad affected me' (C:T004), implying the argument weighs on them."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "unsupported",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Questionary unit does not assert a fact."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Verified all assertions regarding the siblings conversation, the user's comfort level, and the parental conflict against current session evidence. Checked historical context (H001, H003) for conflicting statements about family support or fears, finding none that materially contradict the current update in a way that impacts advice accuracy (relationships evolve).",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED"
+}

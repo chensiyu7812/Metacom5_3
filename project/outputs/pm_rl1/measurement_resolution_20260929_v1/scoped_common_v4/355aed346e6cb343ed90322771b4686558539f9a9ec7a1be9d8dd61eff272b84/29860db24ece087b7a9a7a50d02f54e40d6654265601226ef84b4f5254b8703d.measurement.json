@@ -1,0 +1,272 @@
+{
+  "response_sha256": "d15d7322d715164a0090ec2191d17ac1a5b4d7a0ac8b89b3eaa431650ca38c71",
+  "legal_evidence_identity": "f1ffc4ab9035bdfbab98d79e7bab1fa28029156898e066f06306c73d39f00a02",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "4d0a45de29b97eddde08279391cc5fbe40b79f6a38e6040f603e7072ba7771be",
+  "raw_output_sha256": "3c5cb0f71abd4b2e39793b5fce94989d77ed8ffa323544da26370aa5923a9a35",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Jane is expressing mixed emotions (relief + fear of stagnation) after learning she didn't receive the overseas promotion. She needs validation of her conflicted feelings and gentle guidance forward.",
+      "response_quote": "You were offered the overseas promotion earlier, but that offer is no longer available to you now. It makes sense to feel both relief and disappointment. What kind of growth would you like to pursue from here?",
+      "evidence": [
+        {
+          "source_id": "C:T010",
+          "quote": "Maybe. I was really torn about the decision, fearing how it would affect my relationship with Eliza and just leaving everything behind."
+        },
+        {
+          "source_id": "C:T014",
+          "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+        }
+      ],
+      "reason": "The response appropriately validates Jane's conflicting emotions (relief/disappointment) which she explicitly mentioned in C:T014. It transitions to a forward-looking question about career growth without imposing advice or jumping to conclusions. However, R001 ('You were offered the overseas promotion earlier, but that offer is no longer available to you now') contains a potentially problematic factual framing given C:T002 states 'I just found out I missed out on the overseas promotion I was offered a while back' — suggesting she may have misunderstood the timeline or nature of what happened. This creates some minor tension but doesn't substantially undermine support. Overall coherent, empathic, and responsive without major flaws."
+    },
+    "claims": [
+      {
+        "response_quote": "You were offered the overseas promotion earlier, but that offer is no longer available to you now.",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "evidence": [],
+        "reason": "Factual claim about being offered the promotion contradicts/unclear relative to C:T002's description of learning 'I missed out on the overseas promotion I was offered' — the exact details of what happened aren't fully confirmed in evidence."
+      },
+      {
+        "response_quote": "It makes sense to feel both relief and disappointment.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career."
+          }
+        ],
+        "reason": "Validates the explicit emotion expressed in C:T014 ('relieved...nagging fear')."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response addresses the immediate emotional expression in C:T014 and responds appropriately to Jane's vulnerability about career stagnation concerns. However, the factual assertion in R001 lacks sufficient grounding in the provided evidence, creating uncertainty about accuracy relative to the timeline established in prior turns.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "You were offered the overseas promotion earlier, but that offer is no longer available to you now. It makes sense to feel both relief and disappointment. What kind of growth would you like to pursue from here?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 209
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T010",
+      "quote": "Maybe. I was really torn about the decision, fearing how it would affect my relationship with Eliza and just leaving everything behind.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 135
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You were offered the overseas promotion earlier, but that offer is no longer available to you now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "It makes sense to feel both relief and disappointment.",
+      "positions": [
+        {
+          "start": 99,
+          "end": 153
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T014",
+      "quote": "It's hard to say. I feel stuck, but in some ways, relieved I don't have to move overseas. Yet, there's this nagging fear I'll remain stagnant in my career.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 155
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "Jane is expressing mixed emotions (relief + fear of stagnation) after learning she didn't receive the overseas promotion. She needs validation of her conflicted feelings and gentle guidance forward.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T014"
+      ],
+      "reason": "The response appropriately validates Jane's conflicting emotions (relief/disappointment) which she explicitly mentioned in C:T014. It transitions to a forward-looking question about career growth without imposing advice or jumping to conclusions. However, R001 ('You were offered the overseas promotion earlier, but that offer is no longer available to you now') contains a potentially problematic factual framing given C:T002 states 'I just found out I missed out on the overseas promotion I was offered a while back' — suggesting she may have misunderstood the timeline or nature of what happened. This creates some minor tension but doesn't substantially undermine support. Overall coherent, empathic, and responsive without major flaws."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Factual claim about being offered the promotion contradicts/unclear relative to C:T002's description of learning 'I missed out on the overseas promotion I was offered' — the exact details of what happened aren't fully confirmed in evidence."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the explicit emotion expressed in C:T014 ('relieved...nagging fear')."
+      }
+    ],
+    "misuse_findings": [
+      0
+    ],
+    "coverage": "The response addresses the immediate emotional expression in C:T014 and responds appropriately to Jane's vulnerability about career stagnation concerns. However, the factual assertion in R001 lacks sufficient grounding in the provided evidence, creating uncertainty about accuracy relative to the timeline established in prior turns.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Jane is expressing mixed emotions (relief + fear of stagnation) after learning she didn't receive the overseas promotion. She needs validation of her conflicted feelings and gentle guidance forward.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T014"
+      ],
+      "reason": "The response appropriately validates Jane's conflicting emotions (relief/disappointment) which she explicitly mentioned in C:T014. It transitions to a forward-looking question about career growth without imposing advice or jumping to conclusions. However, R001 ('You were offered the overseas promotion earlier, but that offer is no longer available to you now') contains a potentially problematic factual framing given C:T002 states 'I just found out I missed out on the overseas promotion I was offered a while back' — suggesting she may have misunderstood the timeline or nature of what happened. This creates some minor tension but doesn't substantially undermine support. Overall coherent, empathic, and responsive without major flaws."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Factual claim about being offered the promotion contradicts/unclear relative to C:T002's description of learning 'I missed out on the overseas promotion I was offered' — the exact details of what happened aren't fully confirmed in evidence.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the explicit emotion expressed in C:T014 ('relieved...nagging fear').",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Forward-looking question without asserting personal facts.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "The response addresses the immediate emotional expression in C:T014 and responds appropriately to Jane's vulnerability about career stagnation concerns. However, the factual assertion in R001 lacks sufficient grounding in the provided evidence, creating uncertainty about accuracy relative to the timeline established in prior turns.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    0
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Jane is expressing mixed emotions (relief + fear of stagnation) after learning she didn't receive the overseas promotion. She needs validation of her conflicted feelings and gentle guidance forward.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003"
+      ],
+      "source_turn_ids": [
+        "C:T010",
+        "C:T014"
+      ],
+      "reason": "The response appropriately validates Jane's conflicting emotions (relief/disappointment) which she explicitly mentioned in C:T014. It transitions to a forward-looking question about career growth without imposing advice or jumping to conclusions. However, R001 ('You were offered the overseas promotion earlier, but that offer is no longer available to you now') contains a potentially problematic factual framing given C:T002 states 'I just found out I missed out on the overseas promotion I was offered a while back' — suggesting she may have misunderstood the timeline or nature of what happened. This creates some minor tension but doesn't substantially undermine support. Overall coherent, empathic, and responsive without major flaws."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [],
+        "reason": "Factual claim about being offered the promotion contradicts/unclear relative to C:T002's description of learning 'I missed out on the overseas promotion I was offered' — the exact details of what happened aren't fully confirmed in evidence."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014"
+        ],
+        "reason": "Validates the explicit emotion expressed in C:T014 ('relieved...nagging fear')."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Forward-looking question without asserting personal facts."
+      }
+    ],
+    "coverage": "The response addresses the immediate emotional expression in C:T014 and responds appropriately to Jane's vulnerability about career stagnation concerns. However, the factual assertion in R001 lacks sufficient grounding in the provided evidence, creating uncertainty about accuracy relative to the timeline established in prior turns.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

@@ -1,0 +1,29 @@
+人评备注复核与更正（2026-10-14）
+
+本轮追加解释用户已经写入开发题的文字；不重新解密、不读密钥、不读24题封存标签。
+不修改 v2 验收、原始ZIP/JSON、评分/人类选项、正式校验器或准入规则。
+原来7题清单作为历史保存；新的当前处置为 review/request_disposition.json。
+
+运行环境：Python 3，纯标准库。
+本次实际命令：
+
+cd /home/tokkio/Metacom5_3
+python project/outputs/pm_rl1/human_acceptance_20261014_v3_notes/reconcile_notes.py --repo /home/tokkio/Metacom5_3 --out project/outputs/pm_rl1/human_acceptance_20261014_v3_notes/review
+
+复现时必须另选新目录，禁止覆盖已完成的review：
+
+python project/outputs/pm_rl1/human_acceptance_20261014_v3_notes/reconcile_notes.py --repo /home/tokkio/Metacom5_3 --out project/outputs/pm_rl1/human_acceptance_20261014_v3_notes/review_reproduced
+
+不要使用python -O关闭原始完整性断言。
+
+复核内容：
+1. 已打开的32份开发标签（Chen16、Du派生16）均为development。
+2. Chen16题全部有实质文字；15个原选择可比较，1个理由明确表达无法判断贴切性。
+3. 原完整校验11/16、原风险枚举26/32保持不变。
+4. 第10/15题的人类原文、B原回复片段、C:T000或C:T005/C:T013来源编号机械对齐。
+5. 英文引文和来源定位是分析者释读，不冒充人工填写，不自动创建source_confirmed或human_fact_adjudication。
+6. 全部输入SHA256前后一致，git status保持干净，0原始答案修改。
+
+说明：INTERPRETATIONS和ALIGNMENTS是明示的人工语义分析清单；断言校验引用和来源，不证明语义必然正确。
+当前不要求用户补答；这不表示已通过正式字段接收或奖励资格。
+与v2的统计一致性和守卫检查已经复用，无核心代码变化，本轮不重复运行旧PPO/裁判测试或调用模型。

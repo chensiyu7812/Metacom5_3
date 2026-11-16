@@ -1,0 +1,50 @@
+{
+  "R1": "Prespecified descriptive one-read comparator; do not switch gate to it after outcomes.",
+  "continuation": "Resource fail: stop this QA configuration, no tuning PPO or replacing questions. Resource pass but R2 fail: retrieval gap, not no resource value; no RL. Both pass: evaluate strong fixed/OneShot and content-dependent branch need before RL.",
+  "deployable_retrieval_screen": {
+    "R2_minus_OFF_min": 0.2,
+    "arm": "R2",
+    "latency": "UNASSESSED until full paired deployed path; no automatic 3-second pass",
+    "retain_C_minus_OFF_gain_fraction_min": 0.6666666666666666
+  },
+  "grading": "Predeclared aliases plus blinded source-bound review of all outputs. Uncertain and technical failures keep intervals/missing; gate only if conservative bounds pass with complete planned coverage.",
+  "identity": "d7c07e3ade69e26efe5d4ff37c4edc9002ff7091aa6bffe5d15c0e93efbe9174",
+  "minimum_primary_facts": 12,
+  "minimum_primary_owners": 6,
+  "new_human_review": false,
+  "new_rewards": false,
+  "new_training": false,
+  "primary_OFF": "Same factual prompt and abstention policy; correct unsupported guesses still count for answer accuracy and are separately noted.",
+  "primary_cases": [
+    "F01",
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F09",
+    "F10",
+    "F12",
+    "F17",
+    "F18",
+    "F19",
+    "F20"
+  ],
+  "resource_gate": {
+    "C_accuracy_min": 0.8,
+    "C_minus_D_min": 0.2,
+    "C_minus_OFF_min": 0.3,
+    "positive_C_minus_OFF_owner_means_min": 4
+  },
+  "scope": "PRACTICAL_DEVELOPMENT_SCREEN_NOT_SIGNIFICANCE_OR_REWARD_QUALIFICATION",
+  "secondary": "Report proposition completeness, contradictions, time/order and single-session redundancy separately; do not dilute primary with easier or subjective items.",
+  "secondary_cases": [
+    "M01",
+    "M02",
+    "M06",
+    "M07",
+    "M09"
+  ],
+  "uncertainty": "Development sample, 12 synthetic owners in source pool, not population estimate or independent 30 participants."
+}

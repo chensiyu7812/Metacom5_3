@@ -1,0 +1,60 @@
+{
+  "scope": "AI source-assisted development review; no new human or qualified q/m labels",
+  "cases": [
+    {
+      "case": "N02",
+      "analysis_zh": "ON开始明确提及主管不总认可，来源可支持；OFF也改了问题，不能套用旧C02质量分。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N03",
+      "analysis_zh": "OFF和ON各自与原提示逐字相同；没有强迫把关系历史带入尚未说明主题的倾诉邀请。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N04",
+      "analysis_zh": "ON仍未明确利用新工作/灵活时间/此前冲突；OFF变为建议工作沟通，输出66→103 tokens。改变支持策略不是资源增益。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N05",
+      "analysis_zh": "ON条件式提及此前被低估，与历史负评顾虑有关；OFF也提出如何表述工作调整，质量增量未测。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N18",
+      "analysis_zh": "ON将主管分歧改为更泛化工作冲突；没有证据证明任务帮助改善。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N19",
+      "analysis_zh": "ON提及想换工作，但这是当前对话已有信息；财务/修车压力仍未明确进入回复。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N21",
+      "analysis_zh": "ON又采用晨跑，随后转向其他自我照顾办法；未接续夫妻互留休息时间。旧人评的有限收益/过早自我照顾原则可作审查参照，但不是这条新回复的精确分数。",
+      "quality_direction": null,
+      "reward": null
+    },
+    {
+      "case": "N23",
+      "analysis_zh": "ON/OFF均改变澄清或建议选项，未明确体现邀请不平等细节；非提及也不证明未利用。",
+      "quality_direction": null,
+      "reward": null
+    }
+  ],
+  "instruction_promoted": false,
+  "decision": "Retain original production prompt; a single current-need instruction did not clearly resolve the targeted failure modes in this panel.",
+  "non_claims": [
+    "No causal proof that LoRA degraded the base model.",
+    "No proof that all useful history was ignored.",
+    "No measured deployment net-utility winner."
+  ]
+}

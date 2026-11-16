@@ -1,0 +1,113 @@
+{
+  "response_sha256": "16834ac17e414203f18d19a6511f98253832a65882bc4ebd2b126884c6f3e8a1",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "89c302414a67f1dd1a539e37a680a77652f1d77cbf06629cf0ef8e7578709dc5",
+  "judge_runtime_identity": "05e8f9efdbdbe89fd8a1056ef659ec77cb7428dfb75cadb310087b04dce67cb6",
+  "parser_version": "pm-rl1-qm-typographic-span-v2",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "de77761770e105b47c7dc85aaf405b651f689b4b94c834cbf9d89563da605486",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validating the seeker's expressed difficulty with asking for help and offering gentle encouragement to explore support contacts despite trust barriers.",
+      "response_quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling?",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        },
+        {
+          "source_id": "C:T011",
+          "quote": "Are you considering reaching out to anyone else for support?"
+        }
+      ],
+      "reason": "The reply directly acknowledges and validates the specific emotional constraint articulated in C:T012 (difficulty trusting/asking), reframing the struggle ('weight of uncertainty'). It responds coherently to the preceding context established in C:T011/C:T012 regarding support options. The advice offered ('someone you trust') is non-prescriptive and aligns with the user's history of valuing connection (e.g., H010: 'miss the familiarity of home and having people around who really know me'). No important need is missed; the response is appropriate and responsive."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for identity consistency (seeker named Michael throughout history and current session), factual claims about personal history (none found in reply), temporal relevance (current date 2025 vs past history 2024-2024), and adherence to explicit constraints (validating trust barriers without dismissing them).",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 189
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T011",
+      "quote": "Are you considering reaching out to anyone else for support?",
+      "positions": [
+        {
+          "start": 108,
+          "end": 168
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "strict_parser_status": "parse_or_evidence_failure",
+  "quote_transformations": [
+    {
+      "part": 0,
+      "field": "evidence[0].quote",
+      "source_id": "C:T012",
+      "provided": "I haven't yet. It's hard for me to ask for help or even trust it'll come through.",
+      "matched_original": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+    }
+  ],
+  "normalized_final_json": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Validating the seeker's expressed difficulty with asking for help and offering gentle encouragement to explore support contacts despite trust barriers.",
+      "response_quote": "It's like you're carrying the weight of uncertainty. That can be really tough. Have you thought about talking to someone you trust, like a friend or family member, about how you're feeling?",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        },
+        {
+          "source_id": "C:T011",
+          "quote": "Are you considering reaching out to anyone else for support?"
+        }
+      ],
+      "reason": "The reply directly acknowledges and validates the specific emotional constraint articulated in C:T012 (difficulty trusting/asking), reframing the struggle ('weight of uncertainty'). It responds coherently to the preceding context established in C:T011/C:T012 regarding support options. The advice offered ('someone you trust') is non-prescriptive and aligns with the user's history of valuing connection (e.g., H010: 'miss the familiarity of home and having people around who really know me'). No important need is missed; the response is appropriate and responsive."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "Checked for identity consistency (seeker named Michael throughout history and current session), factual claims about personal history (none found in reply), temporal relevance (current date 2025 vs past history 2024-2024), and adherence to explicit constraints (validating trust barriers without dismissing them).",
+    "uncertainty_reasons": []
+  },
+  "normalization_scope": "only whitespace and straight/curly quote glyphs; no word or source-ID changes",
+  "original_format_transformations": [
+    "remove_closed_thinking_prefix"
+  ]
+}

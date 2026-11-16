@@ -1,0 +1,442 @@
+{
+  "response_sha256": "d38c2613d16b88b2f23bf9e0b80628f533368160c96902c4ecaf170025a93b07",
+  "legal_evidence_identity": "166b4b543211286ecac5e3bd6e5ff39bd46e7f646113d73e095196342f8722b7",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "8e487448fe66f1a5daac8a12e4e35e56f6f80e3647247c52086104041f93ec3b",
+  "raw_output_sha256": "8dcfdc5b7f768944217be2b4792778c704114ebfeaa7b20b339d0cc56abebcdc",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0.25,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "seeker expresses hesitation about discussing workload adjustments with supervisor due to uncertainty of reaction",
+      "response_quote": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "evidence": [
+        {
+          "source_id": "C:T015",
+          "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+        }
+      ],
+      "reason": "The reply directly addresses the user's uncertainty and hesitation in C:T015. It validates the feeling as natural (R001) without invalidating the fear. The advice offered is exploratory ('might be worth', 'might be more understanding') rather than prescriptive, respecting the known history of the supervisor's behavior (dismissive) while offering a pathway to resolution. R004 asks a clarifying question that builds on the user's statement without being redundant. No factual claims are made about the supervisor or user, maintaining m=0. The response matches the emotional tone and context of the session."
+    },
+    "claims": [
+      {
+        "response_quote": "It's natural to feel uncertain about how your supervisor will respond.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Validates the uncertainty expressed by the seeker without contradicting previous interactions."
+      },
+      {
+        "response_quote": "But it might be worth having an open and honest conversation with them about your concerns.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Offers a suggestion consistent with the topic without forcing action."
+      },
+      {
+        "response_quote": "They might be more understanding than you think, and it could lead to some positive changes.",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "evidence": [
+          {
+            "source_id": "H008:T005",
+            "quote": "Yesterday, I suggested a new project plan, but he just dismissed it without even giving it a second thought. I felt humiliated in front of my team."
+          },
+          {
+            "source_id": "H012:T008",
+            "quote": "It is. I've been trying so hard to improve things since the negative review, but it feels like nothing I do is ever enough."
+          },
+          {
+            "source_id": "H015:T015",
+            "quote": "That does sound frustrating, especially when you're already dealing with personal emotions. Have you thought about seeking any support or changes at work?"
+          },
+          {
+            "source_id": "H018:T006",
+            "quote": "Honestly, I'm feeling pretty anxious about it."
+          }
+        ],
+        "reason": "The phrase 'more understanding' contrasts with the historical pattern of the supervisor dismissing concerns. However, as a tentative hypothesis ('might be') used for encouragement rather than factual assertion, this counts as unsupported/potential error but does not reach misuse threshold."
+      },
+      {
+        "response_quote": "What's holding you back from having that conversation?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T015",
+            "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react."
+          }
+        ],
+        "reason": "Probes the specific barrier mentioned by the user."
+      }
+    ],
+    "misuse_findings": [
+      2
+    ],
+    "coverage": "Covers the immediate hesitation and opens space for reflection.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how your supervisor will respond. But it might be worth having an open and honest conversation with them about your concerns. They might be more understanding than you think, and it could lead to some positive changes. What's holding you back from having that conversation?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 310
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It's natural to feel uncertain about how your supervisor will respond.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 70
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "But it might be worth having an open and honest conversation with them about your concerns.",
+      "positions": [
+        {
+          "start": 71,
+          "end": 162
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "response": true,
+      "quote": "They might be more understanding than you think, and it could lead to some positive changes.",
+      "positions": [
+        {
+          "start": 163,
+          "end": 255
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "H008:T005",
+      "quote": "Yesterday, I suggested a new project plan, but he just dismissed it without even giving it a second thought. I felt humiliated in front of my team.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 147
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "H012:T008",
+      "quote": "It is. I've been trying so hard to improve things since the negative review, but it feels like nothing I do is ever enough.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 123
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "H015:T015",
+      "quote": "That does sound frustrating, especially when you're already dealing with personal emotions. Have you thought about seeking any support or changes at work?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 154
+        }
+      ]
+    },
+    {
+      "where": "claims[2]",
+      "source_id": "H018:T006",
+      "quote": "Honestly, I'm feeling pretty anxious about it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 46
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "response": true,
+      "quote": "What's holding you back from having that conversation?",
+      "positions": [
+        {
+          "start": 256,
+          "end": 310
+        }
+      ]
+    },
+    {
+      "where": "claims[3]",
+      "source_id": "C:T015",
+      "quote": "I’ve been thinking of discussing some workload adjustments with my supervisor, but I'm not sure how they’ll react.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0.25,
+    "q_rationale": {
+      "current_need": "seeker expresses hesitation about discussing workload adjustments with supervisor due to uncertainty of reaction",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the user's uncertainty and hesitation in C:T015. It validates the feeling as natural (R001) without invalidating the fear. The advice offered is exploratory ('might be worth', 'might be more understanding') rather than prescriptive, respecting the known history of the supervisor's behavior (dismissive) while offering a pathway to resolution. R004 asks a clarifying question that builds on the user's statement without being redundant. No factual claims are made about the supervisor or user, maintaining m=0. The response matches the emotional tone and context of the session."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Validates the uncertainty expressed by the seeker without contradicting previous interactions."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Offers a suggestion consistent with the topic without forcing action."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H008:T005",
+          "H012:T008",
+          "H015:T015",
+          "H018:T006"
+        ],
+        "reason": "The phrase 'more understanding' contrasts with the historical pattern of the supervisor dismissing concerns. However, as a tentative hypothesis ('might be') used for encouragement rather than factual assertion, this counts as unsupported/potential error but does not reach misuse threshold."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Probes the specific barrier mentioned by the user."
+      }
+    ],
+    "misuse_findings": [
+      2
+    ],
+    "coverage": "Covers the immediate hesitation and opens space for reflection.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "seeker expresses hesitation about discussing workload adjustments with supervisor due to uncertainty of reaction",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the user's uncertainty and hesitation in C:T015. It validates the feeling as natural (R001) without invalidating the fear. The advice offered is exploratory ('might be worth', 'might be more understanding') rather than prescriptive, respecting the known history of the supervisor's behavior (dismissive) while offering a pathway to resolution. R004 asks a clarifying question that builds on the user's statement without being redundant. No factual claims are made about the supervisor or user, maintaining m=0. The response matches the emotional tone and context of the session."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Validates the uncertainty expressed by the seeker without contradicting previous interactions.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Offers a suggestion consistent with the topic without forcing action.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H008:T005",
+          "H012:T008",
+          "H015:T015",
+          "H018:T006"
+        ],
+        "reason": "The phrase 'more understanding' contrasts with the historical pattern of the supervisor dismissing concerns. However, as a tentative hypothesis ('might be') used for encouragement rather than factual assertion, this counts as unsupported/potential error but does not reach misuse threshold.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Probes the specific barrier mentioned by the user.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Covers the immediate hesitation and opens space for reflection.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0.25,
+  "derived_error_indexes": [
+    2
+  ],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "seeker expresses hesitation about discussing workload adjustments with supervisor due to uncertainty of reaction",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T015"
+      ],
+      "reason": "The reply directly addresses the user's uncertainty and hesitation in C:T015. It validates the feeling as natural (R001) without invalidating the fear. The advice offered is exploratory ('might be worth', 'might be more understanding') rather than prescriptive, respecting the known history of the supervisor's behavior (dismissive) while offering a pathway to resolution. R004 asks a clarifying question that builds on the user's statement without being redundant. No factual claims are made about the supervisor or user, maintaining m=0. The response matches the emotional tone and context of the session."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Validates the uncertainty expressed by the seeker without contradicting previous interactions."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Offers a suggestion consistent with the topic without forcing action."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "unsupported",
+        "severity": 0.25,
+        "source_turn_ids": [
+          "H008:T005",
+          "H012:T008",
+          "H015:T015",
+          "H018:T006"
+        ],
+        "reason": "The phrase 'more understanding' contrasts with the historical pattern of the supervisor dismissing concerns. However, as a tentative hypothesis ('might be') used for encouragement rather than factual assertion, this counts as unsupported/potential error but does not reach misuse threshold."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T015"
+        ],
+        "reason": "Probes the specific barrier mentioned by the user."
+      }
+    ],
+    "coverage": "Covers the immediate hesitation and opens space for reflection.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

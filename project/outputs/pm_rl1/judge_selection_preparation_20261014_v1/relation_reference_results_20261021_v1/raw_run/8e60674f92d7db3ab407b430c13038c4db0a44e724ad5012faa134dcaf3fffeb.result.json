@@ -1,0 +1,295 @@
+{
+  "slot_id": "8e60674f92d7db3ab407b430c13038c4db0a44e724ad5012faa134dcaf3fffeb",
+  "request_identity": "24c8ca0cbd953f8e2286832166b1015909c36f25ba55eaa9b798630e6eba1b0a",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 4,
+      "q_rationale": {
+        "current_need": "Acknowledgment of the seeker's general report that things have been tough lately, plus a gentle invitation to elaborate without assuming a cause.",
+        "response_unit_ids": [
+          "R001",
+          "R002"
+        ],
+        "source_turn_ids": [
+          "C:T002"
+        ],
+        "reason": "The reply directly acknowledges the seeker's stated difficulty and then offers an open-ended invitation to share more. It does not over-assume details, and it fully fits this early, non-specific turn."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The seeker explicitly says 'things have been a bit tough lately'; the reply's acknowledgment mirrors that without adding a specific cause."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open-ended question and invitation to share, not a personal factual assertion or presupposition about the seeker's circumstances."
+        }
+      ],
+      "coverage": "Reviewed the full supplied current prefix and past sessions. The reply only responds to the current general report; no user-specific factual claim beyond that report is asserted.",
+      "uncertainty_reasons": []
+    },
+    "q": 4,
+    "m": 0,
+    "U": 1.0,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "f660e5d34a811ed82a50b05c104d72d767523746d37a119de44bf71140943dac",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "8e60674f92d7db3ab407b430c13038c4db0a44e724ad5012faa134dcaf3fffeb",
+      "raw_output_sha256": "6b4f7a42f2d25725472462868e8d7e8fd5fe856483d487395fbaae84b68a237f",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 4,
+      "m": 0,
+      "parsed": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Acknowledgment of the seeker's general report that things have been tough lately, plus a gentle invitation to elaborate without assuming a cause.",
+          "response_quote": "I'm sorry to hear that things have been tough for you. Would you like to talk about what's been going on, or is there something specific on your mind that you'd like to share?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            }
+          ],
+          "reason": "The reply directly acknowledges the seeker's stated difficulty and then offers an open-ended invitation to share more. It does not over-assume details, and it fully fits this early, non-specific turn."
+        },
+        "claims": [
+          {
+            "response_quote": "I'm sorry to hear that things have been tough for you.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The seeker explicitly says 'things have been a bit tough lately'; the reply's acknowledgment mirrors that without adding a specific cause."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the full supplied current prefix and past sessions. The reply only responds to the current general report; no user-specific factual claim beyond that report is asserted.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you. Would you like to talk about what's been going on, or is there something specific on your mind that you'd like to share?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 175
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "m": 0,
+        "q_rationale": {
+          "current_need": "Acknowledgment of the seeker's general report that things have been tough lately, plus a gentle invitation to elaborate without assuming a cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's stated difficulty and then offers an open-ended invitation to share more. It does not over-assume details, and it fully fits this early, non-specific turn."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The seeker explicitly says 'things have been a bit tough lately'; the reply's acknowledgment mirrors that without adding a specific cause."
+          }
+        ],
+        "misuse_findings": [],
+        "coverage": "Reviewed the full supplied current prefix and past sessions. The reply only responds to the current general report; no user-specific factual claim beyond that report is asserted.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Acknowledgment of the seeker's general report that things have been tough lately, plus a gentle invitation to elaborate without assuming a cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's stated difficulty and then offers an open-ended invitation to share more. It does not over-assume details, and it fully fits this early, non-specific turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The seeker explicitly says 'things have been a bit tough lately'; the reply's acknowledgment mirrors that without adding a specific cause.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open-ended question and invitation to share, not a personal factual assertion or presupposition about the seeker's circumstances.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed the full supplied current prefix and past sessions. The reply only responds to the current general report; no user-specific factual claim beyond that report is asserted.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0,
+      "derived_error_indexes": [],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 4,
+        "q_rationale": {
+          "current_need": "Acknowledgment of the seeker's general report that things have been tough lately, plus a gentle invitation to elaborate without assuming a cause.",
+          "response_unit_ids": [
+            "R001",
+            "R002"
+          ],
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The reply directly acknowledges the seeker's stated difficulty and then offers an open-ended invitation to share more. It does not over-assume details, and it fully fits this early, non-specific turn."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The seeker explicitly says 'things have been a bit tough lately'; the reply's acknowledgment mirrors that without adding a specific cause."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open-ended question and invitation to share, not a personal factual assertion or presupposition about the seeker's circumstances."
+          }
+        ],
+        "coverage": "Reviewed the full supplied current prefix and past sessions. The reply only responds to the current general report; no user-specific factual claim beyond that report is asserted.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 1.0
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "6b4f7a42f2d25725472462868e8d7e8fd5fe856483d487395fbaae84b68a237f",
+      "adapted_final_sha256": "6b4f7a42f2d25725472462868e8d7e8fd5fe856483d487395fbaae84b68a237f",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0028077",
+    "usage_upper_usd": "0.0028077",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 4747,
+    "completion_tokens": 1153,
+    "total_tokens": 5900,
+    "prompt_tokens_details": {
+      "cached_tokens": 2304
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 878
+    },
+    "prompt_cache_hit_tokens": 2304,
+    "prompt_cache_miss_tokens": 2443
+  },
+  "elapsed_seconds": 6.170214546000352,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-relation-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-relation-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

@@ -1,0 +1,380 @@
+{
+  "response_sha256": "1f8eba4f3a3881c07277150730c9829f0390c9e513cd23d5909d38c7f1c1821b",
+  "legal_evidence_identity": "6ea81f1c5657b032d3acaf9233beaba13fb22112658e9ae7a186f2bfd6252da4",
+  "rubric_identity": "5d0de70a0c0b1bad0548c2d292417f8f79d7a691ea2f9232ac823adf41a97809",
+  "judge_runtime_identity": "ad198b7104cb0d62927f94f0ea8821f21bdc6e6496cecb4f29cb5429a1a35879",
+  "parser_version": "pm-rl1-completion-qm-v1-20261001",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "501eb401d28beef5b9971f7198ec23de3cc92aa409f24ebf8bb01255edeb3ea2",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the recent mother's illness relapse and explore the user's coping strategy alongside the previously identified work stress.",
+      "response_quote": "It sounds like your mom's health is a significant concern for you and your family. How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+      "evidence": [
+        {
+          "source_id": "C:T009",
+          "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+        },
+        {
+          "source_id": "C:T005",
+          "quote": "Not well. We both got pretty heated, and it feels like I'm not being heard no matter how often I bring it up."
+        },
+        {
+          "source_id": "C:T003",
+          "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me."
+        }
+      ],
+      "reason": "The reply appropriately validates the specific concern raised in the final turn (T009) while acknowledging the cumulative stress from work (T005, T003) identified earlier in the session. It avoids repeating the status question asked in T008 by pivoting to the user's coping mechanisms. It accurately reflects the context provided without inventing facts or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_quote": "It sounds like your mom's health is a significant concern for you and your family.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          },
+          {
+            "source_id": "C:T007",
+            "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress."
+          }
+        ],
+        "reason": "The unit reflects the user's reported 'mom's illness' and 'relapse recently' causing stress on 'them and us' as stated in T009 and T007."
+      },
+      {
+        "response_quote": "How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          },
+          {
+            "source_id": "C:T005",
+            "quote": "Not well. We both got pretty heated, and it feels like I'm not being heard no matter how often I bring it up."
+          },
+          {
+            "source_id": "C:T003",
+            "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me."
+          },
+          {
+            "source_id": "C:T001",
+            "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything."
+          }
+        ],
+        "reason": "The question addresses the emotional stress of the illness (T009) and explicitly links it to the work issues (argument with manager, paycheck) mentioned in T005 and T003, capturing the dual nature of the user's expressed overwhelm in C:T001."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply effectively synthesizes the current turn's focus on the mother's health relapse with the broader context of work stress discussed earlier in the session, inviting further dialogue about coping strategies without repeating information.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It sounds like your mom's health is a significant concern for you and your family. How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 207
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T005",
+      "quote": "Not well. We both got pretty heated, and it feels like I'm not being heard no matter how often I bring it up.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 109
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T003",
+      "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 107
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "It sounds like your mom's health is a significant concern for you and your family.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 82
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T007",
+      "quote": "Yes, it's been months. On top of that, dealing with my mom's illness is just adding more stress.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 96
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "response": true,
+      "quote": "How are you managing to cope with the emotional stress of her illness, in addition to the work-related issues you're facing?",
+      "positions": [
+        {
+          "start": 83,
+          "end": 207
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T009",
+      "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T005",
+      "quote": "Not well. We both got pretty heated, and it feels like I'm not being heard no matter how often I bring it up.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 109
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T003",
+      "quote": "Well, I had another argument with my manager, Mike, about my paycheck. It's really starting to weigh on me.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 107
+        }
+      ]
+    },
+    {
+      "where": "claims[1]",
+      "source_id": "C:T001",
+      "quote": "Hey, it's been a rough week. I'm just feeling overwhelmed with everything.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 74
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge the recent mother's illness relapse and explore the user's coping strategy alongside the previously identified work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T005",
+        "C:T003"
+      ],
+      "reason": "The reply appropriately validates the specific concern raised in the final turn (T009) while acknowledging the cumulative stress from work (T005, T003) identified earlier in the session. It avoids repeating the status question asked in T008 by pivoting to the user's coping mechanisms. It accurately reflects the context provided without inventing facts or violating boundaries."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T007"
+        ],
+        "reason": "The unit reflects the user's reported 'mom's illness' and 'relapse recently' causing stress on 'them and us' as stated in T009 and T007."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T005",
+          "C:T003",
+          "C:T001"
+        ],
+        "reason": "The question addresses the emotional stress of the illness (T009) and explicitly links it to the work issues (argument with manager, paycheck) mentioned in T005 and T003, capturing the dual nature of the user's expressed overwhelm in C:T001."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "The reply effectively synthesizes the current turn's focus on the mother's health relapse with the broader context of work stress discussed earlier in the session, inviting further dialogue about coping strategies without repeating information.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Acknowledge the recent mother's illness relapse and explore the user's coping strategy alongside the previously identified work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T005",
+        "C:T003"
+      ],
+      "reason": "The reply appropriately validates the specific concern raised in the final turn (T009) while acknowledging the cumulative stress from work (T005, T003) identified earlier in the session. It avoids repeating the status question asked in T008 by pivoting to the user's coping mechanisms. It accurately reflects the context provided without inventing facts or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T007"
+        ],
+        "reason": "The unit reflects the user's reported 'mom's illness' and 'relapse recently' causing stress on 'them and us' as stated in T009 and T007.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T005",
+          "C:T003",
+          "C:T001"
+        ],
+        "reason": "The question addresses the emotional stress of the illness (T009) and explicitly links it to the work issues (argument with manager, paycheck) mentioned in T005 and T003, capturing the dual nature of the user's expressed overwhelm in C:T001.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "The reply effectively synthesizes the current turn's focus on the mother's health relapse with the broader context of work stress discussed earlier in the session, inviting further dialogue about coping strategies without repeating information.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "P3 initial source/speaker protocol, before human labels; old pilot unchanged",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "Acknowledge the recent mother's illness relapse and explore the user's coping strategy alongside the previously identified work stress.",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T009",
+        "C:T007",
+        "C:T005",
+        "C:T003"
+      ],
+      "reason": "The reply appropriately validates the specific concern raised in the final turn (T009) while acknowledging the cumulative stress from work (T005, T003) identified earlier in the session. It avoids repeating the status question asked in T008 by pivoting to the user's coping mechanisms. It accurately reflects the context provided without inventing facts or violating boundaries."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T007"
+        ],
+        "reason": "The unit reflects the user's reported 'mom's illness' and 'relapse recently' causing stress on 'them and us' as stated in T009 and T007."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T009",
+          "C:T005",
+          "C:T003",
+          "C:T001"
+        ],
+        "reason": "The question addresses the emotional stress of the illness (T009) and explicitly links it to the work issues (argument with manager, paycheck) mentioned in T005 and T003, capturing the dual nature of the user's expressed overwhelm in C:T001."
+      }
+    ],
+    "coverage": "The reply effectively synthesizes the current turn's focus on the mother's health relapse with the broader context of work stress discussed earlier in the session, inviting further dialogue about coping strategies without repeating information.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 1.0
+}

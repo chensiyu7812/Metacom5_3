@@ -1,0 +1,188 @@
+{
+  "rows": [
+    {
+      "name": "random_initialization",
+      "maximum_new_J": 0,
+      "maximum_new_G": 0,
+      "note": "CPU initialization; not BC",
+      "historical_mean_estimate_usd": "0E-7",
+      "planning_half_to_twice_mean_usd": [
+        "0E-7",
+        "0E-7"
+      ]
+    },
+    {
+      "name": "train_true_OFF",
+      "maximum_new_J": 24,
+      "maximum_new_G": 0,
+      "note": "24 cached exact G; new proxy J",
+      "historical_mean_estimate_usd": "0.2561160",
+      "planning_half_to_twice_mean_usd": [
+        "0.1280580",
+        "0.5122320"
+      ]
+    },
+    {
+      "name": "train_ON",
+      "maximum_new_J": 32,
+      "maximum_new_G": 32,
+      "note": "upper bound; exact terminals share cache",
+      "historical_mean_estimate_usd": "0.3414880",
+      "planning_half_to_twice_mean_usd": [
+        "0.1707440",
+        "0.6829760"
+      ]
+    },
+    {
+      "name": "dev_OFF",
+      "maximum_new_J": 6,
+      "maximum_new_G": 0,
+      "note": "six cached exact G",
+      "historical_mean_estimate_usd": "0.0640290",
+      "planning_half_to_twice_mean_usd": [
+        "0.0320145",
+        "0.1280580"
+      ]
+    },
+    {
+      "name": "dev_FixedRS1",
+      "maximum_new_J": 6,
+      "maximum_new_G": 0,
+      "note": "six cached exact G; not original FixedDev",
+      "historical_mean_estimate_usd": "0.0640290",
+      "planning_half_to_twice_mean_usd": [
+        "0.0320145",
+        "0.1280580"
+      ]
+    },
+    {
+      "name": "dev_initial_and_post_policy",
+      "maximum_new_J": 12,
+      "maximum_new_G": 12,
+      "note": "one fixed greedy endpoint per policy/prefix",
+      "historical_mean_estimate_usd": "0.1280580",
+      "planning_half_to_twice_mean_usd": [
+        "0.0640290",
+        "0.2561160"
+      ]
+    },
+    {
+      "name": "original_BC_initialization_separate",
+      "maximum_new_J": 336,
+      "maximum_new_G": 0,
+      "note": "not included in diagnostic; no qualified targets/checkpoint",
+      "historical_mean_estimate_usd": "3.5856240",
+      "planning_half_to_twice_mean_usd": [
+        "1.7928120",
+        "7.1712480"
+      ]
+    },
+    {
+      "name": "original_FixedDev_pool_separate",
+      "maximum_new_J": 250,
+      "maximum_new_G": 0,
+      "note": "not included; original 15-plan menu",
+      "historical_mean_estimate_usd": "2.6678750",
+      "planning_half_to_twice_mean_usd": [
+        "1.3339375",
+        "5.3357500"
+      ]
+    },
+    {
+      "name": "old_qualification_reserve_conditional",
+      "maximum_new_J": 59,
+      "maximum_new_G": null,
+      "note": "unchanged target applicability must be decided",
+      "historical_mean_estimate_usd": "0.6296185",
+      "planning_half_to_twice_mean_usd": [
+        "0.31480925",
+        "1.2592370"
+      ]
+    },
+    {
+      "name": "old_recovery_reserve_not_authorized",
+      "maximum_new_J": 4,
+      "maximum_new_G": null,
+      "note": "capacity hold only",
+      "historical_mean_estimate_usd": "0.0426860",
+      "planning_half_to_twice_mean_usd": [
+        "0.0213430",
+        "0.0853720"
+      ]
+    },
+    {
+      "name": "final_20_policy_instances_x48",
+      "maximum_new_J": 960,
+      "maximum_new_G": 960,
+      "note": "future upper bound; no test content read",
+      "historical_mean_estimate_usd": "10.2446400",
+      "planning_half_to_twice_mean_usd": [
+        "5.1223200",
+        "20.4892800"
+      ]
+    }
+  ],
+  "observed_reference_calls": 12,
+  "observed_mean_usd": "0.0106715",
+  "uncertainty": "scenario range, NOT confidence interval or guarantee",
+  "native_single_reservation_usd": ".786432",
+  "all_80_native_max_usd": "62.914560",
+  "proposed_limits": {
+    "judge_calls": 80,
+    "cumulative": 305,
+    "selection_acceptance_capacity": 369,
+    "new_generations": 44,
+    "stage_usd": "3",
+    "trial_usd": "4.25",
+    "shared_usd": "20",
+    "native_single_reserve_usd": "0.786432",
+    "management_requests": {
+      "models": 1,
+      "user/balance": 1
+    },
+    "policy_updates": 2,
+    "train_trajectories": 32,
+    "max_gpu_loads": 4,
+    "idle_wait_seconds_per_load": 300,
+    "final_evaluation_planning_hold_usd": "12"
+  },
+  "current_trial_usd": "1.1189538",
+  "completion_of_80_not_guaranteed": true,
+  "capacity_math": "225+80=305; proposed capacity369 leaves64=59 acceptance+4 recovery+1; current289 cannot cover",
+  "full_research_scenarios": [
+    {
+      "episodes_per_seed": 128,
+      "components": {
+        "common_main_responses": 586,
+        "remaining_train_OFF": 72,
+        "PPO_and_NoText_3_seeds_each": 768,
+        "policy_dev_checks": 216,
+        "supervised_baseline_dev": 162,
+        "core_test": 960
+      },
+      "core_J_slots": 2764,
+      "slots_with_original_reserves": 3111,
+      "current_mean_cost_core": "29.4960260",
+      "current_mean_cost_with_reserves": "33.1990365",
+      "selected": false,
+      "exact_de_duplication_complete": false
+    },
+    {
+      "episodes_per_seed": 384,
+      "components": {
+        "common_main_responses": 586,
+        "remaining_train_OFF": 72,
+        "PPO_and_NoText_3_seeds_each": 2304,
+        "policy_dev_checks": 216,
+        "supervised_baseline_dev": 162,
+        "core_test": 960
+      },
+      "core_J_slots": 4300,
+      "slots_with_original_reserves": 4647,
+      "current_mean_cost_core": "45.8874500",
+      "current_mean_cost_with_reserves": "49.5904605",
+      "selected": false,
+      "exact_de_duplication_complete": false
+    }
+  ]
+}

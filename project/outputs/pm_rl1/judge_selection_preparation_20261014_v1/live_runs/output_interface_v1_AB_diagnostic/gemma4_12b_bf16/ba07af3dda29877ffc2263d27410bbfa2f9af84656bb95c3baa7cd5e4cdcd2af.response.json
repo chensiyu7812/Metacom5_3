@@ -1,0 +1,28 @@
+{
+  "transport": "gemma",
+  "request_identity": "ba07af3dda29877ffc2263d27410bbfa2f9af84656bb95c3baa7cd5e4cdcd2af",
+  "raw_text": "```json\n{\n  \"status\": \"scored\",\n  \"q\": 0,\n  \"q_rationale\": {\n    \"current_need\": \"The user is expressing anxiety and a mix of relief/unsettledness regarding their boss's resignation and concerns about future leadership.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T000\"\n    ],\n    \"reason\": \"The reply contains a severe factual error by flatly contradicting the user's stated fact that their boss resigned. This undermines the entire supportive interaction and creates a hallucination of the user's reality.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"contradicted\",\n      \"severity\": 1,\n      \"source_turn_ids\": [\n        \"C:T000\"\n      ],\n      \"reason\": \"The reply asserts that the boss has not resigned, directly contradicting the user's statement in C:T000: 'I just found out my boss resigned.'\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T008\"\n      ],\n      \"reason\": \"The sentiment of wanting respectful leadership is supported by the user's concern in C:T008 about getting someone who 'respects their employees'.\"\n    }\n  ],\n  \"coverage\": \"The reply addresses the user's statement about the boss's resignation and their desire for respectful leadership.\",\n  \"uncertainty_reasons\": []\n}\n```<turn|>",
+  "input_tokens": 14543,
+  "output_tokens": 415,
+  "last_token": 106,
+  "native_thinking": false,
+  "total_seconds": 39.40086215303745,
+  "gpu_seconds": 39.40086215303745,
+  "load_seconds": 9.72016105701914,
+  "gpu_before": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4, NVIDIA RTX A6000, 15527, 0\n",
+  "peak_allocated_bytes": 31265385984,
+  "peak_reserved_bytes": 34284240896,
+  "token_accounting": {
+    "input": 14543,
+    "total_output": 415,
+    "thinking": 0,
+    "final": 414,
+    "format": 1,
+    "attribution": "partition of actual generated token IDs"
+  },
+  "natural_eos": true,
+  "native_parsed": {
+    "role": "assistant",
+    "content": "```json\n{\n  \"status\": \"scored\",\n  \"q\": 0,\n  \"q_rationale\": {\n    \"current_need\": \"The user is expressing anxiety and a mix of relief/unsettledness regarding their boss's resignation and concerns about future leadership.\",\n    \"response_unit_ids\": [\n      \"R001\",\n      \"R002\"\n    ],\n    \"source_turn_ids\": [\n      \"C:T000\"\n    ],\n    \"reason\": \"The reply contains a severe factual error by flatly contradicting the user's stated fact that their boss resigned. This undermines the entire supportive interaction and creates a hallucination of the user's reality.\"\n  },\n  \"assessments\": [\n    {\n      \"response_unit_id\": \"R001\",\n      \"relation\": \"contradicted\",\n      \"severity\": 1,\n      \"source_turn_ids\": [\n        \"C:T000\"\n      ],\n      \"reason\": \"The reply asserts that the boss has not resigned, directly contradicting the user's statement in C:T000: 'I just found out my boss resigned.'\"\n    },\n    {\n      \"response_unit_id\": \"R002\",\n      \"relation\": \"supported\",\n      \"severity\": 0,\n      \"source_turn_ids\": [\n        \"C:T008\"\n      ],\n      \"reason\": \"The sentiment of wanting respectful leadership is supported by the user's concern in C:T008 about getting someone who 'respects their employees'.\"\n    }\n  ],\n  \"coverage\": \"The reply addresses the user's statement about the boss's resignation and their desire for respectful leadership.\",\n  \"uncertainty_reasons\": []\n}\n```"
+  }
+}

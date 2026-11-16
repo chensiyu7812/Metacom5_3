@@ -1,0 +1,166 @@
+{
+  "response_sha256": "0904c91d1cc6060be2c7210897f417e429ea0171039d0b186274b87fe2f86992",
+  "legal_evidence_identity": "a4e2563a04ce0cdc789d3b5329bbfbb671549d928c7c5dfde929c9f7b2caeac9",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "922c9df19d83cdd027c136dd705c050ccbf02960ad1696e95caf456e7b24aa33",
+  "raw_output_sha256": "46d0b4486bff14765586643060bbd19a2a470d7b6f71a568ad7fec1c9c6f9657",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses sadness and confusion ('wonder why did it happen') following a breakup, specifically mentioning ongoing conflict ('keep fighting'). The turn seeks emotional processing.",
+      "response_quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "evidence": [
+        {
+          "source_id": "C:T005",
+          "quote": "I am so sad and just wonder why did it happen!!!"
+        },
+        {
+          "source_id": "C:T006",
+          "quote": "Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you? "
+        },
+        {
+          "source_id": "C:T007",
+          "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it."
+        }
+      ],
+      "reason": "The reply correctly identifies the context (breakup, unresolved emotions) from the immediate session history (C:T007 'can not get over it', C:T005 'wonder why'). Units R001-R002 offer appropriate validation without imposing external advice. Units R003-R004 pose open-ended, non-leading questions to explore the specific feelings mentioned (confusion, sadness), effectively supporting the user's exploration phase. The response respects boundaries (no diagnosis, no unsolicited solutions) and maintains coherence with the current session flow, distinguishing itself from the slightly more speculative questioning in C:T006 by focusing on emotional impact. No important constraint is missed, and the tone is empathetic."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The reply fully covers the emotional content of the final turn (breakup aftermath, confusion/sadness) without relying on past-session details not relevant to the immediate crisis.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It can be really tough to move on from a breakup, especially when it feels like it ended on a bad note.\n\nIt is normal to feel stuck in those emotions.\n\nCan you tell me more about what you are thinking about when you are feeling sad?\n\nIs it the memories of the relationship, the thought of being apart from her, or something else?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 329
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T005",
+      "quote": "I am so sad and just wonder why did it happen!!!",
+      "positions": [
+        {
+          "start": 0,
+          "end": 48
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T006",
+      "quote": "Do you have no idea? Do you think you might have done something wrong or perhaps she was being unfaithful to you? ",
+      "positions": [
+        {
+          "start": 0,
+          "end": 114
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T007",
+      "quote": "We had simple disagreement and both of us were keep fighting.. now I can not get over it.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 89
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": null,
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses sadness and confusion ('wonder why did it happen') following a breakup, specifically mentioning ongoing conflict ('keep fighting'). The turn seeks emotional processing.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "The reply correctly identifies the context (breakup, unresolved emotions) from the immediate session history (C:T007 'can not get over it', C:T005 'wonder why'). Units R001-R002 offer appropriate validation without imposing external advice. Units R003-R004 pose open-ended, non-leading questions to explore the specific feelings mentioned (confusion, sadness), effectively supporting the user's exploration phase. The response respects boundaries (no diagnosis, no unsolicited solutions) and maintains coherence with the current session flow, distinguishing itself from the slightly more speculative questioning in C:T006 by focusing on emotional impact. No important constraint is missed, and the tone is empathetic."
+    },
+    "claims": [],
+    "misuse_findings": [],
+    "coverage": "The reply fully covers the emotional content of the final turn (breakup aftermath, confusion/sadness) without relying on past-session details not relevant to the immediate crisis.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses sadness and confusion ('wonder why did it happen') following a breakup, specifically mentioning ongoing conflict ('keep fighting'). The turn seeks emotional processing.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "The reply correctly identifies the context (breakup, unresolved emotions) from the immediate session history (C:T007 'can not get over it', C:T005 'wonder why'). Units R001-R002 offer appropriate validation without imposing external advice. Units R003-R004 pose open-ended, non-leading questions to explore the specific feelings mentioned (confusion, sadness), effectively supporting the user's exploration phase. The response respects boundaries (no diagnosis, no unsolicited solutions) and maintains coherence with the current session flow, distinguishing itself from the slightly more speculative questioning in C:T006 by focusing on emotional impact. No important constraint is missed, and the tone is empathetic."
+    },
+    "assessments": [],
+    "coverage": "The reply fully covers the emotional content of the final turn (breakup aftermath, confusion/sadness) without relying on past-session details not relevant to the immediate crisis.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses sadness and confusion ('wonder why did it happen') following a breakup, specifically mentioning ongoing conflict ('keep fighting'). The turn seeks emotional processing.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T005",
+        "C:T006",
+        "C:T007"
+      ],
+      "reason": "The reply correctly identifies the context (breakup, unresolved emotions) from the immediate session history (C:T007 'can not get over it', C:T005 'wonder why'). Units R001-R002 offer appropriate validation without imposing external advice. Units R003-R004 pose open-ended, non-leading questions to explore the specific feelings mentioned (confusion, sadness), effectively supporting the user's exploration phase. The response respects boundaries (no diagnosis, no unsolicited solutions) and maintains coherence with the current session flow, distinguishing itself from the slightly more speculative questioning in C:T006 by focusing on emotional impact. No important constraint is missed, and the tone is empathetic."
+    },
+    "assessments": [],
+    "coverage": "The reply fully covers the emotional content of the final turn (breakup aftermath, confusion/sadness) without relying on past-session details not relevant to the immediate crisis.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

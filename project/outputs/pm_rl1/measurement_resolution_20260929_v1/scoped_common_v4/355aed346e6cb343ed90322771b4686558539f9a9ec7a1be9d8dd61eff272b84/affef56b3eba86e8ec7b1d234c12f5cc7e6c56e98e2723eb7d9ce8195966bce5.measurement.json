@@ -1,0 +1,271 @@
+{
+  "response_sha256": "9a8b39bb206c9462c495c13804d40534a41e0ca4c8d4915dbc1513953d3c59fc",
+  "legal_evidence_identity": "fc36c27e76ea0c081bb80223c09a0c988d30d3aeabfe79ac7f1314d68acc9418",
+  "rubric_identity": "ebcc6010f24acb73991a414ebabd75ebc8eac5cdbbeac9e73a32c28083a20571",
+  "judge_runtime_identity": "355aed346e6cb343ed90322771b4686558539f9a9ec7a1be9d8dd61eff272b84",
+  "parser_version": "pm-rl1-qm-scoped-flat-v4",
+  "measurement_draw_id": "f1750f0602892ebd8258e891d711498d0ada248b2fb980e133b836fee6eea6c2",
+  "raw_output_sha256": "a18a0ba05a14890a94825b49471baf337189848799b349c6f4e1af68c14984a0",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 4,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses difficulty reaching out for support ('I haven't yet') and mistrust ('trust it'll come through'). The immediate need is validation of this difficulty and maintaining the supportive alliance.",
+      "response_quote": "It is like you are carrying the weight of uncertainty.\n\nThat can be really tough.\n\nHave you thought about talking to someone you trust, like a friend or family member, about how you are feeling?\n\nSometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "evidence": [
+        {
+          "source_id": "C:T012",
+          "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+        }
+      ],
+      "reason": "The reply successfully validates the user's emotional state ('carrying the weight', 'tough') without dismissing their hesitation. It gently reinforces the option of seeking support consistent with prior turns (C:T011) while respecting the user's stated constraint about difficulty trusting. There are no factual errors, identity mismatches, or boundary violations. The brevity and directness match the turn's length and emotional weight, fully meeting the turn's requirements for empathetic responsiveness."
+    },
+    "claims": [
+      {
+        "response_quote": "Have you thought about talking to someone you trust, like a friend or family member, about how you are feeling?",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T011",
+            "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?"
+          },
+          {
+            "source_id": "C:T012",
+            "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through."
+          }
+        ],
+        "reason": "Suggests talking to trusted people (friends/family) which aligns with history confirming contact exists (H007) and the topic raised in C:T011, framing it as a question rather than demand."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All four units in the reply were analyzed.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "It is like you are carrying the weight of uncertainty.\n\nThat can be really tough.\n\nHave you thought about talking to someone you trust, like a friend or family member, about how you are feeling?\n\nSometimes just sharing your emotions with someone who cares about you can help you feel a bit lighter.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 298
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "Have you thought about talking to someone you trust, like a friend or family member, about how you are feeling?",
+      "positions": [
+        {
+          "start": 83,
+          "end": 194
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T011",
+      "quote": "Relationships can be really challenging. You've been through so much, and it’s okay to feel affected by it. Are you considering reaching out to anyone else for support?",
+      "positions": [
+        {
+          "start": 0,
+          "end": 168
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "I haven’t yet. It’s hard for me to ask for help or even trust it’ll come through.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "The user expresses difficulty reaching out for support ('I haven't yet') and mistrust ('trust it'll come through'). The immediate need is validation of this difficulty and maintaining the supportive alliance.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply successfully validates the user's emotional state ('carrying the weight', 'tough') without dismissing their hesitation. It gently reinforces the option of seeking support consistent with prior turns (C:T011) while respecting the user's stated constraint about difficulty trusting. There are no factual errors, identity mismatches, or boundary violations. The brevity and directness match the turn's length and emotional weight, fully meeting the turn's requirements for empathetic responsiveness."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011",
+          "C:T012"
+        ],
+        "reason": "Suggests talking to trusted people (friends/family) which aligns with history confirming contact exists (H007) and the topic raised in C:T011, framing it as a question rather than demand."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "All four units in the reply were analyzed.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses difficulty reaching out for support ('I haven't yet') and mistrust ('trust it'll come through'). The immediate need is validation of this difficulty and maintaining the supportive alliance.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply successfully validates the user's emotional state ('carrying the weight', 'tough') without dismissing their hesitation. It gently reinforces the option of seeking support consistent with prior turns (C:T011) while respecting the user's stated constraint about difficulty trusting. There are no factual errors, identity mismatches, or boundary violations. The brevity and directness match the turn's length and emotional weight, fully meeting the turn's requirements for empathetic responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Reflective statement summarizing the user's sentiment.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Generic validation statement.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011",
+          "C:T012"
+        ],
+        "reason": "Suggests talking to trusted people (friends/family) which aligns with history confirming contact exists (H007) and the topic raised in C:T011, framing it as a question rather than demand.",
+        "kind": "personal_fact"
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "General reassurance rationale.",
+        "kind": "non_factual"
+      }
+    ],
+    "coverage": "All four units in the reply were analyzed.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "one train-development scope clarification; reused exam, not unseen validation",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 4,
+    "q_rationale": {
+      "current_need": "The user expresses difficulty reaching out for support ('I haven't yet') and mistrust ('trust it'll come through'). The immediate need is validation of this difficulty and maintaining the supportive alliance.",
+      "response_unit_ids": [
+        "R001",
+        "R002",
+        "R003",
+        "R004"
+      ],
+      "source_turn_ids": [
+        "C:T012"
+      ],
+      "reason": "The reply successfully validates the user's emotional state ('carrying the weight', 'tough') without dismissing their hesitation. It gently reinforces the option of seeking support consistent with prior turns (C:T011) while respecting the user's stated constraint about difficulty trusting. There are no factual errors, identity mismatches, or boundary violations. The brevity and directness match the turn's length and emotional weight, fully meeting the turn's requirements for empathetic responsiveness."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Reflective statement summarizing the user's sentiment."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "Generic validation statement."
+      },
+      {
+        "response_unit_id": "R003",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T011",
+          "C:T012"
+        ],
+        "reason": "Suggests talking to trusted people (friends/family) which aligns with history confirming contact exists (H007) and the topic raised in C:T011, framing it as a question rather than demand."
+      },
+      {
+        "response_unit_id": "R004",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T012"
+        ],
+        "reason": "General reassurance rationale."
+      }
+    ],
+    "coverage": "All four units in the reply were analyzed.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair"
+}

@@ -1,0 +1,21 @@
+{
+  "protocol": "rl1-e0-finite-support-bc-then-ppo-v1",
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "bc_epochs": 500,
+  "bc_lr": 0.003,
+  "ppo_episodes": 128,
+  "ppo_defaults": "unchanged e0_learning.PPO defaults",
+  "reason": "from-scratch 4096-episode diagnostic learned complementarity but did not reliably stop; test the originally planned supervised initialization route",
+  "no_hyperparameter_grid": true,
+  "no_outcome_based_extension": true,
+  "critic_oracle_fit": false,
+  "complete_toy_support_only": true,
+  "real_PM_training": false,
+  "LLM_calls": 0,
+  "module_sha256": "016c5a123cf76280080f0bb6e6b2dc6429bee7aa42521981aab34f255c3d77cc",
+  "runner_sha256": "28b1f97d07aec4df0b0a289b226e4131e3f09f237b47f362b53908423e38eeae"
+}

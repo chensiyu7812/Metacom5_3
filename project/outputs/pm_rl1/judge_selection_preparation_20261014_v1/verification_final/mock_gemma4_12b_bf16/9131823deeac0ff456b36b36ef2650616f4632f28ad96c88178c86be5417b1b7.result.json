@@ -1,0 +1,323 @@
+{
+  "request": {
+    "candidate": "gemma4_12b_bf16",
+    "configuration_identity": "56c010a0530671b877d89b339638c7db5db0ff54e7affc2fd8982ed54bdb189b",
+    "phase": "development",
+    "ordinal": 21,
+    "item_key": "dev26A",
+    "draw": "primary",
+    "messages_identity": "8a14348f74435ae7e972145ba5b66ce5f31bbdb72da94b99c5e9f20a4e7df04a",
+    "schema_identity": "66a5e1dc12a795d6efa45791d39796e92c419f62cd61ee49b93b5f1db08c990e",
+    "seed": 2637114857,
+    "input_utf8_bytes": 31296,
+    "request_id": "9131823deeac0ff456b36b36ef2650616f4632f28ad96c88178c86be5417b1b7"
+  },
+  "mode": "mock",
+  "measurement": {
+    "response_sha256": "bfc3cbc3692e807282ed1c7365e7922d1b283bd8d6d6c44bc81da9426fb3fb5a",
+    "legal_evidence_identity": "6ea81f1c5657b032d3acaf9233beaba13fb22112658e9ae7a186f2bfd6252da4",
+    "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+    "judge_runtime_identity": "56c010a0530671b877d89b339638c7db5db0ff54e7affc2fd8982ed54bdb189b",
+    "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+    "measurement_draw_id": "9131823deeac0ff456b36b36ef2650616f4632f28ad96c88178c86be5417b1b7",
+    "raw_output_sha256": "7b235f34f146cfc76d5a264798bedfd7efb491f946bfdd52e00a89ffac25b78e",
+    "reward_eligible": false,
+    "measurement_status": "semantic_uncertainty",
+    "q": null,
+    "m": null,
+    "parsed": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+        "evidence": [
+          {
+            "source_id": "C:T009",
+            "quote": "She had another relapse recently, so things have been pretty tough on her and us."
+          }
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_quote": "I'm so sorry to hear that your mom had another relapse.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "It sounds like you and your family are carrying a heavy load right now.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_quote": "How are you managing to hold things together when it feels like everything is piling up?",
+          "relation": "uncertain",
+          "severity": 0,
+          "evidence": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "exact_span_checks": [
+      {
+        "where": "q_rationale",
+        "response": true,
+        "quote": "I'm so sorry to hear that your mom had another relapse. It sounds like you and your family are carrying a heavy load right now. Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.\n\nHow are you managing to hold things together when it feels like everything is piling up?",
+        "positions": [
+          {
+            "start": 0,
+            "end": 310
+          }
+        ]
+      },
+      {
+        "where": "q_rationale",
+        "source_id": "C:T009",
+        "quote": "She had another relapse recently, so things have been pretty tough on her and us.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 81
+          }
+        ]
+      },
+      {
+        "where": "claims[0]",
+        "response": true,
+        "quote": "I'm so sorry to hear that your mom had another relapse.",
+        "positions": [
+          {
+            "start": 0,
+            "end": 55
+          }
+        ]
+      },
+      {
+        "where": "claims[1]",
+        "response": true,
+        "quote": "It sounds like you and your family are carrying a heavy load right now.",
+        "positions": [
+          {
+            "start": 56,
+            "end": 127
+          }
+        ]
+      },
+      {
+        "where": "claims[2]",
+        "response": true,
+        "quote": "Dealing with her illness on top of the ongoing issues at work must feel incredibly draining.",
+        "positions": [
+          {
+            "start": 128,
+            "end": 220
+          }
+        ]
+      },
+      {
+        "where": "claims[3]",
+        "response": true,
+        "quote": "How are you managing to hold things together when it feels like everything is piling up?",
+        "positions": [
+          {
+            "start": 222,
+            "end": 310
+          }
+        ]
+      }
+    ],
+    "format_transformations": [],
+    "factual_precision": "requires_semantic_audit",
+    "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+    "indexed_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "m": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "claims": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "misuse_findings": [],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+    "semantic_validation": false,
+    "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+    "scoped_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved",
+          "kind": "personal_fact"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "derived_m": null,
+    "derived_error_indexes": [],
+    "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+    "semantic_revision": "Proposed single post-human revision; never implies qualification",
+    "flat_judge_output": {
+      "status": "uncertain",
+      "q": null,
+      "q_rationale": {
+        "current_need": "MOCK only; no semantic judgment.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T009"
+        ],
+        "reason": "MOCK uncertainty; no labels inferred."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "uncertain",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "MOCK unresolved"
+        }
+      ],
+      "coverage": "MOCK only; complete source supplied but not semantically evaluated.",
+      "uncertainty_reasons": [
+        "Synthetic offline plumbing check; not a real score."
+      ]
+    },
+    "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+    "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+    "candidate_utility": null
+  },
+  "elapsed_seconds": 0.002396431053057313,
+  "accounted_peak_usd": "0",
+  "reservation_retained": false
+}

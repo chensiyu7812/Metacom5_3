@@ -1,0 +1,523 @@
+{
+  "slot_id": "bf4667e214e8ba65eccdc49cbc60500f1fa5291c23b5e2003a496746fccf7e4c",
+  "request_identity": "65ec6f2dc83fe7b71c6137e4b36d9eb5acb97d7e20a34b2f83aa1222d7529193",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 2,
+      "q_rationale": {
+        "current_need": "Acknowledge that things have been tough without assuming an unstated cause, and invite John to elaborate if he wants to.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003"
+        ],
+        "source_turn_ids": [
+          "C:T002",
+          "H001:T003",
+          "H002:T003"
+        ],
+        "reason": "R001 and R003 appropriately acknowledge the vague distress and invite elaboration, but R002 introduces job hunting as a specific current difficulty even though the complete evidence only supports general difficulty and mentions past sleep and marital/drinking concerns. That unsupported personal detail is an important responsiveness defect, though the reply still offers an open invitation to clarify."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "John explicitly said things have been a bit tough lately, so this empathic acknowledgment is directly supported."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T002"
+          ],
+          "reason": "The general reflection that John is going through a challenging time is supported by his statement that things have been tough lately."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "unsupported",
+          "severity": 1,
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "The specific claim that job hunting is especially part of the current difficulty has no support: the current turn only says things are tough, and the past sessions mention sleep problems and drinking affecting marriage, not job hunting. This invents a specific present cause rather than merely reflecting the stated distress."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "This is an open invitation to elaborate about what is difficult right now, not a personal factual assertion."
+        }
+      ],
+      "coverage": "Checked the complete current prefix and both legal past sessions. C:T002 supports the general acknowledgment of tough times; H001 contains sleep concerns and H002 contains drinking/marital concerns, with no job-hunting reference anywhere in the supplied record. Thus the job-hunting clause is unsupported, while the surrounding empathy and open question are responsive.",
+      "uncertainty_reasons": []
+    },
+    "q": 2,
+    "m": 1,
+    "U": -0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "38f0061279efc1a6bc748660d87cce6ece6c2b7b6acdc6442c4c8004f2f6fff6",
+      "legal_evidence_identity": "e103f1b7f151403a237b2f387f72232f327453366d9a2abd5059da7a7f750d00",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "bf4667e214e8ba65eccdc49cbc60500f1fa5291c23b5e2003a496746fccf7e4c",
+      "raw_output_sha256": "5f2cacd52ad86447574eede5c9f160642e941f0ad3d94772ee5da7c31a173147",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 2,
+      "m": 1,
+      "parsed": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "Acknowledge that things have been tough without assuming an unstated cause, and invite John to elaborate if he wants to.",
+          "response_quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "evidence": [
+            {
+              "source_id": "C:T002",
+              "quote": "Honestly, things have been a bit tough lately."
+            },
+            {
+              "source_id": "H001:T003",
+              "quote": "yes.i have sleeping problem"
+            },
+            {
+              "source_id": "H002:T003",
+              "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+            }
+          ],
+          "reason": "R001 and R003 appropriately acknowledge the vague distress and invite elaboration, but R002 introduces job hunting as a specific current difficulty even though the complete evidence only supports general difficulty and mentions past sleep and marital/drinking concerns. That unsupported personal detail is an important responsiveness defect, though the reply still offers an open invitation to clarify."
+        },
+        "claims": [
+          {
+            "response_quote": "I'm sorry to hear that things have been tough for you lately.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "John explicitly said things have been a bit tough lately, so this empathic acknowledgment is directly supported."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              }
+            ],
+            "reason": "The general reflection that John is going through a challenging time is supported by his statement that things have been tough lately."
+          },
+          {
+            "response_quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+            "relation": "unsupported",
+            "severity": 1,
+            "evidence": [
+              {
+                "source_id": "C:T002",
+                "quote": "Honestly, things have been a bit tough lately."
+              },
+              {
+                "source_id": "H001:T003",
+                "quote": "yes.i have sleeping problem"
+              },
+              {
+                "source_id": "H002:T003",
+                "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now"
+              }
+            ],
+            "reason": "The specific claim that job hunting is especially part of the current difficulty has no support: the current turn only says things are tough, and the past sessions mention sleep problems and drinking affecting marriage, not job hunting. This invents a specific present cause rather than merely reflecting the stated distress."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Checked the complete current prefix and both legal past sessions. C:T002 supports the general acknowledgment of tough times; H001 contains sleep concerns and H002 contains drinking/marital concerns, with no job-hunting reference anywhere in the supplied record. Thus the job-hunting clause is unsupported, while the surrounding empathy and open question are responsive.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately. It sounds like you're going through a challenging time, especially when it comes to job hunting. Would you like to talk about what's specifically making things difficult right now?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 242
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "H001:T003",
+          "quote": "yes.i have sleeping problem",
+          "positions": [
+            {
+              "start": 0,
+              "end": 27
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "H002:T003",
+          "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "I'm sorry to hear that things have been tough for you lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 61
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "It sounds like you're going through a challenging time, especially when it comes to job hunting.",
+          "positions": [
+            {
+              "start": 62,
+              "end": 158
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T002",
+          "quote": "Honestly, things have been a bit tough lately.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 46
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H001:T003",
+          "quote": "yes.i have sleeping problem",
+          "positions": [
+            {
+              "start": 0,
+              "end": 27
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H002:T003",
+          "quote": "I had a drinking challenge which has been affecting my marriage for quit sometime now",
+          "positions": [
+            {
+              "start": 0,
+              "end": 85
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "m": 1,
+        "q_rationale": {
+          "current_need": "Acknowledge that things have been tough without assuming an unstated cause, and invite John to elaborate if he wants to.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "R001 and R003 appropriately acknowledge the vague distress and invite elaboration, but R002 introduces job hunting as a specific current difficulty even though the complete evidence only supports general difficulty and mentions past sleep and marital/drinking concerns. That unsupported personal detail is an important responsiveness defect, though the reply still offers an open invitation to clarify."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "John explicitly said things have been a bit tough lately, so this empathic acknowledgment is directly supported."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general reflection that John is going through a challenging time is supported by his statement that things have been tough lately."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The specific claim that job hunting is especially part of the current difficulty has no support: the current turn only says things are tough, and the past sessions mention sleep problems and drinking affecting marriage, not job hunting. This invents a specific present cause rather than merely reflecting the stated distress."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Checked the complete current prefix and both legal past sessions. C:T002 supports the general acknowledgment of tough times; H001 contains sleep concerns and H002 contains drinking/marital concerns, with no job-hunting reference anywhere in the supplied record. Thus the job-hunting clause is unsupported, while the surrounding empathy and open question are responsive.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "Acknowledge that things have been tough without assuming an unstated cause, and invite John to elaborate if he wants to.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "R001 and R003 appropriately acknowledge the vague distress and invite elaboration, but R002 introduces job hunting as a specific current difficulty even though the complete evidence only supports general difficulty and mentions past sleep and marital/drinking concerns. That unsupported personal detail is an important responsiveness defect, though the reply still offers an open invitation to clarify."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "John explicitly said things have been a bit tough lately, so this empathic acknowledgment is directly supported.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general reflection that John is going through a challenging time is supported by his statement that things have been tough lately.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The specific claim that job hunting is especially part of the current difficulty has no support: the current turn only says things are tough, and the past sessions mention sleep problems and drinking affecting marriage, not job hunting. This invents a specific present cause rather than merely reflecting the stated distress.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open invitation to elaborate about what is difficult right now, not a personal factual assertion.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Checked the complete current prefix and both legal past sessions. C:T002 supports the general acknowledgment of tough times; H001 contains sleep concerns and H002 contains drinking/marital concerns, with no job-hunting reference anywhere in the supplied record. Thus the job-hunting clause is unsupported, while the surrounding empathy and open question are responsive.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 1,
+      "derived_error_indexes": [
+        2
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 2,
+        "q_rationale": {
+          "current_need": "Acknowledge that things have been tough without assuming an unstated cause, and invite John to elaborate if he wants to.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003"
+          ],
+          "source_turn_ids": [
+            "C:T002",
+            "H001:T003",
+            "H002:T003"
+          ],
+          "reason": "R001 and R003 appropriately acknowledge the vague distress and invite elaboration, but R002 introduces job hunting as a specific current difficulty even though the complete evidence only supports general difficulty and mentions past sleep and marital/drinking concerns. That unsupported personal detail is an important responsiveness defect, though the reply still offers an open invitation to clarify."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "John explicitly said things have been a bit tough lately, so this empathic acknowledgment is directly supported."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T002"
+            ],
+            "reason": "The general reflection that John is going through a challenging time is supported by his statement that things have been tough lately."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "unsupported",
+            "severity": 1,
+            "source_turn_ids": [
+              "C:T002",
+              "H001:T003",
+              "H002:T003"
+            ],
+            "reason": "The specific claim that job hunting is especially part of the current difficulty has no support: the current turn only says things are tough, and the past sessions mention sleep problems and drinking affecting marriage, not job hunting. This invents a specific present cause rather than merely reflecting the stated distress."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "This is an open invitation to elaborate about what is difficult right now, not a personal factual assertion."
+          }
+        ],
+        "coverage": "Checked the complete current prefix and both legal past sessions. C:T002 supports the general acknowledgment of tough times; H001 contains sleep concerns and H002 contains drinking/marital concerns, with no job-hunting reference anywhere in the supplied record. Thus the job-hunting clause is unsupported, while the surrounding empathy and open question are responsive.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": -0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "5f2cacd52ad86447574eede5c9f160642e941f0ad3d94772ee5da7c31a173147",
+      "adapted_final_sha256": "5f2cacd52ad86447574eede5c9f160642e941f0ad3d94772ee5da7c31a173147",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "22bc262f8aee60c3f7a1efef4fe402f8ee742302faa3e26db9189621d0a7c936",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0046842",
+    "usage_upper_usd": "0.0046842",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 5714,
+    "completion_tokens": 2475,
+    "total_tokens": 8189,
+    "prompt_tokens_details": {
+      "cached_tokens": 3072
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1986
+    },
+    "prompt_cache_hit_tokens": 3072,
+    "prompt_cache_miss_tokens": 2642
+  },
+  "elapsed_seconds": 13.888361866003834,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-context-task-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 4,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-context-task-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

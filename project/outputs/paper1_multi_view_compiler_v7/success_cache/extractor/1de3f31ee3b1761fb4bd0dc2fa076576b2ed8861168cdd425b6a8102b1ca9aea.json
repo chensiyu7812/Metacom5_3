@@ -1,0 +1,108 @@
+{
+  "protocol": "paper1-multi-view-success-cache-v1",
+  "identity": {
+    "protocol": "paper1-multi-view-success-cache-v1",
+    "phase": "extractor",
+    "compiler_version": "paper1-qwen-multi-view-memory-compiler-v7",
+    "provider": "Alibaba Cloud Model Studio",
+    "region": "Singapore (International)",
+    "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-235b-a22b-instruct-2507",
+    "request_parameters": {
+      "temperature": 0.0,
+      "max_tokens": 2048,
+      "maximum_prompt_tokens": 16384,
+      "prompt_token_safety_margin": 128,
+      "seed": 0,
+      "estimated_prompt_tokens": 2685,
+      "reserved_prompt_tokens": 2813,
+      "tokenizer_identity": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4:a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+      "profile_context_tokens": 466
+    },
+    "prompt_sha256": "0472faf2fd3d128c6da3e55a46f56276c789329dc6c5e93a96c93e19e373f01a",
+    "schema_sha256": "44ebb54c8fe9a8b7d7dd981bf9ef117cda310395aaee6975d6cfca39d6dcd45b",
+    "source_sha256": "f74dbc73fe23c8612c32c7eb33f42d887bbc622f5b718fdc58a3964c4fa24448",
+    "prior_profile_sha256": "0f859d7b050726f102e5ece16a5205f0a366d6d68b87fd6b44f3ec956bddb3da",
+    "request_payload_sha256": "a0561c1b1e8ed83b400faaa914efd5f6f149cb8c9cfb329b9d9d5de0b5f4fa13"
+  },
+  "result": {
+    "parsed": {
+      "v": "paper1-multi-view-memory-schema-v1",
+      "o": "p14",
+      "s": "p14_conv_3",
+      "p": [
+        {
+          "i": "p14p1",
+          "t": "durable_health_constraint",
+          "k": "pregnancy_complication_diagnosed",
+          "v": "diagnosed with pregnancy complications during a recent check-up, increasing fear due to history of prior pregnancy losses",
+          "s": [
+            {
+              "i": "p14_conv_3:13"
+            }
+          ]
+        },
+        {
+          "i": "p14p2",
+          "t": "stable_relationship_role",
+          "k": "romantic_partner_employment_situation_impact",
+          "v": "partner has unpredictable work schedule due to coworkers' unreliability, leading to frequent disruptions in shared plans",
+          "s": [
+            {
+              "i": "p14_conv_3:9"
+            },
+            {
+              "i": "p14_conv_3:11"
+            }
+          ]
+        }
+      ],
+      "e": [
+        {
+          "i": "p14e1",
+          "t": "relationship_event",
+          "z": "occurred",
+          "n": "had a heated argument with romantic partner Dan about his broken promise to be home for dinner due to last-minute work extension",
+          "s": [
+            {
+              "i": "p14_conv_3:3"
+            },
+            {
+              "i": "p14_conv_3:9"
+            }
+          ]
+        },
+        {
+          "i": "p14e2",
+          "t": "coping_attempt",
+          "z": "ongoing_stage",
+          "n": "repeatedly expressed feelings to romantic partner about need for stability and reliability, but without perceived change",
+          "s": [
+            {
+              "i": "p14_conv_3:7"
+            }
+          ]
+        },
+        {
+          "i": "p14e3",
+          "t": "support_experience",
+          "z": "occurred",
+          "n": "sought emotional support from a confidant regarding relationship strain and anxiety related to pregnancy complications",
+          "s": [
+            {
+              "i": "p14_conv_3:1"
+            }
+          ]
+        }
+      ]
+    },
+    "response_sha256": "860ca4df683e53d5c413b7ac682eb1f554fd09ca1d11d8e9dd183365a628da0d",
+    "usage": {
+      "prompt_tokens": 2687,
+      "completion_tokens": 505,
+      "total_tokens": 3192
+    },
+    "latency_ms": 6390.677044983022,
+    "provider_finish_reason": "stop"
+  }
+}

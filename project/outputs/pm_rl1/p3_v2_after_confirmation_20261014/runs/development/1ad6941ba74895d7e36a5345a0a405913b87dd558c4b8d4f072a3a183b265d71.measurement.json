@@ -1,0 +1,225 @@
+{
+  "response_sha256": "22fe0dfc4428796db2afbc13e496ea23bb48eb52f2ec3930badad08d5fb5ff8a",
+  "legal_evidence_identity": "bd4c73276b4513951cd258adb7de9c7c64c8f1906fba3c6ac13d669287ac5aec",
+  "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+  "judge_runtime_identity": "3ab65bcfd8728161411ce123a89a3d19631ba6c03952d8482d2b1fb74ce18b39",
+  "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+  "measurement_draw_id": "primary",
+  "raw_output_sha256": "29fd635d774cb3289b5c21b00a57ddc282189e9c85af3c6939118820b2809846",
+  "reward_eligible": false,
+  "measurement_status": "measured_candidate",
+  "q": 3,
+  "m": 0,
+  "parsed": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge user's gratitude for listening and provide supportive closure",
+      "response_quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+      "evidence": [
+        {
+          "source_id": "C:T016",
+          "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this."
+        }
+      ],
+      "reason": "The response appropriately validates the user's expression of gratitude in R001. R002 offers supportive permission regarding decision timing, which is contextually relevant but slightly redundant given the immediate prior historical turn (C:T015) also advised giving space. While supportive, it adds a layer of advice beyond the brief acknowledgment primarily requested in C:T016."
+    },
+    "claims": [
+      {
+        "response_quote": "You can take some time before deciding what to do next.",
+        "relation": "supported",
+        "severity": 0,
+        "evidence": [
+          {
+            "source_id": "C:T014",
+            "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes."
+          },
+          {
+            "source_id": "C:T012",
+            "quote": "I'm trying to keep my options open. There's the internship offer, but I'm not sure about committing to it right now."
+          }
+        ],
+        "reason": "Aligns with user's previously stated intention in C:T014 to 'think on it more' and the internship context in C:T012; confirms permission without asserting completed actions."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses gratitude and validates autonomous pacing in the decision-making process.",
+    "uncertainty_reasons": []
+  },
+  "exact_span_checks": [
+    {
+      "where": "q_rationale",
+      "response": true,
+      "quote": "I am glad you feel heard. You can take some time before deciding what to do next.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "q_rationale",
+      "source_id": "C:T016",
+      "quote": "Thanks for listening and for understanding. It's comforting to have someone to talk to about this.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 98
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "response": true,
+      "quote": "You can take some time before deciding what to do next.",
+      "positions": [
+        {
+          "start": 26,
+          "end": 81
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T014",
+      "quote": "I appreciate you saying that. I guess I'll think on it more after this initial disappointment passes.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 101
+        }
+      ]
+    },
+    {
+      "where": "claims[0]",
+      "source_id": "C:T012",
+      "quote": "I'm trying to keep my options open. There's the internship offer, but I'm not sure about committing to it right now.",
+      "positions": [
+        {
+          "start": 0,
+          "end": 116
+        }
+      ]
+    }
+  ],
+  "format_transformations": [],
+  "factual_precision": "requires_semantic_audit",
+  "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+  "indexed_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "m": 0,
+    "q_rationale": {
+      "current_need": "Acknowledge user's gratitude for listening and provide supportive closure",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response appropriately validates the user's expression of gratitude in R001. R002 offers supportive permission regarding decision timing, which is contextually relevant but slightly redundant given the immediate prior historical turn (C:T015) also advised giving space. While supportive, it adds a layer of advice beyond the brief acknowledgment primarily requested in C:T016."
+    },
+    "claims": [
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014",
+          "C:T012"
+        ],
+        "reason": "Aligns with user's previously stated intention in C:T014 to 'think on it more' and the internship context in C:T012; confirms permission without asserting completed actions."
+      }
+    ],
+    "misuse_findings": [],
+    "coverage": "Addresses gratitude and validates autonomous pacing in the decision-making process.",
+    "uncertainty_reasons": []
+  },
+  "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+  "semantic_validation": false,
+  "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+  "scoped_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Acknowledge user's gratitude for listening and provide supportive closure",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response appropriately validates the user's expression of gratitude in R001. R002 offers supportive permission regarding decision timing, which is contextually relevant but slightly redundant given the immediate prior historical turn (C:T015) also advised giving space. While supportive, it adds a layer of advice beyond the brief acknowledgment primarily requested in C:T016."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "not_applicable",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic supportive acknowledgment reflecting gratitude; asserts no specific personal facts about the user.",
+        "kind": "non_factual"
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014",
+          "C:T012"
+        ],
+        "reason": "Aligns with user's previously stated intention in C:T014 to 'think on it more' and the internship context in C:T012; confirms permission without asserting completed actions.",
+        "kind": "personal_fact"
+      }
+    ],
+    "coverage": "Addresses gratitude and validates autonomous pacing in the decision-making process.",
+    "uncertainty_reasons": []
+  },
+  "derived_m": 0,
+  "derived_error_indexes": [],
+  "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+  "semantic_revision": "Proposed single post-human revision; never implies qualification",
+  "flat_judge_output": {
+    "status": "scored",
+    "q": 3,
+    "q_rationale": {
+      "current_need": "Acknowledge user's gratitude for listening and provide supportive closure",
+      "response_unit_ids": [
+        "R001",
+        "R002"
+      ],
+      "source_turn_ids": [
+        "C:T016"
+      ],
+      "reason": "The response appropriately validates the user's expression of gratitude in R001. R002 offers supportive permission regarding decision timing, which is contextually relevant but slightly redundant given the immediate prior historical turn (C:T015) also advised giving space. While supportive, it adds a layer of advice beyond the brief acknowledgment primarily requested in C:T016."
+    },
+    "assessments": [
+      {
+        "response_unit_id": "R001",
+        "relation": "non_factual",
+        "severity": 0,
+        "source_turn_ids": [],
+        "reason": "Generic supportive acknowledgment reflecting gratitude; asserts no specific personal facts about the user."
+      },
+      {
+        "response_unit_id": "R002",
+        "relation": "supported",
+        "severity": 0,
+        "source_turn_ids": [
+          "C:T014",
+          "C:T012"
+        ],
+        "reason": "Aligns with user's previously stated intention in C:T014 to 'think on it more' and the internship context in C:T012; confirms permission without asserting completed actions."
+      }
+    ],
+    "coverage": "Addresses gratitude and validates autonomous pacing in the decision-making process.",
+    "uncertainty_reasons": []
+  },
+  "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+  "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+  "candidate_utility": 0.75
+}

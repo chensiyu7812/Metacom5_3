@@ -1,0 +1,707 @@
+{
+  "slot_id": "c009ec73c45531c9d461375507753baa41d54978221d14c7b9ffbeddd684cfab",
+  "request_identity": "0dc1fc7bbb4355434b5f368359402108a2abc0d187bad5ab3832cd9d55a8148b",
+  "component": "joint",
+  "technical_valid": true,
+  "evaluation": {
+    "technical_valid": true,
+    "model_unknown": false,
+    "value": {
+      "status": "scored",
+      "q": 3,
+      "q_rationale": {
+        "current_need": "The seeker is angry about her mother's rules about friends and asks how the previous supporter coped, implicitly seeking a way to handle the anger; the new AI cannot claim that previous supporter's experience.",
+        "response_unit_ids": [
+          "R001",
+          "R002",
+          "R003",
+          "R004"
+        ],
+        "source_turn_ids": [
+          "C:T001",
+          "C:T003",
+          "C:T005",
+          "C:T007",
+          "C:T009"
+        ],
+        "reason": "The reply validates the anger, accurately reflects the conflict with her mother, and asks a relevant question about whether discussing feelings helps or escalates. It avoids impersonating the prior supporter, so it reasonably responds without inventing a personal anecdote. The main limitation is the localized presupposition in R004 that she has already talked with her mother about how the rules make her feel; this is not explicit in the record, but it is a small explorable premise and does not make the response unusable or miss the central emotional need."
+      },
+      "assessments": [
+        {
+          "response_unit_id": "R001",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [],
+          "reason": "A generic apology/empathy phrase; it does not assert a specific personal fact."
+        },
+        {
+          "response_unit_id": "R002",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T001",
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The seeker reports mixed sadness and anger, repeated conflict with her mother over approval, arguments about friends, and anger at being restricted. Calling the situation tense is directly supported."
+        },
+        {
+          "response_unit_id": "R003",
+          "relation": "supported",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The personal reflection that she feels angry about being told whom she can be friends with is supported by her statement about freedom to choose friends and her report that it makes her angry. The 'natural to push back' part is generic normalization rather than a separate personal factual claim."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "unsupported",
+          "severity": 0.25,
+          "source_turn_ids": [
+            "C:T007",
+            "C:T009",
+            "H002:T021",
+            "H002:T022"
+          ],
+          "reason": "The question 'Did you find that talking to her about how her rules make you feel...' presupposes that she has already had a feelings-focused conversation with her mother about those rules. The record reports arguments about friend choices and anger, and past supporter suggestions to have a discussion, but no completed conversation about how the rules make her feel. This is a localized premise error, not a contradiction of the whole situation."
+        },
+        {
+          "response_unit_id": "R004",
+          "relation": "non_factual",
+          "severity": 0,
+          "source_turn_ids": [
+            "C:T009"
+          ],
+          "reason": "The alternative asking whether it 'usually escalates the argument' is an open outcome question, not an assertion about what has happened or what the outcome was."
+        }
+      ],
+      "coverage": "Reviewed all four response units against the full current prefix C:T000-C:T009 and the complete legal past sessions H001-H002. The supported reflection and the localized unsupported presupposition in R004 were distinguished; historical suggestions were not treated as user confirmation.",
+      "uncertainty_reasons": []
+    },
+    "q": 3,
+    "m": 0.25,
+    "U": 0.5,
+    "reward_eligible": false,
+    "measurement": {
+      "response_sha256": "476e020e8491fe027979e29fa7207b31e343b1520f9acd7aef946a01183d8c1d",
+      "legal_evidence_identity": "cb79fb9903f443d2bb9efb26590f9b8c1a0308f54d24b35c347c2f0200967d53",
+      "rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22",
+      "judge_runtime_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+      "parser_version": "pm-rl1-completion-qm-v2-proposed-20261014",
+      "measurement_draw_id": "c009ec73c45531c9d461375507753baa41d54978221d14c7b9ffbeddd684cfab",
+      "raw_output_sha256": "87a9d17a87250b8efc5854625cac2dbe1720e0a5e058c50ff5f8dab85bbbb7ff",
+      "reward_eligible": false,
+      "measurement_status": "measured_candidate",
+      "q": 3,
+      "m": 0.25,
+      "parsed": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's rules about friends and asks how the previous supporter coped, implicitly seeking a way to handle the anger; the new AI cannot claim that previous supporter's experience.",
+          "response_quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "evidence": [
+            {
+              "source_id": "C:T001",
+              "quote": "I have mixed feelings sad and angry at the same time."
+            },
+            {
+              "source_id": "C:T003",
+              "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+            },
+            {
+              "source_id": "C:T005",
+              "quote": "Yes. My mom never approves of most of the things I do."
+            },
+            {
+              "source_id": "C:T007",
+              "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+            },
+            {
+              "source_id": "C:T009",
+              "quote": "Really? How did you deal with that because for me it makes me angry."
+            }
+          ],
+          "reason": "The reply validates the anger, accurately reflects the conflict with her mother, and asks a relevant question about whether discussing feelings helps or escalates. It avoids impersonating the prior supporter, so it reasonably responds without inventing a personal anecdote. The main limitation is the localized presupposition in R004 that she has already talked with her mother about how the rules make her feel; this is not explicit in the record, but it is a small explorable premise and does not make the response unusable or miss the central emotional need."
+        },
+        "claims": [
+          {
+            "response_quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T001",
+                "quote": "I have mixed feelings sad and angry at the same time."
+              },
+              {
+                "source_id": "C:T003",
+                "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her."
+              },
+              {
+                "source_id": "C:T005",
+                "quote": "Yes. My mom never approves of most of the things I do."
+              },
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The seeker reports mixed sadness and anger, repeated conflict with her mother over approval, arguments about friends, and anger at being restricted. Calling the situation tense is directly supported."
+          },
+          {
+            "response_quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+            "relation": "supported",
+            "severity": 0,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              }
+            ],
+            "reason": "The personal reflection that she feels angry about being told whom she can be friends with is supported by her statement about freedom to choose friends and her report that it makes her angry. The 'natural to push back' part is generic normalization rather than a separate personal factual claim."
+          },
+          {
+            "response_quote": "Did you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "evidence": [
+              {
+                "source_id": "C:T007",
+                "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her."
+              },
+              {
+                "source_id": "C:T009",
+                "quote": "Really? How did you deal with that because for me it makes me angry."
+              },
+              {
+                "source_id": "H002:T021",
+                "quote": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them"
+              },
+              {
+                "source_id": "H002:T022",
+                "quote": "Let them know the consequences of them forcing you, your feelings towards it and how unhappy you are with them restricting you"
+              }
+            ],
+            "reason": "The question 'Did you find that talking to her about how her rules make you feel...' presupposes that she has already had a feelings-focused conversation with her mother about those rules. The record reports arguments about friend choices and anger, and past supporter suggestions to have a discussion, but no completed conversation about how the rules make her feel. This is a localized premise error, not a contradiction of the whole situation."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Reviewed all four response units against the full current prefix C:T000-C:T009 and the complete legal past sessions H001-H002. The supported reflection and the localized unsupported presupposition in R004 were distinguished; historical suggestions were not treated as user confirmation.",
+        "uncertainty_reasons": []
+      },
+      "exact_span_checks": [
+        {
+          "where": "q_rationale",
+          "response": true,
+          "quote": "I'm sorry you're feeling that way. It sounds like the situation with your mom is causing a lot of tension for you. When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.\n\nDid you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "positions": [
+            {
+              "start": 0,
+              "end": 388
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 53
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "q_rationale",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "response": true,
+          "quote": "It sounds like the situation with your mom is causing a lot of tension for you.",
+          "positions": [
+            {
+              "start": 35,
+              "end": 114
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T001",
+          "quote": "I have mixed feelings sad and angry at the same time.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 53
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T003",
+          "quote": "Yes. Am sad because I love my mom so much and I never like to get into arguments with her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 90
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T005",
+          "quote": "Yes. My mom never approves of most of the things I do.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 54
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[0]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "response": true,
+          "quote": "When you feel angry about being told who you can and can't be friends with, it's natural to want to push back against those restrictions.",
+          "positions": [
+            {
+              "start": 115,
+              "end": 252
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[1]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "response": true,
+          "quote": "Did you find that talking to her about how her rules make you feel helped to calm the anger, or does it usually escalate the argument?",
+          "positions": [
+            {
+              "start": 254,
+              "end": 388
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T007",
+          "quote": "Like the kind of friends I should have. I believe I have freedom to choose my friends not her.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 94
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "C:T009",
+          "quote": "Really? How did you deal with that because for me it makes me angry.",
+          "positions": [
+            {
+              "start": 0,
+              "end": 68
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H002:T021",
+          "quote": "Okay, you are old enough to be away from your parents, i am going to suggest you sitting with them down and having a heart to heart discussion with them",
+          "positions": [
+            {
+              "start": 0,
+              "end": 152
+            }
+          ]
+        },
+        {
+          "where": "claims[2]",
+          "source_id": "H002:T022",
+          "quote": "Let them know the consequences of them forcing you, your feelings towards it and how unhappy you are with them restricting you",
+          "positions": [
+            {
+              "start": 0,
+              "end": 126
+            }
+          ]
+        }
+      ],
+      "format_transformations": [],
+      "factual_precision": "requires_semantic_audit",
+      "caveat": "exact quotation validated; semantic support and quality calibration are not mechanically certified",
+      "indexed_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "m": 0.25,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's rules about friends and asks how the previous supporter coped, implicitly seeking a way to handle the anger; the new AI cannot claim that previous supporter's experience.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger, accurately reflects the conflict with her mother, and asks a relevant question about whether discussing feelings helps or escalates. It avoids impersonating the prior supporter, so it reasonably responds without inventing a personal anecdote. The main limitation is the localized presupposition in R004 that she has already talked with her mother about how the rules make her feel; this is not explicit in the record, but it is a small explorable premise and does not make the response unusable or miss the central emotional need."
+        },
+        "claims": [
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reports mixed sadness and anger, repeated conflict with her mother over approval, arguments about friends, and anger at being restricted. Calling the situation tense is directly supported."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal reflection that she feels angry about being told whom she can be friends with is supported by her statement about freedom to choose friends and her report that it makes her angry. The 'natural to push back' part is generic normalization rather than a separate personal factual claim."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The question 'Did you find that talking to her about how her rules make you feel...' presupposes that she has already had a feelings-focused conversation with her mother about those rules. The record reports arguments about friend choices and anger, and past supporter suggestions to have a discussion, but no completed conversation about how the rules make her feel. This is a localized premise error, not a contradiction of the whole situation."
+          }
+        ],
+        "misuse_findings": [
+          2
+        ],
+        "coverage": "Reviewed all four response units against the full current prefix C:T000-C:T009 and the complete legal past sessions H001-H002. The supported reflection and the localized unsupported presupposition in R004 were distinguished; historical suggestions were not treated as user confirmation.",
+        "uncertainty_reasons": []
+      },
+      "citation_resolution": "model-selected IDs resolved mechanically to complete source turns and response sentences",
+      "semantic_validation": false,
+      "transport_contract_status": "MEASUREMENT_CANDIDATE_NOT_REWARD_QUALIFIED",
+      "scoped_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's rules about friends and asks how the previous supporter coped, implicitly seeking a way to handle the anger; the new AI cannot claim that previous supporter's experience.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger, accurately reflects the conflict with her mother, and asks a relevant question about whether discussing feelings helps or escalates. It avoids impersonating the prior supporter, so it reasonably responds without inventing a personal anecdote. The main limitation is the localized presupposition in R004 that she has already talked with her mother about how the rules make her feel; this is not explicit in the record, but it is a small explorable premise and does not make the response unusable or miss the central emotional need."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic apology/empathy phrase; it does not assert a specific personal fact.",
+            "kind": "non_factual"
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reports mixed sadness and anger, repeated conflict with her mother over approval, arguments about friends, and anger at being restricted. Calling the situation tense is directly supported.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal reflection that she feels angry about being told whom she can be friends with is supported by her statement about freedom to choose friends and her report that it makes her angry. The 'natural to push back' part is generic normalization rather than a separate personal factual claim.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The question 'Did you find that talking to her about how her rules make you feel...' presupposes that she has already had a feelings-focused conversation with her mother about those rules. The record reports arguments about friend choices and anger, and past supporter suggestions to have a discussion, but no completed conversation about how the rules make her feel. This is a localized premise error, not a contradiction of the whole situation.",
+            "kind": "personal_fact"
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "not_applicable",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The alternative asking whether it 'usually escalates the argument' is an open outcome question, not an assertion about what has happened or what the outcome was.",
+            "kind": "non_factual"
+          }
+        ],
+        "coverage": "Reviewed all four response units against the full current prefix C:T000-C:T009 and the complete legal past sessions H001-H002. The supported reflection and the localized unsupported presupposition in R004 were distinguished; historical suggestions were not treated as user confirmation.",
+        "uncertainty_reasons": []
+      },
+      "derived_m": 0.25,
+      "derived_error_indexes": [
+        2
+      ],
+      "derivation": "max of explicitly classified personal/boundary error severities; non-factual judgments remain audited",
+      "semantic_revision": "Proposed single post-human revision; never implies qualification",
+      "flat_judge_output": {
+        "status": "scored",
+        "q": 3,
+        "q_rationale": {
+          "current_need": "The seeker is angry about her mother's rules about friends and asks how the previous supporter coped, implicitly seeking a way to handle the anger; the new AI cannot claim that previous supporter's experience.",
+          "response_unit_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ],
+          "source_turn_ids": [
+            "C:T001",
+            "C:T003",
+            "C:T005",
+            "C:T007",
+            "C:T009"
+          ],
+          "reason": "The reply validates the anger, accurately reflects the conflict with her mother, and asks a relevant question about whether discussing feelings helps or escalates. It avoids impersonating the prior supporter, so it reasonably responds without inventing a personal anecdote. The main limitation is the localized presupposition in R004 that she has already talked with her mother about how the rules make her feel; this is not explicit in the record, but it is a small explorable premise and does not make the response unusable or miss the central emotional need."
+        },
+        "assessments": [
+          {
+            "response_unit_id": "R001",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [],
+            "reason": "A generic apology/empathy phrase; it does not assert a specific personal fact."
+          },
+          {
+            "response_unit_id": "R002",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T001",
+              "C:T003",
+              "C:T005",
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The seeker reports mixed sadness and anger, repeated conflict with her mother over approval, arguments about friends, and anger at being restricted. Calling the situation tense is directly supported."
+          },
+          {
+            "response_unit_id": "R003",
+            "relation": "supported",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009"
+            ],
+            "reason": "The personal reflection that she feels angry about being told whom she can be friends with is supported by her statement about freedom to choose friends and her report that it makes her angry. The 'natural to push back' part is generic normalization rather than a separate personal factual claim."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "unsupported",
+            "severity": 0.25,
+            "source_turn_ids": [
+              "C:T007",
+              "C:T009",
+              "H002:T021",
+              "H002:T022"
+            ],
+            "reason": "The question 'Did you find that talking to her about how her rules make you feel...' presupposes that she has already had a feelings-focused conversation with her mother about those rules. The record reports arguments about friend choices and anger, and past supporter suggestions to have a discussion, but no completed conversation about how the rules make her feel. This is a localized premise error, not a contradiction of the whole situation."
+          },
+          {
+            "response_unit_id": "R004",
+            "relation": "non_factual",
+            "severity": 0,
+            "source_turn_ids": [
+              "C:T009"
+            ],
+            "reason": "The alternative asking whether it 'usually escalates the argument' is an open outcome question, not an assertion about what has happened or what the outcome was."
+          }
+        ],
+        "coverage": "Reviewed all four response units against the full current prefix C:T000-C:T009 and the complete legal past sessions H001-H002. The supported reflection and the localized unsupported presupposition in R004 were distinguished; historical suggestions were not treated as user confirmation.",
+        "uncertainty_reasons": []
+      },
+      "transport_revision": "single relation decision; legal combinations constrained before generation; no semantic repair",
+      "evaluator_execution_status": "CANDIDATE_REQUIRES_HUMAN_CALIBRATION",
+      "candidate_utility": 0.5
+    },
+    "outer_adaptation": {
+      "transformation": "bare_json_unchanged",
+      "original_final_sha256": "87a9d17a87250b8efc5854625cac2dbe1720e0a5e058c50ff5f8dab85bbbb7ff",
+      "adapted_final_sha256": "87a9d17a87250b8efc5854625cac2dbe1720e0a5e058c50ff5f8dab85bbbb7ff",
+      "interior_unchanged": true
+    },
+    "pipeline_identity": "897d7ed6c218e1a63009e60390e6857fd29f48c2d5ac845eee538ea0a8caf6dc",
+    "semantic_rubric_identity": "b5fc46c66750e4479468e2320651d2776c41c17bebf4e9fbcccdf746c9e19d22"
+  },
+  "hard_stop": null,
+  "financial": {
+    "accounted_upper_usd": "0.0105795",
+    "usage_upper_usd": "0.0105795",
+    "settlement_confirmed": true,
+    "unsettled_reservation_usd": "0",
+    "invoice_confirmed": false
+  },
+  "usage": {
+    "prompt_tokens": 6905,
+    "completion_tokens": 7090,
+    "total_tokens": 13995,
+    "prompt_tokens_details": {
+      "cached_tokens": 6656
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 6396
+    },
+    "prompt_cache_hit_tokens": 6656,
+    "prompt_cache_miss_tokens": 249
+  },
+  "elapsed_seconds": 36.36198481499741,
+  "fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+  "service_reported_model": "deepseek-flash",
+  "reward_eligible": false,
+  "workflow_version": "pmrl1-relation-reference-v1-20261021",
+  "old_selection_semantic_revisions_used": 1,
+  "semantic_revisions_applied": 2,
+  "joint_prompt_unchanged": false,
+  "new_step_instruction_version": "pmrl1-relation-reference-v1-20261021",
+  "semantic_review_status": "pending_offline_source_review"
+}

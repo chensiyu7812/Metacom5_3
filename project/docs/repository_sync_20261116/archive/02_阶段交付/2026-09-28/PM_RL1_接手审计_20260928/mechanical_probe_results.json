@@ -1,0 +1,19 @@
+{
+  "independent_instances_without_external_transaction": {
+    "both_30_usd_reservations_accepted": true,
+    "total_reserved": "60",
+    "meaning": "The ledger class alone is not a shared atomic gateway. This does not demonstrate a historical overrun."
+  },
+  "batch_overrun_settlement": {
+    "source_expression": "min(actual, worst_case)",
+    "line": 296,
+    "hypothetical_actual_usd": "0.12",
+    "ledger_recorded_usd": "0.10",
+    "meaning": "Batch path clips actual before settlement, unlike the repaired synchronous path; no live Batch was run."
+  },
+  "malformed_resource_block": {
+    "delimiter_present": true,
+    "parsed_blocks": 0,
+    "meaning": "Parser silently skips this block. RL1 must reject damaged/extra delimiters at the envelope boundary."
+  }
+}
