@@ -66,9 +66,11 @@
 
 所有可选字段都必须明确 null 语义，禁止用空字符串表示已知否定。阅读正文独立于索引文本：索引可以含实体别名、事实键和主题，但 Generator 的 reading_view 只能包含白名单字段与有根据的自然表述。
 
+**双时间字段对齐：**主方案中 ResourceRecord.invalid_at 解释为“系统在何时得知旧记录被更正/失效”的记录时间；TemporalClaim.valid_to 才是“原事实在现实叙述中到何时仍有效”的事件时间。两者不能互相直接复制。若旧值终止日期未知，valid_to=null；若知道新的更正来源，保留 invalidated_knowledge_rank 及其 source span。C0 必须把这三者的映射写成可检查的 Schema，而不能只用一个 invalid_at 代替双时间。
+
 ### 3.3 TemporalClaim / TemporalRelation
 
-TemporalClaim：claim_id、head、subject_id、predicate、object、reported_at、source_rank、event_time、valid_from、valid_to、epistemic_status、evidence_spans、semantic_support、version_group。
+TemporalClaim：claim_id、head、subject_id、predicate、object、reported_at、source_rank、event_time、valid_from、valid_to、invalidated_knowledge_rank、epistemic_status、evidence_spans、semantic_support、version_group。
 
 TemporalRelation：edge_id、relation_type、left_id、right_id、direction、evidence_spans、reported_at、derivation_identity、review_status、semantic_support。关系类型只允许预注册白名单；**相关不等于同一，先后不等于因果**。outcome_of 表示用户明确关联的报告结果，不等于该行动在现实世界中造成结果的因果证明。
 
