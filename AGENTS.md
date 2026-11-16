@@ -5,10 +5,10 @@
 For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/`, the new
 `project/src/metacom_pm/rl1v3/` package and the current single-turn research, start
 with `project/docs/PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md` and
-`project/docs/plans/pm_rl1_v3_20261116/EXECUTION_STATE.json`. V3 is adopted when the
-researcher merges the PR that introduced it; it then supersedes the execution order of
+`project/docs/plans/pm_rl1_v3_20261116/EXECUTION_STATE.json`. The contents of that document are **V3.1** (the filename is preserved for stable links).
+V3.1 is adopted only when the researcher merges PR #4; it then supersedes the execution order of
 V2 (`PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`) and of the 11-16 master plan, which stay
-as field/background references. V3 runs as two parallel Codex workstreams (WS-A
+as field/background references. V3.1 runs as two parallel Codex workstreams (30 tasks, WS-A
 resources/generator, WS-B feedback/environment/learning); its §9 defines tasks,
 acceptance tests, fallback designs and the only researcher touchpoints H0–H4.
 Use `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md` for evidence history and
