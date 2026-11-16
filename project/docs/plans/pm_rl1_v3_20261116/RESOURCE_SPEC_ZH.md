@@ -141,8 +141,9 @@ RS 未经过适当专业审核的医疗/危机类内容只保留 research_only�
 在线检索过程：
 
 1. **过滤先行：**严格合法 owner、rank/ready_at、dataset/family、RS risk/review，不把未来资料提前放进向量候选后再删除。
-2. **查询构造：**static=当前可见 user turn + 前面不超过3轮；adaptive=static + 已经买到的 reading_view 中最多200词。必要的实体/时间短语只能从上述可见文字抽出，不能读取私有候选或 NeedCard。查询解释器若另用模型，身份、计算和等待必须记录。
+2. **查询构造：**static=合法前缀**最后不超过3轮（包含当前 user turn）**；adaptive=static + 已经买到的 reading_view 中最多200词。必要的实体/时间短语只能从上述可见文字抽出，不能读取私有候选或 NeedCard。查询解释器若另用模型，身份、计算和等待必须记录。
 3. **候选召回：**每头 BGE dense cosine 与 BM25 并行；按倒数排名融合 RRF(score)=Σ 1/(60+rank)，无结果时允许空集和 STOP。实体/时间/slot 精确查询可增候选，但不能绕过来源合法性。
+   超过已冻结 BGE 原生 token 窗口的索引文本必须先按句/会话事实边界拆为有 parent_id 和原文位置的多个候选块，不能静默截断；各块命中后要回归可解释的父资源单元，避免把长 CASE 或 RAW 随机切成不可理解的孤立句子。
 4. **结构化校验/图扩展：**MP 做时点投影；ME 检验 actor、stage 并允许已验证的一跳事件链；MS 定位 parent；RS 检查方法适用条件。未经验证关系不得作为事实。保留原始 dense/BM25/结构命中和拒收原因供审计。
 5. **候选去重与排序：**对相同来源/同事件链合并证据，确定性 tie-break 用可复现 record_id；排序参数、top candidate 数和查询变体只在 train/dev 冻结，禁止根据 test/评分现场调整。
 6. **按头打包：**只取得当前 GET 对应的一个确定性 reading unit，不让 PM 任意看全部候选。Phase-1 固定 query、每头最多一次 GET，保留16个可重放终点；Phase-2 才允许读后改 query、同头至多2次、EXPAND_MS、总GET≤5。区别“候选池数量”和“实际交付条数”，不能把 Phase-1 固定打包说成已实现学习的可变 top-k。
