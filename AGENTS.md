@@ -2,11 +2,15 @@
 
 ## Current successor scope (PM-RL1, updated 2026-11-16)
 
-For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/` and the current
-single-turn research, start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`
-and `project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` (V2 supersedes the
-P00–P17 work packages of `PM_RL1_MASTER_EXECUTION_PLAN_20261116_ZH.md`; its §0 defines
-the execution loop, the only researcher touchpoints T1–T5, and pre-written branch rules).
+For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/`, the new
+`project/src/metacom_pm/rl1v3/` package and the current single-turn research, start
+with `project/docs/PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_v3_20261116/EXECUTION_STATE.json`. V3 is adopted when the
+researcher merges the PR that introduced it; it then supersedes the execution order of
+V2 (`PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md`) and of the 11-16 master plan, which stay
+as field/background references. V3 runs as two parallel Codex workstreams (WS-A
+resources/generator, WS-B feedback/environment/learning); its §9 defines tasks,
+acceptance tests, fallback designs and the only researcher touchpoints H0–H4.
 Use `project/docs/PM_RL1_PROGRESS_INDEX_20260930_ZH.md` for evidence history and
 `project/docs/PM_RL1_ORIGINAL_IMPLEMENTATION_PLAN_20260928_ZH.md` for original goals.
 The user requested the consolidated execution plan and a new completed-session
