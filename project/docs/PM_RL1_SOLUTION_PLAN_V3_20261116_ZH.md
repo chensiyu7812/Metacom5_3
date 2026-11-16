@@ -232,7 +232,7 @@ C0 开工前必须同时冻结[四资源施工细则 §2–3](plans/pm_rl1_v3_20
 
 **更新操作（借 Mem0 / Memory-R1）。** 对每个候选 MP，与已有同 slot 记录比较，输出 `ADD / UPDATE / INVALIDATE / NOOP`。UPDATE 和 INVALIDATE 只给旧记录写 `invalid_at` 并加更正边，不删除。只有原文中有明确更正或新状态时才允许 UPDATE。
 
-**双时间字段（借 Zep）。** `reported_at`（来源会话日期或 rank）、`event_time`（可空）、`valid_from / invalid_at`。`materialize_at(prefix)` 先按严格过去过滤，再按有效区间投影。
+**双时间字段（借 Zep）。** `reported_at`（来源会话日期或 rank）、`event_time`（可空）、`valid_from / invalid_at`。`materialize_at(prefix)` 先按严格过去过滤，再按有效区间投影。**施工时必须区分**：`invalid_at` 是系统何时获知旧记录被更正的记录时间；旧事实实际有效期终点另用 `valid_to`，未知则保持 null，不能强行复制 `invalid_at`。精确定义见[RESOURCE_SPEC §3](plans/pm_rl1_v3_20261116/RESOURCE_SPEC_ZH.md)。
 
 **校验。** 机械层：跨度精确匹配、owner 一致、rank 严格小于切点。语义层：第二个模型（与抽取器不同的那个）做"原话是否支持该陈述"的蕴含判断，并单独判 stage。两项都通过才进库，否则进拒收队列并保存理由。11/15 发现的 3 个错误（已挂电话被写成避免挂电话等）作为必过回归测试。
 
