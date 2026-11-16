@@ -2,8 +2,10 @@
 
 Start with `project/docs/PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md` and
 `project/docs/plans/pm_rl1_v3_20261116/EXECUTION_STATE.json` for current work
-(V3 supersedes the execution order of V2 and the 11-16 P00–P17 work packages once
-merged; new code goes to `rl1v3/`, this package stays as reusable baseline code).
+(the document's content version is **V3.1**, despite its stable V3 filename;
+PR #4 must be researcher-merged before adoption; thereafter its 30-task JSON DAG
+supersedes the V2/11-16 work-package ordering. New code goes to `rl1v3/`;
+this package remains reusable baseline code).
 The user requested the new session-summary candidate; preserve MS-RAW history
 and give MS-SUM separate source, representation, renderer and result identities.
 Read `project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md` and the user-supplied
