@@ -27,7 +27,7 @@ def timing(e,response,seconds,*,path='sequential',behavior='SYNTHETIC behavior')
     trace=stamp(dict(version=CLIENT_VERSION,trace_id='synthetic',request_identity=digest(payload),
         regime_identity='SYNTHETIC',surface='local_reference_queue_client',concurrency=1,
         send_ns=start,first_text_ns=end-1,last_text_ns=end,completion_ns=end,observed_end_ns=end+1,
-        status='natural_stop',ttft_seconds=(end-1-start)/1e9,completion_seconds=seconds,
+        status='natural_stop',ttft_seconds=(end-1-start)/1e9,completion_seconds=(end-start)/1e9,
         observed_wait_seconds=(end+1-start)/1e9,reply_identity=digest(response['text']),server_result_identity=digest(raw),error=None))
     return timing_receipt(e,response,trace=trace,raw=raw,payload=payload,path_family=path,source_identity='SYNTHETIC timing')
 

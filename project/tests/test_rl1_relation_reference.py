@@ -16,8 +16,31 @@ PROJECT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(PROJECT/"src"))
 BASE=PROJECT/"outputs/pm_rl1/judge_selection_preparation_20261014_v1"
 PREP=BASE/"relation_reference_preparation_20261021_v2"
-HAS_LOCAL_ARTIFACTS = ((BASE/"paired_diagnostic_20261019_v1/paired.py").is_file()
-                       and (PREP/"protocol.json").is_file())
+def _has_original_frozen_tree(protocol_path):
+    """Historical integration needs its original absolute-path frozen inputs.
+
+    The archived copy in GitHub is not the original /opt workspace.  Do not
+    rewrite a hash-bound protocol or silently substitute relocated artifacts.
+    Portable interface checks remain in test_rl1_reference_contracts.py.
+    """
+    if not protocol_path.is_file():
+        return False
+    try:
+        protocol = json.loads(protocol_path.read_text(encoding="utf-8"))
+        bound_paths = (
+            list(protocol["immutable_files"])
+            + list(protocol.get("historical_started_hashes", {}))
+            + list(protocol.get("old_stop_hashes", {}))
+        )
+        return bool(bound_paths) and all(Path(path).is_file() for path in bound_paths)
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+HAS_LOCAL_ARTIFACTS = (
+    (BASE/"paired_diagnostic_20261019_v1/paired.py").is_file()
+    and _has_original_frozen_tree(PREP/"protocol.json")
+)
 if HAS_LOCAL_ARTIFACTS:
     sys.path.insert(0,str(BASE/"paired_diagnostic_20261019_v1"))
     import paired as p

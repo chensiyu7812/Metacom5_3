@@ -1,8 +1,11 @@
 # PM-RL1 scoped implementation
 
-Start with `project/docs/PM_RL1_EXECUTION_PLAN_V2_20261116_ZH.md` and
-`project/docs/plans/pm_rl1_v2_20261116/EXECUTION_STATE.json` for current work
-(V2 supersedes the 11-16 P00–P17 work packages; new code goes to `rl1v2/`).
+Start with `project/docs/PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md` and
+`project/docs/plans/pm_rl1_v3_20261116/EXECUTION_STATE.json` for current work
+(the document's content version is **V3.1**, despite its stable V3 filename;
+PR #4 must be researcher-merged before adoption; thereafter its 30-task JSON DAG
+supersedes the V2/11-16 work-package ordering. New code goes to `rl1v3/`;
+this package remains reusable baseline code).
 The user requested the new session-summary candidate; preserve MS-RAW history
 and give MS-SUM separate source, representation, renderer and result identities.
 Read `project/docs/PM_RL1_SCOPED_IMPLEMENTATION_20260928_ZH.md` and the user-supplied

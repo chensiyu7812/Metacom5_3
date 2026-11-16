@@ -13,6 +13,19 @@ from .schema import digest
 VERSION = 'pmrl1-local-stream-client-latency-v1'
 
 
+def _seconds_match(recorded, from_nanoseconds):
+    """Accept float roundoff, not altered client-clock measurements.
+
+    Identity and integer nanosecond timestamps are still checked separately.
+    A 1e-12-second tolerance admits arithmetic ULP noise but excludes even
+    a one-nanosecond timestamp discrepancy.
+    """
+    if from_nanoseconds is None:
+        return recorded is None
+    return (type(recorded) in (int, float) and math.isfinite(recorded)
+            and math.isclose(recorded, from_nanoseconds, rel_tol=0.0, abs_tol=1e-12))
+
+
 def validate_trace(row):
     if row.get('identity') != digest({k:v for k,v in row.items() if k != 'identity'}):
         raise ValueError('latency trace identity changed')
@@ -32,7 +45,7 @@ def validate_trace(row):
     expected = dict(ttft_seconds=None if first is None else (first-start)/1e9,
         completion_seconds=None if complete is None else (complete-start)/1e9,
         observed_wait_seconds=(end-start)/1e9)
-    if any(row[k] != v for k,v in expected.items()):
+    if any(not _seconds_match(row[k], v) for k, v in expected.items()):
         raise ValueError('seconds disagree with actual client events')
     return row
 
