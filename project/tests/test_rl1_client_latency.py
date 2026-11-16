@@ -1,3 +1,4 @@
+import math
 import time
 
 import pytest
@@ -82,6 +83,22 @@ def test_seconds_cost_has_no_default_no_tokens_and_preserves_missing_quality():
     with pytest.raises(ValueError): seconds_return(quality_gain=1.,trace=trace,seconds_weight=float('nan'),regime_identity='test-only')
     bad = dict(trace,completion_seconds=0.); bad['identity'] = digest({k:v for k,v in bad.items() if k != 'identity'})
     with pytest.raises(ValueError,match='seconds disagree'): validate_trace(bad)
+
+
+@pytest.mark.parametrize('seconds_field',['ttft_seconds','completion_seconds','observed_wait_seconds'])
+def test_trace_accepts_one_ulp_roundoff_but_rejects_changed_measurement(seconds_field):
+    def service(_,emit):
+        emit('reply')
+        return dict(text='reply',finish_reason='natural_stop')
+    trace,_=measured(service)
+    assert trace[seconds_field] is not None
+    rounded=dict(trace,**{seconds_field:math.nextafter(trace[seconds_field],math.inf)})
+    rounded['identity']=digest({k:v for k,v in rounded.items() if k!='identity'})
+    validate_trace(rounded)
+    forged=dict(trace,**{seconds_field:trace[seconds_field]+1e-6})
+    forged['identity']=digest({k:v for k,v in forged.items() if k!='identity'})
+    with pytest.raises(ValueError,match='seconds disagree'):
+        validate_trace(forged)
 
 
 def test_off_skips_catalog_rank_and_feature_encoding(monkeypatch):
