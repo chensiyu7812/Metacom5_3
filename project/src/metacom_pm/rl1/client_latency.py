@@ -23,7 +23,7 @@ def _seconds_match(recorded, from_nanoseconds):
     if from_nanoseconds is None:
         return recorded is None
     return (type(recorded) in (int, float) and math.isfinite(recorded)
-            and math.isclose(recorded, from_nanoseconds, rel_tol=1e-12, abs_tol=1e-12))
+            and math.isclose(recorded, from_nanoseconds, rel_tol=0.0, abs_tol=1e-12))
 
 
 def validate_trace(row):
