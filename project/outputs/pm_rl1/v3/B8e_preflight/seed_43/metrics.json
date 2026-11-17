@@ -1,0 +1,545 @@
+{
+  "encoder_identity": "pmrl1v3-b8e-preflight-programmatic-v1|hash-encoder|dim=32|noise=0.6",
+  "metrics": {
+    "OneShot": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.611935,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.500966
+          },
+          "mean_gets": 0.567,
+          "mean_return": 0.62361,
+          "n": 1000,
+          "off_rate": 0.433,
+          "regret_vs_bayes": 0.01994,
+          "regret_vs_oracle": 0.04963,
+          "se": 0.00559
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.607058,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.840245,
+            "cue_vague": 0.496514
+          },
+          "mean_gets": 0.563,
+          "mean_return": 0.61622,
+          "n": 2000,
+          "off_rate": 0.437,
+          "regret_vs_bayes": 0.02951,
+          "regret_vs_oracle": 0.060985,
+          "se": 0.003947
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.599269,
+            "cue_method": 0.731111,
+            "cue_none": 0.5,
+            "cue_profile": 0.845738,
+            "cue_vague": 0.503941
+          },
+          "mean_gets": 0.5735,
+          "mean_return": 0.614755,
+          "n": 2000,
+          "off_rate": 0.438,
+          "regret_vs_bayes": 0.028285,
+          "regret_vs_oracle": 0.05926,
+          "se": 0.003977
+        }
+      },
+      "train": {
+        "best_dev_return": 0.62361,
+        "checkpoint_sha256": "35b481821254afc9ad7eaccedd5e6c20dc30e64bc8799d19dfef00555c3986bf",
+        "optimizer_steps": 480,
+        "param_sha256": "8c2be5a417f71834a5a94d7754512fe149e99d8c08795a3e3f0a93bd8200c9dd"
+      }
+    },
+    "PPO": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.679391,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.515103
+          },
+          "mean_gets": 0.729,
+          "mean_return": 0.64448,
+          "n": 1000,
+          "off_rate": 0.35,
+          "regret_vs_bayes": -0.00093,
+          "regret_vs_oracle": 0.02876,
+          "se": 0.005475
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.68524,
+            "cue_method": 0.730874,
+            "cue_none": 0.5,
+            "cue_profile": 0.840245,
+            "cue_vague": 0.529786
+          },
+          "mean_gets": 0.7545,
+          "mean_return": 0.64523,
+          "n": 2000,
+          "off_rate": 0.333,
+          "regret_vs_bayes": 0.0005,
+          "regret_vs_oracle": 0.031975,
+          "se": 0.003868
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.675136,
+            "cue_method": 0.731111,
+            "cue_none": 0.499846,
+            "cue_profile": 0.845738,
+            "cue_vague": 0.538208
+          },
+          "mean_gets": 0.718,
+          "mean_return": 0.64228,
+          "n": 2000,
+          "off_rate": 0.3645,
+          "regret_vs_bayes": 0.00076,
+          "regret_vs_oracle": 0.031735,
+          "se": 0.00386
+        }
+      },
+      "eval_final_round": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.678387,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.512759
+          },
+          "mean_gets": 0.721,
+          "mean_return": 0.64386,
+          "n": 1000,
+          "off_rate": 0.359,
+          "regret_vs_bayes": -0.00031,
+          "regret_vs_oracle": 0.02938,
+          "se": 0.005463
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.685025,
+            "cue_method": 0.731133,
+            "cue_none": 0.5,
+            "cue_profile": 0.840245,
+            "cue_vague": 0.526055
+          },
+          "mean_gets": 0.7465,
+          "mean_return": 0.644595,
+          "n": 2000,
+          "off_rate": 0.3395,
+          "regret_vs_bayes": 0.001135,
+          "regret_vs_oracle": 0.03261,
+          "se": 0.003871
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.676003,
+            "cue_method": 0.731111,
+            "cue_none": 0.5,
+            "cue_profile": 0.845738,
+            "cue_vague": 0.528664
+          },
+          "mean_gets": 0.702,
+          "mean_return": 0.64111,
+          "n": 2000,
+          "off_rate": 0.38,
+          "regret_vs_bayes": 0.00193,
+          "regret_vs_oracle": 0.032905,
+          "se": 0.003838
+        }
+      },
+      "train": {
+        "best_dev_return": 0.64448,
+        "best_round": 120,
+        "checkpoints_sha256": {
+          "best": "66a968061faec26a87abfd371fa831803e6e1a9c47e4c399d620e19ae1c7dc01",
+          "round_100": "53e5c1f652f0ee17ca8ea9511bc13244724667113748c800f477330077650908",
+          "round_200": "1c94f3e4ce0fc833d84a5c3882ce399f235260dedd352b37de21d2457cfd3b92"
+        },
+        "final_param_sha256": "c8bcc44f522dabab61486fab0365fb405ee19d52daea0c8c96bad8086fe3cf56",
+        "init_param_sha256": "c9e83d86ba1b8bf25fd901b26d6897ff9d133bcd1e75f105b8aea5341457b62a",
+        "optimizer_steps": 7200,
+        "params_changed_from_init": true
+      }
+    },
+    "PPO-NoText": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.630609,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.504621
+          },
+          "mean_gets": 0.704,
+          "mean_return": 0.62935,
+          "n": 1000,
+          "off_rate": 0.399,
+          "regret_vs_bayes": 0.0142,
+          "regret_vs_oracle": 0.04389,
+          "se": 0.005265
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.626826,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.839615,
+            "cue_vague": 0.507095
+          },
+          "mean_gets": 0.7185,
+          "mean_return": 0.62384,
+          "n": 2000,
+          "off_rate": 0.384,
+          "regret_vs_bayes": 0.02189,
+          "regret_vs_oracle": 0.053365,
+          "se": 0.003788
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.610119,
+            "cue_method": 0.731111,
+            "cue_none": 0.499655,
+            "cue_profile": 0.843148,
+            "cue_vague": 0.500195
+          },
+          "mean_gets": 0.6915,
+          "mean_return": 0.616885,
+          "n": 2000,
+          "off_rate": 0.4225,
+          "regret_vs_bayes": 0.026155,
+          "regret_vs_oracle": 0.05713,
+          "se": 0.003712
+        }
+      },
+      "eval_final_round": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.624624,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.502966
+          },
+          "mean_gets": 0.702,
+          "mean_return": 0.62744,
+          "n": 1000,
+          "off_rate": 0.396,
+          "regret_vs_bayes": 0.01611,
+          "regret_vs_oracle": 0.0458,
+          "se": 0.005314
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.624314,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.839336,
+            "cue_vague": 0.506483
+          },
+          "mean_gets": 0.716,
+          "mean_return": 0.62294,
+          "n": 2000,
+          "off_rate": 0.3775,
+          "regret_vs_bayes": 0.02279,
+          "regret_vs_oracle": 0.054265,
+          "se": 0.003832
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.606599,
+            "cue_method": 0.731111,
+            "cue_none": 0.499655,
+            "cue_profile": 0.841508,
+            "cue_vague": 0.50127
+          },
+          "mean_gets": 0.6965,
+          "mean_return": 0.615765,
+          "n": 2000,
+          "off_rate": 0.414,
+          "regret_vs_bayes": 0.027275,
+          "regret_vs_oracle": 0.05825,
+          "se": 0.003747
+        }
+      },
+      "train": {
+        "best_dev_return": 0.6293499999999999,
+        "best_round": 195,
+        "checkpoints_sha256": {
+          "best": "0699d94e1189345e5bb752267df38a33f0fa952b7061ed307503e7c43db9051e",
+          "round_100": "5ce6ecf6ef1ebe3001abf6f4aaeb5c7b919dc877f57a4767b0dfcd829098e589",
+          "round_200": "3fcab0b9d724e6df35ab82666be7e138322a8e1549b3bd659fd2af0fd359fe29"
+        },
+        "final_param_sha256": "77db95b94b8087cd09290617ce616b22ceb0e88f589b4bd1f1c284cefca2bfa6",
+        "init_param_sha256": "d03e6e300b247b8e0256d863d39f5eb3be3933b240ee7b1cabdcd6d7aa065bdf",
+        "optimizer_steps": 7200,
+        "params_changed_from_init": true
+      }
+    },
+    "PPO-scratch": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.679642,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.510138
+          },
+          "mean_gets": 0.709,
+          "mean_return": 0.64383,
+          "n": 1000,
+          "off_rate": 0.368,
+          "regret_vs_bayes": -0.00028,
+          "regret_vs_oracle": 0.02941,
+          "se": 0.005444
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.68524,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.839965,
+            "cue_vague": 0.525168
+          },
+          "mean_gets": 0.739,
+          "mean_return": 0.644515,
+          "n": 2000,
+          "off_rate": 0.346,
+          "regret_vs_bayes": 0.001215,
+          "regret_vs_oracle": 0.03269,
+          "se": 0.003866
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.673724,
+            "cue_method": 0.731111,
+            "cue_none": 0.5,
+            "cue_profile": 0.818721,
+            "cue_vague": 0.522052
+          },
+          "mean_gets": 0.688,
+          "mean_return": 0.635305,
+          "n": 2000,
+          "off_rate": 0.3975,
+          "regret_vs_bayes": 0.007735,
+          "regret_vs_oracle": 0.03871,
+          "se": 0.003804
+        }
+      },
+      "eval_final_round": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.678746,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.506207
+          },
+          "mean_gets": 0.699,
+          "mean_return": 0.64301,
+          "n": 1000,
+          "off_rate": 0.379,
+          "regret_vs_bayes": 0.00054,
+          "regret_vs_oracle": 0.03023,
+          "se": 0.005411
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.683802,
+            "cue_method": 0.731133,
+            "cue_none": 0.5,
+            "cue_profile": 0.839965,
+            "cue_vague": 0.520917
+          },
+          "mean_gets": 0.7245,
+          "mean_return": 0.643345,
+          "n": 2000,
+          "off_rate": 0.359,
+          "regret_vs_bayes": 0.002385,
+          "regret_vs_oracle": 0.03386,
+          "se": 0.003847
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.674541,
+            "cue_method": 0.730824,
+            "cue_none": 0.499846,
+            "cue_profile": 0.843475,
+            "cue_vague": 0.520456
+          },
+          "mean_gets": 0.6785,
+          "mean_return": 0.638995,
+          "n": 2000,
+          "off_rate": 0.402,
+          "regret_vs_bayes": 0.004045,
+          "regret_vs_oracle": 0.03502,
+          "se": 0.003809
+        }
+      },
+      "train": {
+        "best_dev_return": 0.6438299999999999,
+        "best_round": 110,
+        "checkpoints_sha256": {
+          "best": "b29adc869d6d952ddbe29b727c2c28d1434ace3e36dfdd8278faa8d6cbe23d32",
+          "round_100": "083c5ba6b2d15901738597ee8d36628bb4eb39498489404e35dc0e919c6e0232",
+          "round_200": "f7dcc3df739e6f4386ed75cce1795a62c68aa6e7c93838c85d4113db2e5e1199"
+        },
+        "final_param_sha256": "ad7363cba2fb8647cd87b0686fd03204fb56151191c31e944975899112e17c99",
+        "init_param_sha256": "66bafb3626097511250b72e9b6a9582fb502f2be46ba1e64d0fc9566c6d9a35c",
+        "optimizer_steps": 7204,
+        "params_changed_from_init": true
+      }
+    },
+    "Seq-BC": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.662258,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835031,
+            "cue_vague": 0.496
+          },
+          "mean_gets": 0.634,
+          "mean_return": 0.63685,
+          "n": 1000,
+          "off_rate": 0.417,
+          "regret_vs_bayes": 0.0067,
+          "regret_vs_oracle": 0.03639,
+          "se": 0.00543
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.672893,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.837587,
+            "cue_vague": 0.502599
+          },
+          "mean_gets": 0.6525,
+          "mean_return": 0.63675,
+          "n": 2000,
+          "off_rate": 0.408,
+          "regret_vs_bayes": 0.00898,
+          "regret_vs_oracle": 0.040455,
+          "se": 0.00383
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.668163,
+            "cue_method": 0.731111,
+            "cue_none": 0.5,
+            "cue_profile": 0.84377,
+            "cue_vague": 0.5
+          },
+          "mean_gets": 0.6175,
+          "mean_return": 0.634105,
+          "n": 2000,
+          "off_rate": 0.4455,
+          "regret_vs_bayes": 0.008935,
+          "regret_vs_oracle": 0.03991,
+          "se": 0.003787
+        }
+      },
+      "train": {
+        "best_dev_return": 0.63685,
+        "checkpoint_sha256": "60e4c27082e992942f43e6121448b944614a94203522543d81d5641df5f2ae40",
+        "n_train_states": 4710,
+        "optimizer_steps": 760,
+        "param_sha256": "c9e83d86ba1b8bf25fd901b26d6897ff9d133bcd1e75f105b8aea5341457b62a"
+      }
+    },
+    "Seq-BC-NoText": {
+      "eval": {
+        "dev": {
+          "by_cue": {
+            "cue_event": 0.614014,
+            "cue_method": 0.724824,
+            "cue_none": 0.5,
+            "cue_profile": 0.835528,
+            "cue_vague": 0.498897
+          },
+          "mean_gets": 0.558,
+          "mean_return": 0.62389,
+          "n": 1000,
+          "off_rate": 0.442,
+          "regret_vs_bayes": 0.01966,
+          "regret_vs_oracle": 0.04935,
+          "se": 0.005557
+        },
+        "test_seen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.622595,
+            "cue_method": 0.731392,
+            "cue_none": 0.5,
+            "cue_profile": 0.840245,
+            "cue_vague": 0.500183
+          },
+          "mean_gets": 0.563,
+          "mean_return": 0.62152,
+          "n": 2000,
+          "off_rate": 0.437,
+          "regret_vs_bayes": 0.02421,
+          "regret_vs_oracle": 0.055685,
+          "se": 0.003931
+        },
+        "test_unseen_paraphrase": {
+          "by_cue": {
+            "cue_event": 0.613146,
+            "cue_method": 0.731111,
+            "cue_none": 0.5,
+            "cue_profile": 0.845738,
+            "cue_vague": 0.501954
+          },
+          "mean_gets": 0.5375,
+          "mean_return": 0.61853,
+          "n": 2000,
+          "off_rate": 0.4625,
+          "regret_vs_bayes": 0.02451,
+          "regret_vs_oracle": 0.055485,
+          "se": 0.003908
+        }
+      },
+      "train": {
+        "best_dev_return": 0.6238899999999998,
+        "checkpoint_sha256": "1a34342b437b22ae520a4807cc0d2e195b93ec1783c7f948a1fa7769ce0b4632",
+        "n_train_states": 4710,
+        "optimizer_steps": 760,
+        "param_sha256": "d03e6e300b247b8e0256d863d39f5eb3be3933b240ee7b1cabdcd6d7aa065bdf"
+      }
+    }
+  },
+  "obs_dim": 178,
+  "resume_check": {
+    "identical": true,
+    "resumed": "3ef2700649e30e7bed874ab6a4578e3f06df5b67230bcf2977129a2450b10fa8",
+    "rounds": 20,
+    "split_at": 10,
+    "straight": "3ef2700649e30e7bed874ab6a4578e3f06df5b67230bcf2977129a2450b10fa8"
+  },
+  "seed": 43,
+  "threads": 4,
+  "timing_s": {
+    "OneShot": 3.1,
+    "PPO": 69.61,
+    "PPO-NoText": 72.19,
+    "PPO-scratch": 70.54,
+    "Seq-BC": 4.58,
+    "Seq-BC-NoText": 4.62
+  },
+  "torch": "2.3.1+cu121"
+}

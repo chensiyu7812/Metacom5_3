@@ -1,0 +1,46 @@
+{
+  "code_dirty_at_run": false,
+  "code_files_sha256": {
+    "scripts/rl1v3/B0_prefix_census.py": "a9facc279254821ce0f2265a1fe4d0830a6f5a9d35873ec0a7a57ded12258eb8",
+    "src/metacom_pm/rl1v3/prefixes/__init__.py": "79cda7ca2ccab9d279920aa3e3e297d6b1ba522281b4079df753e74f60bc751a",
+    "src/metacom_pm/rl1v3/prefixes/census.py": "4d2af46c086487b3dd35a680c5c458d762d733eb4a68a2df59917b16e5a891ad",
+    "src/metacom_pm/rl1v3/prefixes/exposure.py": "104e03e337dc831b0b179381c1a7dac09de3547fb14d356aaa7069854b0d76a0"
+  },
+  "command": "PYTHONPATH=project/src python project/scripts/rl1v3/B0_prefix_census.py --config project/configs/rl1v3/B0.yaml --out project/outputs/pm_rl1/v3/B0/",
+  "evidence_note": "deterministic CPU census of a public source; counts are exact facts of the sanitized artifact, surface cues are not need labels",
+  "evidence_tier": "engineering_only",
+  "folds_schema": "pmrl1v3-b0-folds-v1",
+  "git_head_at_run": "f89d98e581dde2f54d920720bdbf4d46adce6b7c",
+  "gpu_used": false,
+  "inputs": {
+    "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "data/strategy/esconv_split_manifest_v1_5.jsonl": "0199fbe1cad5f42aacfd2ba52a92bc6530dfcb33a82bb7bb7e81e5abb6e63e63",
+    "project/configs/rl1v3/B0.yaml": "3f14b93f9419b3d90fc0b296df3547f8504e09c79aa4c501d24d71d1010cd16e"
+  },
+  "model_calls": 0,
+  "outputs": {
+    "census_summary.json": {
+      "bytes": 11754,
+      "sha256": "f9143f2adc765462420ec2f375188a754a283a74c8e4629abf517273addccebf"
+    },
+    "exposure_registry.jsonl": {
+      "bytes": 552973,
+      "rows": 591,
+      "sha256": "0f643d1b8a3ba3daabc074bcd9900917a27fff2486aaeee842602937afafa26d"
+    },
+    "folds.json": {
+      "bytes": 2463,
+      "sha256": "9853d676cd039fe23ba1fdc858ba715d97d75eba607efcac2ff014f27156fbb5"
+    },
+    "prefix_census.jsonl": {
+      "bytes": 5743998,
+      "rows": 4119,
+      "sha256": "377f4d0b91489f800e6acb910c6c0d02fca9f5b6453d730bc7010270fdb3930c"
+    }
+  },
+  "paid_calls": 0,
+  "protocol": "pmrl1v3-b0-prefix-census-v1",
+  "python": "3.11.15",
+  "row_schema": "pmrl1v3-b0-prefix-census-row-v1",
+  "task_id": "B0"
+}
