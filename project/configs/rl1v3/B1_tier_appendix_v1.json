@@ -1,0 +1,58 @@
+{
+ "appendix_id": "pmrl1v3-b1-tier-appendix-v1",
+ "decided_by": "researcher decision 1, WS-B round-5 brief (2026-11-18)",
+ "applies_to": {
+  "sampler": "pmrl1v3-b1-sampler-v1 (code unchanged)",
+  "pool_file": "outputs/pm_rl1/v3/B1/natural_eval_pool_v1.jsonl (unchanged)",
+  "plan": "PM_RL1_SOLUTION_PLAN_V3_20261116_ZH.md tier text (PR #4) is not edited; this appendix records the deviation"
+ },
+ "session_cap": 2,
+ "session_cap_changed": false,
+ "tiers": {
+  "S": {
+   "plan_nominal": 288,
+   "per_owner_target": 16,
+   "realized": 288,
+   "short_owners": {}
+  },
+  "M": {
+   "plan_nominal": "about 480",
+   "per_owner_target": 27,
+   "per_owner_nominal_total": 486,
+   "realized": 482,
+   "short_owners": {
+    "p17": 24,
+    "p18": 26
+   }
+  },
+  "L": {
+   "name": "L-realized",
+   "plan_nominal": 960,
+   "per_owner_target": 54,
+   "per_owner_nominal_total": 972,
+   "realized": 748,
+   "short_owners": {
+    "p10": 34,
+    "p11": 44,
+    "p12": 38,
+    "p13": 44,
+    "p14": 32,
+    "p15": 42,
+    "p16": 48,
+    "p17": 24,
+    "p18": 26,
+    "p2": 50,
+    "p4": 42,
+    "p5": 38,
+    "p6": 48,
+    "p7": 36,
+    "p9": 40
+   }
+  }
+ },
+ "capacity_reason": "383 census sessions with rank>=1; at most 2 prefixes per (owner, session) gives an upper bound of 766; the per-owner order realises 748",
+ "not_done": "no relaxation to 3 prefixes per session to reach 960",
+ "natural_weighting": "estimates are re-weighted to the original cut counts: weight = owner census prefixes / owner selected prefixes, per tier",
+ "dependence": "prefixes are not independent users: inference resamples owner-family clusters (pmrl1v3-eval-protocol-v2, cluster bootstrap B=2000, seed 20261118); counts of prefixes, sessions, owners and clusters are reported with every estimate",
+ "evidence_tier": "engineering_only"
+}
