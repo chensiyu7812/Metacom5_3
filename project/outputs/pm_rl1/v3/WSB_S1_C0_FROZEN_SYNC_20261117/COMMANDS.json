@@ -1,0 +1,19 @@
+{
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "PYTHONPATH": "project/src:/opt/tokkio-data0/tokkio_envs/pmrl1_validation_vendor_20261103"
+  },
+  "cwd": "/home/tokkio/Metacom5_3-ws-b",
+  "python": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+  "v3": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q -m \"not gpu\" project/tests/test_rl1v3_*.py -ra -o addopts= -o xfail_strict=true --junitxml=project/outputs/pm_rl1/v3/WSB_S1_C0_FROZEN_SYNC_20261117/v3.xml",
+  "v3_gate": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python project/scripts/rl1v3/verify_v3_junit.py project/outputs/pm_rl1/v3/WSB_S1_C0_FROZEN_SYNC_20261117/v3.xml --out project/outputs/pm_rl1/v3/WSB_S1_C0_FROZEN_SYNC_20261117/v3_gate.json",
+  "full_cpu": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python -m pytest -q -m \"not gpu\" project/tests/test_paper1_*.py project/tests/test_rl1_*.py project/tests/test_rl1v3_*.py -ra -o addopts= -o xfail_strict=true --junitxml=project/outputs/pm_rl1/v3/WSB_S1_C0_FROZEN_SYNC_20261117/full_cpu.xml",
+  "schemas": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python project/scripts/rl1v3/c0_export_schemas.py --check",
+  "interfaces": "PYTHONDONTWRITEBYTECODE=1 /opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python project/outputs/pm_rl1/v3/WSB_S1_C0_FROZEN_SYNC_20261117/verify_shared_and_sources.py --a-preparation /home/tokkio/Metacom5_3-wsa-bank-prep",
+  "gpu_used": false,
+  "model_calls": 0,
+  "paid_calls": 0,
+  "training": "only existing synthetic CPU optimizer unit tests; no independent training run"
+}
