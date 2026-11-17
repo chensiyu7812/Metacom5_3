@@ -65,7 +65,7 @@
 
 ## 7. 给集成负责人和 A 的事项
 
-1. **CI 缺口**：`.github/workflows/pm-v2-tests.yml` 只运行 `tests/test_paper1_*.py tests/test_rl1_*.py`，不会收集 `test_rl1v3_*.py`；push 触发分支也不包含 `pmrl1-v3/**`。建议集成负责人在 workflow 中加入 `tests/test_rl1v3_*.py`（我不改共享 workflow）。
+1. **CI**：本分支基线的 workflow 只运行 `tests/test_paper1_*.py tests/test_rl1_*.py`。A 的 C0 提交 `50c9ade0` 已加入 `tests/test_rl1v3_*.py`，合入 integration 后 B0 测试会被收集。push 触发分支仍不包含 `pmrl1-v3/**`，所以只有 PR 会触发 CI。
 2. `rl1v3/__init__.py` 由 C0（A）创建；B0 没有创建它，`rl1v3` 目前按隐式命名空间包导入，避免 add/add 冲突。
 3. 本模块暂用本地 canonical JSON（sorted keys、紧凑分隔、UTF-8、`allow_nan=False`）。C0 的 `io.py` 冻结后，B0 改用它并以新 protocol 版本重新生成身份，不静默沿用旧标签。
 4. C0 的 `PrefixSpec` 需要能从普查行无损构造：`prefix_id, owner_id, session_id, cut_turn, cutoff_rank, timestamp, turns` 来自 `materialize_prefix()`；`fold` 来自 `assignment.fold`；`stratum` 由 B1 填，并且只属于评价侧。
