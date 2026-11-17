@@ -24,8 +24,13 @@ def test_client_covers_online_work_and_first_text_is_not_completion():
         time.sleep(.015); emit('world')
         return dict(text='hello world',finish_reason='natural_stop')
     trace,raw = measured(service)
+    # Timestamps are taken when the client dequeues events (receipt), so only the
+    # emission schedule gives deterministic LOWER bounds: first text after one
+    # sleep, completion after both. The receipt gap between them can be < 15 ms
+    # when the first chunk is dequeued late (seen on a CI runner: 14.91 ms).
     assert trace['ttft_seconds'] >= .015
-    assert trace['completion_seconds']-trace['ttft_seconds'] >= .015
+    assert trace['completion_seconds'] >= .030
+    assert trace['completion_seconds'] > trace['ttft_seconds']
     assert trace['observed_wait_seconds'] >= trace['completion_seconds']
     assert trace['reply_identity'] == digest(raw['text'])
     validate_trace(trace)
