@@ -1,5 +1,5 @@
-"""WS-B acceptance ported to 0.2.0; original assertions retained, no xfail/skip.
-Pinned B0 reference code/data and review provenance: fixtures/rl1v3/wsb.
+"""WS-A compatibility tests, with B0 data only; no copied B business code.
+The authoritative WS-B acceptance filename is exclusively owned by WS-B.
 """
 from __future__ import annotations
 
@@ -13,15 +13,8 @@ from metacom_pm.rl1v3 import contracts as K
 from metacom_pm.rl1v3 import io as IO
 
 import gzip
-import importlib.util
-import importlib.machinery
-import sys
-_FIXTURE = Path(__file__).parent / "fixtures/rl1v3/wsb"
-_loader = importlib.machinery.SourceFileLoader("wsb_census_reference", str(_FIXTURE / "census.py.txt"))
-_spec = importlib.util.spec_from_loader(_loader.name, _loader)
-C = importlib.util.module_from_spec(_spec)
-sys.modules[_loader.name] = C
-_loader.exec_module(C)
+from metacom_pm.rl1v3.sources.asset_reuse import session_family
+_FIXTURE = Path(__file__).parent / "fixtures/rl1v3/b0_reference"
 
 PROJECT = Path(__file__).resolve().parents[1]
 B0_ROWS = _FIXTURE / "prefix_census.jsonl.gz"
@@ -86,24 +79,31 @@ def test_off_terminal_is_stop_only_and_empty():
 
 def test_b0_hash_is_byte_identical_to_c0_object_sha256():
     obj = {"b": [1, "é"], "a": {"z": None, "y": True}}
-    assert C.digest(obj) == IO.object_sha256(obj)
+    vector = json.loads((_FIXTURE / "PROVENANCE.json").read_text())["canonical_hash_vector"]
+    assert vector["value"] == obj
+    assert vector["expected"] == IO.object_sha256(obj)
 
 
 def test_every_b0_census_row_builds_a_c0_prefixspec():
-    users = {u.owner_id: u for u in C.load_users(ARTIFACT)}
+    users = {u["owner_id"]: u for u in json.loads(ARTIFACT.read_text())["users"]}
     n = 0
     with gzip.open(B0_ROWS, "rt", encoding="utf-8") as f:
         for line in f:
             r = json.loads(line)
-            turns = C.materialize_prefix(r, users)
+            sessions = users[r["owner_id"]]["sessions"]
+            current = next(s for s in sessions if s["session_id"] == r["session_id"])
+            assert current["chronological_rank"] == r["cutoff_rank"]
+            assert current["timestamp"] == r["timestamp"]
+            turns = current["turns"][:r["cut_turn"]+1]
+            assert current["turns"][r["cut_turn"]+1]["role"] == "supporter"
             spec = K.PrefixSpec(
                 prefix_id=r["prefix_id"], owner_id=r["owner_id"], session_id=r["session_id"],
                 cut_turn=r["cut_turn"], cutoff_rank=r["cutoff_rank"], timestamp=r["timestamp"],
-                turns=tuple(K.SourceTurn(turn_index=i, role=t.role, text=t.content)
+                turns=tuple(K.SourceTurn(turn_index=i, role=t["role"], text=t["content"])
                             for i, t in enumerate(turns)),
                 dataset=r["dataset"], family_id=r["eval_only"]["family_id"],
-                ancestor_family_ids=tuple(sorted({C.session_family(r["owner_id"], session)
-                    for session in users[r["owner_id"]].sessions if session.chronological_rank <= r["cutoff_rank"]})),
+                ancestor_family_ids=tuple(sorted({session_family(r["owner_id"], session["session_id"])
+                    for session in sessions if session["chronological_rank"] <= r["cutoff_rank"]})),
                 fold=r["assignment"]["fold"])
             assert IO.object_sha256([[t.role, t.text] for t in spec.turns]) == r["prefix_sha256"]
             n += 1

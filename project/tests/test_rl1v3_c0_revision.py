@@ -196,7 +196,7 @@ def test_packed_candidate_tokens_remain_private_and_bind_delivered_ids():
 
 
 def test_pinned_b0_reference_is_byte_identical_to_b_branch():
-    root=Path(__file__).parents[2]; fixture=Path(__file__).parent/"fixtures/rl1v3/wsb"
+    root=Path(__file__).parents[2]; fixture=Path(__file__).parent/"fixtures/rl1v3/b0_reference"
     manifest=json.loads((fixture/"PROVENANCE.json").read_text())
     for row in manifest["files"]:
         path=root/row["destination"]
