@@ -1,0 +1,48 @@
+{
+  "tested_business_code_commit": "a26998f088c3e0a410793faa188b0a1939fb5c7e",
+  "current_code_commit": "abc360743ab9559e93338bed70d6a6869bc7451b",
+  "v3": {
+    "tests": 413,
+    "passed": 413,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [],
+    "junit_sha256": "0fd064a2ed8db245c705dca80dc89362534598869a2741576dda6fc9c87e8c4a"
+  },
+  "cpu": {
+    "tests": 2247,
+    "passed": 2246,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [
+      {
+        "test": "::tests.test_paper1_llama_tokenizer",
+        "reason": "collection skipped"
+      }
+    ],
+    "junit_sha256": "0c04ec5ed4503fdef0569196deab0c4c378eea62bda8877a6152a276624894ed"
+  },
+  "cpu_gpu_deselected": 11,
+  "v3_gpu_deselected": 0,
+  "targeted": {
+    "tests": 42,
+    "passed": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": [],
+    "junit_sha256": "9ec75fb65580bc7025b5d322a11c3150e36582a26750897ae20f6b333964a21d"
+  },
+  "schema_count": 32,
+  "integration_base": "PASS",
+  "environment": {
+    "python": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+    "PYTHONPATH": "src:/opt/tokkio-data0/tokkio_envs/pmrl1_validation_vendor_20261103",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  },
+  "commands": {
+    "v3": "python -m pytest -q -m 'not gpu' tests/test_rl1v3_*.py -ra -o addopts= -o xfail_strict=true --junitxml=outputs/pm_rl1/v3/A1b_crossline_20261118/v3.xml",
+    "cpu": "python -m pytest -q -m 'not gpu' tests/test_paper1_*.py tests/test_rl1_*.py tests/test_rl1v3_*.py -ra -o addopts= --junitxml=outputs/pm_rl1/v3/A1b_crossline_20261118/cpu.xml"
+  }
+}

@@ -1,0 +1,344 @@
+{
+  "protocol": "pmrl1v3-asset-conversion-handoff-v1",
+  "original_evidence": {
+    "project/outputs/pm_rl1/v3/A1_preparation/MANIFEST.json": "5848d9553db07570c5fbd01a3e708d3af1f83ccb46e46819a605b92817066f23",
+    "project/outputs/pm_rl1/v3/A1b_preparation/MANIFEST.json": "a930ec37546b21f6746326922b47007de94846b15dd16ac560c529f25b63603c",
+    "project/outputs/pm_rl1/v3/A1b_preparation/measured_v1/ASSET_CONVERSION_SCORECARD.json": "9c81a06bc13c0a072a6702f7cbec585652a506f7307d0166c2f53f8535fcd7dd"
+  },
+  "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+  "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02",
+  "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+  "counts_unchanged": true,
+  "layers": [
+    {
+      "head": "MP",
+      "existing": 713,
+      "source_span_verified": 713,
+      "bank_records": 387,
+      "legally_available_unique": 343,
+      "actually_read_unique": 169,
+      "success": 3610,
+      "attempts": 4119
+    },
+    {
+      "head": "ME",
+      "existing": 1523,
+      "source_span_verified": 1523,
+      "bank_records": 1525,
+      "legally_available_unique": 1461,
+      "actually_read_unique": 500,
+      "success": 4108,
+      "attempts": 4119
+    },
+    {
+      "head": "MS",
+      "existing": 401,
+      "source_span_verified": 401,
+      "bank_records": 401,
+      "legally_available_unique": 383,
+      "actually_read_unique": 352,
+      "success": 4119,
+      "attempts": 4119
+    },
+    {
+      "head": "RS",
+      "existing": 1300,
+      "source_span_verified": 875,
+      "bank_records": 875,
+      "legally_available_unique": 875,
+      "actually_read_unique": 316,
+      "success": 4119,
+      "attempts": 4119
+    }
+  ],
+  "lineage_notes": [
+    "MP bank head387 excludes324 quarantined and2 repaired MP→ME; old MP mapped records389 across heads",
+    "ME head1525=1523 old ME+2 repaired MP; one old ME repaired to unknown stage",
+    "RS verified875 denotes admitted original dialogues; original11590 strategy and13172 treatment IDs are overlapping lineage, not extra bank records or methods"
+  ],
+  "migration": {
+    "ME": {
+      "distinct_bank_records": 1523,
+      "ever_legal": 1459,
+      "existing": 1523,
+      "lineage_verified": 0,
+      "mapped_into_bank": 1523,
+      "migration_status": {
+        "migrated": 1522,
+        "repaired": 1
+      },
+      "source_verified": 1523,
+      "successfully_read": 498
+    },
+    "MP": {
+      "distinct_bank_records": 389,
+      "ever_legal": 345,
+      "existing": 713,
+      "lineage_verified": 0,
+      "mapped_into_bank": 389,
+      "migration_status": {
+        "migrated": 387,
+        "quarantine": 324,
+        "repaired": 2
+      },
+      "source_verified": 713,
+      "successfully_read": 171
+    },
+    "MS": {
+      "distinct_bank_records": 401,
+      "ever_legal": 383,
+      "existing": 401,
+      "lineage_verified": 0,
+      "mapped_into_bank": 401,
+      "migration_status": {
+        "migrated": 401
+      },
+      "source_verified": 401,
+      "successfully_read": 352
+    },
+    "RS_case": {
+      "distinct_bank_records": 0,
+      "ever_legal": 0,
+      "existing": 12,
+      "lineage_verified": 0,
+      "mapped_into_bank": 0,
+      "migration_status": {
+        "quarantine": 6,
+        "repair": 6
+      },
+      "source_verified": 0,
+      "successfully_read": 0
+    },
+    "RS_method": {
+      "distinct_bank_records": 0,
+      "ever_legal": 0,
+      "existing": 3,
+      "lineage_verified": 0,
+      "mapped_into_bank": 0,
+      "migration_status": {
+        "quarantine": 3
+      },
+      "source_verified": 0,
+      "successfully_read": 0
+    },
+    "RS_strategy": {
+      "distinct_bank_records": 823,
+      "ever_legal": 11590,
+      "existing": 11590,
+      "lineage_verified": 0,
+      "mapped_into_bank": 11590,
+      "migration_status": {
+        "adapted_lineage": 11590
+      },
+      "source_verified": 11590,
+      "successfully_read": 4658
+    },
+    "RS_treatment": {
+      "distinct_bank_records": 875,
+      "ever_legal": 13172,
+      "existing": 13172,
+      "lineage_verified": 13172,
+      "mapped_into_bank": 13172,
+      "migration_status": {
+        "adapted_lineage": 13172
+      },
+      "source_verified": 0,
+      "successfully_read": 5877
+    }
+  },
+  "old_full_4119_prefixes": {
+    "attempts": 16476,
+    "success": 15956,
+    "failures": 520,
+    "measured_this_turn": false,
+    "full_read_metrics": {
+      "ME": {
+        "attempts": 4119,
+        "availability_rate": 0.9973294488953629,
+        "available": 4108,
+        "distinct_eligible_records": 1461,
+        "distinct_read_records": 500,
+        "failures": {
+          "unavailable:no_legal_candidates": 11
+        },
+        "get_success_rate": 0.9973294488953629,
+        "prefixes": 4119,
+        "success": 4108,
+        "tokens_max": 341,
+        "tokens_min": 55
+      },
+      "MP": {
+        "attempts": 4119,
+        "availability_rate": 0.8764263170672494,
+        "available": 3610,
+        "distinct_eligible_records": 343,
+        "distinct_read_records": 169,
+        "failures": {
+          "unavailable:no_legal_candidates": 509
+        },
+        "get_success_rate": 0.8764263170672494,
+        "prefixes": 4119,
+        "success": 3610,
+        "tokens_max": 325,
+        "tokens_min": 31
+      },
+      "MS": {
+        "attempts": 4119,
+        "availability_rate": 1.0,
+        "available": 4119,
+        "distinct_eligible_records": 383,
+        "distinct_read_records": 352,
+        "failures": {},
+        "get_success_rate": 1.0,
+        "prefixes": 4119,
+        "success": 4119,
+        "tokens_max": 1264,
+        "tokens_min": 266
+      },
+      "RS": {
+        "attempts": 4119,
+        "availability_rate": 1.0,
+        "available": 4119,
+        "distinct_eligible_records": 875,
+        "distinct_read_records": 316,
+        "failures": {},
+        "get_success_rate": 1.0,
+        "prefixes": 4119,
+        "success": 4119,
+        "tokens_max": 2502,
+        "tokens_min": 354
+      }
+    }
+  },
+  "this_turn_24_prefixes": {
+    "attempts": 96,
+    "b1_input_ready": 24,
+    "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+    "catalog_id": "pmrl1v3-rs-v0-strategy-catalog-1:7323c7f40e7b99cff5b7e7bcc10354c9360b7a0a6016a3495ee13124998d344f",
+    "failures": {
+      "unavailable:no_legal_candidates": 3
+    },
+    "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+    "inputs": {
+      "project/outputs/pm_rl1/v3/A1b_crossline_20261118/RS_V0_STRATEGY_CATALOG.json": "bd4be420762aba78340ccc71a2c6ad0c3d1c031f3e4824c845e6943ab48f3791",
+      "project/outputs/pm_rl1/v3/A1b_preparation/measured_v1/REAL_REPLAY.json": "e0b352fd18db2a79fd6b954f0bcf7198ed1950e926f2c1ed68fb4769b173392e",
+      "project/outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl": "4fb275a25909db457c906734f814bb4c4fe2dabcb760bc3b2ca9c2c86f3fc461"
+    },
+    "model_calls": 0,
+    "note": "A port checks only; B5 coverage acceptance reported separately; GET success is not relevance accuracy",
+    "paid_calls": 0,
+    "prefixes": 24,
+    "preserved_replay_exact_match": true,
+    "protocol": "pmrl1v3-a1b-port-acceptance-v1",
+    "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02",
+    "success": 93,
+    "tokenizer": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+    "unique_read_records": {
+      "ME": 23,
+      "MP": 20,
+      "MS": 24,
+      "RS": 15
+    },
+    "weights_loaded": false
+  },
+  "review_status": {
+    "development_reviewed": 3,
+    "unverified": 3185
+  },
+  "model_calls": 0,
+  "paid_calls": 0,
+  "weights_loaded": false,
+  "caveat": "legal availability and successful GET are not relevance accuracy; no new global census or bank rebuild",
+  "b5_joint": {
+    "protocol": "pmrl1v3-b5-bank-replay-v2",
+    "status": "joint_committed_code_pre_integration_rehearsal",
+    "a_port_commit": "14fd459e473cc3e98ab8b4dbddf73216e9314759",
+    "b_commit": "d06715bf6893710c8b21f2c91c7cac42c0111e85",
+    "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02",
+    "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+    "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+    "tokenizer_identity": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+    "prefixes": 24,
+    "passed": 24,
+    "reachable_distribution": {
+      "8": 3,
+      "16": 21
+    },
+    "total_reachable": 360,
+    "total_orders": 1413,
+    "unreachable_reasons": {
+      "MP:unavailable:no_legal_candidates": 3
+    },
+    "ready_at_equals_cutoff_records": 21,
+    "capacity_stress_passed": 24,
+    "rejected_read_state_tested": 24,
+    "fresh_replay_identical": 24,
+    "failures": [],
+    "model_calls": 0,
+    "gpu_used": false,
+    "paid_calls": 0,
+    "seconds": 114.42171382904053
+  },
+  "b1_v2_catalog": {
+    "a_code_sha": "a26998f088c3e0a410793faa188b0a1939fb5c7e",
+    "b_code_sha": "d06715bf6893710c8b21f2c91c7cac42c0111e85",
+    "b_modules": [
+      {
+        "module": "metacom_pm.rl1v3.needs.sources",
+        "path": "project/src/metacom_pm/rl1v3/needs/sources.py",
+        "sha256": "b7fc948b0c3d96e7727937e968dcd34c927c8c27c8e1b12adb3916691c98e296"
+      },
+      {
+        "module": "metacom_pm.rl1v3.needs.protocol",
+        "path": "project/src/metacom_pm/rl1v3/needs/protocol.py",
+        "sha256": "3c0d733b4bd8c4f27619cbada59833beb4a20d648ef20a9c6060845026e26f4e"
+      },
+      {
+        "module": "metacom_pm.rl1v3.needs.spans",
+        "path": "project/src/metacom_pm/rl1v3/needs/spans.py",
+        "sha256": "4eb61d73541e7d35ab018093b8e12abb31ccb0e3a6b1f2fa4ca130b279e6b846"
+      },
+      {
+        "module": "metacom_pm.rl1v3.needs.cards",
+        "path": "project/src/metacom_pm/rl1v3/needs/cards.py",
+        "sha256": "cc011c216e94ab1e060e1c35f08d7795d0ffc0060155236b7d546eda3165296b"
+      },
+      {
+        "module": "metacom_pm.rl1v3.needs.rs_catalog",
+        "path": "project/src/metacom_pm/rl1v3/needs/rs_catalog.py",
+        "sha256": "49df83b03d6dd1e72cb4baf84ed918f5ed3602a8bcba588f31c74600d644a3ab"
+      },
+      {
+        "module": "metacom_pm.rl1v3.needs.protocol_v2",
+        "path": "project/src/metacom_pm/rl1v3/needs/protocol_v2.py",
+        "sha256": "312c452aa3cc6a70d32c3332096ddb1d7761e23134ed7b8640edf2b9751ace89"
+      }
+    ],
+    "catalog_file_sha256": "bd4be420762aba78340ccc71a2c6ad0c3d1c031f3e4824c845e6943ab48f3791",
+    "catalog_id": "pmrl1v3-rs-v0-strategy-catalog-1:7323c7f40e7b99cff5b7e7bcc10354c9360b7a0a6016a3495ee13124998d344f",
+    "coverage_sha256": "4fb275a25909db457c906734f814bb4c4fe2dabcb760bc3b2ca9c2c86f3fc461",
+    "gpu_used": false,
+    "input_tokens_max": 27009,
+    "input_tokens_min": 2763,
+    "paid_calls": 0,
+    "prefixes": 24,
+    "ready": 24,
+    "script_sha256": "8cab57405479aa125d4d2a00be6149f38028d66c46b98b1f084202d7875a92e1",
+    "tokenizer": "native-tokenizer:601f9509ba598acf3202efaaa94e58fd5da84fc5b2939c78ed3c00c5eceda1db",
+    "tokenizer_files": {
+      "chat_template.jinja": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+      "config.json": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05",
+      "tokenizer.json": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42",
+      "tokenizer_config.json": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8"
+    },
+    "truncated": false,
+    "weights_loaded": false,
+    "writer_calls": 0
+  },
+  "relevance_spotcheck": {
+    "file": "RELEVANCE_SPOTCHECK.json",
+    "sha256": "63fcc70d0348fce7340c78753cfe32719be63105837405eefb4699ce5954e70c",
+    "n": 8,
+    "not_independent_evaluation": true
+  }
+}
