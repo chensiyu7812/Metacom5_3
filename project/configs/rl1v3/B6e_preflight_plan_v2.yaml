@@ -1,0 +1,52 @@
+# WS-B B6e 8-prefix engineering preflight - PLAN v2 ONLY (v1 file kept). Not runnable until every gate
+# holds AND the researcher explicitly authorises the GPU scope. No paid API. No 128 G0 / J1 calls in advance.
+task_id: B6e_preflight
+plan_version: pmrl1v3-b6e-plan-v2
+status: proposal_not_authorised
+prefixes:
+  source: outputs/pm_rl1/v3/B5/real_replay_v2_02d0a4b1_d06715bf/replay_reports.jsonl
+  candidates: folds 1-5 of coverage_sample_v1 whose real replay passed (fold 6 = historical test owners, excluded)
+  rule: >-
+    unchanged from plan v1: sort by n_reachable desc, then fold, then slot; at most 2 per fold and 1 per
+    owner until 8. Terminals per prefix = its REAL reachable subset count (max 16); masks never bypassed.
+  proposed_on_pre_integration_replay: [0ebfd29108ab, 8dc91abd2659, fa14cf4451df, f1935249d725,
+                                       6ce6b7faa301, 20790e78c021, e23e4b2ff0a4, 01c44f464e0e]
+  proposed_terminals: 128          # 8 x 16; recomputed from the integration re-run before any call
+  known_limitation: the v1 rule picks folds 1-4 only and no MP-empty (8-reachable) prefix
+identity_binding:                  # every terminal row binds all of these; any change = new terminal table
+  source_version: "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02"
+  bank_version: "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9"
+  index_version: "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3"
+  renderer_id: "renderer:e7678cc104e460d60e547d8e41debdd284ba519d903e35bd22c615f23e133010"   # A1b Reader, output reserve 320
+  step2_id: none-v0-read-replay
+  g_id: REQUIRED - versioned initial G0 identity (weights sha + request renderer); currently only the not-frozen tokenizer id
+  decode_id: REQUIRED - G0 decode config id (currently not_run)
+  needcard_writer: "pmrl1v3-needcard-writer-v2|qwen3.5-9b|9257893575daef7158cced96f178296491c45c41127aa299cf19197693b7873c"
+  checklist: "pmrl1v3-checklist-template-v2|58819db2598f6c53bcd527c81a637b4032fc603428c3a85378e0f72976e64835"
+  j1: pmrl1v3-itemjudge-v2 + Qwen3.5-9B file-set sha 5f526cd0... (JudgeIdentityV2.id fixed before the first call)
+  engineering_reward: "pmrl1v3-engineering-reward-v2 (preregistration 37012bc199d3d0a5ee1fe603171c9eeaed78a63f97f74335f7ec38b7ef569d74)"
+  evaluation: pmrl1v3-eval-protocol-v2
+calls_upper_bound:
+  needcard_writer: 0               # the 8 are inside the 20-prefix NeedCard pilot (separate authorisation)
+  checklist: 0                     # deterministic template v2
+  g0_generation: 128               # <= 8 x reachable(<=16), one greedy sample each
+  j1_item_judge: 384               # <= 128 x (1 + full re-ask + missing-item re-ask)
+  j2_item_judge: 0                 # GSC stays pending by design; pending is never 0
+  paid_api: 0
+token_measurements:                # Gemma-4-12B native tokenizer, real bank-v0 (pre-integration replay)
+  g0_input_all_heads_range: [2249, 4520]
+  g0_output_reserve: 320
+  rs_reading_median: 1318
+memory_estimate_gib:               # weights from A0 file sizes; KV and activations not measured
+  g0_gemma4_12b_bf16_weights: 22.3
+  qwen35_9b_bf16_weights: 18.0
+  models_loaded: sequentially, never together
+gates:
+  - PR #8 (A1/A1b) merged by the integration owner; B5 v2 replay re-run on integration and byte-identical
+  - this WS-B branch reviewed and merged after PR #8
+  - 20-prefix NeedCard pilot run under its own authorisation, 20/20 cards audited (<=10% evidence errors)
+  - checklists v2 frozen for the 8 prefixes before any G0 call
+  - versioned initial G0 identity and request renderer delivered by WS-A
+  - A0 measured G0 / Qwen throughput and peak memory on the A6000
+  - explicit researcher authorisation; A6000 free >= 30 GiB and not used by WS-A
+evidence_tier: engineering_only
