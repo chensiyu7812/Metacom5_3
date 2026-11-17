@@ -1,0 +1,561 @@
+{
+  "$defs": {
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_char": {
+          "exclusiveMinimum": 0,
+          "title": "End Char",
+          "type": "integer"
+        },
+        "exact_quote": {
+          "minLength": 1,
+          "title": "Exact Quote",
+          "type": "string"
+        },
+        "owner_id": {
+          "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "raw_turn_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Turn Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_id": {
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_rank": {
+          "minimum": 0,
+          "title": "Source Rank",
+          "type": "integer"
+        },
+        "speaker": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Speaker",
+          "type": "string"
+        },
+        "start_char": {
+          "minimum": 0,
+          "title": "Start Char",
+          "type": "integer"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_key",
+        "owner_id",
+        "session_id",
+        "source_rank",
+        "turn_index",
+        "speaker",
+        "start_char",
+        "end_char",
+        "exact_quote",
+        "raw_turn_sha256",
+        "schema_version"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "TimePoint": {
+      "additionalProperties": false,
+      "description": "Null calendar date never means epoch; at least one coordinate is known.",
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Rank"
+        }
+      },
+      "required": [
+        "schema_version"
+      ],
+      "title": "TimePoint",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:ResourceRecord",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ancestor_family_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Ancestor Family Ids",
+      "type": "array"
+    },
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "body": {
+      "title": "Body",
+      "type": "string"
+    },
+    "entity_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Entity Ids",
+      "type": "array"
+    },
+    "epistemic_status": {
+      "default": "unknown",
+      "enum": [
+        "user_reported",
+        "supporter_suggestion",
+        "reported_intention",
+        "inferred_unverified",
+        "unknown"
+      ],
+      "title": "Epistemic Status",
+      "type": "string"
+    },
+    "event_time": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evidence_status": {
+      "default": "uncertain",
+      "enum": [
+        "exact_span_verified",
+        "semantically_supported",
+        "uncertain",
+        "rejected"
+      ],
+      "title": "Evidence Status",
+      "type": "string"
+    },
+    "family_id": {
+      "minLength": 1,
+      "title": "Family Id",
+      "type": "string"
+    },
+    "head": {
+      "enum": [
+        "RS",
+        "MP",
+        "ME",
+        "MS"
+      ],
+      "title": "Head",
+      "type": "string"
+    },
+    "index_keys": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Index Keys",
+      "type": "array"
+    },
+    "invalid_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "invalidated_knowledge_rank": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Invalidated Knowledge Rank"
+    },
+    "invalidation_source_refs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "title": "Invalidation Source Refs",
+      "type": "array"
+    },
+    "license_scope": {
+      "default": "unknown",
+      "minLength": 1,
+      "title": "License Scope",
+      "type": "string"
+    },
+    "origin_dataset": {
+      "minLength": 1,
+      "title": "Origin Dataset",
+      "type": "string"
+    },
+    "original_raw_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Original Raw Identity",
+      "type": "string"
+    },
+    "owner_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Owner Id"
+    },
+    "parent_event_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Event Id"
+    },
+    "parent_session_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parent Session Id"
+    },
+    "positive_eligible": {
+      "default": false,
+      "title": "Positive Eligible",
+      "type": "boolean"
+    },
+    "raw_parent_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw Parent Id"
+    },
+    "raw_view_identity": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Raw View Identity"
+    },
+    "reading_text": {
+      "minLength": 1,
+      "title": "Reading Text",
+      "type": "string"
+    },
+    "ready_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "record_id": {
+      "minLength": 1,
+      "title": "Record Id",
+      "type": "string"
+    },
+    "related_claim_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Related Claim Ids",
+      "type": "array"
+    },
+    "relation_index_version": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Relation Index Version"
+    },
+    "reported_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "review_status": {
+      "enum": [
+        "unverified",
+        "development_reviewed",
+        "independent_reviewed",
+        "professional_approved",
+        "rejected",
+        "unusable"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "risk_tier": {
+      "default": "unknown",
+      "enum": [
+        "ordinary",
+        "high",
+        "unknown"
+      ],
+      "title": "Risk Tier",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_rank": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Rank"
+    },
+    "source_refs": {
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "title": "Source Refs",
+      "type": "array"
+    },
+    "source_split": {
+      "default": "unassigned",
+      "enum": [
+        "train",
+        "dev",
+        "validation",
+        "test",
+        "unassigned",
+        "negative_only"
+      ],
+      "title": "Source Split",
+      "type": "string"
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "enum": [
+            "suggested",
+            "intended",
+            "attempted",
+            "completed",
+            "outcome_reported",
+            "unknown"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Stage"
+    },
+    "subject_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Subject Id"
+    },
+    "summary_view_identity": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Summary View Identity"
+    },
+    "usage_scope": {
+      "default": "engineering_only",
+      "enum": [
+        "engineering_only",
+        "research_only",
+        "deployment"
+      ],
+      "title": "Usage Scope",
+      "type": "string"
+    },
+    "valid_from": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "valid_to": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "view": {
+      "enum": [
+        "method",
+        "case",
+        "assertion",
+        "event",
+        "sum",
+        "raw"
+      ],
+      "title": "View",
+      "type": "string"
+    },
+    "writer_identity": {
+      "minLength": 1,
+      "title": "Writer Identity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "record_id",
+    "bank_version",
+    "head",
+    "view",
+    "owner_id",
+    "source_refs",
+    "reported_at",
+    "event_time",
+    "valid_from",
+    "invalid_at",
+    "stage",
+    "body",
+    "reading_text",
+    "index_keys",
+    "review_status",
+    "writer_identity",
+    "source_rank",
+    "ready_at",
+    "origin_dataset",
+    "family_id",
+    "original_raw_identity",
+    "schema_version"
+  ],
+  "title": "ResourceRecord",
+  "type": "object"
+}

@@ -1,0 +1,155 @@
+{
+  "$defs": {
+    "TimePoint": {
+      "additionalProperties": false,
+      "description": "Null calendar date never means epoch; at least one coordinate is known.",
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Rank"
+        }
+      },
+      "required": [
+        "schema_version"
+      ],
+      "title": "TimePoint",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:ReadingView",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Public text and legal report time; session_rank is allowed time, not an identity.",
+  "properties": {
+    "expandable": {
+      "default": false,
+      "title": "Expandable",
+      "type": "boolean"
+    },
+    "expanded_from_ordinal": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expanded From Ordinal"
+    },
+    "head": {
+      "enum": [
+        "RS",
+        "MP",
+        "ME",
+        "MS"
+      ],
+      "title": "Head",
+      "type": "string"
+    },
+    "ordinal": {
+      "exclusiveMinimum": 0,
+      "title": "Ordinal",
+      "type": "integer"
+    },
+    "reading_text": {
+      "minLength": 1,
+      "title": "Reading Text",
+      "type": "string"
+    },
+    "reported_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TimePoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stage": {
+      "anyOf": [
+        {
+          "enum": [
+            "suggested",
+            "intended",
+            "attempted",
+            "completed",
+            "outcome_reported",
+            "unknown"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stage"
+    },
+    "tokens": {
+      "exclusiveMinimum": 0,
+      "title": "Tokens",
+      "type": "integer"
+    },
+    "view": {
+      "enum": [
+        "method",
+        "case",
+        "assertion",
+        "event",
+        "sum",
+        "raw"
+      ],
+      "title": "View",
+      "type": "string"
+    }
+  },
+  "required": [
+    "head",
+    "view",
+    "ordinal",
+    "reading_text",
+    "reported_at",
+    "tokens",
+    "schema_version"
+  ],
+  "title": "ReadingView",
+  "type": "object"
+}

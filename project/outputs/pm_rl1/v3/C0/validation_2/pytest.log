@@ -1,0 +1,70 @@
+..................F.....................F............................... [ 40%]
+........................................................................ [ 81%]
+................................                                         [100%]
+=================================== FAILURES ===================================
+_ RelationReferenceTests.test_read_only_entry_preserves_old_and_budget_history _
+
+self = <test_rl1_relation_reference.RelationReferenceTests testMethod=test_read_only_entry_preserves_old_and_budget_history>
+
+    def test_read_only_entry_preserves_old_and_budget_history(self):
+        before={path:r.sha(path) for path in self.protocol["old_stop_hashes"]}
+        ledger=Path(self.protocol["financial_baseline"]["ledger_path"]);h=r.sha(ledger)
+        # Historical identities bind absolute paths in the original tree. A
+        # separate worktree may contain identical bytes, but is not that tree.
+        # Exercise the unchanged guard against its actual bound inputs; do not
+        # rewrite the protocol or weaken its exact attempt-set comparison.
+        original_base=Path(self.protocol["run_dir"]).parent.parent
+        with patch.object(self.entry, "BASE", original_base):
+>           self.assertEqual(self.entry.check()["actual_historical"],225)
+                             ^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1_relation_reference.py:258: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/scripts/rl1/114_run_relation_reference.py:61: in check
+    protocol,*_=load();count=historical_guard(protocol)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+protocol = {'analysis_rules': {'automatic_C_or_training': False, 'coverage': 'Report all28, paired12, modelunknown, technical and...rocess_read_authorized': True, 'cumulative_cap': 253, ...}, 'base_prompt_revision': 2, 'baseline_cumulative': 225, ...}
+
+    def historical_guard(protocol):
+        # These are attempts, not output counts; management requests are separate.
+        known={str(x) for name in ("live_runs","paired_diagnostic_runs","action_stage_runs",
+            "reward_noise_runs","anchor_calibration_runs","four_head_diagnostic_runs")
+            for x in (BASE/name).rglob("*.started.json") if "management" not in x.parts}
+        if known != set(protocol["historical_started_hashes"]):
+>           raise ValueError("historical attempt set changed; reconcile, never reset")
+E           ValueError: historical attempt set changed; reconcile, never reset
+
+project/scripts/rl1/114_run_relation_reference.py:53: ValueError
+__________ TaskReferenceTests.test_history_and_exposure_not_inflated ___________
+
+self = <test_rl1_task_reference.TaskReferenceTests testMethod=test_history_and_exposure_not_inflated>
+
+    def test_history_and_exposure_not_inflated(self):
+        activation=Path(self.pr['activation_file'])
+        before=activation.read_bytes() if activation.exists() else None
+        # The protocol's absolute path identities must be checked in their
+        # original tree even when this test code runs from a new worktree.
+        original_base=Path(self.pr['run_dir']).parent.parent
+>       self.assertEqual(t.historical_guard(self.pr,original_base),253)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1_task_reference.py:258: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+protocol = {'activation_file': '/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/docs/pm_rl1_completion_20260930_v2/task_refe...umulative': 253, 'capacity': 349, 'common_task_policy_version_authorized': True, ...}, 'baseline_cumulative': 253, ...}
+base = PosixPath('/opt/tokkio-data0/tokkio_projects/Metacom5_3/project/outputs/pm_rl1/judge_selection_preparation_20261014_v1/task_reference_runs')
+
+    def historical_guard(protocol, base):
+        actual = history_snapshot(base, protocol['run_dir'])
+        if actual != protocol['historical_started_hashes']:
+>           raise ValueError('historical/cross-version started set changed; reconcile without redispatch')
+E           ValueError: historical/cross-version started set changed; reconcile without redispatch
+
+project/src/metacom_pm/rl1/task_reference.py:104: ValueError
+- generated xml file: /home/tokkio/Metacom5_3-ws-a/project/outputs/pm_rl1/v3/C0/validation_2/pytest.xml -
+=========================== short test summary info ============================
+FAILED project/tests/test_rl1_relation_reference.py::RelationReferenceTests::test_read_only_entry_preserves_old_and_budget_history
+FAILED project/tests/test_rl1_task_reference.py::TaskReferenceTests::test_history_and_exposure_not_inflated
+2 failed, 174 passed in 6.05s

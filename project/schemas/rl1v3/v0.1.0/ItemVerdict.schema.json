@@ -1,0 +1,54 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:ItemVerdict",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "J1": {
+      "enum": [
+        "pass",
+        "fail",
+        "uncertain"
+      ],
+      "title": "J1",
+      "type": "string"
+    },
+    "J2": {
+      "enum": [
+        "pass",
+        "fail",
+        "uncertain"
+      ],
+      "title": "J2",
+      "type": "string"
+    },
+    "final": {
+      "enum": [
+        "pass",
+        "fail",
+        "uncertain"
+      ],
+      "title": "Final",
+      "type": "string"
+    },
+    "item_id": {
+      "minLength": 1,
+      "title": "Item Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "item_id",
+    "J1",
+    "J2",
+    "final",
+    "schema_version"
+  ],
+  "title": "ItemVerdict",
+  "type": "object"
+}

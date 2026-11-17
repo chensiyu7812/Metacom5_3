@@ -1,0 +1,171 @@
+{
+  "$defs": {
+    "SourceTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "turn_index",
+        "role",
+        "text",
+        "schema_version"
+      ],
+      "title": "SourceTurn",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:PrefixSpec",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Execution-private routing envelope; use visible() for model input.",
+  "properties": {
+    "ancestor_family_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Ancestor Family Ids",
+      "type": "array"
+    },
+    "cut_turn": {
+      "minimum": 0,
+      "title": "Cut Turn",
+      "type": "integer"
+    },
+    "cutoff_rank": {
+      "minimum": 0,
+      "title": "Cutoff Rank",
+      "type": "integer"
+    },
+    "dataset": {
+      "minLength": 1,
+      "title": "Dataset",
+      "type": "string"
+    },
+    "family_id": {
+      "minLength": 1,
+      "title": "Family Id",
+      "type": "string"
+    },
+    "fold": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Fold"
+    },
+    "owner_id": {
+      "minLength": 1,
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "prefix_id": {
+      "minLength": 1,
+      "title": "Prefix Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "session_id": {
+      "minLength": 1,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "split": {
+      "default": "unassigned",
+      "enum": [
+        "train",
+        "dev",
+        "test",
+        "unassigned"
+      ],
+      "title": "Split",
+      "type": "string"
+    },
+    "stratum": {
+      "anyOf": [
+        {
+          "enum": [
+            "history",
+            "method",
+            "both",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stratum"
+    },
+    "timestamp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Timestamp"
+    },
+    "turns": {
+      "items": {
+        "$ref": "#/$defs/SourceTurn"
+      },
+      "minItems": 1,
+      "title": "Turns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "prefix_id",
+    "owner_id",
+    "session_id",
+    "cut_turn",
+    "turns",
+    "cutoff_rank",
+    "timestamp",
+    "dataset",
+    "family_id",
+    "schema_version"
+  ],
+  "title": "PrefixSpec",
+  "type": "object"
+}

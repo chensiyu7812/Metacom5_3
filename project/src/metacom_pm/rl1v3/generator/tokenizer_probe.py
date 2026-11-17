@@ -1,0 +1,43 @@
+"""CPU-native tokenizer measurement only; deliberately no model/generate import."""
+import argparse
+from collections.abc import Mapping
+from pathlib import Path
+import time
+
+from ..io import file_sha256, object_sha256, parse_json, write_json_once
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--model',type=Path,required=True)
+    parser.add_argument('--requests',type=Path,required=True)
+    parser.add_argument('--out',type=Path,required=True)
+    args=parser.parse_args()
+    from transformers import AutoTokenizer
+    started=time.perf_counter()
+    tok=AutoTokenizer.from_pretrained(args.model,local_files_only=True,trust_remote_code=False)
+    config=parse_json((args.model/'config.json').read_text())
+    context=config.get('text_config',config).get('max_position_embeddings')
+    rows=[]
+    for line in args.requests.read_text().splitlines():
+        row=parse_json(line); request=row['request']
+        if object_sha256(request)!=row['request_sha256']: raise ValueError('request changed')
+        tokens=tok.apply_chat_template(request['messages'],tokenize=True,add_generation_prompt=True,
+                                       enable_thinking=request['enable_thinking'])
+        if isinstance(tokens,Mapping): tokens=tokens['input_ids']
+        if tokens and isinstance(tokens[0],list):
+            if len(tokens)!=1: raise ValueError('expected one tokenized conversation')
+            tokens=tokens[0]
+        count=len(tokens)
+        rows.append(dict(prefix_id=row['prefix_id'],request_sha256=row['request_sha256'],
+                         input_tokens=count,input_ids_sha256=object_sha256(tokens),
+                         output_reserve=request['max_new_tokens'],
+                         fits_native_context=None if context is None else count+request['max_new_tokens']<=context))
+    write_json_once(args.out,dict(requests_sha256=file_sha256(args.requests),tokenizer_sha256=file_sha256(args.model/'tokenizer.json'),
+        chat_template_sha256=object_sha256(tok.chat_template),context_limit=context,rows=rows,
+        cpu_tokenization_seconds=time.perf_counter()-started,model_calls=0,weights_loaded=False,
+        generation_tokens_per_second=None,generations_per_second=None))
+    print(f'CPU tokenized {len(rows)} requests; model calls=0')
+
+
+if __name__=='__main__': main()

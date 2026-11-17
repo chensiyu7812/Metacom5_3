@@ -252,7 +252,13 @@ class TaskReferenceTests(unittest.TestCase):
     def test_history_and_exposure_not_inflated(self):
         activation=Path(self.pr['activation_file'])
         before=activation.read_bytes() if activation.exists() else None
-        self.assertEqual(t.historical_guard(self.pr,BASE),253)
+        # The protocol's absolute path identities must be checked in their
+        # original tree even when this test code runs from a new worktree.
+        original_base=next(p for p in Path(self.pr['run_dir']).parents if p.name == BASE.name)
+        self.assertEqual(t.historical_guard(self.pr,original_base),253)
+        if BASE != original_base:
+            with self.assertRaisesRegex(ValueError, 'historical/cross-version started set changed'):
+                t.historical_guard(self.pr,BASE)
         self.assertEqual(self.pr['statistics']['independent_validation_cases'],0)
         self.assertEqual(self.pr['statistics']['distinct_replies'],12)
         self.assertFalse(r.read(self.entry.PREP/'PROPOSED_AMENDMENT.json')['applied'])

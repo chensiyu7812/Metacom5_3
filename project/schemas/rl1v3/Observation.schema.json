@@ -1,0 +1,334 @@
+{
+  "$defs": {
+    "HeadAvailability": {
+      "additionalProperties": false,
+      "description": "Query-independent legal candidate-pool size AFTER owner/cutoff/ready/family gates.\n\nIdentical for every arm. Not delivered unit count, top-k, score, or capacity.\nPhase-1 GET buys one deterministic unit, which can contain several records.",
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "count": {
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "head": {
+          "enum": [
+            "RS",
+            "MP",
+            "ME",
+            "MS"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "available",
+        "count",
+        "schema_version"
+      ],
+      "title": "HeadAvailability",
+      "type": "object"
+    },
+    "ReadingView": {
+      "additionalProperties": false,
+      "description": "Public text and legal report time; session_rank is allowed time, not an identity.",
+      "properties": {
+        "expandable": {
+          "default": false,
+          "title": "Expandable",
+          "type": "boolean"
+        },
+        "expanded_from_ordinal": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expanded From Ordinal"
+        },
+        "head": {
+          "enum": [
+            "RS",
+            "MP",
+            "ME",
+            "MS"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "ordinal": {
+          "exclusiveMinimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "reading_text": {
+          "minLength": 1,
+          "title": "Reading Text",
+          "type": "string"
+        },
+        "reported_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimePoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "suggested",
+                "intended",
+                "attempted",
+                "completed",
+                "outcome_reported",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "tokens": {
+          "exclusiveMinimum": 0,
+          "title": "Tokens",
+          "type": "integer"
+        },
+        "view": {
+          "enum": [
+            "method",
+            "case",
+            "assertion",
+            "event",
+            "sum",
+            "raw"
+          ],
+          "title": "View",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "view",
+        "ordinal",
+        "reading_text",
+        "reported_at",
+        "tokens",
+        "schema_version"
+      ],
+      "title": "ReadingView",
+      "type": "object"
+    },
+    "SourceTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "turn_index",
+        "role",
+        "text",
+        "schema_version"
+      ],
+      "title": "SourceTurn",
+      "type": "object"
+    },
+    "TimePoint": {
+      "additionalProperties": false,
+      "description": "Null calendar date never means epoch; at least one coordinate is known.",
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Rank"
+        }
+      },
+      "required": [
+        "schema_version"
+      ],
+      "title": "TimePoint",
+      "type": "object"
+    },
+    "VisiblePrefix": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timestamp"
+        },
+        "turns": {
+          "items": {
+            "$ref": "#/$defs/SourceTurn"
+          },
+          "minItems": 1,
+          "title": "Turns",
+          "type": "array"
+        }
+      },
+      "required": [
+        "turns",
+        "timestamp",
+        "schema_version"
+      ],
+      "title": "VisiblePrefix",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:Observation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Same actor/critic whitelist: no private IDs/scores/labels; legal report time allowed.",
+  "properties": {
+    "acquired": {
+      "items": {
+        "$ref": "#/$defs/ReadingView"
+      },
+      "title": "Acquired",
+      "type": "array"
+    },
+    "action_mask": {
+      "items": {
+        "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
+        "type": "string"
+      },
+      "title": "Action Mask",
+      "type": "array"
+    },
+    "availability": {
+      "items": {
+        "$ref": "#/$defs/HeadAvailability"
+      },
+      "title": "Availability",
+      "type": "array"
+    },
+    "domain_id": {
+      "enum": [
+        "finite_head_v1",
+        "adaptive_v1"
+      ],
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "history_sessions": {
+      "minimum": 0,
+      "title": "History Sessions",
+      "type": "integer"
+    },
+    "input_tokens": {
+      "minimum": 0,
+      "title": "Input Tokens",
+      "type": "integer"
+    },
+    "prefix": {
+      "$ref": "#/$defs/VisiblePrefix"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "domain_id",
+    "history_sessions",
+    "prefix",
+    "acquired",
+    "availability",
+    "action_mask",
+    "input_tokens",
+    "schema_version"
+  ],
+  "title": "Observation",
+  "type": "object"
+}

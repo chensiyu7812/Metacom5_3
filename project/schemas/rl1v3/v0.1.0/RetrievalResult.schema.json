@@ -1,0 +1,151 @@
+{
+  "$defs": {
+    "RankedCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "items": {
+            "$ref": "#/$defs/ScoreComponent"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "record_id",
+        "score",
+        "components",
+        "schema_version"
+      ],
+      "title": "RankedCandidate",
+      "type": "object"
+    },
+    "ScoreComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "lexical",
+            "dense",
+            "bm25",
+            "rrf",
+            "temporal",
+            "graph",
+            "entity",
+            "slot"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "score",
+        "schema_version"
+      ],
+      "title": "ScoreComponent",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:RetrievalResult",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Private execution envelope, never an Observation field.",
+  "properties": {
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "filters_applied": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Filters Applied",
+      "type": "array"
+    },
+    "head": {
+      "enum": [
+        "RS",
+        "MP",
+        "ME",
+        "MS"
+      ],
+      "title": "Head",
+      "type": "string"
+    },
+    "index_version": {
+      "minLength": 1,
+      "title": "Index Version",
+      "type": "string"
+    },
+    "query_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Identity",
+      "type": "string"
+    },
+    "ranked": {
+      "items": {
+        "$ref": "#/$defs/RankedCandidate"
+      },
+      "title": "Ranked",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "head",
+    "ranked",
+    "query_identity",
+    "filters_applied",
+    "bank_version",
+    "index_version",
+    "schema_version"
+  ],
+  "title": "RetrievalResult",
+  "type": "object"
+}

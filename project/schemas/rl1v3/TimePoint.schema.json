@@ -1,0 +1,45 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:TimePoint",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Null calendar date never means epoch; at least one coordinate is known.",
+  "properties": {
+    "date": {
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Date"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "session_rank": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Session Rank"
+    }
+  },
+  "required": [
+    "schema_version"
+  ],
+  "title": "TimePoint",
+  "type": "object"
+}

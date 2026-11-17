@@ -1,0 +1,77 @@
+{
+  "$defs": {
+    "SourceTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "turn_index",
+        "role",
+        "text",
+        "schema_version"
+      ],
+      "title": "SourceTurn",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:VisiblePrefix",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "timestamp": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Timestamp"
+    },
+    "turns": {
+      "items": {
+        "$ref": "#/$defs/SourceTurn"
+      },
+      "minItems": 1,
+      "title": "Turns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "turns",
+    "timestamp",
+    "schema_version"
+  ],
+  "title": "VisiblePrefix",
+  "type": "object"
+}

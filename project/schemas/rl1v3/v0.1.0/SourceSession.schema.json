@@ -1,0 +1,169 @@
+{
+  "$defs": {
+    "SourceTurn": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "turn_index",
+        "role",
+        "text",
+        "schema_version"
+      ],
+      "title": "SourceTurn",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:SourceSession",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "ancestor_family_ids": {
+      "default": [],
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Ancestor Family Ids",
+      "type": "array"
+    },
+    "chronological_rank": {
+      "minimum": 0,
+      "title": "Chronological Rank",
+      "type": "integer"
+    },
+    "complete": {
+      "default": true,
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "dataset": {
+      "minLength": 1,
+      "title": "Dataset",
+      "type": "string"
+    },
+    "date": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Date"
+    },
+    "excluded_for_overlap": {
+      "default": false,
+      "title": "Excluded For Overlap",
+      "type": "boolean"
+    },
+    "family_id": {
+      "minLength": 1,
+      "title": "Family Id",
+      "type": "string"
+    },
+    "license": {
+      "minLength": 1,
+      "title": "License",
+      "type": "string"
+    },
+    "owner_id": {
+      "minLength": 1,
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "provenance_version": {
+      "minLength": 1,
+      "title": "Provenance Version",
+      "type": "string"
+    },
+    "raw_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Raw Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "session_id": {
+      "minLength": 1,
+      "title": "Session Id",
+      "type": "string"
+    },
+    "source_split": {
+      "enum": [
+        "train",
+        "dev",
+        "validation",
+        "test",
+        "unassigned",
+        "negative_only"
+      ],
+      "title": "Source Split",
+      "type": "string"
+    },
+    "source_uri": {
+      "minLength": 1,
+      "title": "Source Uri",
+      "type": "string"
+    },
+    "transcript_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Transcript Sha256",
+      "type": "string"
+    },
+    "turns": {
+      "items": {
+        "$ref": "#/$defs/SourceTurn"
+      },
+      "minItems": 1,
+      "title": "Turns",
+      "type": "array"
+    }
+  },
+  "required": [
+    "owner_id",
+    "session_id",
+    "chronological_rank",
+    "date",
+    "turns",
+    "raw_sha256",
+    "dataset",
+    "family_id",
+    "license",
+    "provenance_version",
+    "source_uri",
+    "transcript_sha256",
+    "source_split",
+    "schema_version"
+  ],
+  "title": "SourceSession",
+  "type": "object"
+}
