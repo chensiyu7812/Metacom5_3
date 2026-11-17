@@ -1,0 +1,62 @@
+{
+  "code_sha256": "1b22ecfcc56c51dadc989ebea03eb883f40627abea0c0e597abcadfd88772145",
+  "evidence_tier": "engineering_only",
+  "historical_use_lower_bound": {
+    "prefixes_in_human_review_dirs": 42,
+    "prefixes_in_judge_feedback_training_or_human_dirs": 172,
+    "share": 0.0418,
+    "source": "B0 exposure_registry.jsonl (legacy rl1 PrefixSpec identity match)"
+  },
+  "inputs": {
+    "data/paper1_public_memory/es_memeval_public_multi_view_session_results_v1.jsonl": "ce6a3bec3a84454fb79b9afd033a24a571a4a28997130858f81217088349835e",
+    "data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json": "51c16916c89b8d7ef0845cd0e4fc8b486569ba0ff9c65a39ba66c6d2dde2e12c",
+    "outputs/pm_rl1/v3/B0/exposure_registry.jsonl": "0f643d1b8a3ba3daabc074bcd9900917a27fff2486aaeee842602937afafa26d",
+    "outputs/pm_rl1/v3/B0/prefix_census.jsonl": "377f4d0b91489f800e6acb910c6c0d02fca9f5b6453d730bc7010270fdb3930c"
+  },
+  "legal_strict_past_availability": {
+    "ME_legacy_event": {
+      "per_prefix": {
+        "max": 111,
+        "min": 0,
+        "p10": 9,
+        "p50": 43,
+        "p90": 83
+      },
+      "prefixes_with_at_least_one": 4108,
+      "share": 0.9973
+    },
+    "MP_legacy_profile": {
+      "per_prefix": {
+        "max": 75,
+        "min": 0,
+        "p10": 5,
+        "p50": 16,
+        "p90": 42
+      },
+      "prefixes_with_at_least_one": 4072,
+      "share": 0.9886
+    },
+    "MS_RAW_past_sessions": {
+      "per_prefix": {
+        "max": 32,
+        "min": 1,
+        "p10": 3,
+        "p50": 11,
+        "p90": 22
+      },
+      "prefixes_with_at_least_one": 4119,
+      "share": 1.0
+    }
+  },
+  "not_measured": [
+    "reading through WS-A bank_v0/retrieve.read (A1b not delivered)",
+    "whether any legacy asset improves a reply vs OFF (needs B1/B2 + B6e)",
+    "RS drafts (11/15: 12 cases + 3 methods) \u2014 global, not owner-scoped; none shown to improve natural support (RESOURCE_SPEC \u00a71)"
+  ],
+  "prefixes": 4119,
+  "status": "LEGACY_ASSET_AVAILABILITY_NOT_BANK_V0",
+  "units_total": {
+    "ME_legacy_event": 1523,
+    "MP_legacy_profile": 713
+  }
+}
