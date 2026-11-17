@@ -68,6 +68,7 @@ class ReadUnit:
     tokens: int
     record_ids: tuple[str, ...]  # private; goes to TerminalKey, never to Observation
     cost_s: float = 0.0          # measured/predicted retrieval+read latency
+    public_view: object = None   # the shared-contract ReadingView, when bound to C0
 
 
 @dataclass(frozen=True)
@@ -91,13 +92,17 @@ class State:
 
 
 class FiniteHeadEnv:
+    """``terminal_lookup`` receives the acquired subset mask, or the whole final
+    ``State`` when ``lookup_takes_state`` (needed to build a full TerminalKey
+    from the delivered record groups)."""
+
     def __init__(self, *, availability: Mapping[str, int], reader: Callable[[str], ReadUnit | None],
-                 terminal_lookup: Callable[[int], TerminalOutcome], prefix_tokens: int,
+                 terminal_lookup: Callable[..., TerminalOutcome], prefix_tokens: int,
                  token_capacity: int | None = None, max_gets: int = len(HEADS),
                  step_cost: Mapping[str, float] | None = None,
                  unit_tokens: Mapping[str, int] | None = None,
                  observation_factory: Callable[..., object] | None = None,
-                 visible_prefix: object = None):
+                 visible_prefix: object = None, lookup_takes_state: bool = False):
         unknown = set(availability) - set(HEADS)
         if unknown:
             raise ValueError(f"unknown heads {unknown}")
@@ -112,6 +117,7 @@ class FiniteHeadEnv:
         self.unit_tokens = dict(unit_tokens or {})
         self.observation_factory = observation_factory or (lambda **kw: kw)
         self.visible_prefix = visible_prefix
+        self.lookup_takes_state = lookup_takes_state
 
     # ------------------------------------------------------------- masks
     def legal_actions(self, s: State) -> tuple[str, ...]:
@@ -148,7 +154,7 @@ class FiniteHeadEnv:
         if action not in legal:
             raise IllegalAction(f"{action} not in {legal}")
         if action == STOP:
-            outcome = self.terminal_lookup(s.mask)
+            outcome = self.terminal_lookup(s if self.lookup_takes_state else s.mask)
             if outcome is None:
                 raise PendingTerminal(canonical_path(s.mask))
             return (State(s.order, s.readings, True, s.elapsed_s, s.input_tokens),
