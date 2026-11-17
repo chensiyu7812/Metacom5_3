@@ -1,0 +1,327 @@
+{
+  "$defs": {
+    "ItemVerdict": {
+      "additionalProperties": false,
+      "properties": {
+        "J1": {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "title": "J1",
+          "type": "string"
+        },
+        "J2": {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "title": "J2",
+          "type": "string"
+        },
+        "final": {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "title": "Final",
+          "type": "string"
+        },
+        "item_id": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "J1",
+        "J2",
+        "final",
+        "schema_version"
+      ],
+      "title": "ItemVerdict",
+      "type": "object"
+    },
+    "PairwiseQuality": {
+      "additionalProperties": false,
+      "properties": {
+        "comparator_key_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Comparator Key Sha256",
+          "type": "string"
+        },
+        "judge_identity": {
+          "minLength": 1,
+          "title": "Judge Identity",
+          "type": "string"
+        },
+        "qualification_tier": {
+          "enum": [
+            "engineering_only",
+            "research_qualified",
+            "human_confirmed"
+          ],
+          "title": "Qualification Tier",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "win",
+            "tie",
+            "loss",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comparator_key_sha256",
+        "verdict",
+        "judge_identity",
+        "qualification_tier",
+        "schema_version"
+      ],
+      "title": "PairwiseQuality",
+      "type": "object"
+    },
+    "TerminalKey": {
+      "additionalProperties": false,
+      "properties": {
+        "acquired_record_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Acquired Record Ids",
+          "type": "array"
+        },
+        "bank_version": {
+          "minLength": 1,
+          "title": "Bank Version",
+          "type": "string"
+        },
+        "decode_id": {
+          "minLength": 1,
+          "title": "Decode Id",
+          "type": "string"
+        },
+        "g_id": {
+          "minLength": 1,
+          "title": "G Id",
+          "type": "string"
+        },
+        "index_version": {
+          "minLength": 1,
+          "title": "Index Version",
+          "type": "string"
+        },
+        "ordered_path": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Ordered Path",
+          "type": "array"
+        },
+        "prefix_id": {
+          "minLength": 1,
+          "title": "Prefix Id",
+          "type": "string"
+        },
+        "renderer_id": {
+          "minLength": 1,
+          "title": "Renderer Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "step2_id": {
+          "minLength": 1,
+          "title": "Step2 Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix_id",
+        "bank_version",
+        "index_version",
+        "ordered_path",
+        "acquired_record_ids",
+        "renderer_id",
+        "step2_id",
+        "g_id",
+        "decode_id",
+        "schema_version"
+      ],
+      "title": "TerminalKey",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:TerminalRecord",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "gsc_lower": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Gsc Lower"
+    },
+    "gsc_upper": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Gsc Upper"
+    },
+    "hard_factual": {
+      "enum": [
+        "pass",
+        "fail",
+        "uncertain"
+      ],
+      "title": "Hard Factual",
+      "type": "string"
+    },
+    "hard_safety": {
+      "enum": [
+        "pass",
+        "fail",
+        "uncertain"
+      ],
+      "title": "Hard Safety",
+      "type": "string"
+    },
+    "item_verdicts": {
+      "items": {
+        "$ref": "#/$defs/ItemVerdict"
+      },
+      "title": "Item Verdicts",
+      "type": "array"
+    },
+    "key": {
+      "$ref": "#/$defs/TerminalKey"
+    },
+    "latency_measured": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Latency Measured"
+    },
+    "latency_pred": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Latency Pred"
+    },
+    "misuse_flags": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Misuse Flags",
+      "type": "array"
+    },
+    "qualification_tier": {
+      "enum": [
+        "engineering_only",
+        "research_qualified",
+        "human_confirmed"
+      ],
+      "title": "Qualification Tier",
+      "type": "string"
+    },
+    "request_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Request Sha256",
+      "type": "string"
+    },
+    "response": {
+      "title": "Response",
+      "type": "string"
+    },
+    "response_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Response Sha256",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "soft_quality_pairwise": {
+      "items": {
+        "$ref": "#/$defs/PairwiseQuality"
+      },
+      "title": "Soft Quality Pairwise",
+      "type": "array"
+    }
+  },
+  "required": [
+    "key",
+    "request_sha256",
+    "response",
+    "response_sha256",
+    "item_verdicts",
+    "gsc_lower",
+    "gsc_upper",
+    "hard_factual",
+    "hard_safety",
+    "soft_quality_pairwise",
+    "qualification_tier",
+    "misuse_flags",
+    "latency_pred",
+    "latency_measured",
+    "schema_version"
+  ],
+  "title": "TerminalRecord",
+  "type": "object"
+}
