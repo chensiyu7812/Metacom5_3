@@ -1,7 +1,12 @@
 # B5 真实 bank-v0 回放 v2：24 个固定覆盖前缀（集成前运行）
 
 - 证据等级：engineering_only。只用 CPU；读取 Gemma tokenizer 文件，没有加载权重；Generator、判官、GPU、付费调用都是 0 次
-- 结果目录：`real_replay_v2_02d0a4b1_d06715bf/`，含 `replay_reports.jsonl`、`summary.json` 和 `manifest.json`（输入、输出、代码文件的 SHA256）
+- **正式结果**：`real_replay_v2_aport_02d0a4b1_173bed23/`。
+  - 用 WS-A 自己的读取端口 `bank.v0_port.PrefixPort`（`pmrl1v3-a1b-read-port-v1`，PR #8 head `a26998f0`），代码 `173bed23`；
+  - 含 `replay_reports.jsonl`、`summary.json` 和 `manifest.json`（输入、输出、代码文件的 SHA256）。
+- **交叉核对**：`real_replay_v2_02d0a4b1_d06715bf/`。
+  - 用 B 的薄适配层 `env/a1b_port.py`，基于 A 的上一个 head `a0771e1e`，代码 `d06715bf`；
+  - 两次运行逐前缀比较 key、可达子集、各子集输入 token、availability 和身份，结果见第 2 节。
 - **状态 `pre_integration_rehearsal`**：WS-A 的 A1 `7116b8bd` 和 A1b `c9dd5aae` 还在 PR #8 中，尚未合入 integration（脚本运行时用 `git merge-base` 实际检查过）
   - 本次用的是 A 的真实 source registry 和 bank-v0；
   - 但按规定这还不是"正式交付后"的回放；
@@ -19,6 +24,12 @@
 | 5. RS 案例冒充方法目录 | RS 只按外部 train 案例核对：无 owner、来自 ESConv train、family 与前缀谱系不相交、每个跨度对 ESConv 原文核验通过。不当作方法目录 |
 
 ## 2. 结果（24 个前缀）
+
+两次运行得出同一组结论：
+- 正式运行用 A 的 PrefixPort，基于 `a26998f0`，耗时 98.7 秒；
+- 交叉核对用 B 的适配层，基于 `a0771e1e`，耗时 218.8 秒。
+
+两者的 24 份逐前缀报告**每个字段都完全相同**，所以 A 两次提交之间对 Reader 的重构没有改变可观测的读取结果，两种端口实现也一致。
 
 | 项 | 结果 |
 |---|---|

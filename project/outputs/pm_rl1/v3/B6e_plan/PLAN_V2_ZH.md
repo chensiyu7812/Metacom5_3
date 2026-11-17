@@ -36,7 +36,8 @@
 | renderer | A1b Reader 的 `renderer:e7678cc1…`（包含 Gemma tokenizer 身份，输出预留 320） |
 | Step-2 | `none-v0-read-replay` |
 | G0 / decode | **缺**：目前只有"tokenizer-only-not-frozen-G0"和 `not_run`；需要 WS-A 交付带版本的初始 G0（权重 SHA）、请求渲染器和解码配置 |
-| NeedCard writer | `pmrl1v3-needcard-writer-v2\|qwen3.5-9b\|92578935…` |
+| 读取端口 | WS-A `bank.v0_port.PrefixPort`（`pmrl1v3-a1b-read-port-v1`） |
+| NeedCard writer | `pmrl1v3-needcard-writer-v2\|qwen3.5-9b\|92578935…`，类别输入为 A 的 RS-v0 目录 `pmrl1v3-rs-v0-strategy-catalog-1:7323c7f4…` |
 | 检查表 | `pmrl1v3-checklist-template-v2\|58819db2…`，冻结之后才能生成 |
 | J1 | `pmrl1v3-itemjudge-v2` + Qwen3.5-9B 文件集合 `5f526cd0…`；首次调用前固定 `JudgeIdentityV2.id` |
 | 奖励 / 评价 | ER-v2（预登记哈希 `37012bc1…`）/ 评价协议 v2 |

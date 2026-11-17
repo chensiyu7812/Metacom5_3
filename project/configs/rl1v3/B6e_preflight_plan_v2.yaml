@@ -4,7 +4,7 @@ task_id: B6e_preflight
 plan_version: pmrl1v3-b6e-plan-v2
 status: proposal_not_authorised
 prefixes:
-  source: outputs/pm_rl1/v3/B5/real_replay_v2_02d0a4b1_d06715bf/replay_reports.jsonl
+  source: outputs/pm_rl1/v3/B5/real_replay_v2_aport_02d0a4b1_173bed23/replay_reports.jsonl   # WS-A PrefixPort
   candidates: folds 1-5 of coverage_sample_v1 whose real replay passed (fold 6 = historical test owners, excluded)
   rule: >-
     unchanged from plan v1: sort by n_reachable desc, then fold, then slot; at most 2 per fold and 1 per
@@ -22,6 +22,8 @@ identity_binding:                  # every terminal row binds all of these; any 
   g_id: REQUIRED - versioned initial G0 identity (weights sha + request renderer); currently only the not-frozen tokenizer id
   decode_id: REQUIRED - G0 decode config id (currently not_run)
   needcard_writer: "pmrl1v3-needcard-writer-v2|qwen3.5-9b|9257893575daef7158cced96f178296491c45c41127aa299cf19197693b7873c"
+  rs_v0_catalog: "pmrl1v3-rs-v0-strategy-catalog-1:7323c7f40e7b99cff5b7e7bcc10354c9360b7a0a6016a3495ee13124998d344f"
+  read_port: "pmrl1v3-a1b-read-port-v1 (WS-A bank.v0_port.PrefixPort)"
   checklist: "pmrl1v3-checklist-template-v2|58819db2598f6c53bcd527c81a637b4032fc603428c3a85378e0f72976e64835"
   j1: pmrl1v3-itemjudge-v2 + Qwen3.5-9B file-set sha 5f526cd0... (JudgeIdentityV2.id fixed before the first call)
   engineering_reward: "pmrl1v3-engineering-reward-v2 (preregistration 37012bc199d3d0a5ee1fe603171c9eeaed78a63f97f74335f7ec38b7ef569d74)"

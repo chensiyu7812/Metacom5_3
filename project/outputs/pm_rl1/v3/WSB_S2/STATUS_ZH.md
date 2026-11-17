@@ -16,7 +16,8 @@
 
 ## 2. 分支
 
-- `pmrl1-v3/ws-b-s2` **叠在** WS-A PR #8 的 head `a0771e1e` 上；PR #8 的父提交就是 integration 的 `8bcd326e`。
+- `pmrl1-v3/ws-b-s2` **叠在** WS-A PR #8 之上：先基于 `a0771e1e`；A 之后又推送了 `14fd459e`（A-owned 读取端口 `bank/v0_port.py`）和 `a26998f0`（RS-v0 策略类别目录），已普通 merge 进来（`a2db00cf`），没有冲突。PR #8 的父提交就是 integration 的 `8bcd326e`。
+- B 已改用 A 交付的读取端口和类别目录（`173bed23`）；B 的薄适配层和自行整理的标签列表只保留作交叉核对。
 - 原因：A1/A1b 的 registry、bank、Reader 只在 PR #8 中，B 的真实回放和来源核对必须用它们。
 - Draft PR 的 base 设为 `pmrl1-v3/ws-a-a1-bank-v0`，所以 diff 里只有 B 的改动。PR #8 合入后改指 integration，由集成负责人安排。
 - 本分支没有修改 C0、WS-A 模块、workflow、`EXECUTION_STATE.json`、H0、main 或 PR #4。
@@ -26,8 +27,8 @@
 | 交付 | 文档 | 状态 |
 |---|---|---|
 | A1 与 B1 适配器的 cross_check | `B1/NEEDCARD_V2_CPU_PREFLIGHT_ZH.md` §1 | 内容零差异（401 个会话、4,119 个前缀）；集成前运行 |
-| 24 个前缀的真实 B5 回放 | `B5/REAL_REPLAY_V2_ZH.md` | 24/24 通过；21 个前缀可达 16 个子集，3 个可达 8 个；集成前运行 |
-| RS-v0 目录兼容性 | `B1/NEEDCARD_V2_CPU_PREFLIGHT_ZH.md` §2 | A 没有交付目录；B 机械整理出 8 个历史标签，定义均为 unknown，需要确认 |
+| 24 个前缀的真实 B5 回放 | `B5/REAL_REPLAY_V2_ZH.md` | 用 A 的 PrefixPort：24/24 通过；21 个前缀可达 16 个子集，3 个可达 8 个；与 B 适配层的结果逐前缀相同；集成前运行 |
+| RS-v0 目录兼容性 | `B1/NEEDCARD_V2_CPU_PREFLIGHT_ZH.md` §2 | A 交付的目录（`a26998f0`）满足 writer v2 的全部输入要求；类别是对话动作标签，几乎不能区分案例，只作评价侧注记 |
 | 20 个 NeedCard 试点的 CPU 预算 | 同上 §3 | 20/20 为 ready；prompt 3,739–27,009 token；未截断 |
 | NeedCard 授权申请 | 同上 §4 | 已提交，**未运行** |
 | I 类与 ER 修改 | `B2/PROTOCOL_V2_ZH.md` | 检查表、判官、ER、评价协议均升级到 v2，v1 保留；`B2/protocols_v2_frozen.json` 已冻结 |
@@ -37,7 +38,7 @@
 **PR #8 合入后的必做步骤**：
 
 1. 把本分支改指 integration；
-2. 重跑 `B5_real_replay_v2.py`、`B1_A1_cross_check.py`、`B1_needcard_cpu_preflight.py`；
+2. 重跑 `B5_real_replay_v2.py --port a`、`B1_A1_cross_check.py`、`B1_needcard_cpu_preflight.py`；
 3. 核对结果与本轮的集成前结果一致（摘要中的 status 会自动变为 `formal_on_integration`）。
 
 ## 4. 测试
