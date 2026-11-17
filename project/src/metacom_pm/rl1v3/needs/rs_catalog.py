@@ -82,3 +82,42 @@ def derive(bank, strategy_rows) -> tuple[LabelCatalog, dict]:
                  strategy_ids_not_in_cards=missing, guidance_text_is_generic_template=generic,
                  labels=len(entries), selectable=len(cat.selectable))
     return cat, audit
+
+
+WRITER_FIELDS = ("id", "label", "definition")
+
+
+def check_compat(catalog, cross=None) -> dict:
+    """Does a (WS-A) RS-v0 catalog satisfy the writer v2 input contract?
+
+    Requires per entry family_id/label/definition/writer_selectable; every
+    definition unknown; residual labels not selectable; an explicit unknown
+    value; nothing but id/label/definition reaching the writer (no case text,
+    case/evidence/source ids).  ``cross``: an independently derived list whose
+    label set and selectability must agree."""
+    from .protocol_v2 import _data
+    d = catalog.as_dict()
+    entries = d["entries"]
+    data = getattr(catalog, "data", {})
+    payload = _data(dict(method_catalog=dict(d, selectable=list(catalog.selectable)), past=[],
+                         current=dict(date=None, turns=[])))["METHOD_LABELS"]
+    text = repr(payload)
+    out = dict(
+        entry_fields_present=all(all(k in e for k in ("family_id", "label", "definition", "writer_selectable"))
+                                 for e in entries),
+        definitions_all_unknown=all(e["definition"] == UNKNOWN for e in entries),
+        residual_not_selectable=all(not e["writer_selectable"] for e in entries if e["label"] in RESIDUAL_LABELS),
+        unknown_value_declared=d.get("unknown_value") == UNKNOWN,
+        not_a_method_catalog=data.get("is_a4_method_catalog", False) is False,
+        quality_unverified=d.get("quality", "unverified") == "unverified",
+        writer_payload_fields_only=all(set(x) == set(WRITER_FIELDS) for x in payload),
+        writer_payload_has_no_ids_or_case_text=not any(t in text for t in ("resource:", "source:", "esconv_", "seeker:")),
+    )
+    info = dict(bank_version=d["bank_version"], catalog_id=d["catalog_id"], selectable=list(catalog.selectable),
+                labels=[e["label"] for e in entries], writer_payload_entries=len(payload))
+    if cross is not None:
+        out["cross_check_selectable_equal"] = set(cross.selectable) == set(catalog.selectable)
+        out["cross_check_labels_equal"] = {e["label"] for e in cross.entries} == {e["label"] for e in entries}
+        info["count_units"] = ("WS-A counts original supporter annotations; the WS-B list counts legacy strategy "
+                               "rows - different units, not compared")
+    return dict(out, compatible=all(out.values()), **info)

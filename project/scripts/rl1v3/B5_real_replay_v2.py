@@ -42,9 +42,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=str(PROJECT / "configs/rl1v3/B5_real_replay_v2.yaml"))
     ap.add_argument("--out", default=None, help="override output directory (dry runs)")
+    ap.add_argument("--port", choices=("a", "b"), default="a",
+                    help="a = WS-A bank.v0_port.PrefixPort (formal); b = WS-B thin a1b_port adapter (cross-check)")
+    ap.add_argument("--compare", default=None, help="replay_reports.jsonl of another run to compare keys/reachability")
     args = ap.parse_args()
     cfg = yaml.safe_load(Path(args.config).read_text())
     from metacom_pm.rl1v3.retrieve.native_tokens import NativeTokenizer
+    ident = cfg["reader_identity"]
 
     def load():
         bank = P.load_bank(REPO, registry_dir=cfg["registry_dir"], bank_dir=cfg["bank_dir"],
@@ -54,16 +58,35 @@ def main():
         tok = NativeTokenizer(cfg["tokenizer"], PROJECT / cfg["asset_manifest"])
         return bank, tok
 
+    def a_factory():
+        from metacom_pm.rl1v3.bank import v0_port as AP
+        acfg = json.loads((REPO / AP.CONFIG).read_text())
+        for k in ("registry_dir", "bank_dir", "expected_source", "expected_bank", "expected_index"):
+            if acfg[k] != cfg[k]:
+                raise SystemExit(f"WS-A port config {k} differs from the B5 v2 config")
+        if acfg["reader_identity"] != ident:
+            raise SystemExit("WS-A port reader identity differs from the B5 v2 config")
+        return AP.make_port_factory(root=REPO)
+
     t0 = time.time()
-    bank, tok = load()
-    bank2, tok2 = load()          # independent load for the fresh-port determinism pass
-    ident = cfg["reader_identity"]
+    if args.port == "a":
+        fa, fa2 = a_factory(), a_factory()        # second: independent load from disk + new tokenizer
+        bank, bank2, tok, tok2 = fa.bank, fa2.bank, fa.tokenizer, fa2.tokenizer
+        port_name = "WS-A bank.v0_port.PrefixPort (pmrl1v3-a1b-read-port-v1)"
+    else:
+        (bank, tok), (bank2, tok2) = load(), load()
+        port_name = f"WS-B {P.ADAPTER}"
     cov = [json.loads(x) for x in (PROJECT / cfg["coverage_sample"]).read_text().splitlines()]
     reports = []
     for row in cov:
         p, p2 = P.prefix_for(bank.registry, row), P.prefix_for(bank2.registry, row)
 
         def mk(b, pr, tk, reserve=ident["output_reserve_tokens"]):
+            if args.port == "a":
+                from metacom_pm.rl1v3.bank import v0_port as AP
+                f = ((fa if b is bank else fa2) if reserve == ident["output_reserve_tokens"]
+                     else AP.PortFactory(b, tk, dict(ident, output_reserve_tokens=reserve)))   # stress: own identity
+                return lambda: f.for_prefix(pr)
             return lambda: P.A1bPort(b, pr, tk, g_id=ident["g_id"], decode_id=ident["decode_id"],
                                      step2_id=ident["step2_id"], output_reserve_tokens=reserve)
         port = mk(bank, p, tok)()
@@ -85,8 +108,17 @@ def main():
     boundary = sum(len(h.get("ready_at_equals_cutoff", ())) for r in reports for h in r["head_probe"].values())
     full_tok = [r["input_tokens_by_subset"].get("RS+MP+ME+MS") for r in reports]
     full_tok = [x for x in full_tok if x is not None]
+    compared = None
+    if args.compare:
+        other = {json.loads(x)["prefix_id"]: json.loads(x) for x in Path(args.compare).read_text().splitlines()}
+        same = [r["prefix_id"] for r in reports if r["prefix_id"] in other and all(
+            r[k] == other[r["prefix_id"]][k] for k in ("key_by_subset", "reachable", "input_tokens_by_subset",
+                                                        "availability", "unreachable_heads", "identity"))]
+        compared = dict(path=str(Path(args.compare).relative_to(PROJECT)) if Path(args.compare).is_relative_to(PROJECT)
+                        else args.compare, identical_prefixes=len(same), prefixes=len(reports))
     summary = dict(
         protocol=REPLAY_PROTOCOL, status="formal_on_integration" if integrated else "pre_integration_rehearsal",
+        port=port_name, cross_port_comparison=compared,
         a_formal_commits=a, a_integrated=integrated, code_head=git("rev-parse", "HEAD"),
         source_version=bank.registry.version, bank_version=bank.version, index_version=bank.index_version,
         reader_identity=reports[0]["identity"], tokenizer_identity=tok.identity,
@@ -111,14 +143,15 @@ def main():
         failure_kinds=dict(Counter(f.split(":")[0] for r in reports for f in r["failures"])),
         terminal_outcomes="all pending (no generator output); OFF-only table check passed per prefix" if all(r["passed"] for r in reports) else "see failures",
         model_calls=0, gpu_used=False, wall_seconds=round(time.time() - t0, 1), evidence_tier="engineering_only")
-    tag = f"real_replay_v2_{bank.version.split(':')[1][:8]}_{summary['code_head'][:8]}"
+    tag = f"real_replay_v2_{args.port}port_{bank.version.split(':')[1][:8]}_{summary['code_head'][:8]}"
     out = Path(args.out) if args.out else PROJECT / cfg["out_root"] / tag
     write_jsonl_once(out / "replay_reports.jsonl", reports)
     write_json_once(out / "summary.json", summary)
     if not args.out:
         code = [PROJECT / x for x in ("scripts/rl1v3/B5_real_replay_v2.py", "src/metacom_pm/rl1v3/env/bank_replay_v2.py",
                                       "src/metacom_pm/rl1v3/env/a1b_port.py", "src/metacom_pm/rl1v3/env/c0_binding.py",
-                                      "src/metacom_pm/rl1v3/env/finite_head.py", "configs/rl1v3/B5_real_replay_v2.yaml")]
+                                      "src/metacom_pm/rl1v3/env/finite_head.py", "configs/rl1v3/B5_real_replay_v2.yaml",
+                                      "src/metacom_pm/rl1v3/bank/v0_port.py", "src/metacom_pm/rl1v3/retrieve/v0.py")]
         inputs = {"coverage_sample": PROJECT / cfg["coverage_sample"],
                   "registry": REPO / cfg["registry_dir"] / "registry.json",
                   "sources": REPO / cfg["registry_dir"] / "sources.jsonl",

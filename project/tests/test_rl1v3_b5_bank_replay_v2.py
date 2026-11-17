@@ -297,3 +297,18 @@ def test_real_prefix_must_equal_b0_identity(real):
     P, bank, cov = real
     with pytest.raises(ValueError, match="differs from B0"):
         P.prefix_for(bank.registry, dict(cov[0], prefix_id="0" * 64))
+
+
+def test_ws_a_prefix_port_satisfies_v2_and_matches_the_b_adapter(real):
+    """WS-A's own v0_port.PrefixPort runs the v2 harness and gives exactly the B adapter's terminals."""
+    from metacom_pm.rl1v3.bank import v0_port as AP
+    P, bank, cov = real
+    row = next(r for r in cov if r["rank_bucket"] == "mid")
+    prefix = P.prefix_for(bank.registry, row)
+    ident = dict(g_id="g-test-not-frozen", decode_id="not_run", step2_id="none-v0-read-replay", output_reserve_tokens=320)
+    fa = AP.PortFactory(bank, CharTokenizer(), ident)
+    rep_a = replay_prefix(lambda: fa.for_prefix(prefix))
+    rep_b = replay_prefix(_mk(P, bank, prefix))
+    assert rep_a["passed"], rep_a["failures"]
+    for k in ("key_by_subset", "reachable", "input_tokens_by_subset", "availability", "identity"):
+        assert rep_a[k] == rep_b[k], k

@@ -43,7 +43,14 @@ def main():
                        expected_source=b5["expected_source"], expected_bank=b5["expected_bank"])
     reg = bank.registry
     strategies = S.PinnedInputs(REPO).read("rs_strategy", lines=True)      # hash-checked against the A1 audit
-    catalog, cat_audit = rs_catalog.derive(bank, strategies)
+    b_list, b_audit = rs_catalog.derive(bank, strategies)                   # WS-B cross-check only
+    if cfg.get("rs_catalog_path"):                                          # WS-A delivered RS-v0 catalog (formal)
+        from metacom_pm.rl1v3.bank import rs_v0_catalog as AC
+        catalog = AC.load(REPO / cfg["rs_catalog_path"], root=REPO, bank=bank)   # rebuilt + verified by A's loader
+        cat_audit = dict(source="WS-A " + AC.PROTOCOL, compatibility=rs_catalog.check_compat(catalog, b_list),
+                         a_counts=catalog.data["counts"], b_cross_check_list=dict(b_audit, catalog_id=b_list.catalog_id))
+    else:
+        catalog, cat_audit = b_list, dict(source="WS-B derived list (no WS-A catalog configured)", **b_audit)
     tok = NativeTokenizer(cfg["writer_model"]["path"], PROJECT / cfg["asset_manifest"])
     manifest = json.loads((PROJECT / cfg["asset_manifest"]).read_text())
     model_files = sorted((r["path"].split("/")[-1], r["sha256"]) for r in manifest["files"]
@@ -97,7 +104,7 @@ def main():
         max_fraction_of_native=round(max(r["prompt_plus_output_bound"] for r in rows) / tok.native_context_tokens, 4),
         legality_all_true=all(all(r["legality"].values()) for r in rows), truncated=0,
         writer_calls=0, gpu_used=False, wall_seconds=round(time.time() - t0, 1), evidence_tier="engineering_only")
-    out = Path(args.out) if args.out else PROJECT / "outputs/pm_rl1/v3/B1/needcard_cpu_preflight_v2"
+    out = Path(args.out) if args.out else PROJECT / cfg["out_dir"]
     write_json_once(out / "rs_v0_label_catalog.json", dict(catalog.as_dict(), audit=cat_audit))
     write_jsonl_once(out / "pilot_inputs.jsonl", rows)
     write_json_once(out / "summary.json", summary)
@@ -107,7 +114,8 @@ def main():
                              inputs={"census": PROJECT / cfg["census"], "coverage_sample": PROJECT / cfg["coverage_sample"],
                                      "sources": REPO / b5["registry_dir"] / "sources.jsonl",
                                      "records": REPO / b5["bank_dir"] / "records.jsonl",
-                                     "strategy_cards": REPO / S.PinnedInputs(REPO).config["rs_strategy"]},
+                                     "strategy_cards": REPO / S.PinnedInputs(REPO).config["rs_strategy"],
+                                     **({"rs_v0_catalog": REPO / cfg["rs_catalog_path"]} if cfg.get("rs_catalog_path") else {})},
                              outputs=[out / "rs_v0_label_catalog.json", out / "pilot_inputs.jsonl", out / "summary.json"],
                              code=[PROJECT / x for x in ("scripts/rl1v3/B1_needcard_cpu_preflight.py",
                                                          "src/metacom_pm/rl1v3/needs/protocol_v2.py",

@@ -159,3 +159,18 @@ def test_tier_appendix_matches_the_unchanged_pool():
     assert (app["tiers"]["S"]["realized"], app["tiers"]["M"]["realized"], app["tiers"]["L"]["realized"]) == (288, 482, 748)
     assert app["tiers"]["L"]["name"] == "L-realized" and app["tiers"]["L"]["plan_nominal"] == 960
     assert max(Counter((r["owner_id"], r["session_id"]) for r in pool).values()) <= 2
+
+
+def test_ws_a_rs_v0_catalog_is_compatible_with_writer_v2(real):
+    from metacom_pm.rl1v3.bank import rs_v0_catalog as AC
+    bank, strategies = real
+    cat = AC.load(ROOT / "project/outputs/pm_rl1/v3/A1b_crossline_20261118/RS_V0_STRATEGY_CATALOG.json",
+                  root=ROOT, bank=bank)
+    derived, _ = rs_catalog.derive(bank, strategies)
+    res = rs_catalog.check_compat(cat, derived)
+    assert res["compatible"], res
+    assert set(res["selectable"]) == set(derived.selectable) and "others" not in res["selectable"]
+    _, p = pack(cat)
+    labels = json.loads(W.messages(p)[1]["content"].split("\n", 1)[1])["METHOD_LABELS"]
+    assert len(labels) == 7 and all(set(x) == {"id", "label", "definition"} and x["definition"] == "unknown" for x in labels)
+    assert p["method_catalog"]["catalog_id"] == cat.catalog_id and p["status"] == "ready"
