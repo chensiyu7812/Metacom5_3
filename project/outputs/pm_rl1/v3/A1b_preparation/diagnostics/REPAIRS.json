@@ -1,0 +1,29 @@
+{
+  "preparation_status": "not_completed_pending_C0_freeze",
+  "failures": [
+    {
+      "stage": "initial_bank_build",
+      "error": "ValueError: RS strategy turn not bound to raw dialogue: strat_42855ab2011382dc3817",
+      "cause": "The old strategy adapter normalizes all whitespace; initial migration compared strip-only text. The ordinal was correct.",
+      "repair": "Validate exact same ordinal/role using the existing whitespace normalization; retain original raw bytes/spans. 6410 exact + 5180 normalized, zero residual mismatches.",
+      "evidence": "project/src/metacom_pm/strategy_bank.py:165"
+    },
+    {
+      "stage": "tests_attempt1",
+      "errors": 13,
+      "failures": 1,
+      "passed": 7,
+      "cause": "Fixture assumed nonexistent p2_conv_23; assertion confused 875 admitted source cases with 823 sources used by the old strategy layer.",
+      "repair": "Select a real legal latest p2 prefix from registry; verify 823 strategy-source cases and 875 union source cases separately; B5 step tuple unpacked per existing interface. No B test/assertion modified.",
+      "final_result": "tests_attempt2: 21 passed, no skips/xfails"
+    }
+  ],
+  "not_implemented": [
+    "MS-SUM compiler",
+    "A5 dense/BM25/RRF",
+    "relation propagation",
+    "Generator reply/terminal scores",
+    "bank-v1",
+    "formal C0 freeze or global state update"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "passed": 2156,
+  "failures": [
+    {
+      "test": "tests.test_paper1_authority::test_ci_never_runs_local_gpu_tests_on_github_cpu_runner",
+      "detail": "def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():\n        workflow = (ROOT.parent / \".github/workflows/pm-v2-tests.yml\").read_text()\n        pytest_commands = [\n            line.strip()\n            for line in workflow.splitlines()\n            if line.strip().startswith((\"run: pytest\", \"pytest \"))\n        ]\n        assert pytest_commands\n>       assert all('-m \"not gpu\"' in command for command in pytest_commands)\nE       assert False\nE        +  where False = all(<generator object test_ci_never_runs_local_gpu_tests_on_github_cpu_runner.<locals>.<genexpr> at 0x7f00eda54a00>)\n\nproject/tests/test_paper1_authority.py:107: AssertionError"
+    }
+  ],
+  "skipped": [
+    {
+      "test": "::tests.test_paper1_llama_tokenizer",
+      "detail": "('/home/tokkio/Metacom5_3-wsa-bank-prep/project/tests/test_paper1_llama_tokenizer.py', 15, 'Skipped: frozen tokenizer not present at /home/chenzhi/paper1_runs/frozen_tokenizers/llama31_8b_instruct_tokenizer.json')"
+    }
+  ],
+  "gpu_deselected": 11,
+  "v3_passed": 324,
+  "xfail": 0,
+  "inherited_integration_failure": true
+}

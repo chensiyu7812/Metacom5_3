@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="13" failures="1" skipped="0" tests="21" time="17.957" timestamp="2026-11-17T22:06:29.996120+09:00" hostname="supermicro.icnl.lab"><testcase classname="tests.test_rl1v3_bank_v0" name="test_real_counts_and_no_auto_validation" time="5.441" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_all_325_old_mp_exclusions_reconciled" time="0.001" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_three_repairs_use_exact_evidence_and_new_identities" time="0.001" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_rs_lineage_not_independent_strategy_count" time="0.005"><failure message="AssertionError: assert 823 == 875&#10; +  where 823 = len({'resource:003c4fe55b6b4ded0b46810a368899998ac0563a0de66c36a78e64b498049449', 'resource:0049fdcc8127789fcba94cce4e3868...954b586aab43ca82c3a617b58e6cf1659ed', 'resource:01c92480fac8144fa3e1a9f9009d15d234cd55e3defdb6c63ed2156e7c4ba538', ...})">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    def test_rs_lineage_not_independent_strategy_count(bank):
+        strategy=[r for r in bank.ledger if r['old_head']=='RS_strategy']
+        treatments=[r for r in bank.ledger if r['old_head']=='RS_treatment']
+        assert len(strategy)==11590 and len(treatments)==13172
+        assert sum(r['binding']=='exact' for r in strategy)==6410
+        assert sum(r['binding'].startswith('legacy_whitespace') for r in strategy)==5180
+&gt;       assert len({i for row in strategy for i in row['new_record_ids']})==875
+E       AssertionError: assert 823 == 875
+E        +  where 823 = len({'resource:003c4fe55b6b4ded0b46810a368899998ac0563a0de66c36a78e64b498049449', 'resource:0049fdcc8127789fcba94cce4e3868...954b586aab43ca82c3a617b58e6cf1659ed', 'resource:01c92480fac8144fa3e1a9f9009d15d234cd55e3defdb6c63ed2156e7c4ba538', ...})
+
+project/tests/test_rl1v3_bank_v0.py:69: AssertionError</failure></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_raw_and_case_are_whole_original_dialogues" time="0.036" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_filter_before_rank_uses_only_visible_query" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_deterministic_read_and_native_measurement" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_read_failures_do_not_consume_ordinal" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_whole_unit_capacity_rejection_never_truncates" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_empty_and_no_legal_candidates" time="0.002" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[bank_version]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[index_version]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[renderer_id]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[g_id]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[decode_id]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_replay_rejects_every_identity_change[step2_id]" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_cross_owner_and_record_group_replay_rejected" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_all_16_real_subsets_preserve_get_order" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_actual_b5_can_use_real_read_without_business_changes" time="0.000"><error message="failed on setup with &quot;KeyError: ('p2', 'p2_conv_23')&quot;">bank = &lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7f8c9a423c90&gt;
+
+    @pytest.fixture
+    def reader(bank):
+&gt;       return Reader(bank,bank.registry.prefix('p2','p2_conv_23',0),FixtureTokenizer(),g_id='test_g',decode_id='greedy-test')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_bank_v0.py:27: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/sources/source_registry.py:134: in prefix
+    current = self.entry(owner,session).source
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;metacom_pm.rl1v3.sources.source_registry.Registry object at 0x7f8c9f851b50&gt;
+owner = 'p2', session = 'p2_conv_23'
+
+    def entry(self, owner, session):
+&gt;       return self.by_session[(owner,session)]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: ('p2', 'p2_conv_23')
+
+project/src/metacom_pm/rl1v3/sources/source_registry.py:122: KeyError</error></testcase><testcase classname="tests.test_rl1v3_bank_v0" name="test_bank_load_detects_corruption_and_wrong_version" time="10.345" /><testcase classname="tests.test_rl1v3_bank_v0" name="test_unverified_relation_cannot_enter_runtime" time="1.669" /></testsuite></testsuites>
