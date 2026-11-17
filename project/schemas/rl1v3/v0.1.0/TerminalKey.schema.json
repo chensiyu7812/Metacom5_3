@@ -1,0 +1,78 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:TerminalKey",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquired_record_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Acquired Record Ids",
+      "type": "array"
+    },
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "decode_id": {
+      "minLength": 1,
+      "title": "Decode Id",
+      "type": "string"
+    },
+    "g_id": {
+      "minLength": 1,
+      "title": "G Id",
+      "type": "string"
+    },
+    "index_version": {
+      "minLength": 1,
+      "title": "Index Version",
+      "type": "string"
+    },
+    "ordered_path": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Ordered Path",
+      "type": "array"
+    },
+    "prefix_id": {
+      "minLength": 1,
+      "title": "Prefix Id",
+      "type": "string"
+    },
+    "renderer_id": {
+      "minLength": 1,
+      "title": "Renderer Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "step2_id": {
+      "minLength": 1,
+      "title": "Step2 Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "prefix_id",
+    "bank_version",
+    "index_version",
+    "ordered_path",
+    "acquired_record_ids",
+    "renderer_id",
+    "step2_id",
+    "g_id",
+    "decode_id",
+    "schema_version"
+  ],
+  "title": "TerminalKey",
+  "type": "object"
+}

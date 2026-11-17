@@ -1,0 +1,102 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:TerminalKey",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquired": {
+      "items": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Acquired",
+      "type": "array"
+    },
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "decode_id": {
+      "minLength": 1,
+      "title": "Decode Id",
+      "type": "string"
+    },
+    "domain_id": {
+      "enum": [
+        "finite_head_v1",
+        "adaptive_v1"
+      ],
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "g_id": {
+      "minLength": 1,
+      "title": "G Id",
+      "type": "string"
+    },
+    "index_version": {
+      "minLength": 1,
+      "title": "Index Version",
+      "type": "string"
+    },
+    "ordered_path": {
+      "items": {
+        "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
+        "type": "string"
+      },
+      "title": "Ordered Path",
+      "type": "array"
+    },
+    "owner_id": {
+      "minLength": 1,
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "prefix_context_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prefix Context Sha256",
+      "type": "string"
+    },
+    "prefix_id": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prefix Id",
+      "type": "string"
+    },
+    "renderer_id": {
+      "minLength": 1,
+      "title": "Renderer Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "step2_id": {
+      "minLength": 1,
+      "title": "Step2 Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "domain_id",
+    "owner_id",
+    "prefix_id",
+    "prefix_context_sha256",
+    "bank_version",
+    "index_version",
+    "ordered_path",
+    "acquired",
+    "renderer_id",
+    "step2_id",
+    "g_id",
+    "decode_id",
+    "schema_version"
+  ],
+  "title": "TerminalKey",
+  "type": "object"
+}

@@ -1,0 +1,51 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:ScoreComponent",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "enum": [
+        "lexical",
+        "dense",
+        "bm25",
+        "rrf",
+        "temporal",
+        "graph",
+        "entity",
+        "slot"
+      ],
+      "title": "Name",
+      "type": "string"
+    },
+    "rank": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rank"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "score": {
+      "title": "Score",
+      "type": "number"
+    }
+  },
+  "required": [
+    "name",
+    "score",
+    "schema_version"
+  ],
+  "title": "ScoreComponent",
+  "type": "object"
+}

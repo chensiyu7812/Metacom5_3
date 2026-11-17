@@ -1,0 +1,30 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:Rejection",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "record_id": {
+      "minLength": 1,
+      "title": "Record Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "record_id",
+    "reason",
+    "schema_version"
+  ],
+  "title": "Rejection",
+  "type": "object"
+}

@@ -1,0 +1,288 @@
+{
+  "$defs": {
+    "RankedCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "items": {
+            "$ref": "#/$defs/ScoreComponent"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "record_id",
+        "score",
+        "components",
+        "schema_version"
+      ],
+      "title": "RankedCandidate",
+      "type": "object"
+    },
+    "Rejection": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "reason",
+        "schema_version"
+      ],
+      "title": "Rejection",
+      "type": "object"
+    },
+    "RetrievalResult": {
+      "additionalProperties": false,
+      "description": "Private execution envelope, never an Observation field.",
+      "properties": {
+        "bank_version": {
+          "minLength": 1,
+          "title": "Bank Version",
+          "type": "string"
+        },
+        "delivery_record_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Delivery Record Ids",
+          "type": "array"
+        },
+        "delivery_tokens": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivery Tokens"
+        },
+        "filters_applied": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Filters Applied",
+          "type": "array"
+        },
+        "head": {
+          "enum": [
+            "RS",
+            "MP",
+            "ME",
+            "MS"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "index_version": {
+          "minLength": 1,
+          "title": "Index Version",
+          "type": "string"
+        },
+        "query_identity": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Query Identity",
+          "type": "string"
+        },
+        "ranked": {
+          "items": {
+            "$ref": "#/$defs/RankedCandidate"
+          },
+          "title": "Ranked",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "ranked",
+        "query_identity",
+        "filters_applied",
+        "bank_version",
+        "index_version",
+        "schema_version"
+      ],
+      "title": "RetrievalResult",
+      "type": "object"
+    },
+    "ScoreComponent": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "enum": [
+            "lexical",
+            "dense",
+            "bm25",
+            "rrf",
+            "temporal",
+            "graph",
+            "entity",
+            "slot"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "rank": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rank"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "score": {
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "score",
+        "schema_version"
+      ],
+      "title": "ScoreComponent",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:RetrievalTrace",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acquired_view_sha256": {
+      "items": {
+        "pattern": "^[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "title": "Acquired View Sha256",
+      "type": "array"
+    },
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "index_version": {
+      "minLength": 1,
+      "title": "Index Version",
+      "type": "string"
+    },
+    "prefix_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prefix Sha256",
+      "type": "string"
+    },
+    "query_identity": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Query Identity",
+      "type": "string"
+    },
+    "query_mode": {
+      "enum": [
+        "static",
+        "adaptive"
+      ],
+      "title": "Query Mode",
+      "type": "string"
+    },
+    "query_text": {
+      "title": "Query Text",
+      "type": "string"
+    },
+    "rejected": {
+      "items": {
+        "$ref": "#/$defs/Rejection"
+      },
+      "title": "Rejected",
+      "type": "array"
+    },
+    "result": {
+      "$ref": "#/$defs/RetrievalResult"
+    },
+    "retrieval_identity": {
+      "minLength": 1,
+      "title": "Retrieval Identity",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "prefix_sha256",
+    "query_identity",
+    "query_text",
+    "query_mode",
+    "acquired_view_sha256",
+    "bank_version",
+    "index_version",
+    "result",
+    "rejected",
+    "elapsed_ms",
+    "retrieval_identity",
+    "schema_version"
+  ],
+  "title": "RetrievalTrace",
+  "type": "object"
+}

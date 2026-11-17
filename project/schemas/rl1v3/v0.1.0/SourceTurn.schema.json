@@ -1,0 +1,38 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:SourceTurn",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "role": {
+      "enum": [
+        "seeker",
+        "supporter"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "text": {
+      "title": "Text",
+      "type": "string"
+    },
+    "turn_index": {
+      "minimum": 0,
+      "title": "Turn Index",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "turn_index",
+    "role",
+    "text",
+    "schema_version"
+  ],
+  "title": "SourceTurn",
+  "type": "object"
+}

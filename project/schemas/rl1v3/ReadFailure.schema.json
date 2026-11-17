@@ -1,0 +1,58 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:ReadFailure",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "detail": {
+      "minLength": 1,
+      "title": "Detail",
+      "type": "string"
+    },
+    "elapsed_ms": {
+      "minimum": 0,
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "input_tokens_unchanged": {
+      "minimum": 0,
+      "title": "Input Tokens Unchanged",
+      "type": "integer"
+    },
+    "reason": {
+      "enum": [
+        "empty",
+        "capacity",
+        "owner",
+        "family",
+        "future_source",
+        "not_ready",
+        "invalid_action",
+        "integrity",
+        "unavailable"
+      ],
+      "title": "Reason",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "const": "rejected",
+      "default": "rejected",
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "reason",
+    "detail",
+    "input_tokens_unchanged",
+    "elapsed_ms",
+    "schema_version"
+  ],
+  "title": "ReadFailure",
+  "type": "object"
+}

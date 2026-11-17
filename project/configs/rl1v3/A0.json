@@ -1,0 +1,24 @@
+{
+  "version": "pmrl1v3-a0-cpu-1",
+  "scope": "cpu_inventory_and_request_preparation_only",
+  "gpu_execution_authorized": false,
+  "paid_calls_authorized": false,
+  "request_count": 100,
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "minimum_free_gib_when_authorized": 30,
+  "environments": [
+    "/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python",
+    "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+    "/opt/tokkio-data0/tokkio_envs/paper1-qwen35-vllm-py312/bin/python"
+  ],
+  "tokenizer_python": "/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python",
+  "models": {
+    "g0_candidate": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+    "qwen_judge_candidate": "/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b",
+    "bge_dense": "/opt/tokkio-data0/tokkio_models/huggingface/hub/models--BAAI--bge-m3/snapshots/9a0624b896d81da7492a910ffa53731274b6cf3d"
+  },
+  "legacy_model_binding": "project/outputs/pm_rl1/alternate_executor_probe_20261104_v1/PROTOCOL.json",
+  "bge_binding": "project/data/paper1_authority/paper1_bge_m3_formal_binding_v1.json",
+  "source_runtime": "project/data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json",
+  "source_specs": "project/outputs/pm_rl1/completion_20260930_v2/P1/episode_specs_private.json"
+}

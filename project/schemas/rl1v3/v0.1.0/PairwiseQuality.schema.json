@@ -1,0 +1,51 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:PairwiseQuality",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "comparator_key_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Comparator Key Sha256",
+      "type": "string"
+    },
+    "judge_identity": {
+      "minLength": 1,
+      "title": "Judge Identity",
+      "type": "string"
+    },
+    "qualification_tier": {
+      "enum": [
+        "engineering_only",
+        "research_qualified",
+        "human_confirmed"
+      ],
+      "title": "Qualification Tier",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "win",
+        "tie",
+        "loss",
+        "uncertain"
+      ],
+      "title": "Verdict",
+      "type": "string"
+    }
+  },
+  "required": [
+    "comparator_key_sha256",
+    "verdict",
+    "judge_identity",
+    "qualification_tier",
+    "schema_version"
+  ],
+  "title": "PairwiseQuality",
+  "type": "object"
+}
