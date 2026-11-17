@@ -249,7 +249,16 @@ class RelationReferenceTests(unittest.TestCase):
     def test_read_only_entry_preserves_old_and_budget_history(self):
         before={path:r.sha(path) for path in self.protocol["old_stop_hashes"]}
         ledger=Path(self.protocol["financial_baseline"]["ledger_path"]);h=r.sha(ledger)
-        self.assertEqual(self.entry.check()["actual_historical"],225)
+        # Historical identities bind absolute paths in the original tree. A
+        # separate worktree may contain identical bytes, but is not that tree.
+        # Exercise the unchanged guard against its actual bound inputs; do not
+        # rewrite the protocol or weaken its exact attempt-set comparison.
+        original_base=next(p for p in Path(self.protocol["run_dir"]).parents if p.name == BASE.name)
+        with patch.object(self.entry, "BASE", original_base):
+            self.assertEqual(self.entry.check()["actual_historical"],225)
+        if BASE != original_base:
+            with self.assertRaisesRegex(ValueError, "historical attempt set changed"):
+                self.entry.historical_guard(self.protocol)
         self.assertEqual(r.sha(ledger),h)
         for path,old in before.items():self.assertEqual(r.sha(path),old)
 
