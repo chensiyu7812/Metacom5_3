@@ -192,3 +192,20 @@ def test_unknown_head_in_availability_is_rejected():
     with pytest.raises(ValueError):
         E.FiniteHeadEnv(availability={"XX": 1}, reader=lambda h: None,
                         terminal_lookup=lambda m: None, prefix_tokens=1)
+
+
+def test_dp_with_capacity_feasibility_matches_brute_force_and_env_mask():
+    rng = random.Random(43)
+    tokens = {"RS": 150, "MP": 50, "ME": 120, "MS": 700}
+    for _ in range(200):
+        rewards = {m: rng.random() for m in range(E.N_SUBSETS)}
+        prefix = rng.randint(100, 900)
+        feas = lambda m: prefix + sum(tokens[h] for h in E.heads_of(m)) <= 1200  # noqa: E731
+        dp = E.solve_dp(rewards, feasible=feas)
+        best, paths = E.brute_force_best(rewards, feasible=feas)
+        assert abs(dp.root_value - best) < 1e-9
+        env, _ = toy_env(rewards=rewards, capacity=1200, unit_tokens=tokens)
+        env.prefix_tokens = prefix
+        s = env.reset()
+        legal = {a for a in env.legal_actions(s) if a != "STOP"}
+        assert legal == {E.GET[h] for h in E.HEADS if feas(E.BIT[h])}

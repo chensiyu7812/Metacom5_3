@@ -1,0 +1,27 @@
+# WS-B B8e-preflight: CPU training loop on a fully synthetic programmatic task.
+# engineering_only. No real data, no model download, no GPU, no paid call.
+task_id: B8e_preflight
+evidence_tier: engineering_only
+seeds: [17, 29, 43]
+data:
+  train: {n: 3000, seed: 1001, paraphrases: [0, 1, 2, 3, 4, 5]}
+  dev: {n: 1000, seed: 1002, paraphrases: [0, 1, 2, 3, 4, 5]}
+  test_seen_paraphrase: {n: 2000, seed: 1004, paraphrases: [0, 1, 2, 3, 4, 5]}
+  test_unseen_paraphrase: {n: 2000, seed: 1003, paraphrases: [6, 7, 8, 9]}
+supervised: {epochs: 40, lr: 0.001, batch: 256, oneshot_tau: 0.05}
+ppo:
+  rounds: 200
+  steps_per_round: 2048
+  n_envs: 128
+  epochs: 4
+  minibatch: 256
+  lr: 0.0003
+  clip: 0.2
+  ent_coef: 0.01
+  vf_coef: 0.5
+  gae_lambda: 0.95
+  gamma: 1.0
+  max_grad_norm: 0.5
+  eval_every: 5
+  ckpt_every: 100
+resume_check: {rounds: 20, split_at: 10}

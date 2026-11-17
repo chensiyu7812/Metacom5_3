@@ -177,18 +177,23 @@ class DPResult:
     root_value: float
 
 
-def _reachable(available: int, max_gets: int) -> list[int]:
+def _reachable(available: int, max_gets: int,
+               feasible: Callable[[int], bool] | None = None) -> list[int]:
+    """Subsets reachable under availability, GET budget and a subset-feasibility
+    predicate (e.g. native token capacity; monotone, so order-independent)."""
     heads = heads_of(available)
-    return [mask_of(c) for k in range(min(max_gets, len(heads)) + 1)
-            for c in combinations(heads, k)]
+    out = [mask_of(c) for k in range(min(max_gets, len(heads)) + 1)
+           for c in combinations(heads, k)]
+    return [m for m in out if feasible is None or feasible(m)]
 
 
 def solve_dp(terminal_reward: Mapping[int, float], *, available: int = FULL,
              max_gets: int = len(HEADS), step_cost: Mapping[str, float] | None = None,
-             tol: float = 1e-9) -> DPResult:
+             feasible: Callable[[int], bool] | None = None, tol: float = 1e-9) -> DPResult:
     """Exact optimal values over the subset lattice; ties within ``tol`` kept."""
     cost = {h: float((step_cost or {}).get(h, 0.0)) for h in HEADS}
-    states = sorted(_reachable(available, max_gets), key=lambda m: -bin(m).count("1"))
+    reach = set(_reachable(available, max_gets, feasible))
+    states = sorted(reach, key=lambda m: -bin(m).count("1"))
     missing = [m for m in states if m not in terminal_reward]
     if missing:
         raise PendingTerminal(f"terminal rewards missing for subsets {missing}")
@@ -198,7 +203,8 @@ def solve_dp(terminal_reward: Mapping[int, float], *, available: int = FULL,
         q = {STOP: float(terminal_reward[m])}
         if bin(m).count("1") < max_gets:
             for h in heads_of(available & ~m):
-                q[GET[h]] = -cost[h] + V[m | BIT[h]]
+                if m | BIT[h] in reach:
+                    q[GET[h]] = -cost[h] + V[m | BIT[h]]
         v = max(q.values())
         V[m] = v
         best[m] = tuple(a for a in ACTIONS if a in q and q[a] >= v - tol)
@@ -219,8 +225,8 @@ def solve_dp(terminal_reward: Mapping[int, float], *, available: int = FULL,
 
 
 def brute_force_best(terminal_reward: Mapping[int, float], *, available: int = FULL,
-                     max_gets: int = len(HEADS),
-                     step_cost: Mapping[str, float] | None = None) -> tuple[float, set[tuple]]:
+                     max_gets: int = len(HEADS), step_cost: Mapping[str, float] | None = None,
+                     feasible: Callable[[int], bool] | None = None) -> tuple[float, set[tuple]]:
     """Enumerate every ordered GET sequence (<= 65 paths) as an independent check."""
     from itertools import permutations
     cost = {h: float((step_cost or {}).get(h, 0.0)) for h in HEADS}
@@ -228,6 +234,9 @@ def brute_force_best(terminal_reward: Mapping[int, float], *, available: int = F
     best, paths = float("-inf"), set()
     for k in range(min(max_gets, len(heads)) + 1):
         for seq in permutations(heads, k):
+            if feasible is not None and not all(feasible(mask_of(seq[:i + 1]))
+                                                for i in range(len(seq))):
+                continue
             r = terminal_reward[mask_of(seq)] - sum(cost[h] for h in seq)
             if r > best + 1e-9:
                 best, paths = r, {seq}
@@ -253,7 +262,8 @@ def interval_dp(lower: Mapping[int, float], upper: Mapping[int, float], **kw) ->
             return (lower if res is lo else upper)[m]
         return -cost[HEAD_OF[a]] + res.value[m | BIT[HEAD_OF[a]]]
 
-    acts = [STOP] + [GET[h] for h in heads_of(available)]
+    acts = [STOP] + [GET[h] for h in heads_of(available)
+                     if kw.get("max_gets", len(HEADS)) > 0 and BIT[h] in lo.value]
     ql = {a: q(lo, 0, a) for a in acts}
     qu = {a: q(hi, 0, a) for a in acts}
     best_lower = max(ql.values())
