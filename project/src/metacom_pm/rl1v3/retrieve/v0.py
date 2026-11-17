@@ -3,10 +3,31 @@ from __future__ import annotations
 import re
 from time import perf_counter
 from functools import lru_cache
+from dataclasses import dataclass
 from .. import contracts as K
 from ..io import object_sha256
 from ..bank.bank_v0 import RENDERER_ID
 from ..render.v0 import SYSTEM
+
+
+@dataclass(frozen=True)
+class ReadPlan:
+    """Private sizing result, not a successful GET or a public ReadingView.
+
+    The renderer only uses head/reading_text while measuring the complete
+    prompt. A capacity failure never converts this plan into a delivered view.
+    """
+    head: str
+    view: str
+    reading_text: str
+    reported_at: object
+    stage: str | None
+    ordinal: int
+    tokens: int
+    record_ids: tuple[str, ...]
+    input_tokens_before: int
+    input_tokens_after: int
+    native_prompt_tokens: int
 
 @lru_cache(maxsize=10000)
 def words(text):return frozenset(re.findall(r"[a-z0-9']+",text.casefold()))
@@ -57,17 +78,30 @@ class Reader:
         return K.ReadFailure(reason=reason,detail=detail,input_tokens_unchanged=before,
                              elapsed_ms=(perf_counter()-started)*1000)
 
-    def read(self,head,*,acquired=(),bank_version=None,index_version=None):
+    def _search(self, head):
+        return search(self.bank, head, self.prefix)
+
+    def measure(self,head,*,acquired=(),input_tokens_before=None,bank_version=None,index_version=None):
+        """Measure a whole legal unit, including one that cannot fit capacity.
+
+        This private executor API returns ReadPlan or a typed failure; it does
+        not acquire anything, consume an ordinal or return ReadSuccess.
+        """
         start=perf_counter();before=self._billed(acquired)
         fail=lambda reason,detail:self._failure(reason,detail,before,start)
+        if input_tokens_before is not None and (type(input_tokens_before) is not int or input_tokens_before < 0):
+            return fail('integrity','input_tokens_before_must_be_nonnegative_integer')
+        if input_tokens_before is not None and input_tokens_before != before:
+            return self._failure('integrity','input_tokens_before_does_not_match_acquired',
+                                 input_tokens_before,start)
         if head not in K.HEAD_ORDER:return fail('invalid_action','v0 supports GET_RS/MP/ME/MS only')
         if tuple(r.ordinal for r in acquired)!=tuple(range(1,len(acquired)+1)) or len({r.head for r in acquired})!=len(acquired):
             return fail('invalid_action','invalid acquired sequence')
         if head in {r.head for r in acquired}:return fail('invalid_action','Phase-1 head already read')
-        if (bank_version and bank_version!=self.bank.version) or (index_version and index_version!=self.bank.index_version):
+        if (bank_version is not None and bank_version!=self.bank.version) or (index_version is not None and index_version!=self.bank.index_version):
             return fail('integrity','version_mismatch')
         if not self.bank.records:return fail('empty','empty_bank')
-        try:result=search(self.bank,head,self.prefix)
+        try:result=self._search(head)
         except (ValueError,KeyError) as exc:return fail('integrity','source_or_prefix_integrity: '+str(exc))
         if not result.ranked:return fail('unavailable','no_legal_candidates')
         record=self.bank.by_id[result.ranked[0].record_id]
@@ -75,12 +109,24 @@ class Reader:
         text=f'[{record.head}; reported {stamp}'+(f'; stage {record.stage}' if record.stage else '')+']\n'+record.reading_text
         tokens=self.tokenizer.count(text)
         if tokens<=0:return fail('empty','empty_native_tokenization')
-        view=K.ReadingView(head=head,view=record.view,ordinal=len(acquired)+1,reading_text=text,
-            reported_at=record.reported_at,tokens=tokens,stage=record.stage,expandable=False)
-        after=max(before+tokens,self._billed((*acquired,view)))
+        plan=ReadPlan(head,record.view,text,record.reported_at,record.stage,len(acquired)+1,
+                      tokens,(record.record_id,),before,0,0)
+        native=self.tokenizer.prompt_tokens(self.prefix,(*acquired,plan))
+        after=max(before+tokens,self.base_tokens+sum(r.tokens for r in acquired)+tokens,native)
+        return ReadPlan(head,record.view,text,record.reported_at,record.stage,len(acquired)+1,
+                        tokens,(record.record_id,),before,after,native)
+
+    def read(self,head,*,acquired=(),input_tokens_before=None,bank_version=None,index_version=None):
+        start=perf_counter()
+        plan=self.measure(head,acquired=acquired,input_tokens_before=input_tokens_before,
+                          bank_version=bank_version,index_version=index_version)
+        if isinstance(plan,K.ReadFailure):return plan
+        after=plan.input_tokens_after;before=plan.input_tokens_before
         if after+self.output_reserve_tokens>self.tokenizer.native_context_tokens:
-            return fail('capacity','whole_unit_exceeds_native_context; no truncation or lower-rank substitution')
-        return K.ReadSuccess(reading=view,record_ids=(record.record_id,),input_tokens_before=before,
+            return self._failure('capacity','whole_unit_exceeds_native_context; no truncation or lower-rank substitution',before,start)
+        view=K.ReadingView(head=plan.head,view=plan.view,ordinal=plan.ordinal,reading_text=plan.reading_text,
+            reported_at=plan.reported_at,tokens=plan.tokens,stage=plan.stage,expandable=False)
+        return K.ReadSuccess(reading=view,record_ids=plan.record_ids,input_tokens_before=before,
             input_tokens_after=after,native_context_tokens=self.tokenizer.native_context_tokens,
             output_reserve_tokens=self.output_reserve_tokens,elapsed_ms=(perf_counter()-start)*1000)
 

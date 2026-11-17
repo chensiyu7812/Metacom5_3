@@ -1,0 +1,377 @@
+{
+  "type": "object",
+  "properties": {
+    "protocol": {
+      "const": "pmrl1v3-rs-v0-strategy-catalog-1"
+    },
+    "schema_version": {
+      "const": "rs-v0-catalog-1"
+    },
+    "quality": {
+      "const": "unverified"
+    },
+    "scope": {
+      "const": "engineering_needcard_input_only"
+    },
+    "is_a4_method_catalog": {
+      "const": false
+    },
+    "source_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bank_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "index_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "family_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "definition": {
+            "const": "unknown"
+          },
+          "definition_source": {
+            "type": "null"
+          },
+          "writer_selectable": {
+            "type": "boolean"
+          },
+          "quality": {
+            "const": "unverified"
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          },
+          "n_cases": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "n_strategy_turns": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "case_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "source_families": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "family_id",
+          "label",
+          "definition",
+          "definition_source",
+          "writer_selectable",
+          "quality",
+          "note",
+          "n_cases",
+          "n_strategy_turns",
+          "case_ids",
+          "source_families",
+          "evidence_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "legacy_strategy_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "legacy_treatment_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "required": [
+          "record_id",
+          "source_id",
+          "source_family",
+          "evidence_ids",
+          "legacy_strategy_ids",
+          "legacy_treatment_ids"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "record_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_family": {
+            "type": "string",
+            "minLength": 1
+          },
+          "session_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "original_turn_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "original_label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "category_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_span": {
+            "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:SourceSpan",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "additionalProperties": false,
+            "properties": {
+              "end_char": {
+                "exclusiveMinimum": 0,
+                "title": "End Char",
+                "type": "integer"
+              },
+              "exact_quote": {
+                "minLength": 1,
+                "title": "Exact Quote",
+                "type": "string"
+              },
+              "owner_id": {
+                "minLength": 1,
+                "title": "Owner Id",
+                "type": "string"
+              },
+              "raw_turn_sha256": {
+                "pattern": "^[0-9a-f]{64}$",
+                "title": "Raw Turn Sha256",
+                "type": "string"
+              },
+              "schema_version": {
+                "const": "pmrl1v3-contracts-0.2.0",
+                "default": "pmrl1v3-contracts-0.2.0",
+                "title": "Schema Version",
+                "type": "string"
+              },
+              "session_id": {
+                "minLength": 1,
+                "title": "Session Id",
+                "type": "string"
+              },
+              "source_key": {
+                "minLength": 1,
+                "title": "Source Key",
+                "type": "string"
+              },
+              "source_rank": {
+                "minimum": 0,
+                "title": "Source Rank",
+                "type": "integer"
+              },
+              "speaker": {
+                "enum": [
+                  "seeker",
+                  "supporter"
+                ],
+                "title": "Speaker",
+                "type": "string"
+              },
+              "start_char": {
+                "minimum": 0,
+                "title": "Start Char",
+                "type": "integer"
+              },
+              "turn_index": {
+                "minimum": 0,
+                "title": "Turn Index",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "source_key",
+              "owner_id",
+              "session_id",
+              "source_rank",
+              "turn_index",
+              "speaker",
+              "start_char",
+              "end_char",
+              "exact_quote",
+              "raw_turn_sha256",
+              "schema_version"
+            ],
+            "title": "SourceSpan",
+            "type": "object"
+          },
+          "evidence_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "record_id",
+          "source_id",
+          "source_family",
+          "session_id",
+          "original_turn_index",
+          "original_label",
+          "category_id",
+          "source_span",
+          "evidence_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "cases": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "annotated_supporter_turns": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "label_counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "selectable_categories": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unknown": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "linked_legacy_strategy_ids": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "linked_legacy_treatment_ids": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "cases",
+        "annotated_supporter_turns",
+        "label_counts",
+        "selectable_categories",
+        "unknown",
+        "linked_legacy_strategy_ids",
+        "linked_legacy_treatment_ids"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "catalog_id": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "protocol",
+    "schema_version",
+    "quality",
+    "scope",
+    "is_a4_method_catalog",
+    "source_version",
+    "bank_version",
+    "index_version",
+    "inputs",
+    "entries",
+    "cases",
+    "evidence",
+    "counts",
+    "limitations",
+    "catalog_id"
+  ],
+  "additionalProperties": false,
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pmrl1v3:rs-v0:StrategyCatalog:1"
+}

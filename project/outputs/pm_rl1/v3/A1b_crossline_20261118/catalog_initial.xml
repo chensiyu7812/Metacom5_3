@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="11" time="19.498" timestamp="2026-11-18T01:18:51.608780+09:00" hostname="supermicro.icnl.lab"><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_original_annotation_counts_and_nonadditive_layers" time="5.515" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_unknown_is_not_inferred[None]" time="0.000" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_unknown_is_not_inferred[New strategy]" time="0.000" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_unknown_is_not_inferred[question]" time="0.000" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_unknown_is_not_inferred[]" time="0.000" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_family_and_source_span_validation" time="0.000"><failure message="TypeError: the JSON object must be str, bytes or bytearray, not dict">assets = (&lt;metacom_pm.rl1v3.bank.bank_v0.Bank object at 0x7fe16df45990&gt;, Catalog(data={'protocol': 'pmrl1v3-rs-v0-strategy-cata...], 'catalog_id': 'pmrl1v3-rs-v0-strategy-catalog-1:7323c7f40e7b99cff5b7e7bcc10354c9360b7a0a6016a3495ee13124998d344f'}))
+
+    def test_family_and_source_span_validation(assets):
+        bank,c=assets
+        from metacom_pm.rl1v3.io import decode_contract
+        from metacom_pm.rl1v3.contracts import SourceSpan
+        for row in c.data["evidence"]:
+            source=bank.registry.by_id[row["source_id"]].source
+            assert source.source_split=="train"
+            assert row["source_family"]==source.family_id
+            assert row["source_family"] not in bank.registry.excluded_families
+&gt;           ref=decode_contract(SourceSpan,row["source_span"])
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+project/tests/test_rl1v3_rs_v0_catalog.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+project/src/metacom_pm/rl1v3/io.py:78: in decode_contract
+    raw = parse_json(text)
+          ^^^^^^^^^^^^^^^^
+project/src/metacom_pm/rl1v3/io.py:71: in parse_json
+    return json.loads(text, object_pairs_hook=_unique_object, parse_constant=invalid_constant)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+s = {'end_char': 15, 'exact_quote': 'Hi how are you?', 'owner_id': 'external:esconv_0365', 'raw_turn_sha256': '23a52c96df03eb18636189df36a16bc4a806af34f280d89d08c356d2856d220b', ...}
+cls = None, object_hook = None, parse_float = None, parse_int = None
+parse_constant = &lt;function parse_json.&lt;locals&gt;.invalid_constant at 0x7fe16a2c4680&gt;
+object_pairs_hook = &lt;function _unique_object at 0x7fe173c953a0&gt;, kw = {}
+
+    def loads(s, *, cls=None, object_hook=None, parse_float=None,
+            parse_int=None, parse_constant=None, object_pairs_hook=None, **kw):
+        """Deserialize ``s`` (a ``str``, ``bytes`` or ``bytearray`` instance
+        containing a JSON document) to a Python object.
+    
+        ``object_hook`` is an optional function that will be called with the
+        result of any object literal decode (a ``dict``). The return value of
+        ``object_hook`` will be used instead of the ``dict``. This feature
+        can be used to implement custom decoders (e.g. JSON-RPC class hinting).
+    
+        ``object_pairs_hook`` is an optional function that will be called with the
+        result of any object literal decoded with an ordered list of pairs.  The
+        return value of ``object_pairs_hook`` will be used instead of the ``dict``.
+        This feature can be used to implement custom decoders.  If ``object_hook``
+        is also defined, the ``object_pairs_hook`` takes priority.
+    
+        ``parse_float``, if specified, will be called with the string
+        of every JSON float to be decoded. By default this is equivalent to
+        float(num_str). This can be used to use another datatype or parser
+        for JSON floats (e.g. decimal.Decimal).
+    
+        ``parse_int``, if specified, will be called with the string
+        of every JSON int to be decoded. By default this is equivalent to
+        int(num_str). This can be used to use another datatype or parser
+        for JSON integers (e.g. float).
+    
+        ``parse_constant``, if specified, will be called with one of the
+        following strings: -Infinity, Infinity, NaN.
+        This can be used to raise an exception if invalid JSON numbers
+        are encountered.
+    
+        To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``
+        kwarg; otherwise ``JSONDecoder`` is used.
+        """
+        if isinstance(s, str):
+            if s.startswith('\ufeff'):
+                raise JSONDecodeError("Unexpected UTF-8 BOM (decode using utf-8-sig)",
+                                      s, 0)
+        else:
+            if not isinstance(s, (bytes, bytearray)):
+&gt;               raise TypeError(f'the JSON object must be str, bytes or bytearray, '
+                                f'not {s.__class__.__name__}')
+E               TypeError: the JSON object must be str, bytes or bytearray, not dict
+
+/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/json/__init__.py:339: TypeError</failure></testcase><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_catalog_schema_and_strict_quality" time="5.808" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_tampered_provenance_rejected_even_when_resigned[False]" time="0.972" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_tampered_provenance_rejected_even_when_resigned[True]" time="3.085" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_roundtrip_and_no_promoted_guidance" time="3.674" /><testcase classname="tests.test_rl1v3_rs_v0_catalog" name="test_24_actual_b_needcard_input_packs_without_model" time="0.065" /></testsuite></testsuites>
