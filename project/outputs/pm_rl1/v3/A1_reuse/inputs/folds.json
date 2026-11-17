@@ -1,0 +1,139 @@
+{
+  "family_groups": [
+    [
+      "p13",
+      "p18"
+    ]
+  ],
+  "fold_of_owner": {
+    "p1": 5,
+    "p10": 1,
+    "p11": 1,
+    "p12": 5,
+    "p13": 2,
+    "p14": 6,
+    "p15": 4,
+    "p16": 2,
+    "p17": 3,
+    "p18": 2,
+    "p2": 3,
+    "p3": 4,
+    "p4": 6,
+    "p5": 3,
+    "p6": 1,
+    "p7": 6,
+    "p8": 5,
+    "p9": 4
+  },
+  "folds": {
+    "1": [
+      "p6",
+      "p10",
+      "p11"
+    ],
+    "2": [
+      "p13",
+      "p16",
+      "p18"
+    ],
+    "3": [
+      "p2",
+      "p5",
+      "p17"
+    ],
+    "4": [
+      "p3",
+      "p9",
+      "p15"
+    ],
+    "5": [
+      "p1",
+      "p8",
+      "p12"
+    ],
+    "6": [
+      "p4",
+      "p7",
+      "p14"
+    ]
+  },
+  "g1_partition_candidate": {
+    "eval_fold_of_owner": {
+      "p10": 1,
+      "p11": 3,
+      "p14": 4,
+      "p16": 3,
+      "p17": 2,
+      "p2": 2,
+      "p3": 2,
+      "p4": 4,
+      "p5": 1,
+      "p6": 1,
+      "p7": 4,
+      "p9": 3
+    },
+    "g1_train_owners": [
+      "p1",
+      "p8",
+      "p12",
+      "p13",
+      "p15",
+      "p18"
+    ],
+    "matches_plan_size_12": true,
+    "matches_plan_size_6": true,
+    "n_eval_owners": 12,
+    "n_g1_train_owners": 6,
+    "rule": "G1-train = family closure of historical dev owners ∪ fold 5; remaining owners in owner/family-first folds of 3, historical test owners kept as last fold",
+    "status": "CANDIDATE_FOR_B10_MANIFEST_NOT_FROZEN"
+  },
+  "historical_rl1_split": {
+    "p1": "dev",
+    "p10": "train",
+    "p11": "train",
+    "p12": "train",
+    "p13": "train",
+    "p14": "test",
+    "p15": "dev",
+    "p16": "train",
+    "p17": "train",
+    "p18": "dev",
+    "p2": "train",
+    "p3": "train",
+    "p4": "test",
+    "p5": "train",
+    "p6": "train",
+    "p7": "test",
+    "p8": "train",
+    "p9": "train"
+  },
+  "n_folds": 6,
+  "naive_hash_chunk_fold_of_owner": {
+    "p1": 5,
+    "p10": 1,
+    "p11": 1,
+    "p12": 5,
+    "p13": 2,
+    "p14": 6,
+    "p15": 3,
+    "p16": 2,
+    "p17": 2,
+    "p18": 4,
+    "p2": 3,
+    "p3": 4,
+    "p4": 6,
+    "p5": 3,
+    "p6": 1,
+    "p7": 6,
+    "p8": 5,
+    "p9": 4
+  },
+  "owners_moved_by_family_closure": [
+    "p15",
+    "p17",
+    "p18"
+  ],
+  "protocol": "pmrl1v3-b0-prefix-census-v1",
+  "rule": "owner/family groups first; fold 6 fixed to historical test owners; remaining groups ordered by min sha256('pmrl1v3|fold|'+owner) and first-fit into folds 1-5 of 3 owners (identical to plain hash chunking when every group is a singleton)",
+  "schema": "pmrl1v3-b0-folds-v1"
+}
