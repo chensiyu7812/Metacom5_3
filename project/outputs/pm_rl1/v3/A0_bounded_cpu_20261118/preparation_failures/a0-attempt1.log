@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_prepare.py", line 102, in <module>
+    a=p.parse_args();prepare(a.out,a.examples)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_prepare.py", line 42, in prepare
+    qc=json.loads((Path(wc['writer_model']['path'])/'generation_config.json').read_text())
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pathlib.py", line 1058, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b/generation_config.json'

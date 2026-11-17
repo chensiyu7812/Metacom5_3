@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/resource_relevance_diagnostic.py", line 54, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--out',type=Path,required=True);a=p.parse_args();run(a.out)
+                                                                                                 ^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/resource_relevance_diagnostic.py", line 40, in run
+    quality=record.quality if record else None,
+            ^^^^^^^^^^^^^^
+AttributeError: 'ResourceRecord' object has no attribute 'quality'

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_run.py", line 137, in <module>
+    p.add_argument('--out',type=Path,required=True);a=p.parse_args();run(a.plan,a.approval,a.workload,a.out)
+                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_run.py", line 24, in run
+    cfg=authorize(plan,approval,workload)  # Before any lock, model import or device access.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/generator/bounded_probe.py", line 19, in authorize
+    raise ValueError('separate researcher GPU authorization is required')
+ValueError: separate researcher GPU authorization is required
