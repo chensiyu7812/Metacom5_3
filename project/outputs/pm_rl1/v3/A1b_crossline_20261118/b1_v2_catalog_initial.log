@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/home/tokkio/Metacom5_3-wsa-a1-bank-v0/project/scripts/rl1v3/A1b_b1_catalog_preflight.py", line 75, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/tokkio/Metacom5_3-wsa-a1-bank-v0/project/scripts/rl1v3/A1b_b1_catalog_preflight.py", line 60, in main
+    path=Path(getattr(module,'__file__','/nonexistent')).resolve()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pathlib.py", line 871, in __new__
+    self = cls._from_parts(args)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pathlib.py", line 509, in _from_parts
+    drv, root, parts = self._parse_args(args)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_envs/paper1-py311/lib/python3.11/pathlib.py", line 493, in _parse_args
+    a = os.fspath(a)
+        ^^^^^^^^^^^^
+TypeError: expected str, bytes or os.PathLike object, not NoneType
