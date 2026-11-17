@@ -46,3 +46,53 @@
 - B0 已与 C0 兼容。C0 冻结后，B0 改为 import `rl1v3.io` 并升级 protocol 版本号；身份值不变，因为两边哈希逐字节相同。
 - B5 等 R1–R3 冻结后实现。DP、mask 和状态转移将直接使用 C0 的 Observation 和 TerminalKey，不另造类型。
 - B2 和 B6e 依赖 R4–R6；在这之前只做内部实现草稿，不落盘正式终点表。
+
+---
+
+# 复审：C0 0.2.0（ws-a `8aab9f25`），2026-11-17
+
+**正式结论：契约内容通过。合入前尚缺 2 项合并操作和 1 项跨线约定（见下文"尚缺"）。** 这个结论基于用 A 已提交代码运行的真实测试，而不是 A 的 CI 状态。
+
+## 验证方法
+
+在临时 worktree 中把 `pmrl1-v3/ws-b` 与 ws-a `8aab9f25` 做了一次试合并（不提交、不推送），运行以下检查：
+
+1. B 改写后的 0.2.0 验收 `project/tests/test_rl1v3_c0_wsb_acceptance.py`（14 项）：原来的 6 项 strict-xfail 已改为普通测试；
+2. A 的契约和 A0 测试；
+3. B 的 B0、B5、B8e-preflight 测试；
+4. B5 的 C0 接入测试 `test_rl1v3_b5_c0_binding.py`（11 项，mock bank）；
+5. 与 CI 相同选择的完整 CPU 回归，结果见文末。
+
+试合并树上 `tests/test_rl1v3_*.py` 共 238 项通过，加入接入测试后另有 11 项通过，0 失败。
+
+## R1–R6 逐项结论（全部通过）
+
+| 项 | 结论 | 依据（实际运行的测试） |
+|---|---|---|
+| R1 子集规范化 | 通过 | `finite_head_v1` 下同一子集的不同读取顺序得到同一个键；65 条实际路径恰好对应 16 个键，且 65 条 ExecutionTrace 各不相同；`verify_key` 能用实际顺序复现规范键；`adaptive_v1` 保留顺序；任一身份字段（bank/index/renderer/step2/G/decode/前缀内容/domain）变化都会改变哈希 |
+| R2 GET 绑定记录 | 通过 | 空组、组数不符、有限域重复读同一头、OFF 带 record 均被拒绝；ReadSuccess 要求 record 非空、tokens 计入输入且不超过原生容量；ReadFailure 没有阅读内容和序号 |
+| R3 参数化 EXPAND | 通过 | `EXPAND_MS(1)` 只在 adaptive 中、并且只对可展开的 SUM 合法；裸 `EXPAND_MS`、越界序号、有限域展开、非 SUM 声明可展开都会被拒绝 |
+| R4 固定检查表 | 通过 | `total_weight` 必须等于各项权重之和；`gsc_interval` 拒绝缺项（不能靠删项改变分母）；终点记录不能绑定其他前缀的检查表；`feedback_id` 单列，不进入回复键 |
+| R5 判官证据 | 通过 | J2=None 时为 pending，GSC 为 (None, None) 而不是 0；未运行的判官不能附带证据；两判官不一致且没有人工裁决时不能定为 pass；引文必须出现在回复中 |
+| R6 待测硬约束 | 通过 | `hard_factual`/`hard_safety` 可以为 None；pending 或证据未验证时不能标为 research_qualified |
+| 观察隔离 | 通过 | Observation 和 ReadingView 的字段白名单逐一核对，不含 record/owner/session/prefix/fold/stratum/family/score/label/reward/key/checklist；解码时拒绝在顶层或 acquired 内注入 `record_id`/`score`；可见前缀到 seeker 切点为止 |
+| B0 身份 | 通过 | 4,119 行普查都用 `PrefixSpec.create` 重算出与 B0 完全相同的 `prefix_id`；fold/stratum 不影响 `prefix_id` 和 `runtime_sha256` |
+
+N1–N8 的处置（见 A 的 `C0_revision/INTERFACE_ZH.md`）全部接受。N2 保留 rank 作为合法报告时间、不引入 `sessions_ago`，我同意。
+
+## 尚缺（合入 integration 前须处理）
+
+1. **测试文件冲突（add/add）**：A 的提交在 B 的验收文件同名路径 `tests/test_rl1v3_c0_wsb_acceptance.py` 写了一份移植版，并把 B0 的 `census.py` 和普查数据复制成 `tests/fixtures/rl1v3/wsb/`。按所有权，这个路径以 **B 版（`b2336915`）为准**：它直接导入真实的 `rl1v3.prefixes`，并使用已入库的 B0 产物（`project/outputs/pm_rl1/v3/B0/` 在 ws-b 上已强制入库，CI 中可用）。建议 A 删除这份移植版和 B0 代码副本，或者改名成 A 自己的回放测试并去掉对复制代码的依赖，避免同一份代码有两个来源。
+2. **CI**：须在集成负责人的实际合并提交上重新运行 GitHub CI，不能用各分支此前的绿灯代替。
+3. **family 命名约定（A1）**：`verify_source_context` 要求 PrefixSpec 的 `ancestor_family_ids` 与 A1 SourceSession 的 family 集合**完全一致**。B0 目前使用 `esconv:esconv_XXXX`（ESConv 种子）和 `evoemo_owner:pN`（生成会话）。请 A1 采用这套命名，或者公布 A1 的命名规则，由 B0 以新的 protocol 版本重新生成映射。
+
+## 对 B 侧的影响
+
+- B5 已接入 0.2.0（`env/c0_binding.py`）：终点查表使用完整 TerminalKey 的 sha256；ExecutionTrace 保留实际顺序；ReadFailure 不改变状态；缺失终点报 PendingTerminal。**这些测试目前只基于 mock bank，真实 bank-v0 的回放测试要等 A1b 交付 `read` 后补上。**
+- B2 将使用 A 提供的 `io.bind_checklist`/`load_checklist` 来固定每个前缀的检查表。只有 J1 的工程终点，GSC 会是 pending，所以工程代理奖励必须另行命名和计算，不能冒充 GSC。
+
+## 完整 CPU 回归（试合并树：ws-b `e60a4294` + ws-a `8aab9f25`，验收文件采用 B 版）
+
+`pytest -m "not gpu" tests/test_paper1_*.py tests/test_rl1_*.py tests/test_rl1v3_*.py`：**2070 passed / 0 failed / 2 skipped / 11 deselected（GPU）**，耗时 471.99 秒，Python 3.11.15。
+
+2 个跳过都是环境原因：本机缺少 `/home/chenzhi` 旧路径下的 Llama tokenizer；没有 `rg` 可执行文件。此前在 worktree 中出现的 2 个旧测试失败，已由 A 的 `fa52e74d` 消除。B5 接入测试（`b2336915`）另在同一份 C0 代码上运行，11 项全部通过。

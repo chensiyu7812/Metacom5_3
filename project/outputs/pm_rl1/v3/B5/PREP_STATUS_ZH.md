@@ -1,11 +1,15 @@
-# B5 准备状态（未完成，等待 C0 冻结）
+# B5 状态（2026-11-17）：已接入 C0 0.2.0 候选；真实 bank-v0 回放尚缺
 
 - 证据等级：engineering_only；无模型、GPU 或付费调用
-- 已完成的部分不依赖契约形态：`project/src/metacom_pm/rl1v3/env/finite_head.py`
-  - Phase-1 动作 STOP/GET_RS/GET_MP/GET_ME/GET_MS。每个头最多读一次；终点只取决于已取子集（规范头序 RS, MP, ME, MS）
-  - mask：已读、空头、超出原生容量、超出 GET 预算和 STOP 之后的动作都会被屏蔽；如果仍被执行，抛出 `IllegalAction`，状态不变
-  - GET 只调用注入的 reader（WS-A `retrieve.read`），不调用 G/J；STOP 才查版本化终点表；缺失的终点抛出 `PendingTerminal`，不算 0
-  - Observation 由注入工厂构造；record_ids 只交给执行器，不进入观察
-  - 精确 DP（含平局集合、可达终点、步进成本、可用头与预算限制）、暴力枚举核验、区间 DP（重叠时不声称精确最优）
-- 测试：`project/tests/test_rl1v3_b5_env_core.py` 16 项通过。DP 与 300 张随机表的暴力枚举一致；按 DP 策略执行能达到 DP 值；回放确定；观察中没有私有 id 和未读正文
-- 尚缺（依赖 C0 冻结，见 `../C0_review/C0_REVIEW_WSB_ZH.md` R1–R3）：接入 C0 Observation/TerminalKey（domain_id、规范路径、按动作分组的 record）、真实 bank v0 reader（A1b）、终点表文件格式与 B6e 对接
+- **完成情况必须分开说：**
+
+| 层级 | 状态 | 证据 |
+|---|---|---|
+| 环境核心（与契约无关） | 完成 | `env/finite_head.py`；`test_rl1v3_b5_env_core.py` 17 项。DP 与 300 张随机表、200 张带容量约束的表的暴力枚举一致；按 DP 策略执行能达到 DP 值；回放确定；非法动作抛错且状态不变；缺失终点报 `PendingTerminal` |
+| 接入 C0 0.2.0（mock bank） | 完成 | `env/c0_binding.py`；`test_rl1v3_b5_c0_binding.py` 11 项，在与 ws-a `8aab9f25` 的试合并树上通过。Observation 即 C0 Observation；STOP 时用完整版本化 TerminalKey 的 sha256 查表；65 条实际顺序对应 16 个规范键；ExecutionTrace 保留实际顺序并通过 `verify_key`；更换 G 或前缀都不会复用奖励；ReadFailure 抛 `ReadRejected` 且状态不变；Phase-2 的 `EXPAND_MS(j)` 在本域非法 |
+| 在合成任务上真实训练 | 完成（工程预检） | 见 `../B8e_preflight/RESULTS_ZH.md`。所有回合都经由 `env.step` 执行 |
+| **真实 bank-v0 回放集成测试** | **尚缺** | 依赖 WS-A A1b 交付 bank-v0 和 `retrieve.read`（返回 ReadSuccess/ReadFailure）以及检索 manifest。mock bank 的结果不能代替真实 bank |
+| 正式冻结 | 尚缺 | C0 0.2.0 需由集成负责人合入并通过 CI 后才算冻结 |
+
+- GET 只调用注入的读取器（WS-A `read`），不调用 G/J；只有 STOP 查表。
+- 下一步：A1b 可调用后，选 1–2 个真实 B0 前缀，构造 16 个子集的真实阅读单元，并用 `ExecutionTrace` 回放写入集成测试，同时确认读取器的 tokens、容量和 family 闭包。
