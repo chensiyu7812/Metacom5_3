@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_prepare.py", line 113, in <module>
+    a=p.parse_args();prepare(a.out,a.examples)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/a0_bounded_prepare.py", line 82, in prepare
+    execution_identity=f.binding.g_id if name=='gemma' else 'qwen-a0-hf:'+object_sha256(dict(model=m['identity'],runtime=cfg['runtimes']['hf'],decode=qwen[0]['decode'])),
+                                                                                                   ~^^^^^^^^^^^^
+KeyError: 'identity'

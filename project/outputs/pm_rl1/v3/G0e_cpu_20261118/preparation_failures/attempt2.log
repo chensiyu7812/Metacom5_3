@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/g0e_prepare.py", line 110, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/g0e_prepare.py", line 106, in main
+    run_examples(ROOT,a.out)
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/scripts/rl1v3/g0e_prepare.py", line 69, in run_examples
+    res=port.read(h,acquired=acquired)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/generator/g0e_port.py", line 53, in read
+    plan = self._plan(head,views,before,stamp)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/bank/v0_port.py", line 84, in _plan
+    self._plans[key] = self.reader.measure(
+                       ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/retrieve/v0.py", line 114, in measure
+    native=self.tokenizer.prompt_tokens(self.prefix,(*acquired,plan))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/generator/g0e_port.py", line 30, in prompt_tokens
+    def prompt_tokens(self, prefix, readings): return len(self.encode_messages(messages(prefix,readings)))
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e/project/src/metacom_pm/rl1v3/render/request_packet.py", line 26, in messages
+    raise TypeError('only successful C0 ReadingViews may be rendered')
+TypeError: only successful C0 ReadingViews may be rendered
