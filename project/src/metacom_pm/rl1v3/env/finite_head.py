@@ -102,7 +102,8 @@ class FiniteHeadEnv:
                  step_cost: Mapping[str, float] | None = None,
                  unit_tokens: Mapping[str, int] | None = None,
                  observation_factory: Callable[..., object] | None = None,
-                 visible_prefix: object = None, lookup_takes_state: bool = False):
+                 visible_prefix: object = None, lookup_takes_state: bool = False,
+                 reader_takes_tokens: bool = False):
         unknown = set(availability) - set(HEADS)
         if unknown:
             raise ValueError(f"unknown heads {unknown}")
@@ -118,6 +119,8 @@ class FiniteHeadEnv:
         self.observation_factory = observation_factory or (lambda **kw: kw)
         self.visible_prefix = visible_prefix
         self.lookup_takes_state = lookup_takes_state
+        # real readers (WS-A retrieve.read) charge against the CURRENT input size
+        self.reader_takes_tokens = reader_takes_tokens
 
     # ------------------------------------------------------------- masks
     def legal_actions(self, s: State) -> tuple[str, ...]:
@@ -162,7 +165,7 @@ class FiniteHeadEnv:
                     dict(terminal_mask=s.mask, path=canonical_path(s.mask),
                          key_sha256=outcome.key_sha256))
         head = HEAD_OF[action]
-        unit = self.reader(head)
+        unit = self.reader(head, s.input_tokens) if self.reader_takes_tokens else self.reader(head)
         if unit is None or unit.head != head or not unit.record_ids:
             raise IllegalAction(f"{action}: reader delivered no unit; head must be masked")
         tokens = s.input_tokens + unit.tokens

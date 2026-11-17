@@ -6,6 +6,9 @@
   tokens.  Record ids never enter it.
 * GET calls only the injected WS-A ``read(head) -> ReadSuccess | ReadFailure``;
   a ``ReadFailure`` raises ``ReadRejected`` and leaves the state unchanged.
+  With ``read_takes_tokens`` the reader is ``read(head, input_tokens_before=n)``
+  (real A1b reads charge against the current input); the reply must echo ``n``
+  and the state advances by the charged ``input_tokens_after - n``.
 * STOP builds the full versioned ``TerminalKey`` (prefix context, bank/index,
   renderer, Step-2, G, decode, canonical subset path, per-action record
   groups) plus the ``ExecutionTrace`` with the real order, checks that the
@@ -65,7 +68,7 @@ class C0FiniteHeadEnv(E.FiniteHeadEnv):
     def __init__(self, *, prefix, history_sessions: int, availability: Mapping[str, int],
                  read: Callable[[str], object], identity: TerminalIdentity, table: TerminalTable,
                  prefix_tokens: int, token_capacity: int | None = None,
-                 unit_tokens: Mapping[str, int] | None = None):
+                 unit_tokens: Mapping[str, int] | None = None, read_takes_tokens: bool = False):
         self.K = contracts()
         if not self.K.SCHEMA_VERSION.startswith("pmrl1v3-contracts-0.2"):
             raise RuntimeError("B5 binding targets C0 0.2.x")
@@ -77,17 +80,24 @@ class C0FiniteHeadEnv(E.FiniteHeadEnv):
                          terminal_lookup=self._lookup, prefix_tokens=prefix_tokens,
                          token_capacity=token_capacity, max_gets=len(E.HEADS),
                          unit_tokens=unit_tokens, visible_prefix=prefix.visible(),
-                         lookup_takes_state=True)
+                         lookup_takes_state=True, reader_takes_tokens=read_takes_tokens)
 
     # ------------------------------------------------------------ GET
-    def _reader(self, head: str) -> E.ReadUnit:
-        res = self._read(head)
+    def _reader(self, head: str, input_tokens: int | None = None) -> E.ReadUnit:
+        res = self._read(head) if input_tokens is None else self._read(
+            head, input_tokens_before=input_tokens)
         if isinstance(res, self.K.ReadFailure):
             raise ReadRejected(f"GET_{head}: {res.reason}: {res.detail}")
         if not isinstance(res, self.K.ReadSuccess) or res.reading.head != head:
             raise ReadRejected(f"GET_{head}: reader returned a mismatched result")
+        tokens = res.reading.tokens
+        if input_tokens is not None:
+            if res.input_tokens_before != input_tokens:
+                raise ReadRejected(f"GET_{head}: reader charged against {res.input_tokens_before}"
+                                   f" tokens, state has {input_tokens}")
+            tokens = res.input_tokens_after - input_tokens
         return E.ReadUnit(head=head, reading_text=res.reading.reading_text,
-                          tokens=res.reading.tokens, record_ids=tuple(res.record_ids),
+                          tokens=tokens, record_ids=tuple(res.record_ids),
                           cost_s=res.elapsed_ms / 1000.0, public_view=res.reading)
 
     # ------------------------------------------------------- views
