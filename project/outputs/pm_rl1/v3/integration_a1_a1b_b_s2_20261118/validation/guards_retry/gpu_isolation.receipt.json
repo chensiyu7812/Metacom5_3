@@ -1,0 +1,23 @@
+{
+  "label": "gpu_isolation",
+  "command": [
+    "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "-m",
+    "not gpu",
+    "-ra",
+    "-o",
+    "addopts=",
+    "tests/test_paper1_authority.py::test_ci_never_runs_local_gpu_tests_on_github_cpu_runner",
+    "--junitxml=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/guards_retry/gpu.xml",
+    "--basetemp=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/tmp/guards"
+  ],
+  "cwd": "/home/tokkio/Metacom5_3-integration/project",
+  "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+  "exit_code": 0,
+  "seconds": 0.7580037117004395,
+  "log": "gpu_isolation.log",
+  "log_sha256": "133a437a37816bf91cd5b1a8690835e077157915964de11902e730a8a9b6c18a"
+}

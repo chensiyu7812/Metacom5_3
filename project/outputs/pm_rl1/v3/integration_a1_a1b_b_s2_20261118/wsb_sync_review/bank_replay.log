@@ -1,0 +1,105 @@
+0ebfd29108ab fold=1 reach=16 passed=True
+8dc91abd2659 fold=1 reach=16 passed=True
+74a7a964cc18 fold=1 reach=16 passed=True
+0033d6193dfa fold=1 reach=16 passed=True
+e74dbe96f3ad fold=2 reach=8 passed=True
+fa14cf4451df fold=2 reach=16 passed=True
+f1935249d725 fold=2 reach=16 passed=True
+b60fe830cb1b fold=2 reach=16 passed=True
+c52e6258a215 fold=3 reach=8 passed=True
+6ce6b7faa301 fold=3 reach=16 passed=True
+20790e78c021 fold=3 reach=16 passed=True
+ac45ce97a037 fold=3 reach=16 passed=True
+ab3d17407ca4 fold=4 reach=8 passed=True
+e23e4b2ff0a4 fold=4 reach=16 passed=True
+01c44f464e0e fold=4 reach=16 passed=True
+157818dfca20 fold=4 reach=16 passed=True
+f56ead917de5 fold=5 reach=16 passed=True
+f310c0e490b1 fold=5 reach=16 passed=True
+3e12e70ff5a1 fold=5 reach=16 passed=True
+0c89b35a60cd fold=5 reach=16 passed=True
+ec9964e3efec fold=6 reach=16 passed=True
+28a14a099436 fold=6 reach=16 passed=True
+658182ddcc2a fold=6 reach=16 passed=True
+5282c961c186 fold=6 reach=16 passed=True
+{
+ "protocol": "pmrl1v3-b5-bank-replay-v2",
+ "status": "formal_on_integration",
+ "port": "WS-A bank.v0_port.PrefixPort (pmrl1v3-a1b-read-port-v1)",
+ "cross_port_comparison": {
+  "path": "project/outputs/pm_rl1/v3/B5/real_replay_v2_aport_02d0a4b1_173bed23/replay_reports.jsonl",
+  "identical_prefixes": 24,
+  "prefixes": 24
+ },
+ "a_formal_commits": {
+  "A1": "7116b8bd430727cebe7fd05c328486bd9a4d1f99",
+  "A1b": "c9dd5aae7bff5262455fb6cc6942142a5abb35b9"
+ },
+ "a_integrated": true,
+ "code_head": "59607355b3751c87138b129a079eeb571152b7ce",
+ "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02",
+ "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+ "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+ "reader_identity": {
+  "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+  "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+  "renderer_id": "renderer:e7678cc104e460d60e547d8e41debdd284ba519d903e35bd22c615f23e133010",
+  "step2_id": "none-v0-read-replay",
+  "g_id": "gemma-4-12B-it-707f0a3-tokenizer-only-not-frozen-G0",
+  "decode_id": "not_run"
+ },
+ "tokenizer_identity": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+ "native_context_tokens": 262144,
+ "prefixes": 24,
+ "passed": 24,
+ "reachable_distribution": {
+  "8": 3,
+  "16": 21
+ },
+ "unreachable_reasons": {
+  "MP:unavailable:no_legal_candidates": 3
+ },
+ "head_available_prefixes": {
+  "RS": 24,
+  "MP": 21,
+  "ME": 24,
+  "MS": 24
+ },
+ "legal_candidates_median": {
+  "RS": 875.0,
+  "MP": 4.0,
+  "ME": 28.0,
+  "MS": 8.5
+ },
+ "root_reading_tokens_median": {
+  "RS": 1318.0,
+  "MP": 95,
+  "ME": 113.5,
+  "MS": 713.5
+ },
+ "base_tokens_range": [
+  122,
+  1002
+ ],
+ "all_heads_input_tokens_range": [
+  2249,
+  4520
+ ],
+ "ready_at_equals_cutoff_records": 21,
+ "static_mask_disagreements": 0,
+ "capacity_stress": {
+  "passed": 24,
+  "rejected_read_tested": 24,
+  "reachable_distribution": {
+   "3": 4,
+   "4": 20
+  },
+  "static_mask_disagreements": 0
+ },
+ "failure_kinds": {},
+ "terminal_outcomes": "all pending (no generator output); OFF-only table check passed per prefix",
+ "model_calls": 0,
+ "gpu_used": false,
+ "wall_seconds": 94.8,
+ "evidence_tier": "engineering_only"
+}

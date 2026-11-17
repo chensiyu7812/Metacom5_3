@@ -97,10 +97,10 @@
         "C0"
       ],
       "title": "来源库 source_registry",
-      "status": "pending",
+      "status": "completed",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null,
+      "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+      "commit": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
       "resource_spec_sections": [
         "1",
         "2",
@@ -112,7 +112,11 @@
         "results_doc": "project/outputs/pm_rl1/v3/A1_reuse/RESULTS_ZH.md",
         "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
         "note": "资产审计不等于 source_registry；A1 仍 pending，等待 C0 正式冻结。"
-      }
+      },
+      "acceptance_manifest": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/MANIFEST.json",
+      "evidence_tier": "engineering_only",
+      "integration_note": "PR #8/#9 已合入且在真实 integration 16644abb 完成验收；1276 来源（401 历史会话、875 ESConv train），401/4119 来源内容与前缀 cross_check 零差异；esc1198 多 owner family 保留，84 重叠 family 在 RS 侧隔离。preparation 是历史审计记录。",
+      "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02"
     },
     "A1b": {
       "workstream": "WS-A",
@@ -120,15 +124,21 @@
         "A1"
       ],
       "title": "bank v0 适配器（现有MP/ME/MS-RAW/RS草稿）",
-      "status": "pending",
+      "status": "completed",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null,
+      "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+      "commit": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
       "resource_spec_sections": [
         "1",
         "2",
         "4"
-      ]
+      ],
+      "acceptance_manifest": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/MANIFEST.json",
+      "evidence_tier": "engineering_only",
+      "integration_note": "真实 bank 3188（MP387/ME1525/MS401/RS875），324 MP 隔离、2 MP 转 ME、1 ME 修复映射保留；真实四头读取、原生 token 计费与 A 端口 B5 回放正式通过。3185 unverified + 3 development_reviewed；目录不是 A4 正式方法卡，未声称召回/回复收益。",
+      "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+      "index_version": "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3",
+      "read_port": "pmrl1v3-a1b-read-port-v1"
     },
     "A2": {
       "workstream": "WS-A",
@@ -297,14 +307,15 @@
         "A1b"
       ],
       "title": "需求卡+分层抽样",
-      "status": "pending",
+      "status": "in_progress",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null,
+      "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+      "commit": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
       "resource_spec_sections": [
         "2",
         "8"
-      ]
+      ],
+      "integration_note": "writer v2、分层输入与20/20 CPU预检已集成；真实 NeedCard 未生成，仍未 completed。GPU/模型调用须另行授权。"
     },
     "B2": {
       "workstream": "WS-B",
@@ -312,10 +323,11 @@
         "B1"
       ],
       "title": "检查项生成+J1/J2判官+GSC",
-      "status": "pending",
+      "status": "in_progress",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null
+      "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+      "commit": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "integration_note": "检查表/判官/奖励/评价 v2 协议和代码已集成；真实检查表及 J1/J2 验收未完成，仍未 completed。"
     },
     "B3": {
       "workstream": "WS-B",
@@ -347,17 +359,19 @@
         "C0"
       ],
       "title": "Phase-1 有限头环境+DP",
-      "status": "in_progress",
+      "status": "completed",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
+      "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+      "commit": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
       "resource_spec_sections": [
         "3",
         "5.1",
         "7",
         "9"
       ],
-      "integration_note": "有限头环境、DP 与 C0 mock-bank 绑定已合入；实际集成 17+10 项测试通过。C0 正式冻结与 A1b 真实 bank/read 对接仍待完成。"
+      "integration_note": "有限域/C0 绑定、DP 和真实 A bank 回放正式通过；24 前缀，21×16+3×8 可达子集，360 终点、1413 顺序；24 容量压力及失败不推进状态通过。STOP 真实终点仍 pending，未生成回复/奖励；不等于 B6e 终点表完成。",
+      "acceptance_manifest": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/MANIFEST.json",
+      "evidence_tier": "engineering_only"
     },
     "B6": {
       "workstream": "WS-B",
@@ -535,5 +549,15 @@
     "freeze_manifest": "project/outputs/pm_rl1/v3/integration_c0_freeze_20261117/C0_FREEZE_MANIFEST.json",
     "prior_failure_commit": "d0bde000a1978ffd917fdf04669ecbae14ec9d81",
     "note": "仅工程接口冻结；H0/adoption 不变。A1/A1b 准备提交不是已集成完成。"
+  },
+  "integration_s2_acceptance": {
+    "tested_integration_sha": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+    "results_doc": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/RESULTS_ZH.md",
+    "manifest": "project/outputs/pm_rl1/v3/integration_a1_a1b_b_s2_20261118/MANIFEST.json",
+    "github_push_ci": "https://github.com/chensiyu7812/Metacom5_3/actions/runs/44188379179",
+    "github_push_ci_status": "success",
+    "code_acceptance_complete": true,
+    "all_S1_tasks_complete": false,
+    "record_commit_ci_rule": "状态/报告提交自身 HEAD 的 push CI 仍须核对；最终凭据随 PR 交接评论和最终报告交付。"
   }
 }

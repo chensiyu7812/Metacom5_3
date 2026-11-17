@@ -1,0 +1,68 @@
+{
+  "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+  "phase": "guards",
+  "commands": [
+    {
+      "label": "gpu_isolation",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-m",
+        "not gpu",
+        "-ra",
+        "-o",
+        "addopts=",
+        "tests/test_paper1_authority.py::test_ci_never_runs_local_gpu_tests_on_github_cpu_runner",
+        "--junitxml=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/guards_retry/gpu.xml",
+        "--basetemp=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/tmp/guards"
+      ],
+      "cwd": "/home/tokkio/Metacom5_3-integration/project",
+      "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "exit_code": 0,
+      "seconds": 0.7580037117004395,
+      "log": "gpu_isolation.log",
+      "log_sha256": "133a437a37816bf91cd5b1a8690835e077157915964de11902e730a8a9b6c18a"
+    },
+    {
+      "label": "schemas",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "scripts/rl1v3/c0_export_schemas.py",
+        "--check",
+        "--out",
+        "/home/tokkio/Metacom5_3-integration/project/schemas/rl1v3"
+      ],
+      "cwd": "/home/tokkio/Metacom5_3-integration/project",
+      "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "exit_code": 0,
+      "seconds": 0.26517176628112793,
+      "log": "schemas.log",
+      "log_sha256": "9d6ab7e3736dc2c74008dda9df0d73f884f2244d01f1a7c05a80d20ba6afb6ba"
+    },
+    {
+      "label": "integration_base",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "scripts/paper1/00_validate_integration_base.py"
+      ],
+      "cwd": "/home/tokkio/Metacom5_3-integration/project",
+      "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "exit_code": 0,
+      "seconds": 0.6214497089385986,
+      "log": "integration_base.log",
+      "log_sha256": "fe0d32ee2bc15b785e19184ec2cc59d16742f03d32f7f445dad2d922e558f8a5"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "/home/tokkio/Metacom5_3-integration/project/src:/opt/tokkio-data0/tokkio_envs/pmrl1_validation_vendor_20261103",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "TMPDIR": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/tmp",
+    "MPLCONFIGDIR": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/mpl",
+    "XDG_CACHE_HOME": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/cache"
+  },
+  "runner_sha256": "ced74fb03b736db3341facb2200109e7927aa0ed79cd3a073191ddf4d4e8f34a"
+}

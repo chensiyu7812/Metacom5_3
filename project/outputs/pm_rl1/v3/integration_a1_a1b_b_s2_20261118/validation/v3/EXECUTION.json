@@ -1,0 +1,79 @@
+{
+  "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+  "phase": "v3",
+  "commands": [
+    {
+      "label": "pytest",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "-m",
+        "not gpu",
+        "-ra",
+        "-o",
+        "addopts=",
+        "tests/test_rl1v3_a0.py",
+        "tests/test_rl1v3_asset_reuse.py",
+        "tests/test_rl1v3_b0_prefixes.py",
+        "tests/test_rl1v3_b1_needcard_v2.py",
+        "tests/test_rl1v3_b1_needs.py",
+        "tests/test_rl1v3_b2_checklist_judge.py",
+        "tests/test_rl1v3_b2_engineering_reward.py",
+        "tests/test_rl1v3_b2_v2.py",
+        "tests/test_rl1v3_b5_bank_replay.py",
+        "tests/test_rl1v3_b5_bank_replay_v2.py",
+        "tests/test_rl1v3_b5_c0_binding.py",
+        "tests/test_rl1v3_b5_env_core.py",
+        "tests/test_rl1v3_b8e_preflight.py",
+        "tests/test_rl1v3_bank_port.py",
+        "tests/test_rl1v3_bank_v0.py",
+        "tests/test_rl1v3_c0_a_acceptance.py",
+        "tests/test_rl1v3_c0_revision.py",
+        "tests/test_rl1v3_c0_wsb_acceptance.py",
+        "tests/test_rl1v3_contracts.py",
+        "tests/test_rl1v3_eval_protocol.py",
+        "tests/test_rl1v3_integration_guard.py",
+        "tests/test_rl1v3_rs_v0_catalog.py",
+        "tests/test_rl1v3_source_registry.py",
+        "-o",
+        "xfail_strict=true",
+        "--junitxml=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/v3/pytest.xml",
+        "--basetemp=/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/tmp/v3"
+      ],
+      "cwd": "/home/tokkio/Metacom5_3-integration/project",
+      "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "exit_code": 0,
+      "seconds": 99.13771414756775,
+      "log": "pytest.log",
+      "log_sha256": "ba95b23cd49134a8eb6553f2f27d204aba072d01b205ce54977f591fa3337c84"
+    },
+    {
+      "label": "strict_gate",
+      "command": [
+        "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+        "scripts/rl1v3/verify_v3_junit.py",
+        "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/v3/pytest.xml",
+        "--out",
+        "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/v3/gate.json"
+      ],
+      "cwd": "/home/tokkio/Metacom5_3-integration/project",
+      "head": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+      "exit_code": 0,
+      "seconds": 0.04043149948120117,
+      "log": "strict_gate.log",
+      "log_sha256": "2c6e7893ca4a077abc91675c82bda04c7d69fa1de52f358fde194a680c407d6e"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": "/home/tokkio/Metacom5_3-integration/project/src:/opt/tokkio-data0/tokkio_envs/pmrl1_validation_vendor_20261103",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "TMPDIR": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/tmp",
+    "MPLCONFIGDIR": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/mpl",
+    "XDG_CACHE_HOME": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/integration-s2-20261118-v1/validation/cache"
+  },
+  "runner_sha256": "ffc7ec0b9dee19e83b0c25b87988aa141e8b1d195de1dc5ba03a7570fb4ee88e"
+}

@@ -1,0 +1,12 @@
+{
+  "kind": "integration_validation_invocation_error",
+  "owner": "integration owner",
+  "code_sha": "16644abb3cc28aa1a2f16b0309b84402ac854d5c",
+  "failed_log": "validation/guards/schemas.log",
+  "cause": "c0_export_schemas defaults to project/schemas relative to cwd; wrapper cwd is project, so file path was wrong",
+  "resolution": "v2 wrapper supplies explicit absolute --out for --check; original script, contract, tests, schemas and failed outputs untouched",
+  "retry_output": "validation/guards_retry",
+  "production_changes": false,
+  "original_runner_sha256": "ffc7ec0b9dee19e83b0c25b87988aa141e8b1d195de1dc5ba03a7570fb4ee88e",
+  "corrected_runner_sha256": "ced74fb03b736db3341facb2200109e7927aa0ed79cd3a073191ddf4d4e8f34a"
+}
