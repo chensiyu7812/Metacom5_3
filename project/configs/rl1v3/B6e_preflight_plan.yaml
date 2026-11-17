@@ -1,0 +1,40 @@
+# WS-B B6e small real-terminal preflight - PLAN ONLY. Not runnable until every gate below holds
+# AND the researcher explicitly authorises the GPU scope. No paid API.
+task_id: B6e_preflight
+status: proposal_not_authorised
+prefixes:
+  source: outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+  candidates: folds 1-5 only (20); fold 6 historical test owners excluded
+  n: 8
+  rule: >-
+    after B5 real replay: keep prefixes whose replay passed; sort by n_reachable desc, then fold, then slot;
+    take at most 2 per fold and 1 per owner until 8. Full 16 subsets only where all four heads are legal
+    and capacity-feasible; otherwise use the real reachable set and report the count and reasons.
+calls_upper_bound:
+  needcard_writer: 16        # 8 prefixes x (1 + 1 re-ask), Qwen3.5-9B non-thinking greedy
+  checklist: 0               # deterministic template v1
+  g0_generation: 128         # <= 8 x 16 reachable terminals, one greedy sample each
+  j1_item_judge: 384         # <= 128 terminals x (1 + full re-ask + missing-item re-ask)
+  j2_item_judge: 0           # not in preflight: GSC stays pending by design
+  paid_api: 0
+token_assumptions:            # to be replaced by A0 measurements
+  g0_input_max: 3200         # OFF request 70-877 (A0) + reading units
+  g0_output_max: 320         # A0 output reserve
+  j1_input_max: 3500
+  j1_output_max: 800
+  writer_input_max: 15000    # pilot strictly-past RAW 4,422-46,530 chars
+  writer_output_max: 800
+memory_estimate_gib:          # weights from A0 file sizes; KV not measured
+  g0_gemma4_12b_bf16_weights: 22.3
+  qwen35_9b_bf16_weights: 18.0
+  models_loaded: sequentially, never together
+reward_protocol: pmrl1v3-engineering-reward-v1
+gates:
+  - C0 0.2.0 formally frozen on integration
+  - A1 source_registry + A1b bank-v0/retrieve.read delivered; B5 real replay passed on the coverage sample
+  - B1 adapter cross_check against A1 sessions = 0 mismatches
+  - RS method-family catalog delivered (NeedCard writer input)
+  - versioned initial G0 identity + request renderer (render.request_packet) from WS-A
+  - A0 GPU throughput / peak memory measured on the A6000
+  - explicit researcher authorisation; A6000 free >= 30 GiB and not in use by WS-A
+evidence_tier: engineering_only

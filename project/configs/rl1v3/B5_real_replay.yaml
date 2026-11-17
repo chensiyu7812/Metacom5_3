@@ -1,0 +1,18 @@
+# WS-B B5 real bank-v0 replay (runs only when a WS-A A1b port is importable). CPU only.
+task_id: B5_real_replay
+census: outputs/pm_rl1/v3/B0/prefix_census.jsonl
+coverage_sample: outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+source_artifact: data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json
+out_root: outputs/pm_rl1/v3/B5
+# Module paths a thin A1b shim may expose: factory(census_sources) -> () -> BankPort.
+# None exists on integration d0bde000; the runner then exits 3 without output.
+port_candidates:
+  - metacom_pm.rl1v3.bank.v0_port:make_port_factory
+  - metacom_pm.rl1v3.retrieve.bank_port:make_port_factory
+# G/renderer/Step-2/decode are not frozen; replay identity is explicitly unbound.
+terminal_identity:
+  renderer_id: unbound-renderer-pre-A6
+  step2_id: unbound-step2
+  g_id: unbound-g0-pre-A7
+  decode_id: unbound-decode
+evidence_tier: engineering_only

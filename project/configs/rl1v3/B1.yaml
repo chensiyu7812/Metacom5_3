@@ -1,0 +1,11 @@
+# WS-B B1 pre-A1b frames. CPU only; no model, GPU, judge or paid call.
+task_id: B1
+census: outputs/pm_rl1/v3/B0/prefix_census.jsonl
+exposure: outputs/pm_rl1/v3/B0/exposure_registry.jsonl
+folds: outputs/pm_rl1/v3/B0/folds.json
+source_artifact: data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json
+sampler: pmrl1v3-b1-sampler-v1          # per-owner S/M/L = 16/27/54, <=2 prefixes per (owner, session)
+writer_protocol: pmrl1v3-needcard-writer-v1
+writer_model_planned: qwen_judge_candidate  # A0 config; local Qwen3.5-9B, non-thinking, greedy (needs GPU authorisation)
+method_catalog: null                    # from WS-A RS cards (A1b/A4); writer is blocked until delivered
+evidence_tier: engineering_only
