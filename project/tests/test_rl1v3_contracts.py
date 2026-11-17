@@ -7,6 +7,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from metacom_pm.rl1v3.contracts import (
+    Checklist, ExecutionTrace, HumanAdjudication, OutdatedFact, ReadSuccess, ReadFailure,
     CONTRACT_TYPES, ChecklistItem, HeadAvailability, HistoryItem, IndexManifest,
     ItemVerdict, NeedCard, Observation, PairwiseQuality, PrefixSpec, RankedCandidate,
     ReadingView, Rejection, ResourceRecord, RetrievalResult, RetrievalTrace,
@@ -31,8 +32,8 @@ def examples():
     span = SourceSpan(source_key="fixture:p1:s1:0", owner_id="p1", session_id="s1",
                       source_rank=0, turn_index=0, speaker="seeker", start_char=0,
                       end_char=len(t.text), exact_quote=t.text, raw_turn_sha256=t.raw_turn_sha256)
-    p = PrefixSpec(prefix_id="p1-s2-0", owner_id="p1", session_id="s2", cut_turn=0,
-                   turns=(t,), cutoff_rank=1, timestamp=None, dataset="fixture", family_id="f2")
+    p = PrefixSpec.create( owner_id="p1", session_id="s2", cut_turn=0,
+                   turns=(t,), cutoff_rank=1, timestamp=None, dataset="fixture", family_id="f2", ancestor_family_ids=("f1","f2"))
     resource = ResourceRecord(record_id="me1", bank_version="v0", head="ME", view="event",
         owner_id="p1", source_refs=(span,), reported_at=time, event_time=None, valid_from=None,
         invalid_at=None, stage="intended", body='{"legacy":true}', reading_text=t.text,
@@ -46,9 +47,9 @@ def examples():
     relation = TemporalRelation(edge_id="e1", relation_type="updates", left_id="c2", right_id="c1",
         direction="left_to_right", evidence_spans=(), reported_at=TimePoint(session_rank=2),
         derivation_identity="fixture-v1", review_status="unverified", semantic_support="unverified")
-    view = ReadingView(head="ME", ordinal=1, reading_text=t.text, reported_at=time, tokens=7, stage="intended")
+    view = ReadingView(head="ME", view="event", ordinal=1, reading_text=t.text, reported_at=time, tokens=7, stage="intended")
     availability = HeadAvailability(head="ME", available=True, count=1)
-    obs = Observation(prefix=p.visible(), acquired=(view,), availability=(availability,),
+    obs = Observation(domain_id="finite_head_v1", history_sessions=1, prefix=p.visible(), acquired=(view,), availability=(availability,),
                       action_mask=("STOP",), input_tokens=10)
     component = ScoreComponent(name="bm25", score=0.5, rank=1)
     ranked = RankedCandidate(record_id="me1", score=0.5, components=(component,))
@@ -65,21 +66,28 @@ def examples():
         result=result, rejected=(rejection,), elapsed_ms=0.1, retrieval_identity="bm25-v1")
     history = HistoryItem(record_id="me1", spans=(span,), role="relevant_optional", source_role="seeker", source_rank=0)
     need = NeedCard(prefix_id=p.prefix_id, stratum="history", history_items=(history,),
-        failed_or_rejected=(), outdated_facts=(), method_need=None, risk_flags=())
+        failed_or_rejected=(), outdated_facts=(), method_need=None, risk_flags=(),
+        writer_identity="fixture-v1", input_sha256=SHA, span_validation_status="pending")
     item = ChecklistItem(item_id="i1", category="H-", constraint_type="hard_factual",
         text="Does not claim the planned move already happened", evidence_spans=(span,),
         weight=1.0, applies_to="all_terminals", visibility_scope="evaluation_only", review_status="unverified")
-    key = TerminalKey(prefix_id=p.prefix_id, bank_version="v0", index_version="i0",
-        ordered_path=("GET_ME", "STOP"), acquired_record_ids=("me1",), renderer_id="r0",
+    checklist = Checklist(prefix_id=p.prefix_id, needcard_sha256=need.sha256, items=(item,), total_weight=1.0, writer_identity="fixture-v1")
+    key = TerminalKey.for_prefix(p, domain_id="finite_head_v1", bank_version="v0", index_version="i0",
+        ordered_path=("GET_ME", "STOP"), acquired=(("me1",),), renderer_id="r0",
         step2_id="noplan", g_id="G0-candidate", decode_id="greedy-seed0-v1")
     verdict = ItemVerdict(item_id="i1", J1="uncertain", J2="uncertain", final="uncertain")
     pair = PairwiseQuality(comparator_key_sha256=SHA, verdict="uncertain", judge_identity="not_run", qualification_tier="engineering_only")
-    terminal = TerminalRecord(key=key, request_sha256=SHA, response="", response_sha256=sha256_text(""),
+    execution = ExecutionTrace(domain_id=key.domain_id, ordered_path=key.ordered_path, acquired=key.acquired, readings=(view,))
+    terminal = TerminalRecord(key=key, execution=execution, checklist=checklist, checklist_sha256=checklist.sha256, feedback_id="fixture-feedback-v1", request_sha256=SHA, response="", response_sha256=sha256_text(""),
         item_verdicts=(verdict,), gsc_lower=0.0, gsc_upper=1.0, hard_factual="uncertain",
         hard_safety="uncertain", soft_quality_pairwise=(pair,), qualification_tier="engineering_only",
         misuse_flags=(), latency_pred=None, latency_measured=None)
+    old = OutdatedFact(old_span=span, new_span=replace(span, source_rank=1))
+    human = HumanAdjudication(reviewer_id="fixture-human", record_uri="fixture:adjudication", record_sha256=SHA, response_sha256=sha256_text(""), verdict="uncertain", reason="fixture only")
+    success = ReadSuccess(reading=view, record_ids=("me1",), input_tokens_before=10, input_tokens_after=17, native_context_tokens=128, output_reserve_tokens=32, elapsed_ms=1.0)
+    failure = ReadFailure(reason="empty", detail="no legal records", input_tokens_unchanged=10, elapsed_ms=0.1)
     return {type(x).__name__: x for x in (time,t,s,span,p,p.visible(),resource,claim,relation,view,
-        availability,obs,component,ranked,result,index,rejection,trace,history,need,item,key,verdict,pair,terminal)}
+        availability,obs,component,ranked,result,index,rejection,trace,history,need,item,key,verdict,pair,terminal,checklist,execution,old,human,success,failure)}
 
 
 @pytest.mark.parametrize("cls", CONTRACT_TYPES, ids=lambda c:c.__name__)
@@ -191,7 +199,7 @@ def test_legacy_prefix_adapter_preserves_cut_and_turns():
 @pytest.mark.parametrize("name", [f.name for f in fields(TerminalKey) if f.name != "schema_version"])
 def test_every_terminal_key_field_invalidates_cache(name):
     key=examples()["TerminalKey"]
-    changes = {"ordered_path":("GET_MP","GET_ME","STOP"), "acquired_record_ids":("me2",)}
+    changes = {"ordered_path":("GET_MP","STOP"), "acquired":(("me2",),), "domain_id":"adaptive_v1", "prefix_id":"1"*64, "prefix_context_sha256":"2"*64}
     changed=replace(key, **{name:changes.get(name, getattr(key,name)+"-changed" if isinstance(getattr(key,name),str) else ())})
     assert changed.sha256 != key.sha256
 

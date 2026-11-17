@@ -16,8 +16,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -49,8 +49,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         }
@@ -71,6 +71,28 @@
           "minLength": 1,
           "title": "Bank Version",
           "type": "string"
+        },
+        "delivery_record_ids": {
+          "default": [],
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Delivery Record Ids",
+          "type": "array"
+        },
+        "delivery_tokens": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delivery Tokens"
         },
         "filters_applied": {
           "items": {
@@ -108,8 +130,8 @@
           "type": "array"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         }
@@ -157,8 +179,8 @@
           "title": "Rank"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -176,7 +198,7 @@
       "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:RetrievalTrace",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:RetrievalTrace",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -241,8 +263,8 @@
       "type": "string"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     }

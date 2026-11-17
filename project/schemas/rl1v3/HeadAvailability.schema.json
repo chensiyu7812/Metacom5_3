@@ -1,7 +1,8 @@
 {
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:HeadAvailability",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:HeadAvailability",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "Query-independent legal candidate-pool size AFTER owner/cutoff/ready/family gates.\n\nIdentical for every arm. Not delivered unit count, top-k, score, or capacity.\nPhase-1 GET buys one deterministic unit, which can contain several records.",
   "properties": {
     "available": {
       "title": "Available",
@@ -23,8 +24,8 @@
       "type": "string"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     }

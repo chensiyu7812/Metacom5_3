@@ -1,0 +1,131 @@
+{
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:IndexManifest",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "bank_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Bank Sha256",
+      "type": "string"
+    },
+    "bank_version": {
+      "minLength": 1,
+      "title": "Bank Version",
+      "type": "string"
+    },
+    "built_at": {
+      "minLength": 1,
+      "title": "Built At",
+      "type": "string"
+    },
+    "chunker_identity": {
+      "minLength": 1,
+      "title": "Chunker Identity",
+      "type": "string"
+    },
+    "encoder_dimension": {
+      "exclusiveMinimum": 0,
+      "title": "Encoder Dimension",
+      "type": "integer"
+    },
+    "encoder_id": {
+      "minLength": 1,
+      "title": "Encoder Id",
+      "type": "string"
+    },
+    "encoder_max_tokens": {
+      "exclusiveMinimum": 0,
+      "title": "Encoder Max Tokens",
+      "type": "integer"
+    },
+    "encoder_revision": {
+      "minLength": 1,
+      "title": "Encoder Revision",
+      "type": "string"
+    },
+    "encoder_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Encoder Sha256",
+      "type": "string"
+    },
+    "head": {
+      "enum": [
+        "RS",
+        "MP",
+        "ME",
+        "MS"
+      ],
+      "title": "Head",
+      "type": "string"
+    },
+    "index_version": {
+      "minLength": 1,
+      "title": "Index Version",
+      "type": "string"
+    },
+    "normalization": {
+      "const": "l2",
+      "title": "Normalization",
+      "type": "string"
+    },
+    "pooling": {
+      "const": "cls",
+      "title": "Pooling",
+      "type": "string"
+    },
+    "records_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Records Sha256",
+      "type": "string"
+    },
+    "rrf_k": {
+      "default": 60,
+      "exclusiveMinimum": 0,
+      "title": "Rrf K",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sparse_identity": {
+      "minLength": 1,
+      "title": "Sparse Identity",
+      "type": "string"
+    },
+    "sparse_method": {
+      "const": "bm25",
+      "title": "Sparse Method",
+      "type": "string"
+    },
+    "vectors_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Vectors Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "index_version",
+    "bank_version",
+    "bank_sha256",
+    "head",
+    "encoder_id",
+    "encoder_revision",
+    "encoder_sha256",
+    "encoder_dimension",
+    "encoder_max_tokens",
+    "sparse_method",
+    "sparse_identity",
+    "normalization",
+    "pooling",
+    "chunker_identity",
+    "records_sha256",
+    "vectors_sha256",
+    "built_at",
+    "schema_version"
+  ],
+  "title": "IndexManifest",
+  "type": "object"
+}

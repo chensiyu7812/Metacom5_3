@@ -25,8 +25,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -63,6 +63,30 @@
       "title": "HistoryItem",
       "type": "object"
     },
+    "OutdatedFact": {
+      "additionalProperties": false,
+      "properties": {
+        "new_span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "old_span": {
+          "$ref": "#/$defs/SourceSpan"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "old_span",
+        "new_span",
+        "schema_version"
+      ],
+      "title": "OutdatedFact",
+      "type": "object"
+    },
     "SourceSpan": {
       "additionalProperties": false,
       "properties": {
@@ -87,8 +111,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -143,7 +167,7 @@
       "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:NeedCard",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:NeedCard",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -161,6 +185,11 @@
       "title": "History Items",
       "type": "array"
     },
+    "input_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Input Sha256",
+      "type": "string"
+    },
     "method_need": {
       "anyOf": [
         {
@@ -175,13 +204,13 @@
     },
     "outdated_facts": {
       "items": {
-        "$ref": "#/$defs/SourceSpan"
+        "$ref": "#/$defs/OutdatedFact"
       },
       "title": "Outdated Facts",
       "type": "array"
     },
     "prefix_id": {
-      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
       "title": "Prefix Id",
       "type": "string"
     },
@@ -194,9 +223,18 @@
       "type": "array"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
+      "type": "string"
+    },
+    "span_validation_status": {
+      "enum": [
+        "pending",
+        "verified",
+        "failed"
+      ],
+      "title": "Span Validation Status",
       "type": "string"
     },
     "stratum": {
@@ -214,6 +252,11 @@
       "default": "evaluation_only",
       "title": "Visibility Scope",
       "type": "string"
+    },
+    "writer_identity": {
+      "minLength": 1,
+      "title": "Writer Identity",
+      "type": "string"
     }
   },
   "required": [
@@ -224,6 +267,9 @@
     "outdated_facts",
     "method_need",
     "risk_flags",
+    "writer_identity",
+    "input_sha256",
+    "span_validation_status",
     "schema_version"
   ],
   "title": "NeedCard",

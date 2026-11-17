@@ -11,10 +11,11 @@ import dataclasses
 import hashlib
 import json
 import os
+import tempfile
 from pathlib import Path
 from typing import Any, TypeVar
 
-SCHEMA_VERSION = "pmrl1v3-contracts-0.1.0"
+SCHEMA_VERSION = "pmrl1v3-contracts-0.2.0"
 CANONICAL_VERSION = "pmrl1v3-json-1"
 T = TypeVar("T")
 
@@ -83,14 +84,19 @@ def write_bytes_once(path: str | Path, data: bytes) -> str:
     """Idempotent resume; a different existing artifact is never overwritten."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=".immutable-", dir=path.parent)
     try:
-        with path.open("xb") as stream:
+        with os.fdopen(fd, "wb") as stream:
             stream.write(data)
             stream.flush()
             os.fsync(stream.fileno())
-    except FileExistsError:
-        if path.read_bytes() != data:
-            raise FileExistsError(f"immutable artifact differs: {path}") from None
+        try:
+            os.link(temporary, path)  # atomic publication; never expose a partial JSON
+        except FileExistsError:
+            if path.read_bytes() != data:
+                raise FileExistsError(f"immutable artifact differs: {path}") from None
+    finally:
+        os.unlink(temporary)
     return sha256_bytes(data)
 
 
@@ -138,3 +144,22 @@ def verify_manifest(manifest: dict, *, root: Path, check_inputs: bool = True) ->
         for row in manifest["inputs"].values():
             if file_sha256(row["path"]) != row["sha256"]:
                 raise ValueError(f"input mismatch: {row['path']}")
+
+
+def bind_checklist(root: str | Path, checklist, needcard) -> str:
+    """Write-once per-prefix registry shared by all 16 terminals; no subset key.
+
+    A changed checklist requires a new experiment registry, never replacement.
+    """
+    checklist.verify_needcard(needcard)
+    return write_json_once(Path(root) / (checklist.prefix_id + ".json"), checklist)
+
+
+def load_checklist(root: str | Path, prefix_id: str):
+    from .contracts import Checklist
+    if len(prefix_id) != 64 or any(c not in "0123456789abcdef" for c in prefix_id):
+        raise ValueError("invalid prefix identity")
+    result = decode_contract(Checklist, (Path(root) / (prefix_id + ".json")).read_text())
+    if result.prefix_id != prefix_id:
+        raise ValueError("registry prefix mismatch")
+    return result

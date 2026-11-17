@@ -12,8 +12,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -37,17 +37,17 @@
       "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:PrefixSpec",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:PrefixSpec",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Execution-private routing envelope; use visible() for model input.",
+  "description": "Private B0-bound envelope. Ancestors cover current + ALL strict-past families.\n\nFamily closure is input lineage, never text matching or an actor feature.\nverify_source_context checks it against sources before any resource access.",
   "properties": {
     "ancestor_family_ids": {
-      "default": [],
       "items": {
         "minLength": 1,
         "type": "string"
       },
+      "minItems": 1,
       "title": "Ancestor Family Ids",
       "type": "array"
     },
@@ -84,19 +84,34 @@
       "default": null,
       "title": "Fold"
     },
+    "identity_scope": {
+      "default": "v3",
+      "enum": [
+        "v3",
+        "historical_legacy"
+      ],
+      "title": "Identity Scope",
+      "type": "string"
+    },
     "owner_id": {
       "minLength": 1,
       "title": "Owner Id",
       "type": "string"
     },
     "prefix_id": {
-      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
       "title": "Prefix Id",
       "type": "string"
     },
+    "prefix_protocol": {
+      "default": "pmrl1v3-b0-prefix-census-v1",
+      "minLength": 1,
+      "title": "Prefix Protocol",
+      "type": "string"
+    },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -164,6 +179,7 @@
     "timestamp",
     "dataset",
     "family_id",
+    "ancestor_family_ids",
     "schema_version"
   ],
   "title": "PrefixSpec",

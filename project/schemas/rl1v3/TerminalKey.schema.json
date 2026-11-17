@@ -1,14 +1,17 @@
 {
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:TerminalKey",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:TerminalKey",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
-    "acquired_record_ids": {
+    "acquired": {
       "items": {
-        "minLength": 1,
-        "type": "string"
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "type": "array"
       },
-      "title": "Acquired Record Ids",
+      "title": "Acquired",
       "type": "array"
     },
     "bank_version": {
@@ -19,6 +22,14 @@
     "decode_id": {
       "minLength": 1,
       "title": "Decode Id",
+      "type": "string"
+    },
+    "domain_id": {
+      "enum": [
+        "finite_head_v1",
+        "adaptive_v1"
+      ],
+      "title": "Domain Id",
       "type": "string"
     },
     "g_id": {
@@ -33,14 +44,24 @@
     },
     "ordered_path": {
       "items": {
-        "minLength": 1,
+        "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
         "type": "string"
       },
       "title": "Ordered Path",
       "type": "array"
     },
-    "prefix_id": {
+    "owner_id": {
       "minLength": 1,
+      "title": "Owner Id",
+      "type": "string"
+    },
+    "prefix_context_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Prefix Context Sha256",
+      "type": "string"
+    },
+    "prefix_id": {
+      "pattern": "^[0-9a-f]{64}$",
       "title": "Prefix Id",
       "type": "string"
     },
@@ -50,8 +71,8 @@
       "type": "string"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -62,11 +83,14 @@
     }
   },
   "required": [
+    "domain_id",
+    "owner_id",
     "prefix_id",
+    "prefix_context_sha256",
     "bank_version",
     "index_version",
     "ordered_path",
-    "acquired_record_ids",
+    "acquired",
     "renderer_id",
     "step2_id",
     "g_id",

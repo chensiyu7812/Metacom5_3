@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from metacom_pm.rl1v3.contracts import CONTRACT_TYPES, json_schema
+from metacom_pm.rl1v3.contracts import CONTRACT_TYPES, ReadResult, json_schema
 
 
 def main():
@@ -12,8 +12,8 @@ def main():
     parser.add_argument("--out", type=Path, default=Path("project/schemas/rl1v3"))
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    for cls in CONTRACT_TYPES:
-        path = args.out / f"{cls.__name__}.schema.json"
+    for name, cls in [(c.__name__, c) for c in CONTRACT_TYPES] + [("ReadResult", ReadResult)]:
+        path = args.out / f"{name}.schema.json"
         schema = json_schema(cls)
         if args.check:
             if json.loads(path.read_text()) != schema:
@@ -21,7 +21,7 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(json.dumps(schema, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
-    print(f"{len(CONTRACT_TYPES)} schemas {'checked' if args.check else 'exported'}")
+    print(f"{len(CONTRACT_TYPES)+1} schemas {'checked' if args.check else 'exported'}")
 
 
 if __name__ == "__main__":

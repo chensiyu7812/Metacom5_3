@@ -1,0 +1,228 @@
+{
+  "$defs": {
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_char": {
+          "exclusiveMinimum": 0,
+          "title": "End Char",
+          "type": "integer"
+        },
+        "exact_quote": {
+          "minLength": 1,
+          "title": "Exact Quote",
+          "type": "string"
+        },
+        "owner_id": {
+          "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "raw_turn_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Turn Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_id": {
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_rank": {
+          "minimum": 0,
+          "title": "Source Rank",
+          "type": "integer"
+        },
+        "speaker": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Speaker",
+          "type": "string"
+        },
+        "start_char": {
+          "minimum": 0,
+          "title": "Start Char",
+          "type": "integer"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_key",
+        "owner_id",
+        "session_id",
+        "source_rank",
+        "turn_index",
+        "speaker",
+        "start_char",
+        "end_char",
+        "exact_quote",
+        "raw_turn_sha256",
+        "schema_version"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
+    "TimePoint": {
+      "additionalProperties": false,
+      "description": "Null calendar date never means epoch; at least one coordinate is known.",
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Rank"
+        }
+      },
+      "required": [
+        "schema_version"
+      ],
+      "title": "TimePoint",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:TemporalRelation",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "derivation_identity": {
+      "minLength": 1,
+      "title": "Derivation Identity",
+      "type": "string"
+    },
+    "direction": {
+      "enum": [
+        "left_to_right",
+        "symmetric"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "edge_id": {
+      "minLength": 1,
+      "title": "Edge Id",
+      "type": "string"
+    },
+    "evidence_spans": {
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "title": "Evidence Spans",
+      "type": "array"
+    },
+    "left_id": {
+      "minLength": 1,
+      "title": "Left Id",
+      "type": "string"
+    },
+    "relation_type": {
+      "enum": [
+        "updates",
+        "contradicts",
+        "follows",
+        "follow_up",
+        "outcome_of",
+        "mentions",
+        "derived_from",
+        "parent_session",
+        "about_entity",
+        "same_event_group"
+      ],
+      "title": "Relation Type",
+      "type": "string"
+    },
+    "reported_at": {
+      "$ref": "#/$defs/TimePoint"
+    },
+    "review_status": {
+      "enum": [
+        "unverified",
+        "development_reviewed",
+        "independent_reviewed",
+        "professional_approved",
+        "rejected",
+        "unusable"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "right_id": {
+      "minLength": 1,
+      "title": "Right Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "semantic_support": {
+      "enum": [
+        "unverified",
+        "supported",
+        "uncertain",
+        "rejected"
+      ],
+      "title": "Semantic Support",
+      "type": "string"
+    }
+  },
+  "required": [
+    "edge_id",
+    "relation_type",
+    "left_id",
+    "right_id",
+    "direction",
+    "evidence_spans",
+    "reported_at",
+    "derivation_identity",
+    "review_status",
+    "semantic_support",
+    "schema_version"
+  ],
+  "title": "TemporalRelation",
+  "type": "object"
+}

@@ -1,34 +1,365 @@
 {
   "$defs": {
+    "Checklist": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ChecklistItem"
+          },
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        },
+        "needcard_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Needcard Sha256",
+          "type": "string"
+        },
+        "prefix_id": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prefix Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "total_weight": {
+          "exclusiveMinimum": 0,
+          "title": "Total Weight",
+          "type": "number"
+        },
+        "writer_identity": {
+          "minLength": 1,
+          "title": "Writer Identity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix_id",
+        "needcard_sha256",
+        "items",
+        "total_weight",
+        "writer_identity",
+        "schema_version"
+      ],
+      "title": "Checklist",
+      "type": "object"
+    },
+    "ChecklistItem": {
+      "additionalProperties": false,
+      "properties": {
+        "applies_to": {
+          "const": "all_terminals",
+          "title": "Applies To",
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "H+",
+            "H-",
+            "R",
+            "G",
+            "I",
+            "S"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "constraint_type": {
+          "enum": [
+            "hard_factual",
+            "hard_safety",
+            "soft_support",
+            "relevance"
+          ],
+          "title": "Constraint Type",
+          "type": "string"
+        },
+        "evidence_spans": {
+          "items": {
+            "$ref": "#/$defs/SourceSpan"
+          },
+          "title": "Evidence Spans",
+          "type": "array"
+        },
+        "item_id": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "unverified",
+            "development_reviewed",
+            "independent_reviewed",
+            "professional_approved",
+            "rejected",
+            "unusable"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "visibility_scope": {
+          "const": "evaluation_only",
+          "title": "Visibility Scope",
+          "type": "string"
+        },
+        "weight": {
+          "exclusiveMinimum": 0,
+          "title": "Weight",
+          "type": "number"
+        }
+      },
+      "required": [
+        "item_id",
+        "category",
+        "constraint_type",
+        "text",
+        "evidence_spans",
+        "weight",
+        "applies_to",
+        "visibility_scope",
+        "review_status",
+        "schema_version"
+      ],
+      "title": "ChecklistItem",
+      "type": "object"
+    },
+    "ExecutionTrace": {
+      "additionalProperties": false,
+      "description": "Actual order, independent of finite-domain canonical reply identity.",
+      "properties": {
+        "acquired": {
+          "items": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Acquired",
+          "type": "array"
+        },
+        "domain_id": {
+          "enum": [
+            "finite_head_v1",
+            "adaptive_v1"
+          ],
+          "title": "Domain Id",
+          "type": "string"
+        },
+        "ordered_path": {
+          "items": {
+            "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
+            "type": "string"
+          },
+          "title": "Ordered Path",
+          "type": "array"
+        },
+        "readings": {
+          "items": {
+            "$ref": "#/$defs/ReadingView"
+          },
+          "title": "Readings",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_id",
+        "ordered_path",
+        "acquired",
+        "readings",
+        "schema_version"
+      ],
+      "title": "ExecutionTrace",
+      "type": "object"
+    },
+    "HumanAdjudication": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "record_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "record_uri": {
+          "minLength": 1,
+          "title": "Record Uri",
+          "type": "string"
+        },
+        "response_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Response Sha256",
+          "type": "string"
+        },
+        "reviewer_id": {
+          "minLength": 1,
+          "title": "Reviewer Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reviewer_id",
+        "record_uri",
+        "record_sha256",
+        "response_sha256",
+        "verdict",
+        "reason",
+        "schema_version"
+      ],
+      "title": "HumanAdjudication",
+      "type": "object"
+    },
     "ItemVerdict": {
       "additionalProperties": false,
       "properties": {
         "J1": {
-          "enum": [
-            "pass",
-            "fail",
-            "uncertain"
+          "anyOf": [
+            {
+              "enum": [
+                "pass",
+                "fail",
+                "uncertain"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "title": "J1",
-          "type": "string"
+          "title": "J1"
+        },
+        "J1_quote": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "J1 Quote"
+        },
+        "J1_source_span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "J2": {
-          "enum": [
-            "pass",
-            "fail",
-            "uncertain"
+          "anyOf": [
+            {
+              "enum": [
+                "pass",
+                "fail",
+                "uncertain"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "title": "J2",
-          "type": "string"
+          "title": "J2"
+        },
+        "J2_quote": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "J2 Quote"
+        },
+        "J2_source_span": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceSpan"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "final": {
-          "enum": [
-            "pass",
-            "fail",
-            "uncertain"
+          "anyOf": [
+            {
+              "enum": [
+                "pass",
+                "fail",
+                "uncertain"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "title": "Final",
-          "type": "string"
+          "title": "Final"
+        },
+        "human_adjudication": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HumanAdjudication"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "item_id": {
           "minLength": 1,
@@ -36,8 +367,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         }
@@ -75,8 +406,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -101,15 +432,205 @@
       "title": "PairwiseQuality",
       "type": "object"
     },
+    "ReadingView": {
+      "additionalProperties": false,
+      "description": "Public text and legal report time; session_rank is allowed time, not an identity.",
+      "properties": {
+        "expandable": {
+          "default": false,
+          "title": "Expandable",
+          "type": "boolean"
+        },
+        "expanded_from_ordinal": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expanded From Ordinal"
+        },
+        "head": {
+          "enum": [
+            "RS",
+            "MP",
+            "ME",
+            "MS"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "ordinal": {
+          "exclusiveMinimum": 0,
+          "title": "Ordinal",
+          "type": "integer"
+        },
+        "reading_text": {
+          "minLength": 1,
+          "title": "Reading Text",
+          "type": "string"
+        },
+        "reported_at": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TimePoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "suggested",
+                "intended",
+                "attempted",
+                "completed",
+                "outcome_reported",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "tokens": {
+          "exclusiveMinimum": 0,
+          "title": "Tokens",
+          "type": "integer"
+        },
+        "view": {
+          "enum": [
+            "method",
+            "case",
+            "assertion",
+            "event",
+            "sum",
+            "raw"
+          ],
+          "title": "View",
+          "type": "string"
+        }
+      },
+      "required": [
+        "head",
+        "view",
+        "ordinal",
+        "reading_text",
+        "reported_at",
+        "tokens",
+        "schema_version"
+      ],
+      "title": "ReadingView",
+      "type": "object"
+    },
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_char": {
+          "exclusiveMinimum": 0,
+          "title": "End Char",
+          "type": "integer"
+        },
+        "exact_quote": {
+          "minLength": 1,
+          "title": "Exact Quote",
+          "type": "string"
+        },
+        "owner_id": {
+          "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "raw_turn_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Turn Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_id": {
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_rank": {
+          "minimum": 0,
+          "title": "Source Rank",
+          "type": "integer"
+        },
+        "speaker": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Speaker",
+          "type": "string"
+        },
+        "start_char": {
+          "minimum": 0,
+          "title": "Start Char",
+          "type": "integer"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_key",
+        "owner_id",
+        "session_id",
+        "source_rank",
+        "turn_index",
+        "speaker",
+        "start_char",
+        "end_char",
+        "exact_quote",
+        "raw_turn_sha256",
+        "schema_version"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    },
     "TerminalKey": {
       "additionalProperties": false,
       "properties": {
-        "acquired_record_ids": {
+        "acquired": {
           "items": {
-            "minLength": 1,
-            "type": "string"
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "type": "array"
           },
-          "title": "Acquired Record Ids",
+          "title": "Acquired",
           "type": "array"
         },
         "bank_version": {
@@ -120,6 +641,14 @@
         "decode_id": {
           "minLength": 1,
           "title": "Decode Id",
+          "type": "string"
+        },
+        "domain_id": {
+          "enum": [
+            "finite_head_v1",
+            "adaptive_v1"
+          ],
+          "title": "Domain Id",
           "type": "string"
         },
         "g_id": {
@@ -134,14 +663,24 @@
         },
         "ordered_path": {
           "items": {
-            "minLength": 1,
+            "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
             "type": "string"
           },
           "title": "Ordered Path",
           "type": "array"
         },
-        "prefix_id": {
+        "owner_id": {
           "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "prefix_context_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Prefix Context Sha256",
+          "type": "string"
+        },
+        "prefix_id": {
+          "pattern": "^[0-9a-f]{64}$",
           "title": "Prefix Id",
           "type": "string"
         },
@@ -151,8 +690,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -163,11 +702,14 @@
         }
       },
       "required": [
+        "domain_id",
+        "owner_id",
         "prefix_id",
+        "prefix_context_sha256",
         "bank_version",
         "index_version",
         "ordered_path",
-        "acquired_record_ids",
+        "acquired",
         "renderer_id",
         "step2_id",
         "g_id",
@@ -176,12 +718,81 @@
       ],
       "title": "TerminalKey",
       "type": "object"
+    },
+    "TimePoint": {
+      "additionalProperties": false,
+      "description": "Null calendar date never means epoch; at least one coordinate is known.",
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_rank": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Rank"
+        }
+      },
+      "required": [
+        "schema_version"
+      ],
+      "title": "TimePoint",
+      "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:TerminalRecord",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:TerminalRecord",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
+    "checklist": {
+      "$ref": "#/$defs/Checklist"
+    },
+    "checklist_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Checklist Sha256",
+      "type": "string"
+    },
+    "evidence_validation": {
+      "default": "pending",
+      "enum": [
+        "pending",
+        "verified",
+        "failed"
+      ],
+      "title": "Evidence Validation",
+      "type": "string"
+    },
+    "execution": {
+      "$ref": "#/$defs/ExecutionTrace"
+    },
+    "feedback_id": {
+      "minLength": 1,
+      "title": "Feedback Id",
+      "type": "string"
+    },
     "gsc_lower": {
       "anyOf": [
         {
@@ -209,22 +820,36 @@
       "title": "Gsc Upper"
     },
     "hard_factual": {
-      "enum": [
-        "pass",
-        "fail",
-        "uncertain"
+      "anyOf": [
+        {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
       ],
-      "title": "Hard Factual",
-      "type": "string"
+      "title": "Hard Factual"
     },
     "hard_safety": {
-      "enum": [
-        "pass",
-        "fail",
-        "uncertain"
+      "anyOf": [
+        {
+          "enum": [
+            "pass",
+            "fail",
+            "uncertain"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
       ],
-      "title": "Hard Safety",
-      "type": "string"
+      "title": "Hard Safety"
     },
     "item_verdicts": {
       "items": {
@@ -292,8 +917,8 @@
       "type": "string"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -307,6 +932,10 @@
   },
   "required": [
     "key",
+    "execution",
+    "checklist",
+    "checklist_sha256",
+    "feedback_id",
     "request_sha256",
     "response",
     "response_sha256",

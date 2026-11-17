@@ -1,0 +1,146 @@
+{
+  "$defs": {
+    "SourceSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "end_char": {
+          "exclusiveMinimum": 0,
+          "title": "End Char",
+          "type": "integer"
+        },
+        "exact_quote": {
+          "minLength": 1,
+          "title": "Exact Quote",
+          "type": "string"
+        },
+        "owner_id": {
+          "minLength": 1,
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "raw_turn_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Raw Turn Sha256",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "pmrl1v3-contracts-0.1.0",
+          "default": "pmrl1v3-contracts-0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "session_id": {
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_rank": {
+          "minimum": 0,
+          "title": "Source Rank",
+          "type": "integer"
+        },
+        "speaker": {
+          "enum": [
+            "seeker",
+            "supporter"
+          ],
+          "title": "Speaker",
+          "type": "string"
+        },
+        "start_char": {
+          "minimum": 0,
+          "title": "Start Char",
+          "type": "integer"
+        },
+        "turn_index": {
+          "minimum": 0,
+          "title": "Turn Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source_key",
+        "owner_id",
+        "session_id",
+        "source_rank",
+        "turn_index",
+        "speaker",
+        "start_char",
+        "end_char",
+        "exact_quote",
+        "raw_turn_sha256",
+        "schema_version"
+      ],
+      "title": "SourceSpan",
+      "type": "object"
+    }
+  },
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:HistoryItem",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "record_id": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Record Id"
+    },
+    "role": {
+      "enum": [
+        "required",
+        "relevant_optional",
+        "must_not_contradict"
+      ],
+      "title": "Role",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "pmrl1v3-contracts-0.1.0",
+      "default": "pmrl1v3-contracts-0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_rank": {
+      "minimum": 0,
+      "title": "Source Rank",
+      "type": "integer"
+    },
+    "source_role": {
+      "enum": [
+        "seeker",
+        "supporter"
+      ],
+      "title": "Source Role",
+      "type": "string"
+    },
+    "spans": {
+      "items": {
+        "$ref": "#/$defs/SourceSpan"
+      },
+      "minItems": 1,
+      "title": "Spans",
+      "type": "array"
+    }
+  },
+  "required": [
+    "record_id",
+    "spans",
+    "role",
+    "source_role",
+    "source_rank",
+    "schema_version"
+  ],
+  "title": "HistoryItem",
+  "type": "object"
+}

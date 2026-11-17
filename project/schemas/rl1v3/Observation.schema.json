@@ -2,6 +2,7 @@
   "$defs": {
     "HeadAvailability": {
       "additionalProperties": false,
+      "description": "Query-independent legal candidate-pool size AFTER owner/cutoff/ready/family gates.\n\nIdentical for every arm. Not delivered unit count, top-k, score, or capacity.\nPhase-1 GET buys one deterministic unit, which can contain several records.",
       "properties": {
         "available": {
           "title": "Available",
@@ -23,8 +24,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         }
@@ -40,7 +41,26 @@
     },
     "ReadingView": {
       "additionalProperties": false,
+      "description": "Public text and legal report time; session_rank is allowed time, not an identity.",
       "properties": {
+        "expandable": {
+          "default": false,
+          "title": "Expandable",
+          "type": "boolean"
+        },
+        "expanded_from_ordinal": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expanded From Ordinal"
+        },
         "head": {
           "enum": [
             "RS",
@@ -72,8 +92,8 @@
           ]
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -98,13 +118,26 @@
           "title": "Stage"
         },
         "tokens": {
-          "minimum": 0,
+          "exclusiveMinimum": 0,
           "title": "Tokens",
           "type": "integer"
+        },
+        "view": {
+          "enum": [
+            "method",
+            "case",
+            "assertion",
+            "event",
+            "sum",
+            "raw"
+          ],
+          "title": "View",
+          "type": "string"
         }
       },
       "required": [
         "head",
+        "view",
         "ordinal",
         "reading_text",
         "reported_at",
@@ -126,8 +159,8 @@
           "type": "string"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -168,8 +201,8 @@
           "title": "Date"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -197,8 +230,8 @@
       "additionalProperties": false,
       "properties": {
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -231,10 +264,10 @@
       "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:Observation",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:Observation",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
-  "description": "Same whitelist for actor and critic. No IDs, ranks or reward labels.",
+  "description": "Same actor/critic whitelist: no private IDs/scores/labels; legal report time allowed.",
   "properties": {
     "acquired": {
       "items": {
@@ -245,14 +278,7 @@
     },
     "action_mask": {
       "items": {
-        "enum": [
-          "GET_RS",
-          "GET_MP",
-          "GET_ME",
-          "GET_MS",
-          "STOP",
-          "EXPAND_MS"
-        ],
+        "pattern": "^(STOP|GET_(RS|MP|ME|MS)|EXPAND_MS\\([1-9][0-9]*\\))$",
         "type": "string"
       },
       "title": "Action Mask",
@@ -265,6 +291,19 @@
       "title": "Availability",
       "type": "array"
     },
+    "domain_id": {
+      "enum": [
+        "finite_head_v1",
+        "adaptive_v1"
+      ],
+      "title": "Domain Id",
+      "type": "string"
+    },
+    "history_sessions": {
+      "minimum": 0,
+      "title": "History Sessions",
+      "type": "integer"
+    },
     "input_tokens": {
       "minimum": 0,
       "title": "Input Tokens",
@@ -274,13 +313,15 @@
       "$ref": "#/$defs/VisiblePrefix"
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     }
   },
   "required": [
+    "domain_id",
+    "history_sessions",
     "prefix",
     "acquired",
     "availability",

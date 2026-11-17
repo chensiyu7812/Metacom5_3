@@ -18,8 +18,8 @@
           "title": "Date"
         },
         "schema_version": {
-          "const": "pmrl1v3-contracts-0.1.0",
-          "default": "pmrl1v3-contracts-0.1.0",
+          "const": "pmrl1v3-contracts-0.2.0",
+          "default": "pmrl1v3-contracts-0.2.0",
           "title": "Schema Version",
           "type": "string"
         },
@@ -44,10 +44,29 @@
       "type": "object"
     }
   },
-  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.1.0:ReadingView",
+  "$id": "urn:metacom:rl1v3:pmrl1v3-contracts-0.2.0:ReadingView",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "description": "Public text and legal report time; session_rank is allowed time, not an identity.",
   "properties": {
+    "expandable": {
+      "default": false,
+      "title": "Expandable",
+      "type": "boolean"
+    },
+    "expanded_from_ordinal": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expanded From Ordinal"
+    },
     "head": {
       "enum": [
         "RS",
@@ -79,8 +98,8 @@
       ]
     },
     "schema_version": {
-      "const": "pmrl1v3-contracts-0.1.0",
-      "default": "pmrl1v3-contracts-0.1.0",
+      "const": "pmrl1v3-contracts-0.2.0",
+      "default": "pmrl1v3-contracts-0.2.0",
       "title": "Schema Version",
       "type": "string"
     },
@@ -105,13 +124,26 @@
       "title": "Stage"
     },
     "tokens": {
-      "minimum": 0,
+      "exclusiveMinimum": 0,
       "title": "Tokens",
       "type": "integer"
+    },
+    "view": {
+      "enum": [
+        "method",
+        "case",
+        "assertion",
+        "event",
+        "sum",
+        "raw"
+      ],
+      "title": "View",
+      "type": "string"
     }
   },
   "required": [
     "head",
+    "view",
     "ordinal",
     "reading_text",
     "reported_at",
