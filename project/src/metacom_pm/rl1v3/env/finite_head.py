@@ -103,7 +103,8 @@ class FiniteHeadEnv:
                  unit_tokens: Mapping[str, int] | None = None,
                  observation_factory: Callable[..., object] | None = None,
                  visible_prefix: object = None, lookup_takes_state: bool = False,
-                 reader_takes_tokens: bool = False):
+                 reader_takes_tokens: bool = False, reader_takes_state: bool = False,
+                 dynamic_mask: Callable[[State], object] | None = None):
         unknown = set(availability) - set(HEADS)
         if unknown:
             raise ValueError(f"unknown heads {unknown}")
@@ -121,6 +122,14 @@ class FiniteHeadEnv:
         self.lookup_takes_state = lookup_takes_state
         # real readers (WS-A retrieve.read) charge against the CURRENT input size
         self.reader_takes_tokens = reader_takes_tokens
+        # A1b Reader is stateless: it needs the state's acquired readings (v2 replay)
+        self.reader_takes_state = reader_takes_state
+        if reader_takes_tokens and reader_takes_state:
+            raise ValueError("choose one reader calling convention")
+        # dynamic GET legality from the real reader (full chat-template capacity);
+        # intersected with the static rules, cached per acquisition order
+        self.dynamic_mask = dynamic_mask
+        self._dyn_cache: dict[tuple[str, ...], frozenset] = {}
 
     # ------------------------------------------------------------- masks
     def legal_actions(self, s: State) -> tuple[str, ...]:
@@ -135,6 +144,11 @@ class FiniteHeadEnv:
                         s.input_tokens + self.unit_tokens[h] > self.token_capacity):
                     continue
                 out.append(GET[h])
+        if self.dynamic_mask is not None and len(out) > 1:
+            dyn = self._dyn_cache.get(s.order)
+            if dyn is None:
+                dyn = self._dyn_cache[s.order] = frozenset(self.dynamic_mask(s))
+            out = [a for a in out if a == STOP or a in dyn]
         return tuple(out)
 
     def reset(self) -> State:
@@ -165,7 +179,8 @@ class FiniteHeadEnv:
                     dict(terminal_mask=s.mask, path=canonical_path(s.mask),
                          key_sha256=outcome.key_sha256))
         head = HEAD_OF[action]
-        unit = self.reader(head, s.input_tokens) if self.reader_takes_tokens else self.reader(head)
+        unit = (self.reader(head, s.input_tokens) if self.reader_takes_tokens
+                else self.reader(head, s) if self.reader_takes_state else self.reader(head))
         if unit is None or unit.head != head or not unit.record_ids:
             raise IllegalAction(f"{action}: reader delivered no unit; head must be masked")
         tokens = s.input_tokens + unit.tokens

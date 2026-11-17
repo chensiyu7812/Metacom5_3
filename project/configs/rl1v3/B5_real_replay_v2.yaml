@@ -1,0 +1,25 @@
+# WS-B B5 real bank-v0 replay v2 (pmrl1v3-b5-bank-replay-v2). CPU only; tokenizer files only, no weights.
+# v1 config (B5_real_replay.yaml) is kept unchanged for history.
+task_id: B5_real_replay_v2
+coverage_sample: outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+# WS-A A1 / A1b artefacts (paths relative to the repository root, as WS-A's loaders expect)
+registry_dir: project/outputs/pm_rl1/v3/A1_preparation/final/registry
+bank_dir: project/outputs/pm_rl1/v3/A1b_preparation/measured_v1/bank
+expected_source: "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02"
+expected_bank: "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9"
+expected_index: "index:227cca582de991e1ef823e0122e842be7316bf4339acc73c88992870ff1846f3"
+a_formal_commits: {A1: 7116b8bd430727cebe7fd05c328486bd9a4d1f99, A1b: c9dd5aae7bff5262455fb6cc6942142a5abb35b9}
+integration_ref: origin/pmrl1-v3/integration
+# G renderer tokenizer (Gemma-4-12B-it, the G0 candidate); hashes pinned by the A1 asset audit
+tokenizer: /opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3
+asset_manifest: outputs/pm_rl1/v3/A1_reuse/ASSET_REUSE_MANIFEST.json
+# Same explicit not-frozen identity WS-A used for its REAL_REPLAY; renderer/bank/index come from Reader.identity.
+reader_identity:
+  g_id: gemma-4-12B-it-707f0a3-tokenizer-only-not-frozen-G0
+  decode_id: not_run
+  step2_id: none-v0-read-replay
+  output_reserve_tokens: 320
+# Diagnostic capacity stress (its own renderer identity): capacity = base_tokens + median root unit charge
+capacity_stress: median_root_unit
+out_root: outputs/pm_rl1/v3/B5
+evidence_tier: engineering_only

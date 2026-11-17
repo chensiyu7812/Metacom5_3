@@ -107,3 +107,85 @@ def cross_check(adapter: CensusSources, registry: Iterable) -> list[str]:
         if tuple((t.role, t.text) for t in s.turns) != tuple((t.role, t.text) for t in mine.turns):
             problems.append(f"{s.owner_id}/{s.session_id}: turn text/roles differ")
     return problems
+
+
+# ------------------------------------------------------------- A1 sources (formal)
+
+CONTENT_FIELDS = ("chronological_rank", "date", "dataset", "family_id", "ancestor_family_ids",
+                  "transcript_sha256", "raw_sha256", "complete")
+# A1 derives excluded_for_overlap (RS-side family exclusion); the adapter never set it.  It must
+# equal B0's own family rule: an EvoEmo session derived from ESConv has family "esconv:<id>".
+ADAPTER_METADATA_FIELDS = ("license", "provenance_version", "source_uri", "source_split")
+
+
+def a1_context(registry, row: Mapping) -> PrefixContext:
+    """PrefixContext from the WS-A A1 source registry (B1's formal source after cross_check).
+
+    The prefix is rebuilt by A1 and must equal the frozen B0 id; history is A1's
+    strictly-past same-owner set (``Registry.context`` verifies it)."""
+    prefix = registry.prefix(row["owner_id"], row["session_id"], row["cut_turn"])
+    if prefix.prefix_id != row["prefix_id"]:
+        raise ValueError("A1 prefix identity differs from B0 census row")
+    current, history = registry.context(prefix)
+    history = tuple(sorted(history, key=lambda s: s.chronological_rank))
+    return PrefixContext(prefix=prefix, current=current, history=history, row=row)
+
+
+def cross_check_full(adapter: CensusSources, registry, rows: Iterable[Mapping]) -> dict:
+    """Field-by-field A1 vs B1-adapter comparison: sessions, original turn indices and all prefixes.
+
+    ``content`` mismatches must be zero.  ``adapter_metadata`` lists fields the
+    adapter labels differently by design (license/provenance/uri/split); they
+    are reported, not hidden, and B1 uses the A1 values from now on."""
+    content, meta, coverage = [], {f: 0 for f in ADAPTER_METADATA_FIELDS}, []
+    derived = {"excluded_for_overlap": 0}
+    personal = [e for e in registry.entries if e.availability_scope == "personal_history"]
+    seen = set()
+    for e in personal:
+        a = e.source
+        seen.add((a.owner_id, a.session_id))
+        try:
+            b = adapter.source_session(a.owner_id, a.session_id)
+        except KeyError:
+            coverage.append(f"{a.owner_id}/{a.session_id}: in A1, not in B0 census input")
+            continue
+        for f in CONTENT_FIELDS:
+            if getattr(a, f) != getattr(b, f):
+                content.append(f"{a.owner_id}/{a.session_id}:{f}")
+        if tuple((t.turn_index, t.role, t.text, t.raw_turn_sha256) for t in a.turns) != \
+                tuple((t.turn_index, t.role, t.text, t.raw_turn_sha256) for t in b.turns):
+            content.append(f"{a.owner_id}/{a.session_id}:turns")
+        raw = adapter.users[a.owner_id].session_by_id(a.session_id)
+        if tuple(e.original_turn_indices) != tuple(t.idx for t in raw.turns):
+            content.append(f"{a.owner_id}/{a.session_id}:original_turn_indices")
+        if a.excluded_for_overlap != b.family_id.startswith("esconv:"):
+            content.append(f"{a.owner_id}/{a.session_id}:excluded_for_overlap_vs_b0_family_rule")
+        derived["excluded_for_overlap"] += a.excluded_for_overlap
+        for f in ADAPTER_METADATA_FIELDS:
+            meta[f] += getattr(a, f) != getattr(b, f)
+    for owner, user in adapter.users.items():
+        for s in user.sessions:
+            if (owner, s.session_id) not in seen:
+                coverage.append(f"{owner}/{s.session_id}: in B0 census input, not in A1")
+    n_prefix, prefix_diff = 0, []
+    for row in rows:
+        n_prefix += 1
+        b = adapter.context(row)
+        try:
+            a = a1_context(registry, row)
+        except (KeyError, ValueError) as exc:
+            prefix_diff.append(f"{row['prefix_id']}:a1_context:{exc}")
+            continue
+        for f in ("prefix_id", "runtime_sha256", "cutoff_rank", "timestamp", "family_id",
+                  "ancestor_family_ids", "fold", "turns"):
+            if getattr(a.prefix, f) != getattr(b.prefix, f):
+                prefix_diff.append(f"{row['prefix_id']}:{f}")
+        if [s.session_id for s in a.history] != [s.session_id for s in b.history]:
+            prefix_diff.append(f"{row['prefix_id']}:history_sessions")
+        visible = {x.source.session_id for x in registry.visible(a.prefix)}
+        if visible != {s.session_id for s in b.history}:
+            prefix_diff.append(f"{row['prefix_id']}:a1_visible_set")
+    return dict(personal_sessions=len(personal), prefixes=n_prefix, content_mismatches=content,
+                coverage_mismatches=coverage, prefix_mismatches=prefix_diff,
+                adapter_metadata_differences=meta, a1_derived_flags_checked_against_b0_rule=derived,
+                zero_content_difference=not (content or coverage or prefix_diff))

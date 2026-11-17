@@ -1,0 +1,23 @@
+# WS-B B1 NeedCard writer v2: CPU input preflight only. The writer is NOT run without explicit
+# researcher authorisation (GPU). v1 config (B1.yaml) is kept unchanged.
+task_id: B1_needcard_cpu_preflight_v2
+census: outputs/pm_rl1/v3/B0/prefix_census.jsonl
+coverage_sample: outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+pilot_use: needcard_pilot                # the fixed 20 fold-1..5 prefixes of coverage_sample_v1
+writer_protocol: pmrl1v3-needcard-writer-v2
+source: A1 registry via needs.sources.a1_context (after zero-difference cross_check)
+# WS-A delivered RS-v0 strategy catalog (a26998f0): original ESConv supporter annotations, definitions
+# unknown, Others not selectable, not an A4 method catalog. Verified by WS-A's loader (rebuilt from pinned
+# annotations). The WS-B derived label list (needs/rs_catalog.py) is kept only as a cross-check.
+rs_catalog_path: project/outputs/pm_rl1/v3/A1b_crossline_20261118/RS_V0_STRATEGY_CATALOG.json
+out_dir: outputs/pm_rl1/v3/B1/needcard_cpu_preflight_v2_a1b_catalog
+writer_model:
+  model_id: qwen3.5-9b
+  path: /opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b
+  decode_id: greedy-nonthinking-max800
+asset_manifest: outputs/pm_rl1/v3/A1_reuse/ASSET_REUSE_MANIFEST.json
+# Native context comes from the model config. The operational cap is a WS-B engineering bound until
+# A0 measures Qwen KV memory on the A6000; packs above it are over_budget_operational (never truncated).
+operational_max_input_tokens: 32768
+max_new_tokens: 800
+evidence_tier: engineering_only
