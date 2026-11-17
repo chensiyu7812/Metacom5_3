@@ -1,0 +1,9 @@
+# WS-B B0: legal prefix census + owner/family folds + exposure registry.
+# CPU only; no model, GPU, judge or paid call.
+task_id: B0
+source_artifact: data/paper1_public_memory/es_memeval_public_sanitized_runtime_artifact_v1.json
+esconv_split_manifest: data/strategy/esconv_split_manifest_v1_5.jsonl
+exposure_scan_roots:
+  - project/outputs/pm_rl1
+  - project/docs/reviews
+evidence_tier: engineering_only
