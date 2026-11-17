@@ -69,24 +69,26 @@
       "workstream": "shared",
       "depends_on": [],
       "title": "contracts.py + JSON Schema + io.py",
-      "status": "ready",
+      "status": "in_progress",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null,
+      "results_doc": "project/outputs/pm_rl1/v3/integration_20261117/RESULTS_ZH.md",
+      "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
       "resource_spec_sections": [
         "2",
         "3",
         "7"
-      ]
+      ],
+      "integration_note": "0.2.0 已合入；实际集成 287 项 V3 通过。完整回归发现集成 CI 新步骤遗漏 not gpu marker，正式冻结停止；不得依赖为 frozen。"
     },
     "A0": {
       "workstream": "WS-A",
       "depends_on": [],
       "title": "环境盘点与吞吐实测，选规模档位",
-      "status": "ready",
+      "status": "in_progress",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null
+      "results_doc": "project/outputs/pm_rl1/v3/A0/RESULTS_ZH.md",
+      "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
+      "integration_note": "仅 CPU 盘点、请求及 tokenizer 准备已合入；GPU 吞吐/显存/时间与规模档位未实测，不具备 completed 条件。"
     },
     "A1": {
       "workstream": "WS-A",
@@ -102,7 +104,14 @@
         "1",
         "2",
         "3"
-      ]
+      ],
+      "preparation": {
+        "name": "A1_reuse",
+        "status": "audit_integrated",
+        "results_doc": "project/outputs/pm_rl1/v3/A1_reuse/RESULTS_ZH.md",
+        "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
+        "note": "资产审计不等于 source_registry；A1 仍 pending，等待 C0 正式冻结。"
+      }
     },
     "A1b": {
       "workstream": "WS-A",
@@ -270,14 +279,15 @@
       "workstream": "WS-B",
       "depends_on": [],
       "title": "前缀普查+折分+确定性特征",
-      "status": "ready",
+      "status": "completed",
       "fallback_used": null,
-      "results_doc": null,
-      "commit": null,
+      "results_doc": "project/outputs/pm_rl1/v3/B0/RESULTS_ZH.md",
+      "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
       "resource_spec_sections": [
         "2",
         "9"
-      ]
+      ],
+      "integration_note": "PR #6 已合入；23 项 B0 测试在实际集成 V3 回归通过，原 manifest 的 7 项输入/输出哈希核验通过。18 owner / 401 会话 / 4119 前缀；非独立未曝光确认来源。"
     },
     "B1": {
       "workstream": "WS-B",
@@ -336,16 +346,17 @@
         "C0"
       ],
       "title": "Phase-1 有限头环境+DP",
-      "status": "pending",
+      "status": "in_progress",
       "fallback_used": null,
       "results_doc": null,
-      "commit": null,
+      "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
       "resource_spec_sections": [
         "3",
         "5.1",
         "7",
         "9"
-      ]
+      ],
+      "integration_note": "有限头环境、DP 与 C0 mock-bank 绑定已合入；实际集成 17+10 项测试通过。C0 正式冻结与 A1b 真实 bank/read 对接仍待完成。"
     },
     "B6": {
       "workstream": "WS-B",
@@ -489,7 +500,14 @@
       "resource_spec_sections": [
         "8",
         "9"
-      ]
+      ],
+      "preparation": {
+        "name": "B8e_preflight",
+        "status": "historical_preflight_integrated",
+        "results_doc": "project/outputs/pm_rl1/v3/B8e_preflight/RESULTS_ZH.md",
+        "commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
+        "note": "合入既有 CPU 合成自检；不是 B6e 真实 bank 终点表上的正式 B8e，本轮未启动实验训练。"
+      }
     }
   },
   "evidence_tiers": [
@@ -503,5 +521,16 @@
   "exposure_warning": "既有 PRIVATE 命名的派生/盲映射及评分已同步到公开仓库，历史确认集不能重新宣称未曝光；B0 必须记录 owner/source/task 训练、审阅、公开曝光及时间；真正未见用户确认需要另行授权新来源和冻结。",
   "resource_spec": "RESOURCE_SPEC_ZH.md",
   "resource_spec_version": "V3.1-R1",
-  "resource_spec_rule": "四资源底座、类型化召回、时序关系与回归测试的从属技术规范；§0主方案和本状态表采用规则不变。"
+  "resource_spec_rule": "四资源底座、类型化召回、时序关系与回归测试的从属技术规范；§0主方案和本状态表采用规则不变。",
+  "integration_acceptance": {
+    "tested_commit": "6f5deea313c9f116b983ba07dc787f1bf43a8d4c",
+    "results_doc": "project/outputs/pm_rl1/v3/integration_20261117/RESULTS_ZH.md",
+    "c0_version": "pmrl1v3-contracts-0.2.0",
+    "c0_formally_frozen": false,
+    "status": "blocked_by_integration_ci_configuration",
+    "ci_run_id": 44084379612,
+    "repair_owner": "integration_owner",
+    "failure_test": "tests/test_paper1_authority.py::test_ci_never_runs_local_gpu_tests_on_github_cpu_runner",
+    "note": "按研究者要求遇到集成失败停止冻结，记录并交还修复；不修改研究方案或 H0。"
+  }
 }

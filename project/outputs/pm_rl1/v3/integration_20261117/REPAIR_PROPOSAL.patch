@@ -1,0 +1,11 @@
+--- a/.github/workflows/pm-v2-tests.yml
++++ b/.github/workflows/pm-v2-tests.yml
+@@ -55,7 +55,7 @@
+       - name: Compile PM-v2 modules
+         run: python -m compileall -q src scripts tests
+       - name: Run all V3 acceptance tests
+-        run: pytest -q tests/test_rl1v3_*.py -ra -o addopts= -o xfail_strict=true --junitxml=v3-results.xml
++        run: pytest -q -m "not gpu" tests/test_rl1v3_*.py -ra -o addopts= -o xfail_strict=true --junitxml=v3-results.xml
+       - name: Reject missing, skipped, xfailed or failed V3 acceptance
+         run: python scripts/rl1v3/verify_v3_junit.py v3-results.xml --out v3-gate.json
+       - name: Run blocking public-only Paper-1 suite

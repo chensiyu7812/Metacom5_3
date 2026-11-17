@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___________ test_ci_never_runs_local_gpu_tests_on_github_cpu_runner ____________
+
+    def test_ci_never_runs_local_gpu_tests_on_github_cpu_runner():
+        workflow = (ROOT.parent / ".github/workflows/pm-v2-tests.yml").read_text()
+        pytest_commands = [
+            line.strip()
+            for line in workflow.splitlines()
+            if line.strip().startswith(("run: pytest", "pytest "))
+        ]
+        assert pytest_commands
+>       assert all('-m "not gpu"' in command for command in pytest_commands)
+E       assert False
+E        +  where False = all(<generator object test_ci_never_runs_local_gpu_tests_on_github_cpu_runner.<locals>.<genexpr> at 0x7f78bebe4ba0>)
+
+project/tests/test_paper1_authority.py:107: AssertionError
+- generated xml file: /home/tokkio/Metacom5_3-integration/project/outputs/pm_rl1/v3/integration_20261117/diagnostic/ci_gpu_exclusion.xml -
+=========================== short test summary info ============================
+FAILED project/tests/test_paper1_authority.py::test_ci_never_runs_local_gpu_tests_on_github_cpu_runner
+1 failed in 0.08s
