@@ -1,0 +1,515 @@
+{
+  "audit": {
+    "failures": [],
+    "passed": true,
+    "rows_checked": 4119
+  },
+  "cutoff_rank_buckets": {
+    "1": 195,
+    "10+": 2405,
+    "2-4": 560,
+    "5-9": 959
+  },
+  "cuts_per_session": {
+    "max": 20,
+    "mean": 10.755,
+    "min": 4,
+    "p25": 10,
+    "p50": 11,
+    "p75": 12,
+    "p90": 12
+  },
+  "dataset": "es_memeval_evoemo_public_v1",
+  "days_since_prev_session": {
+    "max": 131,
+    "mean": 20.841,
+    "min": 1,
+    "p25": 8,
+    "p50": 15,
+    "p75": 26,
+    "p90": 44
+  },
+  "distribution": "natural: every legal seeker->supporter cut in sessions with rank>=1, weight 1",
+  "esconv_family_overlap": {
+    "esconv_dialogues": 1300,
+    "evoemo_esconv_seed_families": 84,
+    "flagged_by_esconv_split": {
+      "test": 11,
+      "train": 59,
+      "validation": 14
+    },
+    "flagged_overlap": 84,
+    "note": "these ESConv families appear as EvoEmo history/current sessions; the RS bank (WS-A) must exclude them by family closure (RESOURCE_SPEC T24)",
+    "sets_equal": true
+  },
+  "exposure": {
+    "category_rules": [
+      {
+        "category": "human_review",
+        "name_keys": [
+          "human",
+          "rating",
+          "calibration_form",
+          "pair_review",
+          "acceptance"
+        ]
+      },
+      {
+        "category": "training",
+        "name_keys": [
+          "training",
+          "learning",
+          "supervision",
+          "ppo",
+          "handoff"
+        ]
+      },
+      {
+        "category": "judge_or_feedback",
+        "name_keys": [
+          "judge",
+          "feedback",
+          "measurement",
+          "calibration",
+          "reference",
+          "qualification"
+        ]
+      },
+      {
+        "category": "generation_or_probe",
+        "name_keys": [
+          "probe",
+          "pilot",
+          "executor",
+          "generation",
+          "comparison",
+          "value",
+          "branches",
+          "equivalence",
+          "latency",
+          "claude",
+          "trial",
+          "completion",
+          "bridges",
+          "integration",
+          "gain",
+          "path"
+        ]
+      },
+      {
+        "category": "census_or_diagnostic",
+        "name_keys": [
+          "census",
+          "diagnostic",
+          "coverage",
+          "source",
+          "evidence",
+          "organization",
+          "reorganization",
+          "dataset",
+          "preparation",
+          "publication",
+          "audit",
+          "engineering",
+          "decision",
+          "repair",
+          "interface",
+          "design"
+        ]
+      }
+    ],
+    "distinct_run_dirs": 61,
+    "legacy_prefixes_exposed_any": 172,
+    "legacy_prefixes_exposed_by_category": {
+      "human_review": 42,
+      "judge_or_feedback": 171,
+      "training": 50
+    },
+    "lower_bound_only": true,
+    "owners_with_human_review_artifacts": [
+      "p3",
+      "p6",
+      "p9",
+      "p10",
+      "p11",
+      "p13",
+      "p16",
+      "p17"
+    ],
+    "prefix_level_rule": "legacy rl1 PrefixSpec.identity of each census prefix searched as 64-hex tokens in tracked files of human_review/training/judge_or_feedback run dirs; other legacy identity schemas are not recognised, so this is a lower bound",
+    "scan_roots": [
+      "project/outputs/pm_rl1",
+      "project/docs/reviews"
+    ],
+    "scan_rule": "exact session-id match in git-tracked text files; run dir classified by name",
+    "scanned_git_head": "f89d98e581dde2f54d920720bdbf4d46adce6b7c",
+    "sessions_in_any_artifact": 401
+  },
+  "oversampling_rule": "B1 may oversample need strata for training (target history+both 50%, method 20%, none 30%, max 2 cuts/session, order by sample_key); every selected row must keep selection_reason and natural_weight so natural evaluation is reported separately and never replaced by the training mix",
+  "past_sessions": {
+    "max": 32,
+    "mean": 11.893,
+    "min": 1,
+    "p25": 6,
+    "p50": 11,
+    "p75": 17,
+    "p90": 22
+  },
+  "past_words": {
+    "max": 14283,
+    "mean": 5078.49,
+    "min": 168,
+    "p25": 2527,
+    "p50": 4794,
+    "p75": 7239,
+    "p90": 9260
+  },
+  "per_fold": {
+    "1": {
+      "legal_cuts": 679,
+      "owners": [
+        "p6",
+        "p10",
+        "p11"
+      ]
+    },
+    "2": {
+      "legal_cuts": 654,
+      "owners": [
+        "p13",
+        "p16",
+        "p18"
+      ]
+    },
+    "3": {
+      "legal_cuts": 589,
+      "owners": [
+        "p2",
+        "p5",
+        "p17"
+      ]
+    },
+    "4": {
+      "legal_cuts": 715,
+      "owners": [
+        "p3",
+        "p9",
+        "p15"
+      ]
+    },
+    "5": {
+      "legal_cuts": 910,
+      "owners": [
+        "p1",
+        "p8",
+        "p12"
+      ]
+    },
+    "6": {
+      "legal_cuts": 572,
+      "owners": [
+        "p4",
+        "p7",
+        "p14"
+      ]
+    }
+  },
+  "per_owner": {
+    "p1": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 151,
+        "summary": 9
+      },
+      "fold": 5,
+      "historical_rl1_split": "dev",
+      "legal_cuts": 350,
+      "sessions": 32,
+      "sessions_rank_ge1": 31,
+      "sessions_with_legal_cut": 31
+    },
+    "p10": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 33,
+        "summary": 6
+      },
+      "fold": 1,
+      "historical_rl1_split": "train",
+      "legal_cuts": 185,
+      "sessions": 18,
+      "sessions_rank_ge1": 17,
+      "sessions_with_legal_cut": 17
+    },
+    "p11": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 125,
+        "summary": 4
+      },
+      "fold": 1,
+      "historical_rl1_split": "train",
+      "legal_cuts": 230,
+      "sessions": 23,
+      "sessions_rank_ge1": 22,
+      "sessions_with_legal_cut": 22
+    },
+    "p12": {
+      "es_memeval_targets": {
+        "dialogue_generation": 3,
+        "qa": 106,
+        "summary": 4
+      },
+      "fold": 5,
+      "historical_rl1_split": "train",
+      "legal_cuts": 201,
+      "sessions": 20,
+      "sessions_rank_ge1": 19,
+      "sessions_with_legal_cut": 19
+    },
+    "p13": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 126,
+        "summary": 8
+      },
+      "fold": 2,
+      "historical_rl1_split": "train",
+      "legal_cuts": 238,
+      "sessions": 23,
+      "sessions_rank_ge1": 22,
+      "sessions_with_legal_cut": 22
+    },
+    "p14": {
+      "es_memeval_targets": {
+        "dialogue_generation": 3,
+        "qa": 84,
+        "summary": 6
+      },
+      "fold": 6,
+      "historical_rl1_split": "test",
+      "legal_cuts": 171,
+      "sessions": 17,
+      "sessions_rank_ge1": 16,
+      "sessions_with_legal_cut": 16
+    },
+    "p15": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 36,
+        "summary": 8
+      },
+      "fold": 4,
+      "historical_rl1_split": "dev",
+      "legal_cuts": 226,
+      "sessions": 22,
+      "sessions_rank_ge1": 21,
+      "sessions_with_legal_cut": 21
+    },
+    "p16": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 34,
+        "summary": 8
+      },
+      "fold": 2,
+      "historical_rl1_split": "train",
+      "legal_cuts": 273,
+      "sessions": 25,
+      "sessions_rank_ge1": 24,
+      "sessions_with_legal_cut": 24
+    },
+    "p17": {
+      "es_memeval_targets": {
+        "dialogue_generation": 3,
+        "qa": 67,
+        "summary": 4
+      },
+      "fold": 3,
+      "historical_rl1_split": "train",
+      "legal_cuts": 131,
+      "sessions": 13,
+      "sessions_rank_ge1": 12,
+      "sessions_with_legal_cut": 12
+    },
+    "p18": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 71,
+        "summary": 5
+      },
+      "fold": 2,
+      "historical_rl1_split": "dev",
+      "legal_cuts": 143,
+      "sessions": 14,
+      "sessions_rank_ge1": 13,
+      "sessions_with_legal_cut": 13
+    },
+    "p2": {
+      "es_memeval_targets": {
+        "dialogue_generation": 3,
+        "qa": 36,
+        "summary": 6
+      },
+      "fold": 3,
+      "historical_rl1_split": "train",
+      "legal_cuts": 259,
+      "sessions": 26,
+      "sessions_rank_ge1": 25,
+      "sessions_with_legal_cut": 25
+    },
+    "p3": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 107,
+        "summary": 9
+      },
+      "fold": 4,
+      "historical_rl1_split": "train",
+      "legal_cuts": 281,
+      "sessions": 28,
+      "sessions_rank_ge1": 27,
+      "sessions_with_legal_cut": 27
+    },
+    "p4": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 43,
+        "summary": 11
+      },
+      "fold": 6,
+      "historical_rl1_split": "test",
+      "legal_cuts": 210,
+      "sessions": 22,
+      "sessions_rank_ge1": 21,
+      "sessions_with_legal_cut": 21
+    },
+    "p5": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 76,
+        "summary": 7
+      },
+      "fold": 3,
+      "historical_rl1_split": "train",
+      "legal_cuts": 199,
+      "sessions": 20,
+      "sessions_rank_ge1": 19,
+      "sessions_with_legal_cut": 19
+    },
+    "p6": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 106,
+        "summary": 8
+      },
+      "fold": 1,
+      "historical_rl1_split": "train",
+      "legal_cuts": 264,
+      "sessions": 25,
+      "sessions_rank_ge1": 24,
+      "sessions_with_legal_cut": 24
+    },
+    "p7": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 39,
+        "summary": 5
+      },
+      "fold": 6,
+      "historical_rl1_split": "test",
+      "legal_cuts": 191,
+      "sessions": 19,
+      "sessions_rank_ge1": 18,
+      "sessions_with_legal_cut": 18
+    },
+    "p8": {
+      "es_memeval_targets": {
+        "dialogue_generation": 2,
+        "qa": 81,
+        "summary": 11
+      },
+      "fold": 5,
+      "historical_rl1_split": "train",
+      "legal_cuts": 359,
+      "sessions": 33,
+      "sessions_rank_ge1": 32,
+      "sessions_with_legal_cut": 32
+    },
+    "p9": {
+      "es_memeval_targets": {
+        "dialogue_generation": 1,
+        "qa": 106,
+        "summary": 6
+      },
+      "fold": 4,
+      "historical_rl1_split": "train",
+      "legal_cuts": 208,
+      "sessions": 21,
+      "sessions_rank_ge1": 20,
+      "sessions_with_legal_cut": 20
+    }
+  },
+  "prefix_turns": {
+    "max": 43,
+    "mean": 11.83,
+    "min": 1,
+    "p25": 6,
+    "p50": 11,
+    "p75": 17,
+    "p90": 21
+  },
+  "protocol": "pmrl1v3-b0-prefix-census-v1",
+  "shared_families": [
+    {
+      "family_id": "esconv:esconv_1198",
+      "holders": [
+        {
+          "chronological_rank": 14,
+          "owner_id": "p13",
+          "session_id": "esc1198"
+        },
+        {
+          "chronological_rank": 7,
+          "owner_id": "p18",
+          "session_id": "esc1198"
+        }
+      ],
+      "transcript_sha256": "094757aaf2dd003a3ef99ac7c2cbfee30f581bd0d0bc3a6b006b3a98ebacd76d"
+    }
+  ],
+  "surface_cue_note": "regex surface cues on the trailing seeker block; outcome-blind text descriptors, NOT need labels or need rates",
+  "surface_cue_rate_natural": {
+    "advice_request": 0.008,
+    "back_reference": 0.018,
+    "question_mark": 0.0706,
+    "risk_keyword": 0.0,
+    "temporal_marker": 0.0947
+  },
+  "surface_cue_rate_owner_balanced": {
+    "advice_request": 0.0081,
+    "back_reference": 0.0177,
+    "question_mark": 0.071,
+    "risk_keyword": 0.0,
+    "temporal_marker": 0.0941
+  },
+  "totals": {
+    "cuts_in_esconv_seed_sessions": 702,
+    "cuts_in_evoemo_generated_sessions": 3417,
+    "legal_cuts": 4119,
+    "max_two_per_session_capacity": 766,
+    "owners": 18,
+    "sessions": 401,
+    "sessions_rank_ge1": 383,
+    "sessions_with_legal_cut": 383
+  },
+  "trailing_seeker_words": {
+    "max": 94,
+    "mean": 18.953,
+    "min": 1,
+    "p25": 14,
+    "p50": 18,
+    "p75": 23,
+    "p90": 27
+  }
+}
