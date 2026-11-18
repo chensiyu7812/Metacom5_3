@@ -38,9 +38,13 @@ RECEIPT_DIR = OUT / "pr18_receipt"
 
 
 def gh_state(n: int) -> dict:
-    r = subprocess.run(["gh", "pr", "view", str(n), "--json", "state,isDraft,headRefOid,mergedAt"], cwd=REPO,
-                       capture_output=True, text=True)
-    return json.loads(r.stdout) if r.returncode == 0 else dict(error=r.stderr.strip()[:200])
+    r = subprocess.run(["gh", "api", f"repos/chensiyu7812/Metacom5_3/pulls/{n}", "--jq",
+                        "{state: .state, draft: .draft, merged_at: .merged_at, head: .head.sha, base: .base.ref}"],
+                       cwd=REPO, capture_output=True, text=True)
+    if r.returncode != 0:
+        raise SystemExit(f"gh api failed for PR #{n}: {r.stderr.strip()[:200]}")
+    d = json.loads(r.stdout)
+    return dict(d, state="MERGED" if d["merged_at"] else d["state"].upper())
 
 
 def manifest(step: str, inputs: dict, outputs: list[Path]):
