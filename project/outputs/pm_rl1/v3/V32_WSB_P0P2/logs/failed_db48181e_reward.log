@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/home/tokkio/Metacom5_3-ws-b/project/scripts/rl1v3/V32_wsb_p0p2.py", line 538, in <module>
+    main()
+  File "/home/tokkio/Metacom5_3-ws-b/project/scripts/rl1v3/V32_wsb_p0p2.py", line 533, in main
+    dict(asof=step_asof, visibility=step_visibility, p2=step_p2, reward=step_reward, env=step_env,
+  File "/home/tokkio/Metacom5_3-ws-b/project/scripts/rl1v3/V32_wsb_p0p2.py", line 471, in step_reward
+    write_json_once(out / "J1_CAPACITY_V2.json", res)
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 104, in write_json_once
+    return write_bytes_once(path, (canonical_json(value) + "\n").encode("utf-8"))
+                                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 38, in canonical_json
+    return json.dumps(_jsonable(value), ensure_ascii=False, sort_keys=True,
+                      ^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 29, in _jsonable
+    return {k: _jsonable(v) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 29, in <dictcomp>
+    return {k: _jsonable(v) for k, v in value.items()}
+               ^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 28, in _jsonable
+    raise TypeError("JSON object keys must be strings")
+TypeError: JSON object keys must be strings
+reward exit=1
