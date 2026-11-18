@@ -66,6 +66,12 @@ def wsa_file(name: str) -> str:
                           check=True).stdout
 
 
+def rs_external_version(bank) -> str:
+    """Source-local RS identity: the preinstalled ESConv-train case records only (no personal session,
+    no global registry hash)."""
+    return "esconv-train-preinstalled|rs-cases:" + object_sha256(sorted(r.record_id for r in bank.records if r.head == "RS"))
+
+
 def load_bank():
     from metacom_pm.rl1v3.bank import v0_port as AP
     bank, cfg = AP.load_bank(REPO)
@@ -105,7 +111,7 @@ def step_asof(args):
         snap = object_sha256(sorted((r.head, r.record_id) for h in ("RS", "MP", "ME", "MS")
                                     for r in bank.candidates(h, prefix)))
         b = AB.legacy_bank_v0_binding(reg, prefix, identity=rep[prefix.prefix_id]["identity"], snapshot_sha256=snap,
-                                      external_snapshot=f"{reg.version}|esconv-train-preinstalled",
+                                      external_snapshot=rs_external_version(bank),
                                       visibility_policy=vis_sha)
         probs = AB.validate(b, reg, prefix)
         bindings.append(dict(prefix_id=prefix.prefix_id, binding_sha256=b.sha256, tier=b.tier, tier_reason=b.tier_reason,
@@ -203,7 +209,7 @@ def step_visibility(args):
                               read_takes_acquired=True, dynamic_mask=port.action_mask)
         snap = object_sha256(sorted((r.head, r.record_id) for h in E.HEADS for r in bank.candidates(h, prefix)))
         b = AB.legacy_bank_v0_binding(reg, prefix, identity=rep[prefix.prefix_id]["identity"], snapshot_sha256=snap,
-                                      external_snapshot=f"{reg.version}|esconv-train-preinstalled",
+                                      external_snapshot=rs_external_version(bank),
                                       visibility_policy=VIS.whitelist_manifest()["sha256"])
         ep = RV.BoundEpisode(env, b)
         cur = reg.entry(prefix.owner_id, prefix.session_id).source

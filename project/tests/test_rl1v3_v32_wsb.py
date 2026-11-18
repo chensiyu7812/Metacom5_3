@@ -223,6 +223,17 @@ def test_composite_key_isolates_writer_and_snapshot(world):
     assert AB.asof_terminal_key_sha256(k, b) != AB.asof_terminal_key_sha256(k, b2)
     assert AB.asof_terminal_key_sha256(k, b) == AB.asof_terminal_key_sha256(k, b3)   # tier text is not identity
     assert b.sha256 != dataclasses.replace(b, snapshot_sha256="1" * 64).sha256
+    assert b.sha256 == dataclasses.replace(b, fold=(b.fold or 0) + 1).sha256          # fold is not content
+
+
+def test_binding_identity_is_invariant_to_appending_future_sessions(world):
+    """Identity-level prefix extension: the frontier of an early cutoff never mentions later sessions."""
+    reg = world[0].registry
+    early = owner_cut_prefixes(world, "p15")[4]
+    later = owner_cut_prefixes(world, "p15")[-1]
+    fe, fl = AB.frontier_for(reg, early), AB.frontier_for(reg, later)
+    assert fl[:len(fe)] == fe and len(fl) > len(fe)
+    assert all(e.rank < early.cutoff_rank for e in fe)
 
 
 # ------------------------------------------------------------------ visibility

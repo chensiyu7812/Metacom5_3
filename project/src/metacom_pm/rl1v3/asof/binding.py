@@ -67,7 +67,7 @@ class PrefixAsOfBinding:
     fold: int | None
     family_closure: tuple[str, ...]
     source_frontier: tuple[FrontierEntry, ...]
-    external_snapshot: str                     # RS/ESConv preinstalled snapshot identity (not user time)
+    external_snapshot: str                     # RS external version (source-local; never the global registry hash)
     writer_identity: str
     writer_kind: str
     snapshot_sha256: str                       # materialised resource view available at the cutoff
@@ -89,9 +89,12 @@ class PrefixAsOfBinding:
         return object_sha256([dataclasses.asdict(e) for e in self.source_frontier])
 
     def identity(self) -> dict:
-        """Everything that can change what PM/G see, except the tier label."""
+        """Everything that can change what PM/G see.  Excluded (aligned with WS-A's interface candidate
+        57047c5f): tier labels, notes and the fold assignment (evaluation metadata, not content).  No
+        field may be a global corpus/registry hash: appending a future session must not change a past
+        binding (identity-level prefix extension)."""
         d = dataclasses.asdict(self)
-        for k in ("tier", "tier_reason", "notes"):
+        for k in ("tier", "tier_reason", "notes", "fold"):
             d.pop(k)
         d["frontier_sha256"] = self.frontier_sha256
         return d
