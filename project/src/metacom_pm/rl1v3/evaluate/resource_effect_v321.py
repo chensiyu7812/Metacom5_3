@@ -414,7 +414,7 @@ def history_minutes(words: int, wpm: int = 250) -> float:
 
 def pp1_cost(words: list[int] | None = None, raters: int = 2, f_by_both: bool = True, overrun: float = 1.5,
              wpm: int = 250, seconds_per_call_expected: float = 25, load_seconds: float = 240,
-             timeout: int = 300) -> dict:
+             timeout: int = 300, load_max: int = 600, global_cap: int = 1200) -> dict:
     """Upper-bound cost of one PP1 run (8 prefixes, 16 calls).  ``words`` = as-of history words per prefix."""
     e = PP1_EST_MIN
     prefixes = len(words) if words else 8
@@ -429,8 +429,10 @@ def pp1_cost(words: list[int] | None = None, raters: int = 2, f_by_both: bool = 
     return dict(
         calls=dict(generator=replies, gpu_jobs=1, judge=0, needcard_writer=0, paid_api=0, retries=0),
         gpu_seconds=dict(expected=round(load_seconds + replies * seconds_per_call_expected),
-                         upper_bound=load_seconds + replies * timeout,
-                         note="upper bound = every call hits the 300 s timeout; no automatic retry"),
+                         upper_bound=min(load_max + replies * timeout, global_cap),
+                         without_global_cap=load_max + replies * timeout,
+                         note="hard cap 1200 s for the whole phase (#19 runbook) binds before 16 x 300 s timeouts; "
+                              "unexecuted suffix stays pending; #19 plans 8-20 min, not measured"),
         human_minutes=dict(per_rater=round(per_rater), raters=raters, screener=round(screener),
                            adjudication_upper=adjud, fa_audit_upper=fa, total=round(total),
                            total_with_overrun=round(total * overrun),
@@ -461,8 +463,11 @@ def fc_ms_cost(prefixes: int, median_words: int, arms: int = 3, raters: int = 2,
 
 PP1_STOP = dict(
     before_start=["任一请求包未通过 B 投影检查", "QH 背景或筛查标签未在生成前冻结", "缺少研究者对 16 次调用的授权"],
-    engineering=["技术失败（超时 / 空输出 / OOM / 320 token 截断）≥ 2/16：停止，报告，不自动重试",
-                 "任一输出与请求身份不符或缓存出现异内容覆盖：停止"],
+    engineering=["采用 #19 运行规程（比 B 原稿更严）：任一技术失败（加载失败、OOM、超时、空输出、身份或载荷不符、"
+                 "泄漏、设备争用或显存不足）立即停止本作业",
+                 "finish_reason=length 原样保存为 truncated、不重问；累计第 3 个即停止（>2/16）",
+                 "全阶段硬上限 1200 s（加载最多 600 s，每请求 300 s）；到时未执行的后缀记 pending",
+                 "不自动重试；START 已落盘而结果不明时拒绝重试"],
     blinding=["表单本身泄露条件、资源或模型分数：停止并修正表单（回复中自身出现的提法照常展示，由审计侧标记）"],
     safety=["任何 F8 严重：当日报告研究者；不因此改协议"],
     procedure=["单件中位耗时 > 估计的 2 倍，或 Q0/QH 不确定率 > 40%：结束 PP1 后修订表单，只做程序性修改"],

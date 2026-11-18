@@ -162,7 +162,7 @@ def test_pp1_separated_and_stop_rules_are_outcome_free():
     assert any("结果锁定" in x for x in p["stop"]["never"])
     c = p["cost"]
     assert c["calls"]["generator"] == 16 and c["calls"]["judge"] == 0 and c["calls"]["retries"] == 0
-    assert c["gpu_seconds"]["upper_bound"] == 240 + 16 * 300
+    assert c["gpu_seconds"]["upper_bound"] == 1200 and c["gpu_seconds"]["without_global_cap"] == 600 + 16 * 300
     assert c["human_minutes"]["total_with_overrun"] > c["human_minutes"]["total"] > 0
 
 

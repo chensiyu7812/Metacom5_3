@@ -31,12 +31,12 @@ CENSUS = PROJECT / "outputs/pm_rl1/v3/B0/prefix_census.jsonl"
 SELECTION = PROJECT / "outputs/pm_rl1/v3/B6e_plan/v3/SELECTION.json"
 OUT = PROJECT / "outputs/pm_rl1/v3/V321_WSB/pr18_receipt"
 MODEL_DIR = Path("/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3")
-PP1_SHA = "4ac9ab3d23d04cd8ec9435ea239995ae85a3e610"   # WS-A pmrl1-v3/ws-a-ms-pp1-prep-20261119 (no PR yet)
+PP1_SHA = "4ac9ab3d23d04cd8ec9435ea239995ae85a3e610"   # WS-A Draft PR #19 HEAD (pmrl1-v3/ws-a-ms-pp1-prep-20261119)
 PP1_REQ = "project/outputs/pm_rl1/v3/ms_pp1_prepare_20261119/cpu_v2/REQUESTS_16.jsonl"
 PR13_SHA = "ea2f5bde04caba4590b26c80a572d66caa4a2d08"
 PR13_JOBS = "project/outputs/pm_rl1/v3/resource_architecture_review_20261118/cpu/PROPOSED_JOBS.json"
 ELIG = PROJECT / "outputs/pm_rl1/v3/V32_WSB_P0P2/p2/ELIGIBILITY_54.json"
-OUT_PP1 = PROJECT / "outputs/pm_rl1/v3/V321_WSB/pp1_requests_preliminary"
+OUT_PP1 = PROJECT / "outputs/pm_rl1/v3/V321_WSB/pp1_requests"
 
 
 def git_show(ref: str, path: str) -> str:
@@ -205,7 +205,7 @@ def _pp1_rows():
 
 
 def step_pp1req(_):
-    """Preliminary check of WS-A's 16 PP1 requests (pinned WIP commit; formal receipt follows their Draft PR)."""
+    """Independent check of WS-A's 16 PP1 requests at Draft PR #19's fixed HEAD (re-run if #19 moves)."""
     from metacom_pm.rl1v3.asof import e1_receipt as E
     raw = E.Raw(json.loads(ARTIFACT.read_text()))
     g0e = json.loads(git_show(G0E_REF, G0E_PATH))
@@ -229,7 +229,7 @@ def step_pp1req(_):
         if r["renderer_id"] != rows[0]["renderer_id"] or r["g_id"] != g0e_gid():
             x["problems"].append("Q10_renderer_or_g_id_not_single")
         res.append(x)
-    out = dict(protocol=E.PROTOCOL + ":pp1-requests", scope="preliminary; WS-A WIP commit without PR",
+    out = dict(protocol=E.PROTOCOL + ":pp1-requests", scope="WS-A Draft PR #19 fixed HEAD; any new push to #19 requires a re-run",
                ws_a_commit=PP1_SHA, file=PP1_REQ, file_sha256_git=__import__("hashlib").sha256(
                    git_show(PP1_SHA, PP1_REQ).encode()).hexdigest(),
                requests=len(res), passed=sum(not x["problems"] for x in res),
