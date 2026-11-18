@@ -1,0 +1,15 @@
+{
+  "cause": "default /tmp filesystem exhausted",
+  "full_cpu_first_attempt": {
+    "passed": 2427,
+    "failed": 1,
+    "errors": 2,
+    "skipped": 1,
+    "gpu_deselected": 11,
+    "seconds": 568.23
+  },
+  "remediation": "set TMPDIR and a new pytest --basetemp to dedicated data-volume path; no test assertion changed, no other task files removed",
+  "df": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/sda2       879G  834G     0 100% /\n/dev/sdb1       916G  562G  308G  65% /opt/tokkio-data0\n",
+  "own_scratch_cleanup": "/tmp/pytest-of-tokkio/pytest-188",
+  "other_task_files_touched": false
+}
