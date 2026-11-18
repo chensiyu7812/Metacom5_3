@@ -3,7 +3,7 @@
 ## 0. 性质与身份
 
 - **基础**：PR #17 的补充提案（`pmrl1v3-v32-resource-effect-qual-v1-candidate`，sha `b28cf37b…`）。本文只列出相对它的修订。
-- **候选协议**：`pmrl1v3-v321-resource-effect-qual-candidate-1`，sha `2b4589f2…`。文件为 `outputs/pm_rl1/v3/V321_WSB/protocol/PROTOCOL_V321_CANDIDATE.json`。
+- **候选协议**：`pmrl1v3-v321-resource-effect-qual-candidate-1`，sha `d2fde5db…`。文件为 `outputs/pm_rl1/v3/V321_WSB/protocol/PROTOCOL_V321_CANDIDATE.json`。
 - **不修改的内容**：
   - 冻结的 P2 v1（`2b6057c8…`）；
   - #17 的候选文件；
@@ -29,7 +29,7 @@
 
 | Gate | 用途 | 必要证据 | 不要求 | 当前状态 | 由谁解除 |
 |---|---|---|---|---|---|
-| **G-ENG** | 允许真实生成，按作业逐次授权 | E1 G0e 身份冻结（PR #10 合入，或研究者书面固定）；E2 A0 实测；E3 请求包已导出并通过 B 投影检查；E4 输出策略；E5 研究者对该作业的授权 | PP1 结果、METHOD 卡、MP/ME 审核、Judge | **BLOCKED**：<br>• E1：#10 仍为 OPEN；<br>• E2：A0 未实测；<br>• E3：PENDING，16 个请求已初步通过；<br>• E5：PENDING | integration owner / 研究者；WS-A；WS-B |
+| **G-ENG** | 允许真实生成，按作业逐次授权 | E1 G0e 身份冻结（PR #10 合入，或研究者书面固定）；E2 A0 实测；E3 请求包已导出并通过 B 投影检查；E4 输出策略；E5 研究者对该作业的授权 | PP1 结果、METHOD 卡、MP/ME 审核、Judge | **BLOCKED**：<br>• E1：#10 仍为 OPEN；<br>• E2：A0 未实测；<br>• E3：PASS，16 个请求已在 #19 HEAD 上通过 B 检查；<br>• E5：PENDING | integration owner / 研究者；WS-A；WS-B |
 | **PP1** | 验证评审程序可用 | G-ENG（只需覆盖 16 次调用）；QH 背景；筛查标签；两名审阅者；协议获批；评审工具 | 正式样本筛查、METHOD 卡、MP/ME | **BLOCKED**：<br>• P2 QH 背景已 PASS；<br>• P6 工具未实现（WS-B）；<br>• 其余为 PENDING，等人或等批准 | 研究者；WS-B |
 | **FC-MS** | 比较 OFF / DP-MS / RET-MS，按 S1/S2/S0/S7 分层 | G-ENG；正式样本的 DP-MS 材料；as-of 的 RET-MS；许可范围；正式协议；90 条初筛及扩展的标签；QH 背景；PP1 可用（或书面豁免）；人力；单一 renderer | RS METHOD、MP/ME 审核、J1/J2 | **BLOCKED** | 研究者；WS-A；WS-B |
 | **FC-MP / FC-ME** | MP / ME 的正式比较 | 除 FC 共同项外，还要求逐项人工语义审核 | METHOD | **BLOCKED**：64 条候选 0 条批准 | 研究者指派的审核者 |
@@ -153,7 +153,7 @@
 
 ## 6. PP1
 
-见 `outputs/pm_rl1/v3/V321_WSB/pp1/PP1_PROTOCOL_ZH.md`（sha `9e6dd732…`）。
+见 `outputs/pm_rl1/v3/V321_WSB/pp1/PP1_PROTOCOL_ZH.md`（sha `b23b91eb…`）。
 
 ## 7. 需要研究者决定
 

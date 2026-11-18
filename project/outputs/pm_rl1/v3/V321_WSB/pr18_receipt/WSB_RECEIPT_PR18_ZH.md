@@ -75,9 +75,9 @@ B 只核对了上面 M14 的计数，**没有**判断以下内容：
   - MP/ME/RS 的正式比较；
   - 奖励。
 
-## 5. PP1 的 16 个请求（初步结果）
+## 5. PP1 的 16 个请求（Draft PR #19 HEAD）
 
-对象是 A 的 WIP 提交 `4ac9ab3d`，在分支 `ws-a-ms-pp1-prep-20261119` 上，**尚无 PR**。文件 `cpu_v2/REQUESTS_16.jsonl` 的 SHA 为 `9af4a173…`。B 用同一套方法做了检查：
+对象是 A 的 Draft PR #19，HEAD 为 `4ac9ab3d`。文件 `cpu_v2/REQUESTS_16.jsonl` 的 SHA 为 `9af4a173…`。B 用同一套方法做了检查：
 
 - 16/16 通过，16/16 重分词一致；
 - OFF 与 RET-MS 共用同一个 renderer（`renderer:e04b6de4…`），PP1 内部没有 N2 问题；
@@ -85,7 +85,7 @@ B 只核对了上面 M14 的计数，**没有**判断以下内容：
 - 每个请求都与 B 的 ELIGIBILITY_54 一致（plan_job_id、terminal key、旧 request id、条件），input_tokens 与 PR #13 的 job 一致；
 - 8 个 RET-MS 都有 N1 所述的转义。
 
-这只是初步结果。A 开出 Draft PR 后，B 会在其固定 HEAD 上用同一检查器复跑，复跑通过才作为正式回执。
+这是针对 #19 固定 HEAD 的正式机械回执（结果见 `../pp1_requests/`）。#19 有新提交时须用同一检查器复跑。它不构成生成授权，也不代表 PP1 协议已获批。
 
 ## 6. #16 的 R1–R5 处置
 
@@ -106,7 +106,7 @@ B 只核对了上面 M14 的计数，**没有**判断以下内容：
 
 Gate 的详细定义见 `../gates/GATES_V321.json`。
 
-- **G-ENG E3**：PR #18 的 63 份预览通过；PP1 的 16 个请求初步通过，状态为 PENDING，待 A 的 Draft PR 固定后复跑。
+- **G-ENG E3**：PR #18 的 63 份预览通过；PP1 的 16 个请求在 #19 HEAD 上通过，状态为 PASS。
 - **FC-MS M2**：8 个前缀可用；正式样本前缀尚未导出，状态为 BLOCKED。
 - **C6 单一 renderer**：状态为 BLOCKED（N1/N2）。
 - **FC-MP / FC-ME / FC-RS**：语义与许可问题仍为 BLOCKED。

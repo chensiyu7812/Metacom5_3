@@ -4,15 +4,14 @@
 
 ## 0. 结论
 
-**目前还不能开始任何真实生成或人评。** 离第一步最近的是 PP1，即 16 次 OFF / RET-MS 生成加双盲程序试点。PP1 还差以下 5 件事，没有一件需要扩充工程框架：
+**目前还不能开始任何真实生成或人评。** 离第一步最近的是 PP1，即 16 次 OFF / RET-MS 生成加双盲程序试点。16 个请求包已在 WS-A Draft PR #19 的 HEAD 上通过 B 的独立检查；PP1 还差以下 4 件事，没有一件需要扩充工程框架：
 
 | # | 缺什么 | 由谁解除 |
 |---|---|---|
 | 1 | G0e 身份固定：PR #10 合入，或研究者书面固定 g_id、renderer、step2、decode；另需 A0 实测 | integration owner / 研究者；WS-A 执行 A0 |
-| 2 | WS-A 就 16 个 PP1 请求开 Draft PR；B 在其固定 HEAD 上复跑检查（初步结果已经 16/16 通过） | WS-A → WS-B |
-| 3 | 研究者批准 PP1 协议，并单独授权这 16 次调用 | 研究者 |
-| 4 | 1 名筛查整理者和 2 名审阅者（整理者不兼任审阅者） | 研究者 |
-| 5 | 评审工具：盲化、位置哈希、锁定时间戳、导出 | WS-B（可在授权前完成） |
+| 2 | 研究者批准 PP1 协议，并单独授权绑定最终 SHA 的这 16 次调用 | 研究者 |
+| 3 | 1 名筛查整理者和 2 名审阅者（整理者不兼任审阅者） | 研究者 |
+| 4 | 评审工具：盲化、位置哈希、锁定时间戳、导出 | WS-B（可在授权前完成） |
 
 **首轮正式 MS 比较**（FC-MS：OFF / DP-MS / RET-MS，按 S1/S2/S0/S7 分层）在 PP1 的基础上还需要：
 
@@ -30,13 +29,13 @@
 | 条件 | 证据 |
 |---|---|
 | PR #18 的 8 个前缀通过 B 的独立机械核验：双 horizon、snapshot SHA、RAW 来源、owner/family 隔离、Generator 可见投影 | `pr18_receipt/WSB_RECEIPT_PR18_ZH.md`：<br>• 8/8 前缀；<br>• 16/16 快照；<br>• X5a 首次可测并通过；<br>• 63/63 预览；<br>• 63/63 重分词；<br>• 0 未来文本，0 跨 owner |
-| PP1 的 16 个请求在 WIP 提交上初步通过 | `pp1_requests_preliminary/`：<br>• 16/16 通过，16/16 重分词；<br>• OFF 与 RET-MS 共用同一 renderer；<br>• RET-MS 都是同一 owner 严格更早的完整会话 |
+| PP1 的 16 个请求在 Draft PR #19 HEAD `4ac9ab3d` 上通过 B 检查 | `pp1_requests/`：<br>• 16/16 通过，16/16 重分词；<br>• OFF 与 RET-MS 共用同一 renderer；<br>• RET-MS 都是同一 owner 严格更早的完整会话 |
 | PP1 的 QH 背景已在生成前构建：完整 as-of RAW，与资源臂无关 | `pp1/QH_BACKGROUNDS.json`：8 份，与 #18 `QH_SOURCE_HANDOFF` 的合法 RAW 集合一致 |
 | Q0/QH/F v2：需要标签封存在审计侧；所有审阅者都看不到条件和任何模型或旧人工分数；F-A 移到审计侧 | `docs/PM_RL1_V321_PROTOCOL_REVISION_CANDIDATE_ZH.md` §3 |
 | 门禁按用途拆分；FC-MS 不依赖 RS/MP/ME；PP1 不再成为所有生成的前置条件 | `gates/GATES_V321.json` |
 | 17 组下的精度、可达非劣界和严重错误率上界已重新核算 | `stats/STATS_V321.json` |
 | 90 条初筛：可重现，SHA 与抽样概率已登记；扩展规则只依赖标签 | `screen/INITIAL_SCREEN_90.json`（`31daca4e…`） |
-| PP1 独立协议：流程、分歧处理、计时、停止条件、与正式分析分离 | `pp1/PP1_PROTOCOL_ZH.md`（`9e6dd732…`） |
+| PP1 独立协议：流程、分歧处理、计时、停止条件（工程部分采用 #19 更严的运行规程）、与正式分析分离 | `pp1/PP1_PROTOCOL_ZH.md`（`b23b91eb…`） |
 | 旧 54 保留，曝光只登记不排除；8 个 ELIGIBLE 输入 = 8 OFF + 8 RET-MS | 沿用 #17 |
 
 ## 2. 等待人力或权限的事项
@@ -60,7 +59,6 @@
 |---|---|---|
 | PR #10 合入，或书面固定 G0e 身份 | integration owner / 研究者 | G-ENG |
 | A0 实测：加载前重算权重 hash，确定性重复调用 | WS-A（需授权） | G-ENG |
-| 为 PP1 请求开 Draft PR；B 复跑 | WS-A → WS-B | G-ENG E3 |
 | 评审工具 | WS-B | PP1 P6 |
 | 按正式样本导出 DP-MS（同一规则、同一 renderer），冻结 as-of RET-MS | WS-A；WS-B 核验 | FC-MS M2/M3/C6 |
 | 修复 #16 的 R1–R5，并由 A/B 签收 | WS-B；WS-A 签收 | 只阻塞 G-RWD |
@@ -70,7 +68,7 @@
 | 项 | 预计 | 上界 |
 |---|---|---|
 | Generator 调用 | 16 | 16（不重试） |
-| GPU 时间 | 约 11 分钟 | 84 分钟（每次都到 300 s 超时） |
+| GPU 时间 | 约 11 分钟（#19 规划 8–20 分钟，均未实测） | 20 分钟（#19 的全阶段硬上限 1,200 s） |
 | Judge / writer / 付费 API | 0 | 0 |
 | 人工合计 | 约 7.4 小时（背景用检索式略读） | 11.5 小时（按 250 词/分通读 36,340 词的背景）；再乘 1.5 倍裕量，约 17.2 小时 |
 
@@ -95,7 +93,7 @@
 
 | 指令 | 交付 |
 |---|---|
-| 1 独立复核 PR #18 并出具回执 | `pr18_receipt/`：机械 PASS_WITH_NOTES，N1–N5；语义轴不签收；研究资格轴尚未合格；R1–R5 处置；PP1 请求初步检查 |
+| 1 独立复核 PR #18 并出具回执 | `pr18_receipt/`：机械 PASS_WITH_NOTES，N1–N5；语义轴不签收；研究资格轴尚未合格；R1–R5 处置；另有 #19 的 16 个 PP1 请求回执（`pp1_requests/`） |
 | 2 重构门禁 | `gates/GATES_V321.json`；文档 §2 |
 | 3 修改 Q0/QH/F | 文档 §3；`protocol/PROTOCOL_V321_CANDIDATE.json` 中的 `review` 与 `audit_ledger` |
 | 4 统计方案 | `stats/STATS_V321.json`；文档 §4 |
