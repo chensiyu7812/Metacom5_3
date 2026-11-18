@@ -1,0 +1,60 @@
+{
+ "protocol": "pmrl1v3-wsb-asof-legacy-audit-v1",
+ "compiler_frontier": {
+  "sessions": 401,
+  "reproduced": 401,
+  "units": 2236,
+  "unit_session_or_rank_mismatch": 0,
+  "compiler_versions": [
+   "paper1-qwen-multi-view-memory-compiler-v7"
+  ],
+  "meaning": "per-session compiler inputs were strictly past (prior profile reproduced); unit semantics remain unverified"
+ },
+ "compiler_frontier_mismatches": [],
+ "mp_pool": {
+  "prefixes": 4119,
+  "prefixes_with_mp_pool_difference": 3460,
+  "legacy_only_units_total": 0,
+  "asof_only_units_total": 12663
+ },
+ "b6e_counterfactual": {
+  "same": 4,
+  "differs": 3,
+  "legacy_has_no_candidate": 1
+ },
+ "controls": {
+  "legacy_bank_v0": {
+   "passed": false,
+   "cutoffs": 384,
+   "cutoffs_passed": 384,
+   "prefix_extension": {
+    "X5a_horizon_changes_snapshot": 175
+   }
+  },
+  "reference_chronological": {
+   "passed": true,
+   "cutoffs": 384,
+   "cutoffs_passed": 384,
+   "prefix_extension": {}
+  }
+ },
+ "wsa_sidecar": {
+  "ref": "b63635f3621f3a5d252099efcd58ae2d1958dce2",
+  "snapshots": 65,
+  "owners": [
+   "p1",
+   "p15",
+   "p18"
+  ],
+  "cutoffs_passed": 65,
+  "x5a": "not_testable_single_horizon",
+  "prefix_extension_problems": 0,
+  "passed": true
+ },
+ "bank_version": "bank:02d0a4b1e62fd033c02b4fdc8e76d8796b285aa058cb59201aacde2c13ce8dd9",
+ "source_version": "sources:c6ad9b15ba65341f2e5cab26e5451943c9539844f1043964c516b82171286c02",
+ "evidence_tier": "engineering_only",
+ "gpu_used": false,
+ "model_calls": 0
+}
+asof exit=0
