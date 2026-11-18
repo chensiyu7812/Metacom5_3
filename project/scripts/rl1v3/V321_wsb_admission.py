@@ -210,7 +210,7 @@ def step_pp1(_):
     raw = E.Raw(json.loads(S.ARTIFACT.read_text()))
     handoff = {r["prefix_id"]: r for r in S.bundle_json("cpu_v3/QH_SOURCE_HANDOFF.json")["rows"]}
     elig = json.loads(ELIG.read_text())["rows"]
-    calls = V.pp1_calls(elig)
+    calls = V.pp1_calls(elig, json.loads(S.SELECTION.read_text())["selected_ids"])
     out = OUT / "pp1"
     bgs, index = {}, []
     for b in S.bundle_jsonl("cpu_v3/BINDINGS.jsonl"):
@@ -235,7 +235,8 @@ def step_pp1(_):
                     "timestamp) from the public sanitized artifact; no excerpt, role or ranking; identical for OFF and "
                     "RET-MS; frozen before any generation", rows=list(bgs.values())))
     spec = V.pp1_protocol(elig, qh_backgrounds=dict(file="QH_BACKGROUNDS.json", index=index,
-                                                    sha256=object_sha256(index)), words=[x["words"] for x in index])
+                                                    sha256=object_sha256(index)), words=[x["words"] for x in index],
+                          prefix_order=json.loads(S.SELECTION.read_text())["selected_ids"])
     write_json_once(out / "PP1_PROTOCOL.json", V.freeze(dict(pp1=spec)))
     manifest("pp1", {"eligibility": ELIG}, [out / "QH_BACKGROUNDS.json", out / "PP1_PROTOCOL.json"])
     print(json.dumps(dict(calls=len(calls), backgrounds=len(bgs), all_equal=all(x["equals_pr18_qh_source_handoff"]

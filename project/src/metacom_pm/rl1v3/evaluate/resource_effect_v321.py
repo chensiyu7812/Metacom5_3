@@ -396,12 +396,14 @@ PP1_EST_MIN = dict(screen_per_prefix=10, q0_per_pair=1.5, qh_history_first_read=
                    fa_per_error=1, adjudication_per_item=3)
 
 
-def pp1_calls(eligibility_rows: list[dict]) -> list[dict]:
+def pp1_calls(eligibility_rows: list[dict], prefix_order: list[str] | None = None) -> list[dict]:
+    """16 calls in B6e selection order (``prefix_order``), OFF before RET-MS within a prefix."""
     el = [r for r in eligibility_rows if r.get("plan_job_id") and r["joint_eligibility"] == "ELIGIBLE"]
+    rank = {p: i for i, p in enumerate(prefix_order or sorted({r["prefix_id"] for r in el}))}
     calls = [dict(call=i + 1, prefix_id=r["prefix_id"], owner_id=r["owner_id"],
                   arm={"OFF": "OFF", "MS": "RET-MS"}[r["subset"]], plan_job_id=r["plan_job_id"],
                   existing_request_id=r["existing_request_id"], terminal_key_sha256=r["terminal_key_sha256"])
-             for i, r in enumerate(sorted(el, key=lambda r: (r["owner_id"], r["subset"] != "OFF")))]
+             for i, r in enumerate(sorted(el, key=lambda r: (rank[r["prefix_id"]], r["subset"] != "OFF")))]
     return calls
 
 
@@ -474,8 +476,8 @@ PP1_METRICS = ["完成率与锁定率", "各表单单件耗时（中位、P90）
 
 
 def pp1_protocol(eligibility_rows: list[dict], qh_backgrounds: dict | None = None,
-                 words: list[int] | None = None) -> dict:
-    calls = pp1_calls(eligibility_rows)
+                 words: list[int] | None = None, prefix_order: list[str] | None = None) -> dict:
+    calls = pp1_calls(eligibility_rows, prefix_order)
     return dict(
         protocol=PROTOCOL + ":PP1", status=STATUS, purpose="程序可用性验证；不估计资源效应，不进入正式分析",
         inputs=dict(prefixes=sorted({c["prefix_id"] for c in calls}), arms=["OFF", "RET-MS"], calls=calls,

@@ -180,3 +180,9 @@ def test_pp1_cost_reads_full_histories_and_screen_cost_counts_s7_cheaply():
     assert s["minutes"] == round(1 + 10 + 3)
     f = V.fc_ms_cost(34, 5000)
     assert f["pairs"] == 102 and f["replies"] == 102 and f["total_hours"] > f["per_rater_hours"]
+
+
+def test_pp1_call_order_follows_b6e_selection():
+    sel = json.loads((PROJECT / "outputs/pm_rl1/v3/B6e_plan/v3/SELECTION.json").read_text())["selected_ids"]
+    calls = V.pp1_calls(json.loads(ELIG.read_text())["rows"], sel)
+    assert [c["prefix_id"] for c in calls[::2]] == sel and [c["arm"] for c in calls[:2]] == ["OFF", "RET-MS"]
