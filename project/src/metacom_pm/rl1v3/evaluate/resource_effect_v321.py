@@ -223,7 +223,7 @@ def stats_v321(groups: int = 17) -> dict:
         ni_required_pairs_per_group=ni,
         ni_note="margin -0.10 cannot be shown on 17 groups once ICC >= ~0.04 at any number of pairs per group; "
                 "with ICC = 0 it needs ~27 pairs per group (~460 pairs). -0.10 therefore stays a discussion "
-                "candidate; a reachable margin at m = 4, ICC 0.1 is ~0.26",
+                "candidate; the margin reachable with 80% power at m = 4, ICC 0.1 is ~0.29 (m = 2: ~0.38)",
         serious_error=dict(table=serious_error_table(),
                            replies_needed_upper_below_0_05=dict(
                                zero_events={str(de): replies_needed_for_bound(0.05, 0, de) for de in (1.0, 1.1, 1.3)},

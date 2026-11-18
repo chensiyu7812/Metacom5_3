@@ -255,9 +255,9 @@ def step_protocol(_):
 def step_gates(_):
     from metacom_pm.rl1v3.evaluate import resource_effect_v321 as V
     rec = json.loads((RECEIPT_DIR / "WSB_RECEIPT_PR18.json").read_text())
-    prs = {n: gh_state(n) for n in (10, 15, 16, 17, 18)}
+    prs = {str(n): gh_state(n) for n in (10, 15, 16, 17, 18)}
     facts = dict(
-        g0e_identity=prs[10].get("state") == "MERGED", a0_measured=False,
+        g0e_identity=prs["10"].get("state") == "MERGED", a0_measured=False,
         requests_checked=False, requests_reason="PR #18 的 63 个 E1 预览已通过 B 检查；PP1 的 16 个 G0e 请求包尚未导出",
         output_policy=True, gpu_auth=False,
         pp1_qh_backgrounds=(OUT / "pp1/QH_BACKGROUNDS.json").exists(), pp1_screen_labels=False, raters=False,
