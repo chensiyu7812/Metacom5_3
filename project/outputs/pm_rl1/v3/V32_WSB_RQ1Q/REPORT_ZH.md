@@ -206,6 +206,9 @@ A 交付后，B 按以下 5 个轴分别给出结论。A 的工程通过**不等
 ## 10. 测试、CI 与日志
 
 - 新测试 `tests/test_rl1v3_v32_rq1_qual.py`：30 项。覆盖冻结的 v1 未改变、54 个输入的资格、Q0/QH/F 的隔离、QH 背景包不使用并集、配对与聚类规则、uncertain 只进上下界、精确符号翻转、Holm、精度、抽样的确定性以及与回复无关、曝光不排除、可执行性、Gate。
-- 测试数量和 CI 结果以 PR 页面为准。本地结果见 `logs/v3_strict.*` 和 `logs/full_cpu.*`。
+- 本地 V3 严格套件（代码 HEAD `6c8d2ebd`）：**633 passed**（原有 603 + 新增 30），0 skip/xfail/fail；`verify_v3_junit` 门禁通过（`logs/v3_strict.*`、`logs/v3_gate.json`）。
+- 本地完整 CPU 公共套件（与 CI 相同的范围：`test_paper1_*`、`test_rl1_*`、`test_rl1v3_*`，代码 `8541b951`）：**2,465 passed，2 skipped，11 个 GPU 用例 deselected**（`logs/full_cpu.*`）。2 个 skip 都是环境原因：本机没有冻结的 Llama tokenizer，PATH 上没有 rg。
+- PR #17 的 CI（run 44319303845，`8541b951`）：通过。V3 套件 633 passed；公共套件 2,398 passed，63 个历史 skip。
+- 另外，本地额外跑了整个 `tests/` 目录（`logs/alltests_dir.*`，范围大于 CI）：3,961 passed，**99 failed**，66 skipped。失败**全部**在旧的 `test_v1_5_*` 和 `test_posthoc_v1_bank_probe.py` 中，这些文件不在 CI 定义的套件内；paper1/rl1/rl1v3 的失败数为 0。本分支相对 `a9cf0cca` 只新增文件，没有修改或删除任何已有文件，所以这些失败与本轮改动无关。日志原样保留，没有处理。
 - 第一次运行（代码 `54727b35`）因为 manifest 根路径错误而失败，产物已删除，日志原样保留为 `logs/failed_54727b35_*.log`。修复后（`6c8d2ebd`）5 个步骤全部通过，日志为 `logs/<step>.log` 和 `logs/<step>.start`。
 - 每个步骤都有 `manifest.json`，记录输入、输出和代码的 SHA。
