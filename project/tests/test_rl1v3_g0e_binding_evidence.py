@@ -85,3 +85,16 @@ def test_review_pack_preserves_prior_development_checks_and_full_legal_candidate
         for c in search_result.ranked:assert canonical_json(bank.by_id[c.record_id])==canonical_json(catalog[c.record_id])
         assert r['reviewer_fields']['topic_relevance']=='unreviewed'
         assert 1<=meta['fold']<=5
+
+
+def test_latest_b_own_addendum_agrees_with_independent_a_reconstruction():
+    root=BASE/'G0e_binding_20261118';report=json.loads((root/'b_latest/G0E_BINDING_ADDENDUM.json').read_text())
+    assert report['status']=='passed' and report['terminals']==120 and report['model_calls']==0
+    assert report['old_rewards_reusable'] is False and all(r['passed'] for r in report['prefixes'])
+    a={(r['prefix_id'],r['subset']):r for r in jl(root/'KEY_BINDINGS.jsonl')}
+    b={(r['prefix_id'],r['subset']):r for r in jl(root/'b_latest/G0E_TERMINALS.jsonl')}
+    assert a.keys()==b.keys()
+    for k in a:
+        assert a[k]['old_key_sha256']==b[k]['old_key_sha256']
+        assert a[k]['new_key_sha256']==b[k]['key_sha256']
+        assert a[k]['request_sha256']==b[k]['request_sha256'] and b[k]['failures']==[]
