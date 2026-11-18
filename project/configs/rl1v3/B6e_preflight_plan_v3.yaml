@@ -1,0 +1,36 @@
+# WS-B B6e 8-prefix ENGINEERING COVERAGE preflight - PLAN v3 (researcher decision 2026-11-18).
+# Plans v1 (PLAN_ZH.md) and v2 (B6e_preflight_plan_v2.yaml) are kept unchanged as history.
+# Not runnable until every gate holds AND the researcher explicitly authorises the GPU scope. No paid API.
+task_id: B6e_preflight
+plan_version: pmrl1v3-b6e-plan-v3
+status: preregistered_not_authorised
+why_changed: >-
+  the v1/v2 rule (sort by reachable count) can only pick 16-reachable prefixes of folds 1-4, so the
+  MP-empty (8-reachable) case and fold 5 were never exercised; v3 is a coverage diagnostic that fixes
+  7 x R16 + 1 x MP8 and requires folds 1-5. It is not a natural-distribution sample.
+selection:
+  module: metacom_pm.rl1v3.evaluate.b6e_select_v3      # RULE + rule_sha256 live in code, fixed before selecting
+  candidates: the 20 fold-1..5 needcard_pilot prefixes of outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+  replay: outputs/pm_rl1/v3/WSB_S3/integration_acceptance_320a33d1/B5/replay_reports.jsonl   # formal integration B5
+  coverage_sample: outputs/pm_rl1/v3/B1/coverage_sample_v1.jsonl
+  no_quality_input: selection reads replay facts only (reachability, fold, owner); never generation or judge output
+needcard_pilot_plan: outputs/pm_rl1/v3/B1/needcard_pilot_v1_plan/RUN_PLAN.json   # the 8 are inside these 20; no extra writer calls
+calls_upper_bound:            # recomputed from the selection; must equal it
+  needcard_writer: 0
+  checklist: 0                # deterministic template v3
+  g0_generation: 120          # 7 x 16 + 1 x 8, one greedy sample per terminal
+  j1_item_judge: 360          # <= 3 per terminal (full, full re-ask, missing-item re-ask)
+  j2_item_judge: 0            # GSC stays pending; pending is never 0
+  paid_api: 0
+gates:
+  - formal integration acceptance of B5/B1 (WS-B S3, 320a33d1) - done
+  - this WS-B S3 branch reviewed and merged by the integration owner
+  - NeedCard pilot run under its own authorisation; the 8 cards audited valid (pilot evidence-error gate <= 10%)
+  - checklists v3 frozen for the 8 prefixes before any G0 call
+  - versioned initial G0 identity (weights sha, request renderer, decode config) delivered by WS-A
+  - A0 measured G0 / Qwen throughput and peak memory on the A6000
+  - explicit researcher authorisation; A6000 free >= 30 GiB and not used by WS-A
+claims_not_allowed:
+  - natural-distribution estimates from these 8 prefixes
+  - generalisation or PPO superiority from training and testing on the same 8 prefixes
+evidence_tier: engineering_only

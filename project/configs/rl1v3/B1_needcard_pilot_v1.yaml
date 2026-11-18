@@ -1,0 +1,27 @@
+# WS-B B1 NeedCard writer v2 pilot (pmrl1v3-b1-needcard-pilot-v1): the fixed 20 fold-1..5 prefixes.
+# The GPU run needs a researcher AUTHORIZATION.json bound to RUN_PLAN.json's plan_sha256. Not run without it.
+task_id: B1_needcard_pilot_v1
+preflight_config: configs/rl1v3/B1_needcard_v2.yaml
+b5_config: configs/rl1v3/B5_real_replay_v2.yaml
+# formal integration acceptance (WS-B S3, HEAD 320a33d1): the packs must be byte-identical to these
+acceptance: outputs/pm_rl1/v3/WSB_S3/integration_acceptance_320a33d1/ACCEPTANCE.json
+accepted_preflight: outputs/pm_rl1/v3/WSB_S3/integration_acceptance_320a33d1/B1_preflight/pilot_inputs.jsonl
+decode:
+  do_sample: false
+  enable_thinking: false
+  max_new_tokens: 800
+  reask: 1            # writer v2 rule: one verbatim re-ask, then writer_failed
+  stop_tokens: ["<|im_end|>", "<|endoftext|>"]   # pinned tokenizer ids 248046 / 248044
+  pad_token: "<|endoftext|>"
+runtime:
+  python: /opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python   # A0 ENV_REPORT: torch 2.7.1+cu128, transformers 5.17.0
+  backend: transformers
+  model_class: AutoModelForImageTextToText   # checkpoint architecture Qwen3_5ForConditionalGeneration; text-only input
+  dtype: bfloat16
+  attn_implementation: sdpa
+  gpu_name: NVIDIA RTX A6000
+  gpu_uuid: GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4
+  min_free_gib: 30
+plan_dir: outputs/pm_rl1/v3/B1/needcard_pilot_v1_plan
+out_dir: outputs/pm_rl1/v3/B1/needcard_pilot_v1
+evidence_tier: engineering_only
