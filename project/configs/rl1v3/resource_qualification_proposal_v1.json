@@ -1,0 +1,87 @@
+{
+  "protocol": "pmrl1v3-resource-qualification-proposal-1",
+  "status": "design_proposal_not_active_protocol",
+  "changes_c0": false,
+  "changes_bank_or_ranker": false,
+  "model_execution_authorized": false,
+  "gpu_requests_authorized": 0,
+  "research_qualification": "pending",
+  "sample_scope": "existing exposed development prefixes; not independent confirmation",
+  "independent_unit": "owner with source-family cluster; prefix is a paired repeated measure",
+  "layers": {
+    "A": {
+      "question": "Are source, span, role, owner, family and knowledge-time legal?",
+      "cpu_now": ["load fixed registry/bank", "verify exact spans", "replay 83 fixed candidate rankings", "reconstruct 120 existing request projections"],
+      "additional_probe": "prefix-extension invariance for new writers; adding future sessions must not change an earlier as-of projection",
+      "required_mechanical_errors": 0,
+      "not_established": ["semantic entailment", "entity coreference", "fact validity", "actual writer ready_at"]
+    },
+    "B": {
+      "question": "Is any safe applicable evidence present, and did the reader choose it?",
+      "input": "relevance_review_20261118: 83 frozen rows, original queries, complete legal candidate IDs/scores and source spans",
+      "dimensions": ["source_support", "subject_match", "topic_relevance", "event_phase_validity", "current_prefix_contradiction", "need_to_read_now", "need_to_mention_now", "rs_case_applicability", "misleading_advice_risk"],
+      "labels": ["yes", "no", "unknown", "not_applicable"],
+      "review": "two independent reviewers before response outcomes; retain disagreement; adjudication separately attributed",
+      "denominator": "Recall requires an independently adjudicated relevant-source set, not just top-1 labels",
+      "thresholds": null,
+      "status": "human_annotations_pending"
+    },
+    "C": {
+      "question": "Does G preserve subject, stage, time and optional non-use for identical evidence?",
+      "conditions": ["current_flat_Notes", "bounded_reading_proposal"],
+      "fixed": ["prefix", "selected_source_quotes", "G_weights", "decode", "resource_subset"],
+      "change_identity": ["bank_if_reading_text_changes", "renderer", "request", "terminal"],
+      "challenge_cases": ["user_vs_partner", "suggestion_vs_attempt", "old_fact_vs_current_correction", "external_case_vs_user_history", "optional_nonmention", "quoted_prompt_injection"],
+      "separate_from_natural_support": true,
+      "status": "not_run_requires_material_review_and_model_authorization"
+    },
+    "D": {
+      "question": "At the same prefix and same G, does the actually retrieved resource improve the response relative to OFF?",
+      "proposed_jobs": "39 existing feasible OFF/single-head inputs; no responses generated",
+      "arms": ["OFF", "RS", "MP", "ME", "MS"],
+      "baseline": "OFF contains no resources and no resident skills directory",
+      "privileged_control": "oracle-source is an explicitly private diagnostic arm, never policy-visible or a deployable comparator",
+      "outcomes": ["blinded_support_preference_with_ties", "attribution_errors", "stage_errors", "unnecessary_history_intrusion", "hard_safety", "input_output_tokens", "user_wait"],
+      "status": "pending; proxy scores alone cannot establish natural support"
+    },
+    "E": {
+      "question": "Do components help or interfere together?",
+      "proposed_jobs": "15 additional feasible MP+MS or ME+MS inputs on the same eight prefixes",
+      "contrast": "I_ij = Y(i+j) - Y(i) - Y(j) + Y(OFF)",
+      "eligibility": "all four observed cells, same scalar measurement scale and frozen G; ordinal pairwise preference alone is not additive",
+      "unreachable_or_pending": "remain missing with reason, never zero; report coverage",
+      "status": "pending; 54 total unique D/E proposals, not the 120-terminal B6e run"
+    },
+    "F": {
+      "question": "What extra time does the user actually wait?",
+      "measure": ["cold_model_load", "queue", "legal_filter_search", "serialization_tokenization", "prefill", "time_to_first_visible_token", "decode", "SupportPlan", "retry_fallback", "final_response_wall_clock"],
+      "cache_conditions": ["cold", "warm_no_response_cache", "exact_response_cache_hit"],
+      "report": ["p50", "p95", "input_tokens", "output_tokens", "failures", "truncations"],
+      "status": "not_run; CPU checks are not model latency evidence"
+    }
+  },
+  "rs_comparison": {
+    "arms": ["R0", "F-resident", "Method retrieval", "Method+case"],
+    "materials": "same small source-reviewed low-risk method set; method+case shares the exact retrieved method with method-only",
+    "pilot": "four development prefixes from different owners, outcome-blind selection after applicability review; at most 12 new RS alternative responses plus shared R0",
+    "material_availability": "pending; existing eight annotation classes are not method cards",
+    "resident_cost": "charge always-present prompt tokens, prefill and context; it is not the resource-free OFF",
+    "case_only": "current bank-v0 RS is a separate historical-engineering comparator",
+    "R0_default_when_no_qualified_material": true
+  },
+  "generator_comparison": {
+    "arms": ["G0 no-plan", "same G0 with explicit SupportPlan", "trained G1"],
+    "separate_factorial": true,
+    "SupportPlan": "same evidence, private plan references public read ordinals only, use does not require mentioning, count plan tokens/calls/time",
+    "G1": "requires actual training and held-out owner/family data; training uses optional-ignore/OFF-better as well as relevant evidence; independent preference qualification",
+    "selection_rule": "freeze G weights/backend before resource-gain results; prompt-comparison selection uses development data and separate confirmation",
+    "status": "not_run"
+  },
+  "analysis": {
+    "technical_failure": "pending/unavailable; keep attempts, reasons and costs; no zero reward or selective retry",
+    "semantic_failure": "retain as observed outcome; do not delete because resource harmed the reply",
+    "clusters": "owner and shared source family; report actual independent counts and uncertainty, no 54-sample pseudo-independence",
+    "exposure": "these pilots are formative; independent confirmation needs frozen unconsumed material or explicitly disclosed same-corpus limitations",
+    "promotion_rule": "A does not certify B; B does not certify C; C does not certify D/E; D/E do not establish F"
+  }
+}
