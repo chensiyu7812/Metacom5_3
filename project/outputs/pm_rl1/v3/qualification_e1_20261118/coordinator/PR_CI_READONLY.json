@@ -1,0 +1,1066 @@
+[
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/10",
+      "number": 10,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": false,
+      "body": "WS-A 在 integration `320a33d1d871199d171f998300ce926b341ca1a8` 上提供 B6e 所需的初始 G0e 请求端口、A0 有界实测申请和开发相关性诊断。最新 HEAD：`73fdb12f29b6970a268eeda704d73e1bd35b1c3e`。本 PR 未合并。\n\n**交付提交**\n\n- `9f29fc8d`：G0e / `generator.g0e_port.make_port_factory` / `render.request_packet` / 输出缓存规则与 CPU 验收。\n- `07dee4bc`：复用原 100 OFF，准备有界 A0 请求、原生分词复核、授权/独占/版本守卫及测量后成本投影。\n- `d8939403`：12 项带来源跨度的开发相关性检查；无检索调参或质量改善声明。\n- `73fdb12f`：输入/输出/code manifests、原始失败与修复记录、代码 CI 和验收收据。\n\n**G0e 接口**\n\n`pmrl1v3-g0e-1`：Gemma-4-12B-it 完整 revision/权重 SHA/tokenizer/template 已绑定；greedy、seed=0、max_new_tokens=320、no-plan Step-2、HF batch=1。CPU 请求不加载权重。新 `G0e:b624c7c3…` / `renderer:e04b6de4…` 与旧 tokenizer-only B5 端口并存；C0 0.2.0、32 Schema、source/bank/index、B-owned 模块及旧证据未变。\n\n模型只能接收 `packet.payload()`，不能发送私有 envelope。仅合法可见前缀 + 成功 GET 的 ReadingView + 固定 prompt/decode；OFF 没有 Notes。NeedCard、Checklist、判官、oracle、私有 IDs/分数及未读/未来正文不进入模型投影。OFF/ME/RS/ALL 原生输入分别 418/668/1658/2771 token，另保留320。16 子集/65 顺序身份可复现。\n\n直接使用 B 的 C0FiniteHeadEnv 对 20 个开发前缀验收：17×16 + 3×8 = 296 终点、1153 顺序；key、trace、计费一致，STOP 全部 pending。另核对 B Draft PR #11 (`0af8d35e`) 的固定选择：8/8 前缀已被本轮覆盖，共120终点。B v3 已准备120 G0 / 最多360 J1 预算；两线合入后，应建立绑定新 G0e 身份的生成调用 manifest，保留旧 replay key 历史。没有更改 B 的方案或代码。\n\n**真实测试**\n\n- 新增定向 CPU：24 passed。\n- 本地 V3：490 passed，0 skip/xfail；verify_v3_junit 通过。\n- 本地补充完整 CPU：2323 passed，1 旧 Llama tokenizer 缺失 skip，11 GPU deselected（日志和 SHA 收据保全于共享 workspace 的 `pmrl1-validation/g0e-cpu-20261118/LOCAL_FULL_CPU_RECEIPT.json`）。\n- 代码 HEAD CI：https://github.com/chensiyu7812/Metacom5_3/actions/runs/44200339100 ，success。\n- **最终 HEAD CI**：https://github.com/chensiyu7812/Metacom5_3/actions/runs/44202885285 ，success。V3 490 passed，完整 CPU 2255 passed / 63 skipped / 1 GPU deselected；integration-base step 实际 success。\n- CI 历史63个 skip：sentence_transformers缺失1、Llama tokenizer缺失1、rg缺失1、旧engine/relation inputs缺失32、旧engine/task inputs缺失28；不计为完整覆盖。逐项记录与 JUnit 已归档。V3 零 skip/xfail。\n- 32份 C0 Schema 一致，141个受保护文件逐字节一致，4份已提交 manifest 校验通过。\n\n**A0 与限制**\n\n申请包仅 CPU 准备，独立 GPU 授权尚未取得：Gemma最多154请求（含2 warmup），Qwen最多7请求（含1 warmup），每模型1次加载；A6000独占、启动前至少30 GiB空闲，明确停止和不重试规则。现有 vLLM 未注册 Gemma4Unified 架构，保留命名 HF 回退，实际兼容性未测。吞吐/显存/预计时间均未填实测值；J1真实输入仍缺，不拿NeedCard测速替代J1。\n\nG0e 不是 A7 正式 G0。没有 GPU、模型生成、实验训练、付费调用；未完成 A4/A5/A6/A7/G1。B6e 仍需集成端口、冻结新生成身份、独立授权及真实 NeedCard/Checklist/回复与判定。没有改 main、PR #4、H0 或 EXECUTION_STATE。\n\n报告与完整接口身份：\n- `project/outputs/pm_rl1/v3/G0e_cpu_20261118/RESULTS_ZH.md`\n- `project/outputs/pm_rl1/v3/G0e_cpu_20261118/VALIDATION_ZH.md`\n- `project/outputs/pm_rl1/v3/A0_bounded_cpu_20261118/RESULTS_ZH.md`\n- `project/outputs/pm_rl1/v3/relevance_dev_20261118/RESULTS_ZH.md`\n",
+      "title": "WS-A: G0e CPU request binding, bounded A0 proposal and relevance diagnostics",
+      "base": "pmrl1-v3/integration",
+      "base_sha": "320a33d1d871199d171f998300ce926b341ca1a8",
+      "head": "pmrl1-v3/ws-a-g0e-cpu",
+      "head_sha": "73fdb12f29b6970a268eeda704d73e1bd35b1c3e",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "eb0ae350a990a727e9f592df94f73eb8970de0a3",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-17T23:32:58Z",
+      "updated_at": "2026-11-18T00:06:05Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 4,
+      "changed_files": 61,
+      "additions": 2890,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/10",
+      "display_title": "WS-A: G0e CPU request binding, bounded A0 proposal and relevance diagnostics"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44202885285,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 212,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44202885285/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44202885285/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134461236396,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44202885285,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/11",
+      "number": 11,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": true,
+      "body": "WS-B S3（PM-RL1 V3.1）。证据等级：engineering_only。本 PR **没有**：writer、G0、J1/J2 调用，GPU，真实模型训练，付费调用。\n\n基于 integration `320a33d1`（PR #8、#9 合入后）。本 PR 没有修改 C0、WS-A 模块、workflow、`EXECUTION_STATE.json`、H0，也没有修改任何 v1/v2 协议或冻结产物。**请集成负责人审核后合入；B 不自行合并。**\n\n| # | 交付 | 结果 |\n|---|---|---|\n| 1 | 正式 integration 上的 B5/B1 验收（`05b0e0b1`，在任何代码改动之前，绑定 `320a33d1`） | B5 24/24，状态 formal_on_integration；360 个终点；1,413 条合法读取顺序；ready_at 边界 21 条；容量压力 24/24；cross_check 401 个会话、4,119 个前缀零差异；NeedCard 输入 20/20 ready。与集成负责人在 `16644abb` 的运行逐字段相同 |\n| 2 | B2 H−/I 归属定向检查 | 冻结的 v2 在 5 类反例中有 5 类误判：同一句里两个不同错误被合并、一个错误被扣两次、双判官归属不同时区间失真。v2 保持不动；新增检查表 v3、判官 v3（原子错误账本 L1–L8）、聚合 v3、ER-v3（计算与 ER-v2 相同）。冻结记录 `f901812d…`；检查表项目和权重不变 |\n| 3 | NeedCard 20 前缀试点准备 | `RUN_PLAN.json` plan `9a43a79b…`：可运行命令、模型和提示词身份、输入 SHA（与验收逐字节相同）、调用上限 20/20/40、停止条件 S1–S5、只写一次的输出目录、6 项逐卡核查规则。GPU 环境的 CPU 复核和权重 SHA 校验都通过。**等待研究者 GPU 授权** |\n| 4 | B6e-v3 预注册 | 7 R16 + 1 MP8，覆盖第 1–5 折，每个 owner 最多 1 个，每折最多 2 个；120 个终点，G0 ≤ 120 次，J1 ≤ 360 次，J2 和付费都为 0；真实 key 120/120 与正式回放相同。v1/v2 方案保留 |\n| 5 | B6e→B8e CPU 接口 | 终点登记：真实 key 与回放核对、检查表先冻结、只收 ER-v3、pending 绝不记 0、ER 与 GSC 隔离、不完整表不能当 Oracle。真实实例已接入 BC、OneShot、PPO、NoText（真实环境 + 标明 FIXTURE 的奖励，只跑几步） |\n\n文档：\n- `outputs/pm_rl1/v3/WSB_S3/STATUS_ZH.md`\n- `WSB_S3/INTEGRATION_ACCEPTANCE_ZH.md`\n- `B2/ATTRIBUTION_V3_ZH.md`\n- `B1/NEEDCARD_PILOT_AUTH_REQUEST_ZH.md`\n- `B6e_plan/PLAN_V3_ZH.md`\n- `WSB_S3/B6E_B8E_INTERFACE_ZH.md`\n\n测试（head `0af8d35e`）：\n\n| 范围 | passed | fail | skip / xfail |\n|---|---:|---:|---|\n| 本地 V3（verify_v3_junit） | 524 | 0 | 0 / 0 |\n| PR CI 44200904101 V3 | 524 | 0 | 0 / 0 |\n| 本地完整 CPU（与 CI 同范围） | 2,356 | 0 | 2（旧环境：Llama tokenizer 路径、rg） |\n| PR CI 完整 CPU | 2,289 | 0 | 63（旧环境） |\n\n- 本地与 CI 的 V3 测试身份集合相同：`testcase_ids_sha256 = ba1a852c…`。\n- CI 的全部步骤都成功，包括 integration-base。\n\n\n---\n\n### 第 7 轮更新（仍为 Draft：等 PR #10 合入）\n\n| 项 | 状态 |\n|---|---|\n| G0e 绑定附录 `B6e_g0e_binding_addendum.py` | 已写好。本地临时合入 PR #10 head（`73fdb12f`）做了演练：8/8 通过，可达数 120 不变，变化的身份字段只有 renderer、Step-2、g_id、decode_id，资源对应关系 120/120 相同，旧奖励无法复用，payload 没有泄漏。**正式附录等 PR #10 合入 integration 后再生成**；不覆盖 PLAN_V3_FROZEN.json 和 REAL_KEYS_CHECK.json |\n| B2-v3 风险 | 账本和反例保持不变。J1 原定 max_new_tokens=800 明显不够（13 项检查表每项都引一句时就超过 800；40 项时连只给判定都超过）。已记录为尚未实测的风险，并提出按前缀定额的方案（未采用，判官身份没有改动）。截断、缺项、证据编号错误、原子错误冲突都会落到 uncertain，ER 拒绝计算，终点保持 pending |\n| B1 计划 v2 | `b1d3225b…`：max_first_calls=20，max_retry_calls=0；GPU 环境 CPU 复核和权重 SHA 都通过。v1（`9a43a79b…`）保留，仍能通过校验。**未运行，等研究者授权** |\n| 核查 v2 | 6 项检查与 v1 完全相同；结论分为 valid、evidence_error、stratum_error、uncertain、writer_failed、pre_call_blocked；两道门：证据错误率 ≤ 10%，B6e 的 8 个前缀各有 valid 卡 |\n| B6e 报告函数 | 已预先写好全部要求的指标（不插补、保留分母） |\n| CI（head `10fccdf6`，run 44212034419） | V3 542 passed（0 skip、0 xfail）；完整 CPU 2,307 passed / 63 个旧环境 skip / 0 失败 |\n\n状态：`outputs/pm_rl1/v3/WSB_S3/ROUND7_STATUS_ZH.md`\n\n\n\n## 第 8 轮更新：奖励设计与资源边际价值审查（只做 CPU，仍为 Draft）\n\n- 文档：`project/outputs/pm_rl1/v3/B2/REWARD_MARGINAL_VALUE_REVIEW_ZH.md`\n- 十类反例：交给冻结的检查表 v3、J1-v3 账本和 ER-v3 计算，判官答案按“正确判官”写。结果 7 项通过、3 项部分覆盖、4 项缺口，见 `reward_review/COUNTEREXAMPLES.json`。\n  - 缺口：错标 required 导致强制提及（+0.101）；无关引用只扣 0.01；引用历史但说教的回复胜过温暖的回复（+0.046）；写卡漏记更正后，过时事实不扣分。\n- 新增提案模块 `evaluate/marginal_value.py`：区间边际、交互项，以及“检索 → G 吸收 → 效果”归因链。未采用。\n- 冻结协议没有改动，测试核对了 `protocols_v3_frozen.json` 中的身份；模型调用 0 次。\n- 本地 V3 回归 566 项通过（新增 24 项）。\n- 提交：`7825fff1`（代码与测试）、`dd33e131`（结果与文档）。\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n",
+      "title": "WS-B S3: formal integration acceptance, B2 attribution v3, NeedCard pilot plan, B6e plan v3, B8e real interface",
+      "base": "pmrl1-v3/integration",
+      "base_sha": "320a33d1d871199d171f998300ce926b341ca1a8",
+      "head": "pmrl1-v3/ws-b-s3",
+      "head_sha": "dd33e1311eea56a9312e99c7f237e928ee09fe12",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "98db59b26ea79b54dc7c24befe8b09f863228c77",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-17T23:36:46Z",
+      "updated_at": "2026-11-18T12:13:44Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 9,
+      "changed_files": 80,
+      "additions": 6117,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/11",
+      "display_title": "WS-B S3: formal integration acceptance, B2 attribution v3, NeedCard pilot plan, B6e plan v3, B8e real interface"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44254141953,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 217,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44254141953/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44254141953/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134631652315,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44254141953,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/12",
+      "number": 12,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": true,
+      "body": "本 PR 保全 PR #10 的最终提交 `73fdb12f`，提供独立后续补充；最终 HEAD **`8ba20d21da4bdcbb552946241563bd41dbe46c6c`**。暂以 #10 工作分支为 base，避免重复 diff。**不要合入 PR #10 工作分支**：请 integration owner 先合入 #10，再将本 PR base 改为 integration。未修改 C0、32 Schema、B-owned 代码、旧输出或 EXECUTION_STATE。\n\n**联合身份验收**\n\nA `c4c9db1e` 与 B 最新 `10fccdf6` 在独立本地合成提交 `87d5e870` 上，实际运行 B 的 `B6e_g0e_binding_addendum.py`：8/8前缀、120/120终点、471条合法顺序，status=passed；2427条可识别未来话语检查无泄漏。全部key经真实GET重建，A/B独立材料的新旧key及request SHA逐一相同；旧key奖励不可复用，STOP全部pending。联合代码 V3 **588 passed，0 skip/xfail**。新renderer/g/decode/Step-2与旧bank-v0身份隔离；source/bank/index不变。B addendum SHA `c1acae9f83e708953b73ac23ef88398ef3d9877b946386049ca09418323fa2a6`。这不是正式integration验收。\n\n**A0 CPU补充**\n\nGemma677检查点张量+1 tied alias与HF meta形状一致；Qwen760必需张量齐全，15个MTP权重明确登记为HF未使用。头部与小文件核查、严格HF loading-info/形状/tied检查已准备；未加载张量内容、未初始化CUDA或推理。旧100 OFF和token IDs逐条一致。\n\n新计划 `0476c0f19b45b3473129d5909ac12436ca44c5fc05df42fbe7994ec910d65194`：100 OFF + 8前缀32条资源请求，缩减短重复后总上限仍Gemma154、Qwen NeedCard7。A6000唯一UUID、启动空闲≥30GiB、锁、停止与日志规则保留。独立授权未取得，实际显存/吞吐/耗时均待测。J1不以NeedCard测速替代；B最新800-token容量风险单独列为依赖，未擅自改decode。S288/M482/L-realized748只有请求上界，没有虚构耗时。\n\n**检索诊断**\n\n保留原12项开发检查，新增83条分层审阅材料，完整候选catalog1876条；77条成功正文、6条无合法候选。新增人工判断全部unreviewed，未改v0排序，不是召回准确率或支持收益。\n\n**版本与验证**\n\n- G0e binding manifest：`d0a43fe83e6f31467c94b93b80538ec3dcef67500dff86fa1c4426c62e0c5294`\n- A0 supplement manifest：`4cca5e6f3a3fccaf4688aa954ea1238fcf0a8c619df5aed2c4798ae3d62376b2`\n- relevance manifest：`7d82b2814757f5251cbd8d14b16946f0f354f39e62f2994e5b7314b527d39b10`\n- 最终 HEAD 本地 V3：**513 passed，0 fail / skip / xfail**；严格 JUnit gate 通过。A+B 最新合成代码另有588项V3通过，区别于本PR分支自身覆盖。\n- 32 Schema、GPU CI隔离保护、integration-base与三份manifest校验通过。\n- **最终 HEAD CI success**：https://github.com/chensiyu7812/Metacom5_3/actions/runs/44213269571 。V3 **513 passed，0 skip/xfail**；完整 CPU **2278 passed / 63 skipped / 1 GPU deselected**；integration-base step 实际 success。Artifact SHA `281adfe09d8238acd19a20eba8779522525c690389e51f5afe27ba646bebc189`；本地与CI V3 testcase身份集合一致。\n- 63个历史skip：缺sentence_transformers 1、旧Llama tokenizer缺失1、rg缺失1、旧engine/relation inputs缺失32、旧engine/task inputs缺失28；不计为完整覆盖。原始JUnit、逐项SKIPS、jobs及SHA收据保全于共享工作区 `/opt/tokkio-data0/tokkio_projects/pmrl1-validation/g0e-binding-20261118/ci-final/`，总收据 `FINAL_HANDOFF_RECEIPT.json`。首轮代码CI 44212150340 也通过，证据独立保留。\n- 生产实现/请求/manifest在最终CI后没有变化；PR保持Draft仅因为父PR #10 尚未合入，应由integration owner调整base和正式集成。\n\n中文报告：`project/outputs/pm_rl1/v3/G0e_binding_20261118/{RESULTS_ZH.md,LATEST_B_ACCEPTANCE_ZH.md}`、`A0_preflight_supplement_20261118/RESULTS_ZH.md`、`relevance_review_20261118/RESULTS_ZH.md`。\n\n剩余：integration owner合入#10/依赖后正式集成验收；研究者单独GPU授权；B真实NeedCard/Checklist、J1 decode与真实负载。没有120个B6e生成、GPU、真实模型训练、付费调用；G0e不是A7。",
+      "title": "WS-A: G0e/B6e identity binding and guarded A0 CPU preflight supplement",
+      "base": "pmrl1-v3/ws-a-g0e-cpu",
+      "base_sha": "73fdb12f29b6970a268eeda704d73e1bd35b1c3e",
+      "head": "pmrl1-v3/ws-a-g0e-binding",
+      "head_sha": "8ba20d21da4bdcbb552946241563bd41dbe46c6c",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "a17531c7df60e5ee40d4600ce4da9fdf0550c4ed",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-18T00:58:21Z",
+      "updated_at": "2026-11-18T01:24:44Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 6,
+      "changed_files": 67,
+      "additions": 4517,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/12",
+      "display_title": "WS-A: G0e/B6e identity binding and guarded A0 CPU preflight supplement"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44213269571,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 215,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44213269571/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44213269571/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134496674181,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44213269571,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/13",
+      "number": 13,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": false,
+      "body": "当前 bank-v0 已通过来源与读取工程验收，但人物/时间/事件投影、候选适用性及资源对同一 Generator 的增量价值尚未建立。本 PR 提交《四资源架构与能力缺口审查》与可复跑 CPU 核查、机器可读 A–F 最小验证提案；不改变生产接口、bank、排序或研究方案。\n\n基于 integration `320a33d1d871199d171f998300ce926b341ca1a8` 独立施工。审查 G0e 候选固定为 PR #12 `8ba20d21`，没有将 #10/#12 的业务代码重复引入；本 PR 无需等待它们合入才能审阅文档和 CPU 工具。\n\n结论：MP/ME 应先完善人物/slot、阶段和双时间投影；MS 保留 RAW 并验证 SUM/事实键/父文；RS 不必使用 RAG，需直接比较 R0、F-resident、Method、Method+case。当前 Notes 是有边界的文本拼接，仍缺真实 G 语义阅读及同 G/OFF 因果比较。324 条隔离 MP 的全轨迹最新池替代记录均更晚，严格过去过滤不等于已经完成 prefix-as-of 写入。\n\n实际 CPU 核验：3188 条固定 bank、37894 次来源跨度引用；83 条开发样本的合法候选/分数/排名与旧材料一致；8 前缀的120份既有请求可由合法前缀和已读正文精确重建。存储 token IDs 只核查长度，未重新分词。130 项定向 pytest 通过，零 fail/skip/xfail；32份 Schema 一致。最终 HEAD 的全量 PR CI 已通过，实测数量与历史跳过见下文。\n\n最小 D/E 提案是39个OFF/单头和15个MP+MS/ME+MS输入，共54个；结果均null，无GPU/模型执行授权，非B的120终点运行。RS方法材料、独立标签、阅读语义/增量质量/交互/在线延迟均明确pending。\n\n文档：`project/docs/PM_RL1_FOUR_RESOURCE_ARCHITECTURE_REVIEW_20261118_ZH.md`。\n结果与SHA：`project/outputs/pm_rl1/v3/resource_architecture_review_20261118/`。\n复核脚本：`project/scripts/rl1v3/resource_architecture_review.py`，只读固定输入、拒绝覆盖输出，不加载模型。\n\n未修改 C0/32 Schema、A/B 业务代码、旧失败/冻结产物、全局 EXECUTION_STATE、main、H0 或 PR #4。未扫描全部资产、迁移bank、实施A5、申请GPU、运行生成/实验训练/付费调用。不自动合并本PR。\n\n最终 HEAD `ea2f5bde04caba4590b26c80a572d66caa4a2d08` 的 GitHub CI 已通过：https://github.com/chensiyu7812/Metacom5_3/actions/runs/44254295904 。V3 **476 passed / 0 skip / 0 xfail**；完整 CPU **2241 passed / 63 skipped / 1 GPU deselected**；integration-base/outcome-lock 步骤实际 success。63 个历史 skip 为缺旧 engine/relation 输入32、旧 engine/task 输入28、sentence_transformers 1、旧 Llama tokenizer 1、rg 1，不计完整覆盖。新增10项审查测试全部通过。\n\n本轮没有新增生产资源/G接口；交付的是只读验证工具、设计结论与待验证实验。原始CI日志和最终收据保存于共享 workspace `/opt/tokkio-data0/tokkio_projects/pmrl1-validation/resource-review-ci-20261118/`。",
+      "title": "WS-A：四资源架构缺口审查与 CPU 分层验证提案",
+      "base": "pmrl1-v3/integration",
+      "base_sha": "320a33d1d871199d171f998300ce926b341ca1a8",
+      "head": "pmrl1-v3/ws-a-resource-architecture-review",
+      "head_sha": "ea2f5bde04caba4590b26c80a572d66caa4a2d08",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "73f12ced3882542bae31f43cd4e2645bd90e8d12",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-18T06:50:15Z",
+      "updated_at": "2026-11-18T07:02:53Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 1,
+      "changed_files": 12,
+      "additions": 704,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/13",
+      "display_title": "WS-A：四资源架构缺口审查与 CPU 分层验证提案"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44254295904,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 218,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44254295904/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44254295904/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134632151797,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44254295904,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/14",
+      "number": 14,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": true,
+      "body": "## 研究方案候选（非 H0 采纳/非实验授权）\n\n将 2026-11-18 对长期动态记忆、RS 不必 RAG、四头存储/阅读能力、奖励可信性及用户端到端延迟的讨论，整理为可审阅的 **PM-RL1 V3.2 完整研究方案**，并提供 WS-A、WS-B 两份可复制的下一轮 CPU 指令。\n\n### 文件\n- `project/docs/PM_RL1_RESEARCH_PLAN_V3_2_CANDIDATE_20261118_ZH.md`：完整方案（RQ0–RQ6、数据集、as-of 时序记忆、MP/ME/MS/RS、RS 四方案、G0/G1、NeedCard/J1、奖励、RL、延迟、Tokkio、P0–P7、失败分支）。\n- `project/docs/plans/pm_rl1_v3_2_20261118/WS_A_NEXT_PROMPT_ZH.md`：时间重放/时点物化、语义和四资源最小验证、83/54 输入资格及 CPU 验收。\n- `project/docs/plans/pm_rl1_v3_2_20261118/WS_B_NEXT_PROMPT_ZH.md`：G0e 新身份、PrefixAsOf、NeedCard/J1 修订申请、盲评机制与有限头环境的 CPU 准备。\n\n### 保留与边界\n- 基于正式 integration，**未**修改任何生产代码、C0/32 Schema、source/bank/index、冻结 key/trace、训练/判官身份、`EXECUTION_STATE.json`、H0 或 main。\n- **没有**运行 GPU、模型生成、判官、训练、付费 API；不启动 B6e 120 终点。\n- PR #4 的 V3.1 仍是未采纳候选；PR #10/#11/#12/#13 的合并由 integration owner 单独处理。本 PR **只**是计划与指令，合入本 PR 本身不代表批准 V3.2 执行，也不授权任何 GPU。\n- 强调当前 bank-v0 3,188 条合法可回放，但存在 MP 全轨迹 latest 导致历史时点建库资格未证的风险；PR #13 54 个输入均仍未生成。\n- B1 pilot v2 20-call/0-retry、J1 输出上限修订、A0、B6e 仍需单独研究者授权，J1 的 800-token capacity 风险必须按新 JudgeIdentity 评审。\n\n### 后续建议\n先 review 本方案并记录与 V3.1 冲突的决策，再分别下达 A、B CPU 任务；待集成 owner 处理 #10 后再进行 B 的正式绑定，不能将临时合成分支当正式验收。\n\n证据等级：research_plan_candidate + engineering_only（仅先前报告的工程事实）。",
+      "title": "PM-RL1 V3.2 候选完整研究方案：时间一致记忆、资源资格、奖励与 A/B 下一轮任务",
+      "base": "pmrl1-v3/integration",
+      "base_sha": "320a33d1d871199d171f998300ce926b341ca1a8",
+      "head": "pmrl1-v3/plan-v3_2-research-20261118",
+      "head_sha": "f26e7cf8e2c4a728a0d36078700ea676b47223ef",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "86973a018a586db2ae3cce5c0fce712184f1b60f",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-18T11:33:04Z",
+      "updated_at": "2026-11-18T11:33:04Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 3,
+      "changed_files": 3,
+      "additions": 440,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/14",
+      "display_title": "PM-RL1 V3.2 候选完整研究方案：时间一致记忆、资源资格、奖励与 A/B 下一轮任务"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44295714382,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 219,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44295714382/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44295714382/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134772085761,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44295714382,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/15",
+      "number": 15,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": false,
+      "body": "旧 bank-v0 的 MP 先按全历史 latest 入池，再在读取时过滤过去，不能证明每个历史时点的建库选择未受未来影响。本 PR 在研究者明确授权的 V3.2 P0–P2 CPU 范围内新增独立 as-of sidecar：从已完成 RAW 逐会话提交，区分 reported/known/ready 与事实有效时间，生成可复现 frontier/ledger/snapshot，并保留所有旧身份。\n\n基线 `320a33d1d871199d171f998300ce926b341ca1a8`；HEAD `b63635f3621f3a5d252099efcd58ae2d1958dce2`；独立分支 `pmrl1-v3/ws-a-asof-cpu-20261118`。不依赖合并 #10/#12/#13/#14，不修改 C0/32 Schema、旧 bank/Notes/key、A0/100 OFF 原生 token IDs、H0、EXECUTION_STATE 或 main；不自动合并。\n\n### 交付和边界\n- 3 owner（p1/p15/p18）、68会话、65真实历史cut；93条append-only ledger，批流/未来追加/持久重启/幂等一致；干净重跑全部输出与manifest逐字一致。\n- 复现324条旧隔离MP的更晚替代风险，没有恢复入库。保留3188旧资源、1876独特候选、83开发样本及18578候选上下文、54原提案、120旧请求；54没有换样。\n- 83：20 ELIGIBLE / 23 BLOCKED / 40 LEGACY_DIAGNOSTIC；54：16 / 14 / 24。ELIGIBLE仅指机械输入资格，不等于值得读取/资源收益。\n- MP/ME主体、slot、七阶段和更正结构；MS单命题SUM/父RAW/unusable/fallback；两张METHOD候选、独立CASE和R0/F-resident/METHOD/METHOD+CASE公平输入。语义、RS适用及许可例外待审；新表示仅为有新身份的不可执行请求提案，未重新分词/生成。\n- 独立B AI工程审阅100项通过，直接RAW oracle核对65切点，并独立核验54/83/120/324保全。不是人评或原WS-B owner的正式采纳。\n- 研究者要求五项继续人工待审：完整原话、speaker/owner/session/rank、前后文、来源SHA和完整会话RAW已交付，②省略已补全；真实ledger人工批准数为0。\n\n### 验证\n最终 HEAD 的 [GitHub CPU CI #220](https://github.com/chensiyu7812/Metacom5_3/actions/runs/44301809117) 全部步骤通过：V3 **580 passed，0 skip/xfail/error**；公共 CPU 套件 **2345 passed，63 skipped，1 GPU deselected**；integration/outcome-lock PASS。63 项跳过明确保留：60 项需要历史本地 engine/relation/task 输入，1 项缺 rg，2 个模块分别缺 sentence_transformers 和冻结 Llama tokenizer；跳过不算覆盖。完整计数、逐项原因及 V3 gate 见 [CI JUnit artifact](https://github.com/chensiyu7812/Metacom5_3/actions/runs/44301809117/artifacts/14427302238)，原始 job 日志在同一 CI 页面，artifact SHA256 `12178da40fc74f5b81be5a2b97781c6b31c80c567b39387b54e126ac1df919b4`。\n\n本地完整 CPU：2411 passed、1 历史 tokenizer 缺失 skip、11 GPU deselected；本地全套收集早于 B 最后新增两项，新增项已包含在最终 580 项 V3 复跑及上述最终 HEAD CI。32 Schema 通过。首次缺 jsonschema 及批量 parent 排序失败日志均保留，修复后重验。没有 GPU、模型生成、Judge、研究训练或付费调用。\n\n### 审阅入口\n- [中文报告](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/docs/PM_RL1_ASOF_CPU_P0_P2_20261118_ZH.md)\n- [结果及原始日志](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/outputs/pm_rl1/v3/asof_cpu_20261118/RESULTS_ZH.md)\n- [65时点差异](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/outputs/pm_rl1/v3/asof_cpu_20261118/SNAPSHOT_DIFFS_ZH.md)\n- [接口冻结候选](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/outputs/pm_rl1/v3/asof_cpu_20261118/INTERFACE_FREEZE_CANDIDATE.json)\n- [正式交给 B owner 的接口审阅请求](https://github.com/chensiyu7812/Metacom5_3/pull/11#issuecomment-6978235612)\n- [B最终复核](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/outputs/pm_rl1/v3/asof_cpu_20261118/b_review/FINAL_RECEIPT.json)\n- [五项人工审查包](https://github.com/chensiyu7812/Metacom5_3/blob/b63635f3621f3a5d252099efcd58ae2d1958dce2/project/outputs/pm_rl1/v3/asof_cpu_20261118/human_review/HUMAN_REVIEW_PACKET_ZH.md)\n\n剩余：人工语义、自动抽取/摘要、方法适用和CASE关联、正式owner接口采纳、新请求原生容量、A0/G0/Judge/人评与资源增量质量。未宣布A4/A5/A6/A7或研究级资源收益完成。",
+      "title": "WS-A V3.2 P0–P2：CPU as-of 重放、四资源候选及固定83/54资格",
+      "base": "pmrl1-v3/integration",
+      "base_sha": "320a33d1d871199d171f998300ce926b341ca1a8",
+      "head": "pmrl1-v3/ws-a-asof-cpu-20261118",
+      "head_sha": "b63635f3621f3a5d252099efcd58ae2d1958dce2",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "6ffe9332102c6a59ae61d32f05af2eb20ee26f68",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-18T12:13:02Z",
+      "updated_at": "2026-11-18T12:33:19Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 1,
+      "changed_files": 241,
+      "additions": 33334,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/15",
+      "display_title": "WS-A V3.2 P0–P2：CPU as-of 重放、四资源候选及固定83/54资格"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44301809117,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 220,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44301809117/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44301809117/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134793163996,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44301809117,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "pr": {
+      "url": "https://github.com/chensiyu7812/Metacom5_3/pull/16",
+      "number": 16,
+      "state": "open",
+      "merged": false,
+      "mergeable": true,
+      "draft": true,
+      "body": "## WS-B V3.2 P0–P2：as-of 绑定、资源价值协议、奖励资格（CPU only）\n\n叠在 PR #11（`dd33e131`）之上；**#11 的冻结交付一字未改，仍为 Draft**。完整报告：`project/outputs/pm_rl1/v3/V32_WSB_P0P2/REPORT_ZH.md`；给 WS-A 的复核收据：`ASOF_JOINT_RECEIPT_ZH.md`。\n\n本轮没有使用：GPU、Generator、NeedCard writer、Judge、PPO/SFT、付费 API、B6e 终点、J1 调用。没有修改：H0、EXECUTION_STATE、C0、B1/B2/B5/B6e 冻结证据。没有合并任何 PR。全部结论为 engineering_only。\n\n### 结果\n- **G0e 正式绑定：BLOCKED**。PR #10（`73fdb12f`）仍为 OPEN，所以 #11 保持 Draft。#10 合入后的执行步骤已写在报告第 2 节。\n- **bank-v0 as-of 审计**：\n  - 旧编译器的输入是按时间顺序的：401/401 个会话的 prior-profile 哈希都能只用严格过去的单元重算出来；\n  - 但 MP 入池用的是全轨迹最新值，导致 **3,460/4,119 个前缀的 MP 池小于时间一致池**（反方向为 0）；\n  - B6e 8 个前缀的 MP Top-1：4 个与旧结果相同，3 个不同；ab3d17 的 MP 在旧库中\"不可达\"，这是全历史投影造成的，时间一致池中有 2 个候选。\n- **WS-A as-of sidecar（PR #15，`b63635f3`）**：B 用自己的检查器（X1–X4、X5b/c、X7）和 RAW oracle 独立核对，p1/p15/p18 共 65 个切点 **65/65 通过**（机械层）。X5a 无法从单一 horizon 的导出文件检验，已请 A 补充。检查器先用 bank-v0 做过对照：旧规则触发 175 处违规，按时间一致方式重建后 0 处。\n- **54 个输入的联合资格**：ELIGIBLE 16 / LEGACY_DIAGNOSTIC 24 / BLOCKED 14，与 A 的判定一致。38 处分歧全部是 A 的写入器/语义轴更严，联合标签取更保守的一方。54 个输入一个都没换。\n- **P2 协议冻结**（SHA `2b6057c8…`）：\n  - 实验族 EXP-D / E / E-tier2 / RS / C，每个族只改一个因素；\n  - RS 四方案：R0 / F-resident / METHOD / METHOD+CASE；\n  - 76 个预注册盲评对，A/B 位置由协议 SHA 决定；错误类别 E1–E11；\n  - 七种诊断情形中 S7 未被 54 覆盖，需另立补充集（只是提案）。\n- **可见性**：PM / NoText / G 三张白名单。B6e 的 471 个读取顺序、942 次观察 **0 泄漏**；2 个 G0e fixture 请求 0 泄漏。\n- **奖励**：\n  - NeedCard pilot v2 `b1d3225b…` 的 CPU 复核通过，writer 调用 0 次；\n  - required / relevant_optional / must_not_contradict 的语义已用测试固定；\n  - J1 容量 v2：如果回复是一整句 240 token 的长句，13 项检查表最坏需要 6,981 token；多句回复 40 项最坏 5,223 token；\n  - decode 候选（上限 8,192 推荐，备选 16,384）**未采用**，等研究者批准；\n  - 调用、检查项、终点三级状态分开登记，pending 从不填 0；训练与评价隔离规则 R1–R8。\n- **环境与基线**：as-of 绑定的 episode、类型化的非法 GET、NoText、奖励区间、按版本隔离的缓存；11 个对照臂的公平性契约。合成任务上的 fixture 结果只说明代码能跑通。\n- **延迟**：在线与离线分两本账，记录 TTFV / TTC / TTFA 的 p50/p95 及失败率。真实测量需要另行授权。\n\n### 测试与 CI\n- 新增 `tests/test_rl1v3_v32_wsb.py`（37 项）。\n- 本地 V3 严格套件和完整 CPU 套件的结果见 `outputs/.../V32_WSB_P0P2/logs/`。\n\n### 需要研究者或 integration owner 决定\n1. 合入 PR #10；\n2. NeedCard pilot v2 运行授权；\n3. J1 decode 上限选择，并冻结新的 JudgeIdentity；\n4. P2 生成范围（tier-1，或 tier-1 + tier-2）；\n5. S7 补充集；\n6. EXP-RS 的方法材料；\n7. 人工审阅人力；\n8. A6000 延迟测量；\n9. C0 迁移提案（TerminalKey 增加 `asof_binding_sha256`）。\n\n请勿由 WS-B 自行合并；合并由 integration owner 负责。\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n",
+      "title": "WS-B V3.2 P0–P2：as-of 绑定与独立核验、54 输入联合资格、资源价值协议、奖励资格（CPU only）",
+      "base": "pmrl1-v3/ws-b-s3",
+      "base_sha": "dd33e1311eea56a9312e99c7f237e928ee09fe12",
+      "head": "pmrl1-v3/ws-b-v32-p0p2",
+      "head_sha": "a9cf0cca0fecd044a5a4e2a4066355a9a8123dc5",
+      "head_repo_id": 1326311344,
+      "head_repo_full_name": "chensiyu7812/Metacom5_3",
+      "merge_commit_sha": "ace45d88471e9e9348d175bbe6b0e3a38ef79faf",
+      "user": {
+        "login": "chensiyu7812",
+        "name": "chensiyu7812",
+        "email": null,
+        "avatar_url": "https://avatars.githubusercontent.com/u/68813436?v=4",
+        "id": 68813436
+      },
+      "requested_reviewers": null,
+      "requested_team_reviewers": null,
+      "diff": null,
+      "comments": null,
+      "created_at": "2026-11-18T12:33:02Z",
+      "updated_at": "2026-11-18T12:33:02Z",
+      "closed_at": null,
+      "merged_at": null,
+      "commits": 7,
+      "changed_files": 73,
+      "additions": 8126,
+      "deletions": 0,
+      "display_url": "https://github.com/chensiyu7812/Metacom5_3/pull/16",
+      "display_title": "WS-B V3.2 P0–P2：as-of 绑定与独立核验、54 输入联合资格、资源价值协议、奖励资格（CPU only）"
+    },
+    "ci": {
+      "workflow_runs": [
+        {
+          "id": 44305002847,
+          "name": "PM tests",
+          "status": "completed",
+          "conclusion": "success",
+          "run_number": 221,
+          "jobs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44305002847/jobs",
+          "logs_url": "https://api.github.com/repos/chensiyu7812/Metacom5_3/actions/runs/44305002847/logs",
+          "workflow_id": 329107835
+        }
+      ]
+    },
+    "jobs": {
+      "jobs": [
+        {
+          "id": 134804157881,
+          "name": "pytest",
+          "status": "completed",
+          "conclusion": "success",
+          "run_id": 44305002847,
+          "logs_url": null,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3
+            },
+            {
+              "name": "Install CPU PyTorch for non-GPU CI",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4
+            },
+            {
+              "name": "Install package",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5
+            },
+            {
+              "name": "Compile PM-v2 modules",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6
+            },
+            {
+              "name": "Run all V3 acceptance tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7
+            },
+            {
+              "name": "Reject missing, skipped, xfailed or failed V3 acceptance",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8
+            },
+            {
+              "name": "Run blocking public-only Paper-1 suite",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9
+            },
+            {
+              "name": "Upload test counts and skip reasons",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10
+            },
+            {
+              "name": "Validate Paper-1 integration base and outcome lock",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 22
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 23
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "role": "WS-A resource/Generator engineer",
+  "evidence_level": "engineering_only",
+  "test_environment": {
+    "python": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+    "vendor": "/opt/tokkio-data0/tokkio_envs/pmrl1_validation_vendor_20261103",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "base_sha": "b63635f3621f3a5d252099efcd58ae2d1958dce2",
+  "test_code_hashes": {
+    "project/scripts/rl1v3/check_e1_exports_standalone.py": "cec0c46ac041dfaace3bdf0a0968bd21b295b7412a2e1a55f236170fa5f02578",
+    "project/scripts/rl1v3/e1_synthetic_fixture.py": "2309b0a433c69553bb56b961d84a3d07c08a49bd1a0d3f72384c381451377b2b",
+    "project/scripts/rl1v3/prepare_e1_qualification.py": "fa161dac58aeaa122b6f9a13c65faabacf9a38fafeaf8d9d5e916737f6e97348",
+    "project/scripts/rl1v3/verify_e1_dual_readings.py": "39080ad111ed9622b0a826af8cd5685d9241cdb5b72ea292f7d1b5739642078d",
+    "project/src/metacom_pm/rl1v3/compile/qualification.py": "d922f9f627e58410398fe5824363ee8aa062379a05e675ce063a0f6fc25c6023",
+    "project/tests/test_rl1v3_e1_qualification.py": "615da5506dad838eac4874192e5811378785e782daba80536c287cdf8628fb52"
+  },
+  "full_cpu": {
+    "tests": 2423,
+    "passed": 2422,
+    "skipped": [
+      {
+        "name": ".tests.test_paper1_llama_tokenizer",
+        "reason": "collection skipped",
+        "detail": "('/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-qualification/project/tests/test_paper1_llama_tokenizer.py', 15, 'Skipped: frozen tokenizer not present at /home/chenzhi/paper1_runs/frozen_tokenizers/llama31_8b_instruct_tokenizer.json')"
+      }
+    ],
+    "failures": [],
+    "junit_sha256": "b1d7c206558f2e1e498fce02bd1a7d93fee3d51fbf9739df73677ba15ad13672",
+    "gpu_deselected": 11,
+    "seconds": 565.14
+  },
+  "v3_strict": {
+    "tests": 589,
+    "passed": 589,
+    "skipped": [],
+    "failures": [],
+    "junit_sha256": "0cbcf7f178146cd6a83e4d3960d6f77b9c407779f09b597fe217e6ca73667ea8",
+    "seconds": 106.64
+  },
+  "targeted_final": {
+    "tests": 9,
+    "passed": 9,
+    "skipped": [],
+    "failures": [],
+    "junit_sha256": "4379828adbbf72d89fa1e859fef6484b90a6bb66ace6f16654039d3d3c27e6ee"
+  },
+  "scope_notes": [
+    "full CPU tests are the repository CI scope: test_paper1_*, test_rl1_*, test_rl1v3_*",
+    "standard-library verifier identity/payload checks were separately rerun after expansion; targeted-final passed",
+    "existing deterministic optimizer fixture unit tests are not research training and produce no research checkpoints"
+  ],
+  "reproducibility": {
+    "files": 69,
+    "byte_identical": true,
+    "original_manifest": "9939c50e2fd436361a14b33c8f8270f00ee0bb06b9011f4f2e752adff67a981c",
+    "repeat_manifest": "9939c50e2fd436361a14b33c8f8270f00ee0bb06b9011f4f2e752adff67a981c",
+    "fresh_native_tokenization": true
+  },
+  "snapshot_hashes_recomputed": 16,
+  "native_dual_horizon_read_pairs": 8,
+  "semantic_approvals": 0,
+  "original_human_five": "pending_human_review unchanged",
+  "model_calls": 0,
+  "paid_calls": 0,
+  "research_training_runs": 0,
+  "merge_actions": 0,
+  "B_independent_review": "requested_at_PR_handoff; pending receipt",
+  "CI": "see final PR HEAD workflow; not replaced by local results",
+  "logs": {
+    "full-cpu.log": "0670a6838a89c3b50dc81c9b73480d813eecc2c5281cb2cef9afeb4a049f76d9",
+    "full-cpu.xml": "b1d7c206558f2e1e498fce02bd1a7d93fee3d51fbf9739df73677ba15ad13672",
+    "v3-final.log": "831bd119d028b4407a32af3fdd1d9eaeea939a2876e42cf18be940c405d32a5f",
+    "v3-final.xml": "0cbcf7f178146cd6a83e4d3960d6f77b9c407779f09b597fe217e6ca73667ea8",
+    "v3-final-gate.json": "ea09a862016a3ef05c7800e11a7141de2ee2e21cba21b7ea78e5d9308fc8b8d7",
+    "targeted-final.log": "e286e96acf24cea5230d6836450cec3e29e53fc199508ce0dde0fbcff4c482fc",
+    "targeted-final.xml": "4379828adbbf72d89fa1e859fef6484b90a6bb66ace6f16654039d3d3c27e6ee",
+    "standalone-final.log": "c37e857840ea36e5408ef5af90a9f7a9edfd09537373e27c89cdd9249705155f",
+    "standalone-final.json": "16129b06b66ffadb7c7c153c32562d62026d1ea404a149a3b37ba769d61eb658",
+    "dual-readings.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build_v3.log": "d8e7f35e1c1aca90766bccbb3d5cf020f0762cc849da766af363435be9593394",
+    "repeat-v3.log": "d8e7f35e1c1aca90766bccbb3d5cf020f0762cc849da766af363435be9593394",
+    "synthetic.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
