@@ -1,6 +1,6 @@
 # WS-A E0/E1 资源资格交付（CPU，Draft）
 
-主报告：[PM_RL1_E1_QUALIFICATION](../../../../../docs/PM_RL1_E1_QUALIFICATION_20261118_ZH.md)。本目录只新增证据，不批准研究资源或模型运行。
+主报告：[PM_RL1_E1_QUALIFICATION](../../../../docs/PM_RL1_E1_QUALIFICATION_20261118_ZH.md)。本目录只新增证据，不批准研究资源或模型运行。
 
 - [8 前缀绑定表](BINDINGS_ZH.md)；完整 `cpu_v3/BINDINGS.jsonl`、snapshots/frontiers/ledgers/readings。
 - [SHA 交换规范](SNAPSHOT_HASH_SPEC_ZH.md)及 HASH_TEST_VECTORS；[复跑与 B 审阅入口](RUNBOOK_ZH.md)。
