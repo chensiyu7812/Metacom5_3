@@ -352,6 +352,10 @@ def test_assess_job_rules():
             "S6_third_party_as_user"} <= set(me["candidate_situations"])
     assert me["questions"]["generator_uses_or_ignores_correctly"] == "not_answerable_before_generation"
     assert me["questions"]["worth_reading_now"] == "pending_human"
+    cov = P2.coverage([off, rs, me, blk])
+    assert cov["S2"]["status"].startswith("determined_by_human_labels") and cov["S2"]["candidate_inputs"] == 2
+    assert cov["S7"]["status"] == "NOT_COVERED_needs_supplementary_set" and cov["S7"]["head_level_unavailable"] == 1
+    assert P2.coverage([off], memory_empty_inputs=1)["S7"]["status"] == "covered"
 
 
 def test_review_pairs_positions_are_seeded_and_complete():

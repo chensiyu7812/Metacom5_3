@@ -89,7 +89,7 @@ def assess_job(job: dict, facts: dict, prefix_cues: dict) -> dict:
         reasons.append("no resource; as-of independent")
     if status == "BLOCKED":
         return dict(eligibility="BLOCKED", reasons=reasons, questions=None, required_human_checks=[],
-                    candidate_situations=["S7_no_legal_source_in_legacy"], research_role="not_run_not_zero")
+                    candidate_situations=["S7h_head_without_legal_source_in_legacy"], research_role="not_run_not_zero")
     for h in subset:
         f = facts[h]
         c = f["cues"]
@@ -145,16 +145,28 @@ SITUATIONS = {
     "S4": "a relevant resource may induce inappropriate advice",
     "S5": "the user already refused / tried and failed a suggestion",
     "S6": "third-party (or external case) information may be taken as the user's own experience",
-    "S7": "no legal external source at all",
+    "S7": "no legal personal-history source at all (every memory head unavailable; RS is a preinstalled "
+          "external snapshot and stays available)",
 }
+HUMAN_DETERMINED = ("S1", "S2")   # need / no-need is a semantic judgement; lexical cues cannot find it
 
 
-def coverage(assessed: list[dict]) -> dict:
+def coverage(assessed: list[dict], *, memory_empty_inputs: int = 0) -> dict:
     out = {}
+    resource_inputs = sum(1 for a in assessed if a.get("research_role") not in ("off_baseline", "not_run_not_zero"))
     for k in SITUATIONS:
-        n = sum(any(s.startswith(k) for s in a["candidate_situations"]) for a in assessed)
-        out[k] = dict(description=SITUATIONS[k], candidate_inputs=n,
-                      status="covered_by_prescreen_pending_human" if n else "NOT_COVERED_needs_supplementary_set")
+        n = sum(any(s.split("_")[0] == k for s in a["candidate_situations"]) for a in assessed)
+        if k in HUMAN_DETERMINED:
+            out[k] = dict(description=SITUATIONS[k], prescreen_inputs=n, candidate_inputs=resource_inputs,
+                          status="determined_by_human_labels (every resource input is a candidate)")
+        elif k == "S7":
+            out[k] = dict(description=SITUATIONS[k], candidate_inputs=memory_empty_inputs,
+                          head_level_unavailable=sum("S7h_head_without_legal_source_in_legacy" in a["candidate_situations"]
+                                                     for a in assessed),
+                          status="covered" if memory_empty_inputs else "NOT_COVERED_needs_supplementary_set")
+        else:
+            out[k] = dict(description=SITUATIONS[k], candidate_inputs=n,
+                          status="covered_by_prescreen_pending_human" if n else "NOT_COVERED_needs_supplementary_set")
     return out
 
 

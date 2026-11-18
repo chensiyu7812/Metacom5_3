@@ -367,7 +367,8 @@ def step_p2(args):
         joint_rule="joint = the more conservative of B's time-legality label and WS-A's writer/semantic label "
                    "(ELIGIBLE > LEGACY_DIAGNOSTIC > BLOCKED); disagreements listed, none silently resolved",
         wsa_ref=WSA_REF, disagreements=disagree,
-        situations=RV.coverage(assessed),
+        situations=RV.coverage(assessed, memory_empty_inputs=sum(
+            all(facts[a["prefix_id"]][h]["legal_candidates"] == 0 for h in ("MP", "ME", "MS")) for a in assessed)),
         supplementary_needed=dict(
             rule="only for situations NOT covered; a separate, pre-registered challenge set with its own identity, "
                  "never replacing any of the 54; selection before any generation, by researcher approval",
