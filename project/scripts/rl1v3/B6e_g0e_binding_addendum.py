@@ -81,14 +81,24 @@ def private_ids_of(port, prefix, records):
 
 
 def future_texts_of(port, prefix, *, min_len=24):
-    """Current-session turns after the cut and every later session of the owner (never visible)."""
+    """Current-session turns after the cut and every later session of the owner (never visible).
+
+    A future utterance that is verbatim identical to a legally visible one (the visible prefix or a
+    strictly-past session, e.g. a supporter's fixed greeting) cannot identify future information and
+    is reported separately, not checked.  -> (texts to check, count shared with legal text)."""
     reg = port.bank.registry
     cur = reg.entry(prefix.owner_id, prefix.session_id).source
     out = [t.text for t in cur.turns if t.turn_index > prefix.cut_turn]
+    legal = {t.text for t in prefix.turns}
     for e in reg.entries:
-        if e.source.owner_id == prefix.owner_id and e.source.chronological_rank > prefix.cutoff_rank:
+        if e.source.owner_id != prefix.owner_id:
+            continue
+        if e.source.chronological_rank > prefix.cutoff_rank:
             out += [t.text for t in e.source.turns]
-    return sorted({t for t in out if len(t) >= min_len})
+        elif e.source.chronological_rank < prefix.cutoff_rank:
+            legal |= {t.text for t in e.source.turns}
+    fut = {t for t in out if len(t) >= min_len}
+    return sorted(fut - legal), len(fut & legal)
 
 
 def main():
@@ -128,9 +138,10 @@ def main():
                                read_takes_acquired=True, dynamic_mask=oport.action_mask)
         old_table = TerminalTable({k: E.TerminalOutcome(reward=0.5, key_sha256=k) for k in old["key_by_subset"].values()},
                                   table_id="old-identity-rewards-must-not-transfer")
-        fut = future_texts_of(port, p)
+        fut, fut_shared = future_texts_of(port, p)
         checks = dict(reachable_new=rep["n_reachable"], reachable_preregistered=want, replay_passed=rep["passed"],
-                      replay_failures=rep["failures"], future_texts_checked=len(fut), failures=[])
+                      replay_failures=rep["failures"], future_texts_checked=len(fut),
+                      future_texts_identical_to_legal_text=fut_shared, failures=[])
         reach_masks = sorted(E.mask_of(() if s == "OFF" else s.split("+")) for s in rep["key_by_subset"])
         if rep["n_reachable"] != want or sorted(rep["key_by_subset"]) != sorted(old["key_by_subset"]):
             stop = stop or f"reachable_changed:{pid[:12]}:{want}->{rep['n_reachable']}"
@@ -206,7 +217,7 @@ def main():
     write_jsonl_once(out / "G0E_REPLAY_REPORTS.jsonl", reports)
     write_jsonl_once(out / "G0E_TERMINALS.jsonl", terms)
     write_json_once(out / "G0E_BINDING_ADDENDUM.json", rec)
-    man = build_manifest(task="B6e_g0e_binding_addendum", root=PROJECT,
+    man = None if not out.is_relative_to(PROJECT) else build_manifest(task="B6e_g0e_binding_addendum", root=PROJECT,
                          inputs={"selection": PLAN_DIR / "SELECTION.json", "plan_v3": PLAN_DIR / "PLAN_V3_FROZEN.json",
                                  "real_keys_check": PLAN_DIR / "REAL_KEYS_CHECK.json", "formal_replay": FORMAL_REPLAY,
                                  "g0e_config": REPO / "project/configs/rl1v3/G0e.json"},
@@ -216,7 +227,8 @@ def main():
                                PROJECT / "src/metacom_pm/rl1v3/generator/g0e_port.py",
                                PROJECT / "src/metacom_pm/rl1v3/generator/g0e.py",
                                PROJECT / "src/metacom_pm/rl1v3/render/request_packet.py"], code_sha=rec["code_head"])
-    write_json_once(out / "manifest.json", dict(man, model_calls=0, gpu_used=False, status=rec["status"]))
+    if out.is_relative_to(PROJECT):
+        write_json_once(out / "manifest.json", dict(man, model_calls=0, gpu_used=False, status=rec["status"]))
     print(json.dumps({k: rec[k] for k in ("status", "identity_fields_changed", "terminals", "terminals_preregistered",
                                           "addendum_sha256")}, indent=1))
     print(json.dumps([dict(p=r["prefix_id"][:12], new=r["reachable_new"], pre=r["reachable_preregistered"],
