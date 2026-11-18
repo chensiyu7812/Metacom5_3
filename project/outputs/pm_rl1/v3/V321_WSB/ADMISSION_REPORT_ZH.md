@@ -104,4 +104,4 @@
 
 ## 7. 测试核查
 
-见 `testsdiff/ALLTESTS_DIFF_ZH.md`（全量测试跑完后填写）。最终 HEAD 的 CI 写在 PR 描述中，它是在最后一次推送之后核对的。
+见 `testsdiff/ALLTESTS_DIFF_ZH.md`。在相同环境、相同命令下，base `a9cf0cca` 与 #17 HEAD `3dafb2aa` 的 99 个失败逐测试 ID 完全相同：只在一边失败的为 0，状态变化 0；HEAD 多出的 30 个测试全部通过。这 99 个都是旧 `test_v1_5_*`、posthoc 等文件，不在 CI 范围内，81 个是缺少未入库的旧数据。#17 最终 HEAD 的 CI（run 44323588907）：V3 633 passed，公共 2,398 passed。#20 最终 HEAD 的 CI 写在 PR 描述中。
