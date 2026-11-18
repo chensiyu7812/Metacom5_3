@@ -307,6 +307,9 @@ def step_admission(_):
     screen = json.loads((OUT / "screen/INITIAL_SCREEN_90.json").read_text())
     words = []
     for r in screen["rows"]:
+        if r["stratum"] == "S7_rank0":                    # rank-0 cuts: no personal history (not in B0 census)
+            words.append(0)
+            continue
         c = census[r["prefix_id"]]
         words.append(sum(len(t["text"].split()) for s in raw.legal_past(c["owner_id"], c["cutoff_rank"], c["timestamp"])
                          for t in s["turns"]))
