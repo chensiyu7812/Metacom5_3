@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/home/tokkio/Metacom5_3-ws-b/project/scripts/rl1v3/V321_wsb_admission.py", line 325, in <module>
+    dict(receipt=step_receipt, screen=step_screen, stats=step_stats, pp1=step_pp1, protocol=step_protocol,
+  File "/home/tokkio/Metacom5_3-ws-b/project/scripts/rl1v3/V321_wsb_admission.py", line 271, in step_gates
+    write_json_once(out / "GATES_V321.json", dict(protocol=V.PROTOCOL, status=V.STATUS, prs=prs, facts=facts,
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 104, in write_json_once
+    return write_bytes_once(path, (canonical_json(value) + "\n").encode("utf-8"))
+                                   ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 38, in canonical_json
+    return json.dumps(_jsonable(value), ensure_ascii=False, sort_keys=True,
+                      ^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 29, in _jsonable
+    return {k: _jsonable(v) for k, v in value.items()}
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 29, in <dictcomp>
+    return {k: _jsonable(v) for k, v in value.items()}
+               ^^^^^^^^^^^^
+  File "/home/tokkio/Metacom5_3-ws-b/project/src/metacom_pm/rl1v3/io.py", line 28, in _jsonable
+    raise TypeError("JSON object keys must be strings")
+TypeError: JSON object keys must be strings
+exit=1
