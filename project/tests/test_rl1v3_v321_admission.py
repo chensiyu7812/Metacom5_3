@@ -170,3 +170,13 @@ def test_freeze_marks_candidate_and_keeps_base():
     f = V.freeze(dict(x=1))
     assert f["status"] == "PROPOSED_NOT_ADOPTED" and f["base"]["protocol"] == Q.PROTOCOL
     assert "unchanged" in f["supersedes"]
+
+
+def test_pp1_cost_reads_full_histories_and_screen_cost_counts_s7_cheaply():
+    c = V.pp1_cost([5000] * 8)
+    assert c["human_minutes"]["history_read_per_person"] == 160
+    assert c["human_minutes"]["per_rater"] == round(8 * 1.5 + 160 + 8 * 3 + 16 * 4)
+    s = V.screen_cost([0, 2500])
+    assert s["minutes"] == round(1 + 10 + 3)
+    f = V.fc_ms_cost(34, 5000)
+    assert f["pairs"] == 102 and f["replies"] == 102 and f["total_hours"] > f["per_rater_hours"]

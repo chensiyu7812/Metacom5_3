@@ -405,26 +405,56 @@ def pp1_calls(eligibility_rows: list[dict]) -> list[dict]:
     return calls
 
 
-def pp1_cost(prefixes: int = 8, raters: int = 2, f_by_both: bool = True, overrun: float = 1.5,
-             seconds_per_call_expected: float = 25, load_seconds: float = 240, timeout: int = 300) -> dict:
+def history_minutes(words: int, wpm: int = 250) -> float:
+    """Full first read of an as-of history (upper bound; a searched skim is cheaper but not assumed)."""
+    return words / wpm
+
+
+def pp1_cost(words: list[int] | None = None, raters: int = 2, f_by_both: bool = True, overrun: float = 1.5,
+             wpm: int = 250, seconds_per_call_expected: float = 25, load_seconds: float = 240,
+             timeout: int = 300) -> dict:
+    """Upper-bound cost of one PP1 run (8 prefixes, 16 calls).  ``words`` = as-of history words per prefix."""
     e = PP1_EST_MIN
+    prefixes = len(words) if words else 8
     pairs, replies = prefixes, 2 * prefixes
-    per_rater = pairs * e["q0_per_pair"] + prefixes * e["qh_history_first_read"] + pairs * e["qh_per_pair"] + \
-        (replies if f_by_both else replies // 2 + math.ceil(0.2 * replies)) * e["f_per_reply"]
-    screener = prefixes * e["screen_per_prefix"]
+    read = sum(history_minutes(w, wpm) for w in words) if words else prefixes * e["qh_history_first_read"]
+    f_items = replies if f_by_both else replies // 2 + math.ceil(0.2 * replies)
+    per_rater = pairs * e["q0_per_pair"] + read + pairs * e["qh_per_pair"] + f_items * e["f_per_reply"]
+    screener = read + prefixes * 3                       # read the history, then label (S-1..S-5)
     adjud = math.ceil(0.25 * replies) * e["adjudication_per_item"]
-    fa = replies * e["fa_per_error"]          # upper bound: one error per reply
+    fa = replies * e["fa_per_error"]                     # upper bound: one error per reply
     total = raters * per_rater + screener + adjud + fa
-    calls = replies
     return dict(
-        calls=dict(generator=calls, gpu_jobs=1, judge=0, needcard_writer=0, paid_api=0, retries=0),
-        gpu_seconds=dict(expected=round(load_seconds + calls * seconds_per_call_expected),
-                         upper_bound=load_seconds + calls * timeout,
+        calls=dict(generator=replies, gpu_jobs=1, judge=0, needcard_writer=0, paid_api=0, retries=0),
+        gpu_seconds=dict(expected=round(load_seconds + replies * seconds_per_call_expected),
+                         upper_bound=load_seconds + replies * timeout,
                          note="upper bound = every call hits the 300 s timeout; no automatic retry"),
-        human_minutes=dict(per_rater=per_rater, raters=raters, screener=screener, adjudication_upper=adjud,
-                           fa_audit_upper=fa, total=total, total_with_overrun=round(total * overrun)),
-        assumptions=dict(PP1_EST_MIN, f_by_both=f_by_both, overrun=overrun),
+        human_minutes=dict(per_rater=round(per_rater), raters=raters, screener=round(screener),
+                           adjudication_upper=adjud, fa_audit_upper=fa, total=round(total),
+                           total_with_overrun=round(total * overrun),
+                           history_read_per_person=round(read)),
+        assumptions=dict(PP1_EST_MIN, f_by_both=f_by_both, overrun=overrun, wpm=wpm,
+                         history_words=words, note="history read = full first read at wpm (upper bound)"),
     )
+
+
+def screen_cost(words: list[int], wpm: int = 250, label_minutes: float = 3, s7_minutes: float = 1) -> dict:
+    """Curator minutes for a screen set (S7 items have no history)."""
+    mins = [s7_minutes if w == 0 else history_minutes(w, wpm) + label_minutes for w in words]
+    return dict(items=len(words), minutes=round(sum(mins)), hours=round(sum(mins) / 60, 1),
+                median_words=sorted(words)[len(words) // 2] if words else 0)
+
+
+def fc_ms_cost(prefixes: int, median_words: int, arms: int = 3, raters: int = 2, wpm: int = 250) -> dict:
+    """Formal MS comparison: all arm pairs per prefix, Q0+QH by two raters, F by one person per reply."""
+    e = PP1_EST_MIN
+    pairs = prefixes * arms * (arms - 1) // 2
+    replies = prefixes * arms
+    per_rater = pairs * e["q0_per_pair"] + prefixes * history_minutes(median_words, wpm) + pairs * e["qh_per_pair"]
+    f = replies * e["f_per_reply"] + prefixes * history_minutes(median_words, wpm)
+    return dict(prefixes=prefixes, arms=arms, pairs=pairs, replies=replies, generator_calls=replies,
+                per_rater_hours=round(per_rater / 60, 1), f_person_hours=round(f / 60, 1),
+                total_hours=round((raters * per_rater + f) / 60, 1))
 
 
 PP1_STOP = dict(
@@ -443,7 +473,8 @@ PP1_METRICS = ["完成率与锁定率", "各表单单件耗时（中位、P90）
                "技术痕迹计数（实体字符、截断）"]
 
 
-def pp1_protocol(eligibility_rows: list[dict], qh_backgrounds: dict | None = None) -> dict:
+def pp1_protocol(eligibility_rows: list[dict], qh_backgrounds: dict | None = None,
+                 words: list[int] | None = None) -> dict:
     calls = pp1_calls(eligibility_rows)
     return dict(
         protocol=PROTOCOL + ":PP1", status=STATUS, purpose="程序可用性验证；不估计资源效应，不进入正式分析",
@@ -469,7 +500,7 @@ def pp1_protocol(eligibility_rows: list[dict], qh_backgrounds: dict | None = Non
                         pooling="只有在查看 PP1 结果之前书面预注册合并规则时才可合并；默认不合并",
                         exposure="PP1 的 RET-MS vs OFF 结果查看后，这 8 个前缀登记为 outcome_same_contrast",
                         reporting="PP1 结果只作描述性、探索性报告"),
-        cost=pp1_cost(),
+        cost=pp1_cost(words),
     )
 
 

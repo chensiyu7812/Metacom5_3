@@ -235,7 +235,7 @@ def step_pp1(_):
                     "timestamp) from the public sanitized artifact; no excerpt, role or ranking; identical for OFF and "
                     "RET-MS; frozen before any generation", rows=list(bgs.values())))
     spec = V.pp1_protocol(elig, qh_backgrounds=dict(file="QH_BACKGROUNDS.json", index=index,
-                                                    sha256=object_sha256(index)))
+                                                    sha256=object_sha256(index)), words=[x["words"] for x in index])
     write_json_once(out / "PP1_PROTOCOL.json", V.freeze(dict(pp1=spec)))
     manifest("pp1", {"eligibility": ELIG}, [out / "QH_BACKGROUNDS.json", out / "PP1_PROTOCOL.json"])
     print(json.dumps(dict(calls=len(calls), backgrounds=len(bgs), all_equal=all(x["equals_pr18_qh_source_handoff"]
@@ -297,6 +297,35 @@ def step_gates(_):
         print(g["gate"], g["state"], [(i["id"], i["state"]) for i in g["items"]])
 
 
+def step_admission(_):
+    """Cost numbers for the admission report: PP1 (from its protocol), the 90 screen, FC-MS scenarios."""
+    from metacom_pm.rl1v3.asof import e1_receipt as E
+    from metacom_pm.rl1v3.evaluate import resource_effect_v321 as V
+    import V321_wsb_pr18_receipt as S
+    raw = E.Raw(json.loads(S.ARTIFACT.read_text()))
+    census = {c["prefix_id"]: c for c in map(json.loads, S.CENSUS.read_text().splitlines())}
+    screen = json.loads((OUT / "screen/INITIAL_SCREEN_90.json").read_text())
+    words = []
+    for r in screen["rows"]:
+        c = census[r["prefix_id"]]
+        words.append(sum(len(t["text"].split()) for s in raw.legal_past(c["owner_id"], c["cutoff_rank"], c["timestamp"])
+                         for t in s["turns"]))
+    pp1 = json.loads((OUT / "pp1/PP1_PROTOCOL.json").read_text())["pp1"]
+    with_hist = sorted(w for w in words if w)
+    med = with_hist[len(with_hist) // 2]
+    res = dict(pp1_cost=pp1["cost"], screen90=V.screen_cost(words), screen162_upper=V.screen_cost(words + words[:72]),
+               fc_ms=[V.fc_ms_cost(n, med) for n in (34, 51, 68)],
+               note="FC-MS rows: 17 groups x m = 2 / 3 / 4 prefixes, 3 arms (OFF, DP-MS, RET-MS), all 3 pairs; "
+                    "history read once per person per prefix at 250 wpm (upper bound); screen162_upper "
+                    "approximates the remaining 72 by the first 72 items' history lengths")
+    write_json_once(OUT / "admission/ADMISSION_NUMBERS.json", res)
+    manifest("admission", {"screen": OUT / "screen/INITIAL_SCREEN_90.json", "pp1": OUT / "pp1/PP1_PROTOCOL.json"},
+             [OUT / "admission/ADMISSION_NUMBERS.json"])
+    print(json.dumps(dict(pp1=res["pp1_cost"]["human_minutes"], gpu=res["pp1_cost"]["gpu_seconds"],
+                          screen90=res["screen90"], screen162=res["screen162_upper"], fc_ms=res["fc_ms"]),
+                     ensure_ascii=False))
+
+
 def _junit(p: Path) -> dict:
     res = {}
     for tc in ET.parse(p).getroot().iter("testcase"):
@@ -341,8 +370,9 @@ def step_testsdiff(a):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("step", choices=("receipt", "screen", "stats", "pp1", "protocol", "gates", "testsdiff"))
+    ap.add_argument("step", choices=("receipt", "screen", "stats", "pp1", "protocol", "gates", "admission",
+                                     "testsdiff"))
     ap.add_argument("--runs", nargs="*", default=[], help="label=junit.xml (base first, head second)")
     a = ap.parse_args()
     dict(receipt=step_receipt, screen=step_screen, stats=step_stats, pp1=step_pp1, protocol=step_protocol,
-         gates=step_gates, testsdiff=step_testsdiff)[a.step](a)
+         gates=step_gates, admission=step_admission, testsdiff=step_testsdiff)[a.step](a)
