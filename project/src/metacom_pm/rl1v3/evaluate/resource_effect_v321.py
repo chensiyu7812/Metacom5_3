@@ -324,7 +324,7 @@ def gates_v321(f: dict) -> list[dict]:
               f["a0_measured"], reason="A0 尚未实测（需 GPU 授权）", owner="WS-A（执行）/ 研究者（授权）"),
         _item("E3", "本作业全部请求包已导出（messages、input_ids、decode），并通过 B 独立投影检查",
               f["requests_checked"], reason=f.get("requests_reason", "请求包尚未导出或未经 B 检查"),
-              owner="WS-A（导出）/ WS-B（检查）"),
+              owner="WS-A（导出）/ WS-B（检查）", pending=f.get("requests_pending", False)),
         _item("E4", "输出缓存 write-once、无自动重试、技术失败记为 pending", f["output_policy"],
               reason="G0e 输出策略未随身份冻结", owner="WS-A"),
         _item("E5", "研究者对该作业的 GPU/Generator 单独授权（列出调用数上限）", f["gpu_auth"],

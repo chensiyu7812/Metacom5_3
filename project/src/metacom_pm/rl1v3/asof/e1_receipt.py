@@ -371,3 +371,87 @@ def check_projection(row: dict, prefix: dict, reading: dict | None, raw: Raw, g0
     return dict(request_id=row["request_id"], arm=row["arm"], owner_id=owner, previewed=True,
                 input_tokens=row["input_tokens"], html_escaped_payload=escaped, metadata_patterns=meta,
                 problems=p)
+
+
+# ------------------------------------------------------------------ PP1 requests (G0e renderer, <resource head=..>)
+_RES = re.compile(r'<resource head="MS">(.*?)</resource>', re.S)
+
+
+def identify_raw_session(payload: str, raw: Raw, owner: str) -> dict | None:
+    """Which complete session of ``owner`` the (unescaped) MS payload renders verbatim, if any."""
+    lines = html.unescape(payload).split("\n")
+    body = [x for x in lines if x.startswith(("supporter: ", "seeker: "))]
+    for s in raw.by_owner[owner]:
+        if body == [f"{t['role']}: {t['text']}" for t in s["turns"] if t["text"]]:
+            return dict(session_id=s["session_id"], rank=s["rank"], date=s["date"],
+                        header=[x for x in lines if x not in body])
+    return None
+
+
+def check_pp1_request(row: dict, prefix: dict, raw: Raw, g0e: dict, off_messages=None) -> dict:
+    p: list[str] = []
+    mi = row["model_input"]
+    m = mi["messages"]
+    if m[0] != dict(role="system", content=g0e["common"]["system_prompt"]):
+        p.append("Q1_system_prompt_not_G0e")
+    conv = [dict(role=ROLE[t["role"]], content=t["text"]) for t in prefix["turns"]]
+    if m[len(m) - len(conv):] != conv:
+        p.append("Q2_conversation_not_verbatim_prefix")
+    inserted = m[1:len(m) - len(conv)]
+    src = None
+    if row["condition"] == "OFF":
+        if inserted:
+            p.append("Q3_off_has_insert")
+    else:
+        if len(inserted) != 1 or inserted[0]["role"] != "user":
+            p.append("Q3_not_exactly_one_inserted_block")
+        else:
+            blocks = _RES.findall(inserted[0]["content"])
+            if len(blocks) != 1:
+                p.append("Q4_not_exactly_one_MS_block")
+            else:
+                src = identify_raw_session(blocks[0], raw, prefix["owner_id"])
+                if src is None:
+                    p.append("Q4_payload_not_a_verbatim_owner_session")
+                elif not src["rank"] < prefix["cutoff_rank"] or (src["date"] and src["date"] > prefix["timestamp"]):
+                    p.append("Q4_payload_session_not_strictly_past")
+        if off_messages is not None and [x for x in m if x not in inserted] != off_messages:
+            p.append("Q3_not_single_factor_vs_OFF")
+    vis = "\n".join(x["content"] for x in m[1:])
+    meta = sorted({tag for rx, tag in META if rx.search(vis)})
+    owner, cutoff = prefix["owner_id"], prefix["cutoff_rank"]
+    legal = set()
+    for s in raw.legal_past(owner, cutoff, prefix["timestamp"]):
+        for t in s["turns"]:
+            legal |= ngrams(t["text"])
+    for t in prefix["turns"]:
+        legal |= ngrams(t["text"])
+    seen = ngrams(vis) - legal
+    fut, oth = set(), set()
+    cur = raw.sessions[(owner, prefix["session_id"])]
+    for t in cur["turns"][prefix["cut_turn"] + 1:]:
+        fut |= ngrams(t["text"])
+    for s in raw.by_owner[owner]:
+        if s["rank"] > cutoff:
+            for t in s["turns"]:
+                fut |= ngrams(t["text"])
+    for o, ss in raw.by_owner.items():
+        if o != owner:
+            for s in ss:
+                for t in s["turns"]:
+                    oth |= ngrams(t["text"])
+    if seen & fut:
+        p.append(f"Q5_future_text_ngrams:{len(seen & fut)}")
+    if seen & oth:
+        p.append(f"Q5_other_owner_ngrams:{len(seen & oth)}")
+    if digest(mi["input_ids"]) != row["input_ids_sha256"] and text_sha(canon(mi["input_ids"])) != row["input_ids_sha256"]:
+        p.append("Q6_input_ids_sha")
+    if len(mi["input_ids"]) != row["input_tokens"] or row["input_tokens"] + 320 > 16384:
+        p.append("Q6_tokens_or_capacity")
+    if mi["decode"] != g0e["common"]["decode"] or row["step2_id"] != g0e["common"]["step2_id"]:
+        p.append("Q7_decode_or_step2_not_G0e")
+    if row["execution_authorized"] or row["result"] is not None or row["reward"] is not None:
+        p.append("Q8_not_inert")
+    return dict(request_id=row["request_id"], order=row["order"], condition=row["condition"], owner_id=owner,
+                input_tokens=row["input_tokens"], ms_source=src, metadata_patterns=meta,
+                html_escaped=bool(re.search(r"&(#x27|quot|amp|lt|gt);", vis)), problems=p)

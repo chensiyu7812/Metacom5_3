@@ -31,6 +31,12 @@ CENSUS = PROJECT / "outputs/pm_rl1/v3/B0/prefix_census.jsonl"
 SELECTION = PROJECT / "outputs/pm_rl1/v3/B6e_plan/v3/SELECTION.json"
 OUT = PROJECT / "outputs/pm_rl1/v3/V321_WSB/pr18_receipt"
 MODEL_DIR = Path("/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3")
+PP1_SHA = "4ac9ab3d23d04cd8ec9435ea239995ae85a3e610"   # WS-A pmrl1-v3/ws-a-ms-pp1-prep-20261119 (no PR yet)
+PP1_REQ = "project/outputs/pm_rl1/v3/ms_pp1_prepare_20261119/cpu_v2/REQUESTS_16.jsonl"
+PR13_SHA = "ea2f5bde04caba4590b26c80a572d66caa4a2d08"
+PR13_JOBS = "project/outputs/pm_rl1/v3/resource_architecture_review_20261118/cpu/PROPOSED_JOBS.json"
+ELIG = PROJECT / "outputs/pm_rl1/v3/V32_WSB_P0P2/p2/ELIGIBILITY_54.json"
+OUT_PP1 = PROJECT / "outputs/pm_rl1/v3/V321_WSB/pp1_requests_preliminary"
 
 
 def git_show(ref: str, path: str) -> str:
@@ -53,9 +59,9 @@ def bundle_jsonl(rel: str):
     return [strict_loads(x) for x in git_show(PR18_SHA, f"{BUNDLE}/{rel}").splitlines() if x.strip()]
 
 
-def write(name: str, obj) -> Path:
-    OUT.mkdir(parents=True, exist_ok=True)
-    p = OUT / name
+def write(name: str, obj, out: Path = OUT) -> Path:
+    out.mkdir(parents=True, exist_ok=True)
+    p = out / name
     if p.exists():
         raise SystemExit(f"refusing to overwrite {p}")
     p.write_text(json.dumps(obj, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
@@ -193,8 +199,75 @@ def step_tokenize(_):
     print(json.dumps({k: v for k, v in res.items() if k != "rows"}, indent=1))
 
 
+def _pp1_rows():
+    from metacom_pm.rl1v3.asof.e1_receipt import strict_loads
+    return [strict_loads(x) for x in git_show(PP1_SHA, PP1_REQ).splitlines() if x.strip()]
+
+
+def step_pp1req(_):
+    """Preliminary check of WS-A's 16 PP1 requests (pinned WIP commit; formal receipt follows their Draft PR)."""
+    from metacom_pm.rl1v3.asof import e1_receipt as E
+    raw = E.Raw(json.loads(ARTIFACT.read_text()))
+    g0e = json.loads(git_show(G0E_REF, G0E_PATH))
+    prefixes = {}
+    for b in bundle_jsonl("cpu_v3/BINDINGS.jsonl"):
+        prefixes[b["prefix_id"]] = bundle_json("cpu_v3/" + b["prefix_path"])
+    elig = {r["plan_job_id"]: r for r in json.loads(ELIG.read_text())["rows"] if r.get("plan_job_id")}
+    jobs = {j["plan_job_id"]: j for j in json.loads(git_show(PR13_SHA, PR13_JOBS))["jobs"]}
+    rows = _pp1_rows()
+    off = {r["prefix_id"]: r["model_input"]["messages"] for r in rows if r["condition"] == "OFF"}
+    res = []
+    for r in sorted(rows, key=lambda r: r["order"]):
+        x = E.check_pp1_request(r, prefixes[r["prefix_id"]], raw, g0e, off.get(r["prefix_id"]))
+        e = elig.get(r["plan_job_id"])
+        if e is None or e["joint_eligibility"] != "ELIGIBLE" or e["terminal_key_sha256"] != r["terminal_key_sha256"] \
+                or e["existing_request_id"] != r["legacy_request_id"] or \
+                {"OFF": "OFF", "MS": "RET-MS"}[e["subset"]] != r["condition"]:
+            x["problems"].append("Q9_not_the_B_ELIGIBLE_input")
+        if jobs.get(r["plan_job_id"], {}).get("input_tokens") != r["input_tokens"]:
+            x["problems"].append("Q9_input_tokens_differ_from_PR13_job")
+        if r["renderer_id"] != rows[0]["renderer_id"] or r["g_id"] != g0e_gid():
+            x["problems"].append("Q10_renderer_or_g_id_not_single")
+        res.append(x)
+    out = dict(protocol=E.PROTOCOL + ":pp1-requests", scope="preliminary; WS-A WIP commit without PR",
+               ws_a_commit=PP1_SHA, file=PP1_REQ, file_sha256_git=__import__("hashlib").sha256(
+                   git_show(PP1_SHA, PP1_REQ).encode()).hexdigest(),
+               requests=len(res), passed=sum(not x["problems"] for x in res),
+               problems=dict(Counter(p.split(":")[0] for x in res for p in x["problems"])),
+               renderer_ids=sorted({r["renderer_id"] for r in rows}), conditions=dict(Counter(r["condition"] for r in rows)),
+               html_escaped=sum(x["html_escaped"] for x in res),
+               ret_ms_sources=[dict(order=x["order"], owner=x["owner_id"], session=x["ms_source"]["session_id"],
+                                    rank=x["ms_source"]["rank"], cutoff=prefixes[r["prefix_id"]]["cutoff_rank"])
+                               for x, r in zip(res, sorted(rows, key=lambda r: r["order"])) if x["ms_source"]],
+               rows=res)
+    write("PP1_REQUESTS_CHECK.json", out, OUT_PP1)
+    print(json.dumps({k: v for k, v in out.items() if k != "rows"}, ensure_ascii=False, indent=1))
+
+
+def g0e_gid():
+    return "G0e:b624c7c3f99ffe6b35eca29e2f93ea9e624e66b31303415e4b9c4b1bc4c6c07e"
+
+
+def step_pp1tok(_):
+    """G0e HF interpreter: tokenizer files only."""
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(str(MODEL_DIR))
+    rows = []
+    for r in _pp1_rows():
+        m = r["model_input"]
+        ids = tok.apply_chat_template(m["messages"], tokenize=True, add_generation_prompt=True)
+        if hasattr(ids, "keys"):
+            ids = ids["input_ids"]
+        rows.append(dict(request_id=r["request_id"], order=r["order"], n=len(m["input_ids"]),
+                         match=list(ids) == m["input_ids"]))
+    out = dict(model_dir=str(MODEL_DIR), weights_loaded=False, rows=rows, matched=sum(x["match"] for x in rows),
+               requests=len(rows))
+    write("PP1_TOKENIZE_CHECK.json", out, OUT_PP1)
+    print(json.dumps({k: v for k, v in out.items() if k != "rows"}))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("step", choices=("check", "tokenize"))
+    ap.add_argument("step", choices=("check", "tokenize", "pp1req", "pp1tok"))
     a = ap.parse_args()
-    dict(check=step_check, tokenize=step_tokenize)[a.step](a)
+    dict(check=step_check, tokenize=step_tokenize, pp1req=step_pp1req, pp1tok=step_pp1tok)[a.step](a)

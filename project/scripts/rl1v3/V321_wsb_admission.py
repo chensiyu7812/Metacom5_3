@@ -151,6 +151,15 @@ def step_receipt(_):
         gate_effect="G-ENG E3：PR #18 的 63 个预览通过；PP1 的 16 个旧请求包仍需导出后用同一检查器核验。"
                     "FC-MS M2：8 个前缀 PASS，正式样本前缀待导出。FC-MP/ME/RS：语义/许可 BLOCKED 不变",
     )
+    pp1 = OUT / "pp1_requests_preliminary"
+    if (pp1 / "PP1_REQUESTS_CHECK.json").exists():
+        a = json.loads((pp1 / "PP1_REQUESTS_CHECK.json").read_text())
+        t = json.loads((pp1 / "PP1_TOKENIZE_CHECK.json").read_text())
+        receipt["pp1_requests_preliminary"] = dict(
+            ws_a_commit=a["ws_a_commit"], file_sha256=a["file_sha256_git"], passed=f"{a['passed']}/{a['requests']}",
+            retokenised=f"{t['matched']}/{t['requests']}", renderer_ids=a["renderer_ids"], conditions=a["conditions"],
+            html_escaped_ret_ms=a["html_escaped"], ret_ms_sources=a["ret_ms_sources"],
+            status="PRELIMINARY: WS-A 尚未就该提交开 PR；在其 Draft 固定 HEAD 上复跑后才作为正式回执")
     write_json_once(RECEIPT_DIR / "WSB_RECEIPT_PR18.json", receipt)
     print(json.dumps(dict(mechanical=receipt["axes"]["mechanical"]["verdict"], counts=counts), ensure_ascii=False))
 
@@ -256,9 +265,18 @@ def step_gates(_):
     from metacom_pm.rl1v3.evaluate import resource_effect_v321 as V
     rec = json.loads((RECEIPT_DIR / "WSB_RECEIPT_PR18.json").read_text())
     prs = {str(n): gh_state(n) for n in (10, 15, 16, 17, 18)}
+    pp1_dir = OUT / "pp1_requests_preliminary"
+    pp1_req_pass = False
+    if (pp1_dir / "PP1_REQUESTS_CHECK.json").exists() and (pp1_dir / "PP1_TOKENIZE_CHECK.json").exists():
+        a = json.loads((pp1_dir / "PP1_REQUESTS_CHECK.json").read_text())
+        t = json.loads((pp1_dir / "PP1_TOKENIZE_CHECK.json").read_text())
+        pp1_req_pass = a["passed"] == a["requests"] == 16 and t["matched"] == t["requests"] == 16
     facts = dict(
         g0e_identity=prs["10"].get("state") == "MERGED", a0_measured=False,
-        requests_checked=False, requests_reason="PR #18 的 63 个 E1 预览已通过 B 检查；PP1 的 16 个 G0e 请求包尚未导出",
+        requests_checked=False, requests_pending=pp1_req_pass,
+        requests_reason=("PP1 的 16 个请求包在 WS-A WIP 提交 4ac9ab3d 上初步通过 B 检查（16/16，重分词 16/16）；"
+                         "须在 A 的 Draft PR 固定 HEAD 上用同一检查器复跑") if pp1_req_pass else
+                        "PP1 的 16 个 G0e 请求包尚未导出或未经 B 检查",
         output_policy=True, gpu_auth=False,
         pp1_qh_backgrounds=(OUT / "pp1/QH_BACKGROUNDS.json").exists(), pp1_screen_labels=False, raters=False,
         pp1_protocol_approved=False, instrument=False,
