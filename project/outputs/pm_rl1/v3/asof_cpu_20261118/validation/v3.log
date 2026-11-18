@@ -1,0 +1,41 @@
+
+==================================== ERRORS ====================================
+_______________ ERROR collecting tests/test_rl1v3_c0_revision.py _______________
+ImportError while importing test module '/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/tests/test_rl1v3_c0_revision.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../../tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rl1v3_c0_revision.py:12: in <module>
+    from test_rl1v3_contracts import examples
+tests/test_rl1v3_contracts.py:7: in <module>
+    from jsonschema import Draft202012Validator
+E   ModuleNotFoundError: No module named 'jsonschema'
+________________ ERROR collecting tests/test_rl1v3_contracts.py ________________
+ImportError while importing test module '/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/tests/test_rl1v3_contracts.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../../tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rl1v3_contracts.py:7: in <module>
+    from jsonschema import Draft202012Validator
+E   ModuleNotFoundError: No module named 'jsonschema'
+______________ ERROR collecting tests/test_rl1v3_rs_v0_catalog.py ______________
+ImportError while importing test module '/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/tests/test_rl1v3_rs_v0_catalog.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../../tokkio_envs/paper1-py311/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_rl1v3_rs_v0_catalog.py:6: in <module>
+    from jsonschema import Draft202012Validator
+E   ModuleNotFoundError: No module named 'jsonschema'
+- generated xml file: /opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/outputs/pm_rl1/v3/asof_cpu_20261118/validation/v3.xml -
+=========================== short test summary info ============================
+ERROR tests/test_rl1v3_c0_revision.py
+ERROR tests/test_rl1v3_contracts.py
+ERROR tests/test_rl1v3_rs_v0_catalog.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 3 errors during collection !!!!!!!!!!!!!!!!!!!!
+3 errors in 3.16s

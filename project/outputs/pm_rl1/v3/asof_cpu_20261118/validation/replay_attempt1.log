@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/scripts/rl1v3/asof_cpu_replay.py", line 311, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/scripts/rl1v3/asof_cpu_replay.py", line 293, in main
+    ledger,snapshots=replay(registry,out)
+                     ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/scripts/rl1v3/asof_cpu_replay.py", line 106, in replay
+    for row in stream.rows:full.append(row,registry)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-asof/project/src/metacom_pm/rl1v3/compile/asof.py", line 248, in append
+    raise ValueError('missing or cross-owner relation/parent')
+ValueError: missing or cross-owner relation/parent
