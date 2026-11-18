@@ -75,7 +75,7 @@ def run(out):
                     record_ids=[r for group in packet.key.acquired for r in group]
                     private=[pid,*record_ids]
                     for rid in record_ids:
-                        private.extend(s.source_id for s in f.bank.by_id[rid].source_refs)
+                        private.extend(s.source_key for s in f.bank.by_id[rid].source_refs)
                     text=canonical_json(payload)
                     assert not any(i in text for i in private)
                     mappings.append(dict(mapping,prefix_id=pid,subset=TR.subset_name(mask),
