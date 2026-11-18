@@ -55,7 +55,7 @@ def code_sha():
 
 
 def manifest(step, inputs, outputs):
-    m = build_manifest(task=f"V32_wsb_rq1_qual:{step}", root=OUT / step, inputs=inputs, outputs=outputs,
+    m = build_manifest(task=f"V32_wsb_rq1_qual:{step}", root=PROJECT, inputs=inputs, outputs=outputs,
                        code=[c for c in CODE], code_sha=code_sha())
     write_json_once(OUT / step / "manifest.json", m)
 
