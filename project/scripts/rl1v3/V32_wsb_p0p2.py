@@ -258,9 +258,18 @@ def step_visibility(args):
                          future_texts=len(future), unavailable=[h for h in E.HEADS if env.availability[h] == 0]))
     req, ref = pr13_file(PR13_REQ)
     g_rows = []
+    census = {c["prefix_id"]: c for c in jl(CENSUS)}
     for case in req["cases"]:
         payload = {k: case["row"][k] for k in ("messages", "input_ids", "decode")}
-        rp = VIS.scan(payload, VIS.GENERATOR_REQUEST, private_tokens=sorted(private | {case["row"]["prefix_id"]}))
+        c = census[case["row"]["prefix_id"]]
+        gp = reg.prefix(c["owner_id"], c["session_id"], c["cut_turn"])
+        cur = reg.entry(gp.owner_id, gp.session_id).source
+        g_future = [t.text for t in cur.turns[gp.cut_turn + 1:]] + [
+            t.text for e in reg.entries if e.source.owner_id == gp.owner_id and e.source.chronological_rank > gp.cutoff_rank
+            for t in e.source.turns]
+        g_legal = [t.text for t in gp.turns] + [t.text for s in reg.context(gp)[1] for t in s.turns]
+        rp = VIS.scan(payload, VIS.GENERATOR_REQUEST, private_tokens=sorted(private | {case["row"]["prefix_id"]}),
+                      future_texts=g_future, legal_texts=g_legal)
         g_rows.append(dict(request_id=case["row"]["request_id"][:16], subset=case["row"]["subset"], **rp))
     res = dict(protocol=VIS.PROTOCOL, whitelist_sha256=VIS.whitelist_manifest()["sha256"], prefixes=len(sel_prefixes),
                orders=n_orders, observations=n_obs, leaks=sum(r.get("leaks", 0) for r in rows if "leaks" in r),
@@ -436,7 +445,7 @@ def step_reward(args):
     worst = {}
     for g in grid:
         if g["scenario"] == "worst" and g["format"] == "pretty":
-            worst.setdefault(g["items"], {})[g["reply"]] = g["output_tokens"]
+            worst.setdefault(str(g["items"]), {})[g["reply"]] = g["output_tokens"]
     # input side on the 8 B6e prefixes, ALL readings, fixture checklist (13 items) + per-extra-item cost
     fa = AP.make_port_factory(root=REPO)
     reg, bank = fa.bank.registry, fa.bank
@@ -457,7 +466,7 @@ def step_reward(args):
     per_item = max(count(json.dumps(dict(id=i.item_id, category=i.category, text=i.text,
                                          evidence=[s.exact_quote for s in i.evidence_spans]), indent=1))
                    for i in cl.items) + 8
-    worst40 = worst[max(worst)]["one_320tok_sentence"]
+    worst40 = worst[max(worst, key=int)]["one_320tok_sentence"]
     for r in inp:
         r["input_tokens_all_40items_est"] = r["input_tokens_all_13items"] + 27 * per_item
         r["budget_40items_worst"] = RQ.decode_budget(worst40, input_tokens=r["input_tokens_all_40items_est"])
@@ -466,7 +475,7 @@ def step_reward(args):
                reply_tokens=reply_tokens, grid=grid, worst_pretty_by_items=worst,
                fits_800=sorted({g["items"] for g in grid if g["output_tokens"] > 800}),
                input_side=inp, per_extra_item_input_tokens=per_item, decode_candidate=RQ.DECODE_CANDIDATE,
-               blocked_shapes=sorted({(g["items"], g["reply"]) for g in grid if g["budget"]["blocked"]}),
+               blocked_shapes=[list(x) for x in sorted({(g["items"], g["reply"]) for g in grid if g["budget"]["blocked"]})],
                evidence_tier="engineering_only (static tokenizer counts, no judge run)")
     write_json_once(out / "J1_CAPACITY_V2.json", res)
     write_json_once(out / "REWARD_QUALIFICATION_MANIFEST.json", RQ.manifest())
