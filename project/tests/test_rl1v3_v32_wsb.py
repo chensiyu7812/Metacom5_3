@@ -486,3 +486,58 @@ def test_manifests_are_stable():
     for m in (VIS.whitelist_manifest(), RQ.manifest(), BL.manifest(), LT.manifest()):
         body = {k: v for k, v in m.items() if k != "sha256"}
         assert m["sha256"] == object_sha256(body)
+
+
+# ------------------------------------------------------------------ WS-A sidecar adapter
+def _sidecar(world, prefix, *, extra_session=None, drop_last=False, partial=False, readable_me=False):
+    reg = world[0].registry
+    _, hist = reg.context(prefix)
+    sessions = list(hist)
+    if extra_session is not None:
+        sessions.append(extra_session)
+    if drop_last:
+        sessions = sessions[:-1]
+    tp = lambda r: dict(session_rank=r, date=None)
+    views, sources = [], []
+    for s in sessions:
+        e = reg.entry(s.owner_id, s.session_id)
+        refs = [dict(owner_id=s.owner_id, session_id=s.session_id, source_rank=s.chronological_rank, turn_index=i,
+                     start_char=0, end_char=len(t.text), exact_quote=t.text) for i, t in enumerate(s.turns) if t.text]
+        if partial:
+            refs = refs[:-1]
+        views.append(dict(disposition="raw_available", current_validity="unknown", record=dict(
+            record_id=f"asof-record:{s.session_id}", kind="MS_RAW", owner_id=s.owner_id, text="raw", source_refs=refs,
+            known_at=tp(s.chronological_rank + 1), ready_at=tp(s.chronological_rank + 1), stage=None)))
+        sources.append(dict(owner_id=s.owner_id, session_id=s.session_id, chronological_rank=s.chronological_rank,
+                            transcript_sha256=s.transcript_sha256, ready_at=tp(e.ready_at.session_rank)))
+    if readable_me:
+        r = views[0]["record"]
+        views.append(dict(disposition="raw_available", current_validity="unknown",
+                          record=dict(r, record_id="asof-record:me", kind="ME", stage="attempted",
+                                      source_refs=r["source_refs"][:1])))
+    return dict(as_of=dict(owner_id=prefix.owner_id, cutoff_rank=prefix.cutoff_rank,
+                           prefix_context_sha256=prefix.runtime_sha256),
+                views=views, source_frontier=dict(sources=sources if extra_session is None else sources[:-1]),
+                snapshot_sha="x", writer_identity="writer:test")
+
+
+def test_wsa_adapter_accepts_exact_raw_frontier_and_rejects_violations(world):
+    from metacom_pm.rl1v3.asof import wsa_adapter as WA
+    bank, _, _, census = world
+    reg = bank.registry
+    prefixes = owner_cut_prefixes(world, "p15")[3:6]
+    rows = list(census.values())
+    ok = WA.check_sidecar([_sidecar(world, p) for p in prefixes], reg, rows)
+    assert ok["passed"] and ok["cutoffs_passed"] == 3 and ok["x5a"] == "not_testable_single_horizon"
+    p = prefixes[0]
+    future = next(e.source for e in reg.entries if e.source.owner_id == "p15" and e.source.chronological_rank > p.cutoff_rank)
+    cases = dict(future=dict(extra_session=future), dropped=dict(drop_last=True), partial=dict(partial=True),
+                 readable_me=dict(readable_me=True))
+    want = dict(future=("R2", "X2_span_future"), dropped=("R2", "X1"), partial=("R4",), readable_me=("R5",))
+    for name, kw in cases.items():
+        res = WA.check_sidecar([_sidecar(world, p, **kw)], reg, rows)
+        probs = [x for r in res["rows"] for x in r["problems"]]
+        assert not res["passed"] and all(any(x.startswith(w) for x in probs) for w in want[name]), (name, probs)
+    bad = _sidecar(world, p)
+    bad["as_of"]["prefix_context_sha256"] = "0" * 64
+    assert WA.check_sidecar([bad], reg, rows)["rows"][0]["problems"] == ["prefix_context_not_a_legal_B0_prefix"]

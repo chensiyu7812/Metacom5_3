@@ -36,6 +36,8 @@ SELECTION = V3 / "B6e_plan/v3/SELECTION.json"
 REPLAY = V3 / "WSB_S3/integration_acceptance_320a33d1/B5/replay_reports.jsonl"
 PR13_JOBS = "project/outputs/pm_rl1/v3/resource_architecture_review_20261118/cpu/PROPOSED_JOBS.json"
 PR13_REQ = "project/tests/fixtures/rl1v3_resource_review/request_inputs.json"
+WSA_REF = "b63635f3621f3a5d252099efcd58ae2d1958dce2"     # pmrl1-v3/ws-a-asof-cpu-20261118 (pinned)
+WSA_DIR = "project/outputs/pm_rl1/v3/asof_cpu_20261118/cpu_v3"
 
 
 def git(*a, cwd=REPO):
@@ -50,6 +52,18 @@ def pr13_file(path: str) -> tuple[dict, str]:
     ref = git("rev-parse", "origin/pmrl1-v3/ws-a-resource-architecture-review")
     text = subprocess.run(["git", "show", f"{ref}:{path}"], cwd=REPO, capture_output=True, text=True, check=True).stdout
     return json.loads(text), ref
+
+
+def wsa_files(sub: str) -> list[tuple[str, str]]:
+    names = subprocess.run(["git", "ls-tree", "--name-only", f"{WSA_REF}:{WSA_DIR}/{sub}"], cwd=REPO,
+                           capture_output=True, text=True, check=True).stdout.split()
+    return [(n, subprocess.run(["git", "show", f"{WSA_REF}:{WSA_DIR}/{sub}/{n}"], cwd=REPO, capture_output=True,
+                               text=True, check=True).stdout) for n in names]
+
+
+def wsa_file(name: str) -> str:
+    return subprocess.run(["git", "show", f"{WSA_REF}:{WSA_DIR}/{name}"], cwd=REPO, capture_output=True, text=True,
+                          check=True).stdout
 
 
 def load_bank():
@@ -119,12 +133,15 @@ def step_asof(args):
                               per_cutoff_problem_kinds=dict(Counter(p.split(":")[0] for r in res["rows"] for p in r["problems"])),
                               prefix_extension_problem_kinds=dict(Counter(p.split(":")[0] for p in res["prefix_extension_problems"])),
                               exchange_sha256=object_sha256(ex))
-    a_check = dict(status="PENDING: no WS-A as-of exchange delivered (branch pmrl1-v3/ws-a-asof-cpu-20261118 has no "
-                          "commit beyond integration at check time)")
+    from metacom_pm.rl1v3.asof import wsa_adapter as WA
+    snaps = [json.loads(t) for _, t in wsa_files("snapshots")]
+    a_check = WA.check_sidecar(snaps, reg, census)
+    a_check.update(wsa_ref=WSA_REF, files=len(snaps), files_sha256=object_sha256([t for _, t in wsa_files("snapshots")]))
+    write_json_once(out / "WSA_SIDECAR_INDEPENDENT_CHECK.json", a_check)
+    a_check = {k: v for k, v in a_check.items() if k != "rows"}
     if args.a_exchange:
         ex = json.loads(Path(args.a_exchange).read_text())
-        a_check = CK.run(ex, reg)
-        a_check["exchange_file_sha256"] = file_sha256(args.a_exchange)
+        a_check["exchange_file"] = dict(CK.run(ex, reg), exchange_file_sha256=file_sha256(args.a_exchange))
     rule = ("pre-registered control set: the 8 B6e-v3 owners, every session that has a legal prefix, its smallest "
             "cut_turn; horizons = cutoff and full trajectory")
     write_json_once(out / "EXCHANGE_CONTROLS.json", dict(protocol=CK.PROTOCOL, owners=owners, cutoffs=len(cut_prefixes),
@@ -136,7 +153,10 @@ def step_asof(args):
                    b6e_counterfactual=dict(Counter(r["top1"] for r in cf)),
                    controls={k: dict(passed=v["passed"], cutoffs=v["cutoffs"], cutoffs_passed=v["cutoffs_passed"],
                                      prefix_extension=v["prefix_extension_problem_kinds"]) for k, v in controls.items()},
-                   wsa_exchange=a_check if not args.a_exchange else dict(passed=a_check["passed"]),
+                   wsa_sidecar=dict(ref=WSA_REF, snapshots=a_check["snapshots"], owners=a_check["owners"],
+                                    cutoffs_passed=a_check["cutoffs_passed"], x5a=a_check["x5a"],
+                                    prefix_extension_problems=len(a_check["prefix_extension_problems"]),
+                                    passed=a_check["passed"]),
                    bank_version=bank.version, source_version=reg.version, evidence_tier="engineering_only",
                    gpu_used=False, model_calls=0)
     write_json_once(out / "ASOF_SUMMARY.json", summary)
@@ -318,7 +338,22 @@ def step_p2(args):
         assessed.append(dict(plan_job_id=None, prefix_id=u["prefix_id"], owner_id=None, layer="D" if "+" not in u["subset"] else "E",
                              subset=u["subset"], terminal_key_sha256=None, existing_request_id=None,
                              generation_calls_executed=0, pr13_status=u["status"], **a))
-    counts = Counter(a["eligibility"] for a in assessed)
+    rank = {"BLOCKED": 0, "LEGACY_DIAGNOSTIC": 1, "ELIGIBLE": 2}
+    a_rows = {r["plan_job_id"]: r for r in (json.loads(x) for x in wsa_file("INPUT_54_ELIGIBILITY.jsonl").splitlines())}
+    disagree = []
+    for a in assessed:
+        ar = a_rows.get(a["plan_job_id"])
+        a["b_mechanical_eligibility"] = a.pop("eligibility")
+        a["wsa_writer_eligibility"] = ar["status"] if ar else None
+        a["wsa_snapshot_sha"] = ar["snapshot_sha"] if ar else None
+        joint = a["b_mechanical_eligibility"] if ar is None else min(a["b_mechanical_eligibility"], ar["status"], key=rank.get)
+        a["joint_eligibility"] = joint
+        if ar and ar["status"] != a["b_mechanical_eligibility"]:
+            disagree.append(dict(plan_job_id=a["plan_job_id"], prefix_id=a["prefix_id"][:12], subset=a["subset"],
+                                 b=a["b_mechanical_eligibility"], a=ar["status"], joint=joint))
+    counts = Counter(a["joint_eligibility"] for a in assessed if a["plan_job_id"])
+    b_counts = Counter(a["b_mechanical_eligibility"] for a in assessed if a["plan_job_id"])
+    a_counts = Counter(r["status"] for r in a_rows.values())
     spec = dict(
         scope="exposed development inputs only; NOT executed; quality/result fields stay null",
         source=dict(pr13_ref=ref, jobs_sha256=object_sha256(jobs), proposed=54, unreachable_listed=len(jobs_doc["unreachable"])),
@@ -328,8 +363,11 @@ def step_p2(args):
                                                 "projection (MP Top-1 differs or is tie-dependent)",
                               BLOCKED="unreachable in bank-v0 (never filled with zero; a new as-of input would be a new "
                                       "identity outside the 54)"),
-        counts=dict(counts), situations=RV.coverage([a for a in assessed if a["eligibility"] != "BLOCKED"] +
-                                                    [a for a in assessed if a["eligibility"] == "BLOCKED"]),
+        counts=dict(joint=dict(counts), b_mechanical=dict(b_counts), wsa_writer=dict(a_counts)),
+        joint_rule="joint = the more conservative of B's time-legality label and WS-A's writer/semantic label "
+                   "(ELIGIBLE > LEGACY_DIAGNOSTIC > BLOCKED); disagreements listed, none silently resolved",
+        wsa_ref=WSA_REF, disagreements=disagree,
+        situations=RV.coverage(assessed),
         supplementary_needed=dict(
             rule="only for situations NOT covered; a separate, pre-registered challenge set with its own identity, "
                  "never replacing any of the 54; selection before any generation, by researcher approval",
@@ -341,8 +379,8 @@ def step_p2(args):
     )
     frozen = RV.freeze(spec)
     pairs = RV.assign_positions(RV.review_pairs(jobs), frozen["protocol_sha256"])
-    write_json_once(out / "ELIGIBILITY_54.json", dict(protocol=RV.PROTOCOL, rows=assessed, counts=dict(counts),
-                    head_facts=facts, evidence_tier="engineering_only"))
+    write_json_once(out / "ELIGIBILITY_54.json", dict(protocol=RV.PROTOCOL, rows=assessed, counts=spec["counts"],
+                    disagreements=disagree, head_facts=facts, wsa_ref=WSA_REF, evidence_tier="engineering_only"))
     write_json_once(out / "P2_PROTOCOL_FROZEN.json", frozen)
     write_json_once(out / "BLIND_REVIEW_PAIRS.json", dict(protocol=RV.PROTOCOL, protocol_sha256=frozen["protocol_sha256"],
                     pairs=pairs, n=len(pairs), executed=0))
@@ -352,7 +390,7 @@ def step_p2(args):
                          code=[Path(__file__), PROJECT / "src/metacom_pm/rl1v3/evaluate/resource_value_v32.py",
                                PROJECT / "src/metacom_pm/rl1v3/asof/legacy_audit.py"], code_sha=git("rev-parse", "HEAD"))
     write_json_once(out / "manifest.json", dict(man, model_calls=0, gpu_used=False, generation_calls=0))
-    print(json.dumps(dict(counts=dict(counts), protocol_sha256=frozen["protocol_sha256"], pairs=len(pairs),
+    print(json.dumps(dict(counts=spec["counts"], disagreements=len(disagree), protocol_sha256=frozen["protocol_sha256"], pairs=len(pairs),
                           situations={k: v["candidate_inputs"] for k, v in frozen["situations"].items()}), indent=1))
 
 
