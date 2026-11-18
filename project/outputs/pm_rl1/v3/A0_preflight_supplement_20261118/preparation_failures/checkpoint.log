@@ -1,0 +1,13 @@
+/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/lib/python3.12/site-packages/fla/utils/_device.py:100: UserWarning: Triton is not supported on current platform, roll back to CPU.
+  _cpu_device_warning()
+Traceback (most recent call last):
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e-binding/project/scripts/rl1v3/a0_checkpoint_preflight.py", line 64, in <module>
+    reports={name:inspect_model(cfg) for name,cfg in plan['workloads'].items()}
+                  ^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e-binding/project/scripts/rl1v3/a0_checkpoint_preflight.py", line 35, in inspect_model
+    tensors,header=read_header(path/name);headers.append(header)
+                   ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/tokkio-data0/tokkio_projects/Metacom5_3-wsa-g0e-binding/project/src/metacom_pm/rl1v3/generator/checkpoint_guard.py", line 36, in read_header
+    if t['dtype']!='BF16':raise ValueError('only pinned BF16 checkpoints admitted')
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: only pinned BF16 checkpoints admitted
