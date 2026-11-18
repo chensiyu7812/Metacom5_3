@@ -1,0 +1,130 @@
+{
+  "protocol": "pm-v1.5-paper1-rs-ms-r0-delta-root-repair-v1",
+  "date": "2026-08-13",
+  "status": "ACTIVE_ZERO_API_R0_DELTA_TREATMENT_REPAIR_GENERATOR_FROZEN",
+  "purpose": "Remove the response-treatment and prompt-style confounds that prevent RS and MS effects from being causally identified, while separating development promotion from formal head pass and final Paper 1 success.",
+  "evidence_diagnosis": {
+    "RS_current_treatment": {
+      "observed": "Baseline won 31/33 clean RS-only same-stack pairs across EvoEmo and ESConv; only 2/28 independent groups showed material benefit.",
+      "identified_failure": "The current compiler turns RS into the sole primary act, and the dominant Restatement card forbids the acknowledgement, question, advice, or forward move that complete R0 replies retain.",
+      "bounded_conclusion": "The current replacement treatment fails. This does not identify the effect of an additive, state-matched RS strategy delta." 
+    },
+    "MS_current_treatment": {
+      "observed": "On 19 selected MS-ON states from 11 owners, routed won 12, baseline won 4, and 3 tied; owner directions were 7 positive, 2 negative, and 2 tied (one-sided exact p=0.0898). Baseline had three nonzero-risk pairs and routed had zero.",
+      "identified_failure": "Thirteen of 19 responses safely did not use the specific memory, yet eight of the twelve quality wins occurred in that non-use slice. Generic response-program style therefore confounds memory-attributable Function.",
+      "bounded_conclusion": "This is positive development evidence that promotes MS treatment repair and confirmation. It is neither a formal MS pass nor a failure requiring p<0.05 at this stage."
+    }
+  },
+  "architecture": {
+    "invariant_R0_foundation": [
+      "current-turn grounding and empathy",
+      "safety, refusal, stop, and burden boundaries",
+      "a complete useful reply when all optional resources are absent",
+      "at most one appropriate forward question, choice, next step, or closure"
+    ],
+    "RS_delta": {
+      "definition": "R0 plus one bounded strategy move; RS never replaces the R0 foundation.",
+      "restatement_rule": "Restatement is a local contribution and may not be the entire response or suppress useful forward motion.",
+      "selector_estimand": "Incremental benefit of R0+RS versus the identical R0 foundation, not mere strategy applicability or opportunity."
+    },
+    "MS_delta": {
+      "decision_space": ["USE", "ASK", "IGNORE"],
+      "USE": "A specific, strictly past, user-owned, relevant, non-conflicting fact contributes information not recoverable from current context alone.",
+      "ASK": "Continuity is uncertain and a tentative check grounded in the past fact is useful.",
+      "IGNORE": "The fact is redundant, stale, vague, conflicting, wrong-owner, present in current context, or not useful now.",
+      "function_boundary": "A better generic question, warmth, or response length with no past-information contribution counts as R0 quality, never MS Function."
+    },
+    "joint_order": [
+      "R0 current-turn and safety foundation",
+      "supported personal-memory delta",
+      "bounded strategy delta",
+      "one coherent forward move or closure"
+    ],
+    "factorial_arms": ["M0+R0", "M0+RS", "MS+R0", "MS+RS"],
+    "same_stack_requirements": [
+      "same generator, endpoint, base prompt, current context, seed policy, output cap, and R0 foundation",
+      "only the requested component delta and its exact evidence may differ",
+      "matched response-length envelope; incomplete short replies cannot create a cost win",
+      "blind pair order and owner-clustered inference"
+    ]
+  },
+  "stage_gates": {
+    "development_promotion": {
+      "role": "Decide whether a repaired head merits one frozen confirmatory run; this is not a paper claim.",
+      "p_value_rule": "No p<0.05 requirement on a small development slice.",
+      "required": [
+        "requested-to-received = 1.00 and wrong-owner/future/scaffold/answer leakage = 0",
+        "both ON and OFF decisions occur on eligible development states",
+        "owner- or dialogue-level Quality direction is positive on the learned-ON slice",
+        "no critical risk event and no directional material-risk increase",
+        "source-aware Function is observed on at least two independently reviewed ON cases and is not explained by current context alone",
+        "failure cases are localized to a versioned treatment defect rather than silently tuned on confirmatory outcomes"
+      ],
+      "current_MS_decision": "PROMOTE_TO_TREATMENT_REPAIR_AND_CONFIRMATORY_QUALIFICATION_AFTER_MS_ONLY_FUNCTION_REVIEW",
+      "current_RS_decision": "DO_NOT_PROMOTE_CURRENT_REPLACEMENT_TREATMENT; IMPLEMENT_AND_QUALIFY_R0_PLUS_RS_DELTA"
+    },
+    "formal_head_pass": {
+      "role": "Support a named RS_pass or MS_pass in the paper.",
+      "required": [
+        "grouped/cross-fitted selector is nondegenerate and beats the named transparent baseline under an incremental-benefit estimand",
+        "source-aware component-attributable Function is nonzero and reproducible; generator telemetry is insufficient",
+        "overall same-stack Quality is noninferior to component-OFF at the frozen -0.05 NetWin margin",
+        "learned-ON-slice Quality has a positive point estimate and either a cluster interval lower bound above zero or an independent positive replication with no material regression",
+        "every material-risk difference upper bound is within +0.05 and no critical event is hidden by aggregation",
+        "component marginal evidence survives full-minus-component and matched-cost or matched-ON-rate controls"
+      ],
+      "functional_use_rate": "The prior 0.80 single-component value is an aspirational engineering reference, not an independent hard pass gate. Formal passage follows the nonzero, attributable, reproducible Function rule plus Quality/Risk evidence."
+    },
+    "paper1_primary_pass": {
+      "predicate": "RS_pass AND count_pass(MP,MS,ME) >= 2 AND all three complementary external tracks pass",
+      "note": "No small development p-value, default-OFF identity, one winning baseline comparison, or one memory head can satisfy this predicate alone."
+    }
+  },
+  "external_coverage_matrix": {
+    "ESConv_response": {
+      "component_scope": "RS/R0 only; longitudinal MS is structurally N/A and must remain OFF.",
+      "primary_comparisons": ["always-off/R0", "fixed-RS-high", "transparent-rule RS", "cost-and-ON-rate-matched random RS"],
+      "pass_shape": "R0+learned-RS is overall Quality/Risk noninferior to R0, positive on the learned-ON slice, better than transparent rule or matched random on a preregistered selection outcome, and cheaper than fixed-high when RS is selectively OFF."
+    },
+    "EvoEmo_longitudinal_response": {
+      "component_scope": "RS and MS are tested alone and jointly with the four-arm R0/RS/MS factorial; MP/ME remain in the complete Paper 1 design.",
+      "primary_comparisons": ["M0+R0", "M0+RS", "MS+R0", "MS+RS", "transparent rule", "cost-matched fixed", "cost-and-ON-rate-matched random", "full-minus-component"],
+      "pass_shape": "RS and MS each have attributable Function and noninferior overall Quality/Risk; their learned-ON slices are directionally beneficial; the joint policy adds adaptive value at matched resource amount and preserves the frozen 16-action safety/frontier requirements."
+    },
+    "ES_MemEval_QA": {
+      "component_scope": "Memory retrieval/answering and abstention only; RS is structurally N/A. MS contributes to typed memory selection/transport, not supportive-response Quality.",
+      "primary_comparisons": ["no-memory", "full history", "official session-RAG Top4", "typed-memory fixed-high", "typed-memory learned PM"],
+      "pass_shape": "Learned typed memory improves answerable memory-required QA over no-memory, is accuracy/risk noninferior and at least 10% cheaper than fixed-high, and has a preregistered accuracy-cost advantage over session-RAG or full history without increasing false answers on should-abstain cases."
+    },
+    "correct_complete_interpretation": "The full system passes all three external experiments. RS is evidenced by ESConv plus EvoEmo; MS is evidenced by EvoEmo plus ES-MemEval. Requiring both heads to pass every dataset is a category error."
+  },
+  "execution_order": [
+    "Independently source-review the six claimed-use MS-only rows and matched safe-nonuse controls; do not spend generator calls.",
+    "Freeze and unit-test the invariant R0 plus RS/MS delta compiler under the current Llama generator.",
+    "Build outcome-blind development panels and negative controls for restatement, closure, current-context echo, stale/conflict, wrong owner, and uncertain continuity.",
+    "Run a small current-generator four-arm development factorial; estimate RS and MS main effects and interaction with owner/dialogue clustering.",
+    "If development promotion gates pass, freeze selectors, thresholds, compiler, judges, margins, baselines, and confirmatory samples before reading outcomes.",
+    "Execute ESConv RS confirmation, EvoEmo RS/MS factorial confirmation, and ES-MemEval typed-memory QA in their correct component scopes.",
+    "Only after current-generator treatment success, run the predesigned generator robustness comparison as a secondary moderator analysis."
+  ],
+  "generator_policy": {
+    "current_primary_generator": "meta/llama-3.1-8b-instruct",
+    "frozen_for_root_repair": true,
+    "stronger_generator_qualification": "DEFERRED_UNTIL_CURRENT_GENERATOR_DEVELOPMENT_PROMOTION_PASSES",
+    "reason": "Changing treatment and generator simultaneously would not identify whether the root repair worked and would invite outcome-driven generator selection."
+  },
+  "implementation": {
+    "zero_api_compiler": "src/metacom_pm/v1_5_response_program_v4.py",
+    "unit_tests": "tests/test_v1_5_response_program_v4.py",
+    "live_runner_wired": false,
+    "reason_live_runner_not_wired": "A separate content-addressed execution manifest must first freeze exact states, prompts, endpoint, budgets, raw persistence, and measurement."
+  },
+  "authorization": {
+    "api_calls": 0,
+    "generator_calls": 0,
+    "pm_refit": false,
+    "external_execution": false,
+    "zero_api_compiler_and_contract_tests": true,
+    "existing_output_source_review": true
+  }
+}
