@@ -104,7 +104,7 @@ def assess_job(job: dict, facts: dict, prefix_cues: dict) -> dict:
             if f.get("slot_versions_before_cutoff", 0) > 1:
                 checks.add(f"{h}: earlier versions of this profile slot exist; current value?")
                 situations.add("S3_possibly_outdated")
-            if c["supporter_suggestion"] or c["seeker_rejection_or_failure"]:
+            if h == "ME" or c["supporter_suggestion"] or c["seeker_rejection_or_failure"]:
                 checks.add(f"{h}: stage (suggested / intended / attempted / completed / rejected)")
             if c["seeker_rejection_or_failure"]:
                 situations.add("S5_rejected_or_failed_suggestion")

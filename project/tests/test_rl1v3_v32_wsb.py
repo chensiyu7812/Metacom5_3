@@ -362,6 +362,7 @@ def test_assess_job_rules():
     assert {"S3_possibly_outdated", "S4_may_induce_inappropriate_advice", "S5_rejected_or_failed_suggestion",
             "S6_third_party_as_user"} <= set(me["candidate_situations"])
     assert me["questions"]["generator_uses_or_ignores_correctly"] == "not_answerable_before_generation"
+    assert any(c.startswith("ME: stage") for c in P2.assess_job(dict(subset="ME"), _facts(), {})["required_human_checks"])
     assert me["questions"]["worth_reading_now"] == "pending_human"
     cov = P2.coverage([off, rs, me, blk])
     assert cov["S2"]["status"].startswith("determined_by_human_labels") and cov["S2"]["candidate_inputs"] == 2
