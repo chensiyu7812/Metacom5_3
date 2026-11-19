@@ -1,0 +1,99 @@
+{
+ "assignment": {
+  "default": "2 名整理者，按 owner 组整组分配（同组不拆）；整理者不担任这些前缀在 FC-MS 中的审阅者",
+  "split": {
+   "CUR1": [
+    "p10",
+    "p11",
+    "p12",
+    "p16",
+    "p6",
+    "p7",
+    "p8",
+    "p9"
+   ],
+   "CUR2": [
+    "p1",
+    "p13+p18",
+    "p14",
+    "p15",
+    "p17",
+    "p2",
+    "p3",
+    "p4",
+    "p5"
+   ]
+  },
+  "words_by_curator": {
+   "CUR1": 68896,
+   "CUR2": 69523
+  }
+ },
+ "blinding": [
+  "样本层（cue/other/S7）对整理者隐藏",
+  "看不到任何回复、检索排名或 DP 材料",
+  "同一 owner 按 (cutoff, cut) 升序，as-of：不会先看到更晚的会话"
+ ],
+ "cost": {
+  "note": "上界 = 每条都通读其 as-of 历史；下界 = 同一 owner 只增量通读一次（按时间顺序），每条再加 4 分钟",
+  "owner_incremental_hours": 15.2,
+  "per_item_full_read_hours": 29.2
+ },
+ "dp_selection": {
+  "needs": "WS-A 对齐（#19 DP_PENDING 的 selector 字段）；研究者确认",
+  "rule": "选材者 = 该前缀的筛查整理者（非该前缀审阅者），在表单 S 中完成：DP 会话 = 含“必要”片段最多的合法过去会话；无“必要”片段时取含“相关但可选”片段最多者；仍无则取最近一次合法会话；并列取较近者",
+  "s0_note": "S0 中的 DP 会话按同一规则取最近会话，它代表“直接给一段与此刻无关的真实历史”，用于检查打扰与误用",
+  "why": "与 #19 的“独立选材、全部合法 RAW、生成前、无排名”一致，并把选材变成可复现的标签规则，不新增人工步骤"
+ },
+ "expansion": {
+  "deterministic": "resource_effect_v321.expansion_next()",
+  "order": "每次只按标签计数决定下一条；新增条目进入新的整理者包（同一 owner 同一整理者）",
+  "rule": {
+   "freeze": "每条筛查标签提交即冻结；正式生成只针对已冻结的条目",
+   "global_minimum": {
+    "S1": 17
+   },
+   "phase_B": "对仍有缺口的 owner 组：按冻结的 draw 顺序继续筛查 162 中尚未筛查的条目（S1 或 S2 缺口先取 cue，S0 缺口先取 other），每次一条，达到目标即停",
+   "phase_C": "Phase B 后若全局 S1 < 17：对 S1 不足的 owner，按同一 salt 的哈希顺序从自然框架 cue 层继续抽取，每 owner 最多再加 8 条；仍不足即报告缺口，不改变定义、不放宽标签",
+   "probabilities": "每一阶段登记实际筛查条目及其阶段内抽样概率；主估计量是按标签分层的条件效应，不用权重；自然分布估计才使用 1/π 加权并单独报告",
+   "targets_per_owner_group": {
+    "S0": 1,
+    "S1": 1,
+    "S2": 1
+   },
+   "trigger": "仅由生成前筛查标签触发；任何回复、评分、J1/J2 或旧结果都不得参与",
+   "unclear": "'unclear' 不计入任何目标，单列报告"
+  }
+ },
+ "items": 90,
+ "kind": "FC-MS formal screening execution package (90 items, frozen draw)",
+ "owners": 18,
+ "packages": {
+  "CUR1": {
+   "blind_scan_hits": 0,
+   "bytes": 1675399,
+   "html_sha256": "a6ce0852ee88ded9c8ed84a56b7c4a36e3c1a886093b0e937e9b41090398e98b",
+   "items": 40,
+   "package_sha256": "27f6c0c5896b45e88594faf4a264ababf945efe39c16d0aee5f32d6de8526e35"
+  },
+  "CUR2": {
+   "blind_scan_hits": 0,
+   "bytes": 1764101,
+   "html_sha256": "abf93842c62f3bb2b81f60815a8d216c936c7f892eaaa2aa93351e6ae5d217f8",
+   "items": 50,
+   "package_sha256": "23b635dd35adea2914a9de3f001c109f5735b495479afe67560aa26d4f9b9be7"
+  }
+ },
+ "protocol": {
+  "id": "pmrl1v3-v321a-working-protocol-candidate-1",
+  "sha256": "27df254fcf287156736559851e131122de3b8c73d79b814e81e0d45e15cde859"
+ },
+ "screen_sha256": "31daca4e6cd5cd697f95df87a9fb49c331a6e9792a4168fb54347e69dd297bf0",
+ "sealed_ledger": {
+  "format": "整理者阶段文件（S 锁定）→ 协调人核验 → 标签写入审计 ledger（prefix_id, need, risk, spans, submitted_at, curator, export head）；ledger 只在审计侧",
+  "never_shown_to": [
+   "审阅者",
+   "Generator"
+  ]
+ }
+}

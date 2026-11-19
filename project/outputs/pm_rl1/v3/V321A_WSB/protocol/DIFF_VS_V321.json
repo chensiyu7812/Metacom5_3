@@ -1,0 +1,136 @@
+{
+ "base": {
+  "frozen_p2_v1": "2b6057c8dde4b443c08fd3ff281cb6c22c3ebd1f4d1a02eab8ac948a7bd4c81f",
+  "pp1_v321_sha256": "b23b91eb2a9d9abf849d481f5952d591abfd5fea8ec55f0bdcffb28da987d2e3",
+  "v321": {
+   "protocol": "pmrl1v3-v321-resource-effect-qual-candidate-1",
+   "sha256": "d2fde5db53185f8632b7489bfe21aea6a8ae7d5ace1ea9f55261bce3b3ed7cca"
+  },
+  "v32_candidate": {
+   "protocol": "pmrl1v3-v32-resource-effect-qual-v1-candidate",
+   "sha256_prefix": "b28cf37b"
+  }
+ },
+ "rows": [
+  {
+   "area": "研究边界",
+   "gate": "FC-* C9；G-RWD",
+   "id": "A1",
+   "v321": "未单列 Step-2 与 G 的分工",
+   "version_a": "版本 A：Step-1 学获取与 STOP；Step-2 no-plan；G 隐式决定适用/使用/提及；不提及不算错；applicability 提示须版本化单独评价；禁止按正式结果调 prompt/资源/样本",
+   "why": "研究者确认版本 A"
+  },
+  {
+   "area": "FC-MS 主比较",
+   "gate": "FC-MS C9",
+   "id": "A2",
+   "v321": "FC-MS 比较 OFF/DP-MS/RET-MS，按 S1/S2/S0/S7 分层，未指定唯一主比较",
+   "version_a": "主：S1 中 DP-MS − OFF 的 QH 净偏好；次：RET−OFF、DP−RET（S1，门控 Holm）；保护：Q0、F；S2/S0 描述",
+   "why": "先冻结主比较，避免按结果方向换主指标"
+  },
+  {
+   "area": "结论分层",
+   "gate": "—",
+   "id": "A3",
+   "v321": "未区分",
+   "version_a": "资源潜在价值 / 检索质量 / renderer 效应 / PM 策略增益 四类；FC-MS-1 只回答前两类",
+   "why": "防止把 DP 结果写成 PM 成绩"
+  },
+  {
+   "area": "臂定义",
+   "gate": "FC-MS C10",
+   "id": "A4",
+   "v321": "DP-MS = MS-RAW-direct（固定规则）",
+   "version_a": "DP-MS = 生成前独立选材（采用 #19 selection_policy），B 提议用表单 S 的 span 标签确定性选材；RET-MS = lexical-v0 Top-1，不改名；OFF = 真实无资源",
+   "why": "DP 应是“合适历史”的诊断条件；规则可复现"
+  },
+  {
+   "area": "S7",
+   "gate": "—",
+   "id": "A5",
+   "v321": "S7 作为 FC-MS 分层之一",
+   "version_a": "MS 族中 S7 无合法 MS：请求与 OFF 相同即结构性零效应，只核验请求同一性与确定性，不做人评",
+   "why": "节省人工，避免评审同一回复"
+  },
+  {
+   "area": "正确使用 vs 引用",
+   "gate": "G-RWD",
+   "id": "A6",
+   "v321": "未明确",
+   "version_a": "主指标 QH 偏好；F1–F5 误用；F6 强行提及；提及率只作锁定后描述，永不作奖励",
+   "why": "未提及 ≠ 遗漏"
+  },
+  {
+   "area": "margin",
+   "gate": "C1",
+   "id": "A7",
+   "v321": "−0.10/+0.05 为讨论候选",
+   "version_a": "不采纳为门槛；只有研究者事先确认的 margin 才能给出 non_inferior",
+   "why": "17 组下不可达"
+  },
+  {
+   "area": "多重比较",
+   "gate": "C9",
+   "id": "A8",
+   "v321": "未定",
+   "version_a": "单一主检验；次要固定顺序 + Holm；F 族内 Holm；其余探索",
+   "why": "生成前冻结"
+  },
+  {
+   "area": "S1 不足",
+   "gate": "C2",
+   "id": "A9",
+   "v321": "Phase B/C 扩展，仍不足即报告缺口",
+   "version_a": "增加：生成前一次登记的上限修订；k_S1 < 8 或 S1 < 17 时主比较降为描述性；从不改定义",
+   "why": "标签驱动、与结果无关"
+  },
+  {
+   "area": "曝光 vs 设计改动",
+   "gate": "C8",
+   "id": "A10",
+   "v321": "曝光只登记不排除",
+   "version_a": "新增设计改动 ledger：生成结果出现后的改动，受影响分析一律探索性",
+   "why": "真正需要控制的是结果出现后的设计改动"
+  },
+  {
+   "area": "评审机制",
+   "gate": "P6、C8",
+   "id": "A11",
+   "v321": "位置 sha256(协议|pair|通道)，表单结构",
+   "version_a": "分包与阶段锚点；秘密 salt （先登记 sha）；每通道完全平衡 + 第二名审阅者镜像；生成结果在锁定前封存（公开仓库）；审阅者代码化",
+   "why": "盲态与锁定可核验"
+  },
+  {
+   "area": "翻译",
+   "gate": "P5",
+   "id": "A12",
+   "v321": "未规定",
+   "version_a": "原文为准；按句映射；同一方法同一译者；背景生成前冻结；回复由不知条件者翻译；译者不兼审阅者",
+   "why": "防止译文成为提示"
+  },
+  {
+   "area": "PP1 地位",
+   "gate": "C4",
+   "id": "A13",
+   "v321": "PP1 可书面豁免",
+   "version_a": "保留为正式大规模人评的前置流程（默认不豁免）；不阻塞生成；默认不并入统计",
+   "why": "研究者倾向"
+  },
+  {
+   "area": "表单 S",
+   "gate": "C2",
+   "id": "A14",
+   "v321": "S-4 摘录 + S-5 主题",
+   "version_a": "S-4 span 只进审计 ledger；删除 S-5 主题（QH 不再使用整理者文字）；样本层（cue/other）对整理者隐藏；同一 owner 按时间顺序",
+   "why": "避免层信息诱导 S1"
+  },
+  {
+   "area": "Gate",
+   "gate": "全部",
+   "id": "A15",
+   "v321": "G-ENG E1–E5；FC C1–C6",
+   "version_a": "G-ENG 增 E6 执行器验收；FC 增 C7 renderer 验收、C8 封存与 ledger、C9 主比较族冻结、C10 DP 规则；P6 由工具完成转为 PASS",
+   "why": "补齐本轮新增要求"
+  }
+ ]
+}

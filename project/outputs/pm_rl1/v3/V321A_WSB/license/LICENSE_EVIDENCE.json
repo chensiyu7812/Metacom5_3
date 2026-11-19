@@ -1,0 +1,114 @@
+{
+ "checked_on": "2026-11-19",
+ "disclaimer": "这是证据整理，不是法律意见；最终由研究者（必要时咨询机构）决定",
+ "method": "GitHub API (gh api) for repository metadata, LICENSE and README; Zenodo record page read once via a web fetch (the API refused automated access); local artifact counts",
+ "sources": [
+  {
+   "evidence": "Creative Commons Attribution-NonCommercial 4.0 International（CC BY-NC 4.0）全文",
+   "id": "L1",
+   "source": "ESConv（thu-coai/Emotional-Support-Conversation）",
+   "url": "https://github.com/thu-coai/Emotional-Support-Conversation/blob/main/LICENSE",
+   "what": "仓库 LICENSE 文件"
+  },
+  {
+   "evidence": "“Copyright © 2021 CoAI Group, Tsinghua University. All rights reserved. Data and codes are for academic research use only.”",
+   "id": "L2",
+   "source": "ESConv",
+   "url": "https://github.com/thu-coai/Emotional-Support-Conversation",
+   "what": "README 首行"
+  },
+  {
+   "evidence": "cc-by-nc-4.0（只在 refs/pr/2 分支看到，主分支未核实）",
+   "id": "L3",
+   "source": "ESConv（Hugging Face thu-coai/esconv）",
+   "url": "https://huggingface.co/datasets/thu-coai/esconv",
+   "what": "数据卡 license 字段"
+  },
+  {
+   "evidence": "仓库没有 LICENSE 文件，GitHub license 字段为 null；README 写明 EvoEmo 数据在 data/evo_emo.json",
+   "id": "L4",
+   "source": "ES-MemEval / EvoEmo（slptongji/ES-MemEval）",
+   "url": "https://github.com/slptongji/ES-MemEval",
+   "what": "GitHub 仓库许可"
+  },
+  {
+   "evidence": "资源类型 Software；许可 CC BY 4.0；2026-01-22 发布；1 个 zip（798 kB）；记录中没有数据来源、使用条款或伦理说明",
+   "id": "L5",
+   "source": "ES-MemEval v1.0.0（Zenodo 10.5281/zenodo.18338564）",
+   "url": "https://zenodo.org/records/18338564",
+   "what": "Zenodo 记录"
+  },
+  {
+   "evidence": "论文文本标注 CC BY 4.0；这只覆盖论文，不一定覆盖数据",
+   "id": "L6",
+   "source": "ES-MemEval 论文（arXiv 2602.01885）",
+   "url": "https://arxiv.org/abs/2602.01885",
+   "what": "论文许可"
+  },
+  {
+   "evidence": "401 个会话中 85 个来自 ESConv（session id escNNN），316 个为 EvoEmo 生成会话",
+   "id": "L7",
+   "source": "本项目 sanitized artifact（ES-MemEval-Public-v1.0.0-1427）",
+   "url": null,
+   "what": "来源构成（本地计数）"
+  },
+  {
+   "evidence": "ESConv_academic_research_only（8）；inherited_research_scope; upstream_EvoEmo_license_unresolved（261）",
+   "id": "L8",
+   "source": "WS-A 来源登记（#18）",
+   "url": null,
+   "what": "license 字段"
+  },
+  {
+   "evidence": "public。仓库中已有 data/external/ESConv.json（9.0 MB）、data/external/evo_emo.json（4.5 MB）、sanitized artifact，以及 #20 提交的 8 份 QH 背景（RAW 派生）",
+   "id": "L9",
+   "source": "本仓库 chensiyu7812/Metacom5_3",
+   "url": null,
+   "what": "可见性（gh api）"
+  }
+ ],
+ "uses": [
+  {
+   "basis": [
+    "L1/L2：ESConv 允许非商业学术研究使用，须署名",
+    "L5：EvoEmo 发布记录为 CC BY 4.0；其中 ESConv 派生部分仍受 L1 约束"
+   ],
+   "conditions": [
+    "研究者确认本项目属于非商业学术研究",
+    "署名 ESConv 与 ES-MemEval",
+    "Tokkio 等商业部署用途不在此证据范围内"
+   ],
+   "status": "有证据支持（前提待确认）",
+   "use": "内部研究（团队内、非商业学术研究）"
+  },
+  {
+   "basis": [
+    "L1：BY-NC 允许以非商业目的分享，须附署名与许可链接",
+    "L2：仅限学术研究"
+   ],
+   "conditions": [
+    "任务包内附来源署名与许可说明",
+    "参与者书面承诺只用于本研究、不转发、结束后删除",
+    "支付评审劳务是否影响“非商业”判断，需研究者或机构确认",
+    "内容涉及情绪困扰：给参与者事先说明与退出权；遵守所在机构的伦理与数据管理要求"
+   ],
+   "status": "可行，但须附条件并由研究者确认",
+   "use": "人工审阅共享（把含 RAW 的任务包交给整理者、审阅者、裁决者）"
+  },
+  {
+   "basis": [
+    "L1 允许非商业再分发，但 L2 写有“All rights reserved … academic research use only”",
+    "L4：数据仓库无 LICENSE；L5 的 CC BY 4.0 属于“软件”记录，是否覆盖数据文件未写明",
+    "CC BY 4.0 不能为 ESConv 派生部分（L7 的 85 个会话）去掉 NC 限制",
+    "EvoEmo 生成会话所用生成模型的条款未知"
+   ],
+   "conditions": [
+    "不要只凭“数据公开”推断可以公开再分发",
+    "现状（L9）需要研究者决定：仓库转私有，或移除原始数据只保留哈希与获取脚本",
+    "本轮新生成的 PP1/筛查任务包已放在仓库外，只提交哈希"
+   ],
+   "status": "未确立",
+   "use": "公开再分发（公开仓库、公开任务包、论文附录长段原文）"
+  }
+ ]
+}
