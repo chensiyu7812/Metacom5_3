@@ -1,0 +1,109 @@
+{
+  "protocol": "pmrl1-g0e-limited-research-freeze-target-1",
+  "source_PR": 10,
+  "source_HEAD": "73fdb12f29b6970a268eeda704d73e1bd35b1c3e",
+  "identities": {
+    "decode_id": "decode:de376c64c6da1bc02d0752811d8a0dffeec41f2bd9cf869a1e8c1af16f448069",
+    "g_id": "G0e:b624c7c3f99ffe6b35eca29e2f93ea9e624e66b31303415e4b9c4b1bc4c6c07e",
+    "renderer_id": "renderer:e04b6de4d78624db4379c25537b9e6f8571b00b4c4edee681c7b5b3e31bb3d27",
+    "step2_id": "pmrl1v3-g0e-no-plan-1"
+  },
+  "model": {
+    "architecture": "Gemma4UnifiedForConditionalGeneration",
+    "attestation_path": "project/outputs/pm_rl1/v3/A0/repair_1/ENV_REPORT.json",
+    "attestation_sha256": "be1a91d91bff8d6a991115c34656602142b60942c2bdaa5417d30b8d932b1ef9",
+    "files": {
+      "chat_template.jinja": {
+        "bytes": 18683,
+        "sha256": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4"
+      },
+      "config.json": {
+        "bytes": 4423,
+        "sha256": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9"
+      },
+      "generation_config.json": {
+        "bytes": 260,
+        "sha256": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e"
+      },
+      "model.safetensors": {
+        "bytes": 23919549408,
+        "sha256": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d"
+      },
+      "processor_config.json": {
+        "bytes": 1382,
+        "sha256": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9"
+      },
+      "tokenizer.json": {
+        "bytes": 32169626,
+        "sha256": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f"
+      },
+      "tokenizer_config.json": {
+        "bytes": 3089,
+        "sha256": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+      }
+    },
+    "model_id": "Gemma-4-12B-it-707f0a3",
+    "native_context_tokens": 262144,
+    "revision": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+    "weight_hash_status": "reused_A0_byte_attestation; fresh hash required before GPU load"
+  },
+  "model_path": "/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3",
+  "tokenizer_identity": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+  "system_prompt_sha256": "7f4a0bac68d8d27999d2c1db9de21e0b33e19a50b197bff8cb01c152eb5282e5",
+  "decode": {
+    "do_sample": false,
+    "enable_thinking": false,
+    "eos_token_id": [
+      1,
+      106,
+      50
+    ],
+    "max_new_tokens": 320,
+    "num_beams": 1,
+    "pad_token_id": 0,
+    "repetition_penalty": 1.0,
+    "seed": 0,
+    "suppress_tokens": [
+      258883,
+      258882
+    ]
+  },
+  "runtime": {
+    "allow_tf32": false,
+    "attention": "sdpa",
+    "backend": "hf",
+    "cross_backend_bitwise_determinism_claim": false,
+    "cublas_workspace_config": ":4096:8",
+    "deterministic_algorithms": true,
+    "dtype": "bfloat16",
+    "fixed_batch_size": 1,
+    "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+    "max_batch_context_tokens": 32768,
+    "max_batch_size": 1,
+    "max_model_len": 16384,
+    "model_class": "AutoModelForMultimodalLM",
+    "packages": {
+      "safetensors": "0.8.0",
+      "tokenizers": "0.23.2",
+      "torch": "2.7.1+cu128",
+      "transformers": "5.17.0",
+      "vllm": "0.10.1"
+    },
+    "padding_side": "left",
+    "python": "3.12.14"
+  },
+  "spec_sha256": "5b2479e7ed319bf4a91b891852bafd30fb6d0fc3b357f3a5235e360af78c82f8",
+  "source_files_sha256": {
+    "project/configs/rl1v3/G0e.json": "ebcd31d32d86d6fc447615f8b1eca5e7b93ac5747df103bc359475b2cc5702c6",
+    "project/src/metacom_pm/rl1v3/generator/g0e.py": "c7f8c604ff916d51c17f64b434cb60ae7c34c4aa73748fa1de153272e601ef4f",
+    "project/src/metacom_pm/rl1v3/render/request_packet.py": "ea9c0b675e17b6748c2338d56e69189682be3f4a437bb9c14e6c7fdf95230b0c"
+  },
+  "scope": "limited research baseline for original 4 OFF A0; original PP1 only after separate authorization; FC-MS renderer is a separate identity",
+  "identity_acceptance": "PENDING_RESEARCHER_CONFIRMATION",
+  "signed_by": null,
+  "decision_evidence": null,
+  "merged": false,
+  "research_qualified": false,
+  "authorized": false,
+  "freeze_target_sha256": "8b42aeb31bb3e8dc680aabcacf478cbbc888467af833e0c7a4733ba6a0f20082"
+}
