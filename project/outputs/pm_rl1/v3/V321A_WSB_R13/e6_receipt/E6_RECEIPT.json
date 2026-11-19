@@ -1,0 +1,61 @@
+{
+ "consequence": "E6 未签收：按研究者要求，A0 与 PP1 都不能批准；修复后 B 用同一 harness 在新的固定 HEAD 上复跑",
+ "defects": [
+  {
+   "finding": "SIGTERM to the supervisor ends it without STOP/SUMMARY; the worker runs in its own session, survives as an orphan and finishes the in-flight call (12 s in the harness; a real generate or a model load would keep the GPU busy until it ends). The parent-side watchdog timers die with the parent.",
+   "fix": "convert SIGTERM/SIGHUP into an exception in the supervisor (so drive() journals STOP and close() kills the group); in the worker add PR_SET_PDEATHSIG=SIGKILL (preexec) and a watchdog thread that exits when getppid() != the admitted supervisor pid; pass a per-operation absolute deadline to the worker and enforce it there too",
+   "id": "E6-D1",
+   "scenario": "E5_parent_SIGTERM",
+   "severity": "high"
+  },
+  {
+   "finding": "same as D1 for SIGKILL (cannot be caught): orphan worker completes the in-flight call",
+   "fix": "worker-side PR_SET_PDEATHSIG + parent-pid watchdog + worker-side deadline (as D1)",
+   "id": "E6-D2",
+   "scenario": "E6_parent_SIGKILL",
+   "severity": "medium"
+  },
+  {
+   "finding": "the no-retry claim is keyed by the approval hash; a second approval for the SAME plan (any text change) re-runs every request although a REQUEST_START without result exists (4-call plan -> 6 physical calls in the harness)",
+   "fix": "key the claim by plan_sha256 (one execution per plan); or refuse when any journal of this plan has an unresolved START unless the new approval names that journal and a new plan covers only never-started request ids; never re-run validated or unresolved calls under the same plan",
+   "id": "E6-D3",
+   "scenario": "F1_reapproval_after_unresolved_start",
+   "severity": "high"
+  },
+  {
+   "finding": "when the worker process itself dies, close() skips killpg, so children left in its process group survive (the real HF worker is not expected to spawn processes)",
+   "fix": "close(): always killpg(worker pgid, SIGKILL) and reap, ignoring ProcessLookupError",
+   "id": "E6-D4",
+   "scenario": "E3_worker_exit_leaves_child",
+   "severity": "low"
+  }
+ ],
+ "failed_checks": [
+  "E3: when the worker itself dies, its children in the same process group are also removed",
+  "E5_parent_SIGTERM: after the supervisor is killed, the worker must not keep running (no orphan)",
+  "E6_parent_SIGKILL: after the supervisor is killed, the worker must not keep running (no orphan)",
+  "F1: a second approval for the same plan must not re-run requests whose START is unresolved"
+ ],
+ "failed_match_expected_defects": true,
+ "method": "B 自写故障注入 harness（V321A_e6_harness.py）；A 的执行器只作为被测对象；不使用 A 的测试或验收函数作为 oracle；假 worker、假 nvidia-smi、临时 DATA；不加载模型、不访问 GPU",
+ "object": {
+  "code_head": "575011b43947f4aaf73d6bb31f376bf4c36405fc",
+  "head": "46349ccf02fef477bfc8fd76114bf1e38044e1d3",
+  "pr": 21
+ },
+ "observations": [
+  "日志语义：START = REQUEST_START（发送前 fsync 落盘，已由假 worker 在收到请求时核对）；RESULT = REQUEST_RETURNED（原样）+ REQUEST_VALIDATED；FAILED 没有逐请求事件，由 STOP（含 reason 与 pending）表示。建议增加 failed_request_id 字段。监督进程被杀时没有 STOP：读取方必须把“有 START、无 RESULT”视为未决（E6-D1/D3 的修复后由执行器强制）",
+  "write_once 是 O_EXCL + fsync(文件和目录)，不是临时文件 + rename；写一半崩溃会留下不完整文件，代码有意保留作为未决证据，读取方需容忍最后一条不可解析",
+  "executor_review_evidence 只检查非空；应绑定 B 的 E6 回执（URL、回执 sha、覆盖的执行器 HEAD）",
+  "模型与 tokenizer：baseline 的文件列表包含 tokenizer.json、tokenizer_config.json、chat_template.jinja，加载前逐字节哈希（本 harness 用替代小文件验证了“哈希不符即 STOP、不加载”）；24 GB 实际哈希约 170 s 计入 1,200 s 总预算",
+  "真实 worker 的“只加载一次”“原生 tokenizer 与请求 ids 相等”只做了代码审查（假 worker 替代了它），需在 A0 实测时由日志证明",
+  "未跟踪文件不在干净检查范围内（--untracked-files=no）；PYTHONPATH 下的未跟踪 sitecustomize.py 会在 worker 启动时被导入（低）"
+ ],
+ "retest": "python scripts/rl1v3/V321A_e6_harness.py --wt <worktree at fixed HEAD> --out <dir>",
+ "totals": {
+  "checks": 47,
+  "failed": 4,
+  "passed": 43
+ },
+ "verdict": "NOT_SIGNED"
+}

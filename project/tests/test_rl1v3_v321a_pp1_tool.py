@@ -168,7 +168,9 @@ def test_form_rules_curator_and_f():
     base = dict(need="S1", risk=["none"])
     errs = T.validate_answer(view, it, base, True)
     assert any("reason" in e for e in errs) and any("span" in e for e in errs)
-    ok = dict(base, reason="the reply would repeat a failed idea", spans=[dict(ref=ref, role="required")])
+    assert any("sessions_needed" in e for e in errs)
+    ok = dict(base, reason="the reply would repeat a failed idea", sessions_needed="one",
+              spans=[dict(ref=ref, role="required")])
     assert T.validate_answer(view, it, ok, True) == []
     assert T.validate_answer(view, it, dict(ok, risk=["none", "stale"]), True)          # exclusive option
     # F: yes needs severity, verbatim quote and a source (F5 may use no_source)

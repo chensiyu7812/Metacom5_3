@@ -1,0 +1,42 @@
+{
+ "defects_closed": {
+  "E6-D1": "E5 通过：SIGTERM 后 worker 2 秒内消失，不再继续计算",
+  "E6-D2": "E6 通过：SIGKILL 后同上（pidfd 监护在 worker 进程组内）",
+  "E6-D3": "F1 通过：同一计划的新授权被请求集合 claim 拒绝，物理调用不增加",
+  "E6-D4": "E3 通过：worker 退出后，进程组内子进程被清理"
+ },
+ "method": "B 自写故障注入 harness（V321A_e6_harness.py）；A 的执行器只作为被测对象；不使用 A 的测试或验收函数作为 oracle；假 worker、假 nvidia-smi、临时 DATA；不加载模型、不访问 GPU；同一 harness 在 #23 上复跑，另加 2 项（授权缺 binding SHA、运行不带 binding）；进程类场景另用实际执行环境 Python 3.12（无 os.pidfd_open，走 ctypes 路径）复跑",
+ "not_an_authorization": "E6 签收不构成 A0 或 PP1 的运行授权；授权须另签 binding SHA 与最终 checkout HEAD",
+ "object": {
+  "code_head": "26343dc69ba1616fad293319a26a86b0b1b0816d",
+  "executor_bindings": {
+   "A0": "c9eb9169897686c018b657c39b766689b78058441976774eb34107f8da0d65e1",
+   "PP1": "2a14cac2f2598fdbeb47c1ce6f9159fa2518ec592707d84d8999dd1bd6f71b2d"
+  },
+  "head": "67169816bddaf50206f9847300673d4887713c4d",
+  "original_plans": {
+   "A0": "43f175c5…",
+   "PP1": "bc51f931…"
+  },
+  "pr": 23
+ },
+ "remaining_observations": [
+  "SIGTERM 仍不写 STOP/SUMMARY（未决 START 是持久记录，并已强制不可重试）",
+  "FAILED 无逐请求事件（建议 failed_request_id）",
+  "executor_review_evidence 仍只检查非空：授权文件应引用本回执 URL、#23 HEAD 与 binding SHA"
+ ],
+ "scope": "CPU 故障注入范围：执行器的准入、身份、守卫、日志、停止、进程清理、不重试；真实 worker 在真实模型上的“只加载一次”“原生 tokenizer 相等”须由 A0 日志证明",
+ "totals": {
+  "py311": {
+   "checks": 49,
+   "failed": 0,
+   "passed": 49
+  },
+  "py312_process_paths": {
+   "checks": 20,
+   "failed": 0,
+   "passed": 20
+  }
+ },
+ "verdict": "SIGNED"
+}

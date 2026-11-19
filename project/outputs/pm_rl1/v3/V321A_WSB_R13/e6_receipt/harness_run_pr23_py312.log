@@ -1,0 +1,21 @@
+PASS guards | B8_gpu_taken_mid_run: another process on the GPU stops the job; no further START; worker gone
+PASS journal | C1: FINISHED with exactly 4 physical calls (no warm-up, no extra call)
+PASS journal | C1: event order RUN_START…LOAD_OK, then START/RETURNED/VALIDATED ×4, SUMMARY last
+PASS journal | C1: every REQUEST_START is durable on disk before the worker receives that request
+PASS journal | C1: hash chain re-computed by B from file bytes
+PASS journal | C1: worker received the pinned GPU UUID and the supervisor pid; exited after the run
+PASS retry | C1b: the same approval cannot run twice (claim is write-once)
+PASS failure | D2_worker_crash: STOPPED at call 2; no later START; pending recorded; worker gone
+PASS process | E1: the supervisor's hard deadline kills the hung worker and its child (same process group)
+PASS process | E2: a worker that ignores SIGTERM is still removed when the job stops (SIGKILL escalation)
+PASS process | E3: when the worker itself dies, its children in the same process group are also removed
+PASS process | E4_parent_SIGINT: Ctrl-C stops the job, journals STOP, kills the worker at once
+PASS process | E5_parent_SIGTERM: after the supervisor is killed, the worker must not keep running (no orphan)
+PASS process | E5_parent_SIGTERM: no new call is issued after the supervisor dies
+PASS journal | E5_parent_SIGTERM: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval
+PASS process | E6_parent_SIGKILL: after the supervisor is killed, the worker must not keep running (no orphan)
+PASS process | E6_parent_SIGKILL: no new call is issued after the supervisor dies
+PASS journal | E6_parent_SIGKILL: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval
+PASS retry | F1: a second approval for the same plan must not re-run requests whose START is unresolved
+PASS retry | F2: a second job cannot start while one holds the exclusive lock
+{"checks": 20, "passed": 20, "failed": 0}

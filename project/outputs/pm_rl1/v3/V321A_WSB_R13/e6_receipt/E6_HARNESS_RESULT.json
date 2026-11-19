@@ -1,0 +1,622 @@
+{
+ "checks": [
+  {
+   "area": "admission",
+   "detail": "AdmissionError: no explicit authorization",
+   "name": "A1_not_authorized: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: A0/PP1 authorization cannot transfer",
+   "name": "A2_job_kind_transfer: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: authorization plan SHA",
+   "name": "A3_plan_sha_mismatch: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: authorization call budget",
+   "name": "A4_call_budget_mismatch: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: approval must pin actual checkout HEAD",
+   "name": "A5_checkout_head_not_pinned: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: G0e identity not fixed",
+   "name": "A6_g0e_identity_not_fixed: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: final executor acceptance missing",
+   "name": "A7_no_executor_review: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: researcher signature/evidence missing",
+   "name": "A8_no_researcher: refused before device/claim/journal/worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: bound file changed: project/outputs/pm_rl1/v3/runprep_fcms_20261119/cpu_v2/A0_CALLS_4.jsonl",
+   "name": "A9_bound_request_file_changed: refused (bound file changed)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: executor source changed: project/scripts/rl1v3/limited_g0e_run.py",
+   "name": "A10_executor_script_changed: refused (executor source changed)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": "AdmissionError: dirty tracked checkout",
+   "name": "A11_dirty_tracked_checkout: refused (dirty)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "AdmissionError: GPU identity",
+   "name": "B1_gpu_uuid_mismatch: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "AdmissionError: GPU free memory floor",
+   "name": "B2_gpu_free_below_floor: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "AdmissionError: GPU occupied by another process; stop own job only",
+   "name": "B3_gpu_occupied_by_other_pid: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "CalledProcessError: Command '['nvidia-smi', '--id=GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4', '--query-gpu=uuid,memory.free', '--format=csv,noheader,nounits']' returned non-zero exit status 3.",
+   "name": "B4_nvidia_smi_failure: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "AdmissionError: root reserve below 1 GiB; owner must resolve, no automatic cleanup",
+   "name": "B5_root_below_1GiB: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": "AdmissionError: redirect TMPDIR to run data root",
+   "name": "B6_tmpdir_not_redirected: refused before claim, journal and worker",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": {
+    "error": "AdmissionError: model hash: config.json",
+    "events": [
+     "RUN_START",
+     "STOP"
+    ]
+   },
+   "name": "B7_model_bytes_wrong: STOP before LOAD_START, no worker spawned",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "guards",
+   "detail": {
+    "orphans": [],
+    "reason": "AdmissionError: GPU occupied by another process; stop own job only",
+    "starts": 0
+   },
+   "name": "B8_gpu_taken_mid_run: another process on the GPU stops the job; no further START; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": {
+    "backend": "hf_real",
+    "baseline_sha256": "d8a1613ae2240c3b9adf9a7197d9ac2c9d68515abf11bd3dcd8a3f997f1d0132",
+    "deterministic_pairs_equal": true,
+    "job_kind": "A0_MIN",
+    "last_journal_sha256": "cca907bb5852a8943e083d43c921b8d73cbeb652602c1501af55202cd6e0816c",
+    "length_count": 0,
+    "pending": [],
+    "physical_calls": 4,
+    "plan_sha256": "0dacf9c97507b2da67b6551de79c23748a87fc3e298fb20ef29d1f75b4abdba6",
+    "reason": null,
+    "research_qualified": false,
+    "status": "FINISHED",
+    "truncated_pending": [],
+    "unattempted_or_failed_pending": [],
+    "validated_calls": 4,
+    "wall_seconds": 3.032881350722164
+   },
+   "name": "C1: FINISHED with exactly 4 physical calls (no warm-up, no extra call)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": [
+    "RUN_START",
+    "MODEL_BYTES_VERIFIED",
+    "LOAD_START",
+    "LOAD_OK",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    null
+   ],
+   "name": "C1: event order RUN_START…LOAD_OK, then START/RETURNED/VALIDATED ×4, SUMMARY last",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "name": "C1: every REQUEST_START is durable on disk before the worker receives that request",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": null,
+   "name": "C1: hash chain re-computed by B from file bytes",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": null,
+   "name": "C1: worker received the pinned GPU UUID and the supervisor pid; exited after the run",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "retry",
+   "detail": "FileExistsError: [Errno 17] File exists: '/opt/tokkio-data0/tokkio_runs/wsb_v321a/e6/final/C1_normal_A0/data/tokkio_projects/pmrl1-validation/limited-g0e-claims/a036ecf7a51f0f18f4f724cb69eaf4f6b50deb86967f37582e0d15f16dc2da3f.json'",
+   "name": "C1b: the same approval cannot run twice (claim is write-once)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 2,
+    "orphans": [],
+    "pending": 3,
+    "reason": "AdmissionError: worker error: RuntimeError: simulated worker failure"
+   },
+   "name": "D1_worker_error: STOPPED at call 2; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 2,
+    "orphans": [],
+    "pending": 3,
+    "reason": "AdmissionError: worker exited without complete response"
+   },
+   "name": "D2_worker_crash: STOPPED at call 2; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 1,
+    "orphans": [],
+    "pending": 4,
+    "reason": "AdmissionError: empty output"
+   },
+   "name": "D3_empty_output: STOPPED at call 1; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 3,
+    "orphans": [],
+    "pending": 2,
+    "reason": "JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
+   },
+   "name": "D4_garbage_response: STOPPED at call 3; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 2,
+    "orphans": [],
+    "pending": 3,
+    "reason": "AdmissionError: A0 truncation: diagnostic incomplete, no extra call"
+   },
+   "name": "D5_A0_first_length: STOPPED at call 2; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "gens": 2,
+    "orphans": [],
+    "pending": 2,
+    "reason": "AdmissionError: A0 repeated tokens differ"
+   },
+   "name": "D6_A0_repeat_differs: STOPPED at call 2; no later START; pending recorded; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": "AdmissionError: worker error: OutOfMemoryError: CUDA out of memory (simulated)",
+   "name": "D7_load_oom: OOM during load stops before any REQUEST_START; worker gone",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "backend": "b_fake",
+    "baseline_sha256": "d8a1613ae2240c3b9adf9a7197d9ac2c9d68515abf11bd3dcd8a3f997f1d0132",
+    "deterministic_pairs_equal": false,
+    "job_kind": "PP1",
+    "last_journal_sha256": "2476f9a0889e0d5c5757808783cdaa02add84fb1dc4ca9ab93ea9e3f42ac21b3",
+    "length_count": 3,
+    "pending": [
+     "PP1-admission:2e9085801f2d4bfd49f563c48c9474a571b3379237704f1eefab3f7f3d75e826",
+     "PP1-admission:73b1c27242272718abe5df7f3af0f65d95f58ffb97f204e41ba9823930cd5d03",
+     "PP1-admission:399d39788f31f3bd6c20005ec0b1f3fc7c9fc0ba5fc59f1fdff422b5ac966dc8",
+     "PP1-admission:7194c44bad183b4e79a9deb0a820d2838825f08dce6a03186bae816ef72c4c5e",
+     "PP1-admission:8ba7197c0128b20b5cad4be6a7bd7b47f7a1575982d14dc676b57b704be3a4cc",
+     "PP1-admission:1023adbe2550a1126fc8b6277cb701ee3150b48aed13e19552f754c361657f16",
+     "PP1-admission:aef80c3c50147a9bb4a4d0ce318ffe1905e6e5a0043a09e8ecee555d2e960f35",
+     "PP1-admission:6fc336eb498585dd921400026f227895afa06141fb57ade349062c00f54fb468",
+     "PP1-admission:4a577349688abe1c59b61019c721a2f8e3213b66055d9825926c193e150ec6c3",
+     "PP1-admission:6809988b7c3bb9a9e3fe8cd3682dfed72bd3846d787b572eca789766bc4b2fb8"
+    ],
+    "physical_calls": 9,
+    "plan_sha256": "bc51f93157648229f751b586be013af8d2ce42071dd95c03171f522f95d96380",
+    "reason": "AdmissionError: third length stop",
+    "research_qualified": false,
+    "status": "STOPPED",
+    "truncated_pending": [
+     "PP1-admission:2e9085801f2d4bfd49f563c48c9474a571b3379237704f1eefab3f7f3d75e826",
+     "PP1-admission:73b1c27242272718abe5df7f3af0f65d95f58ffb97f204e41ba9823930cd5d03",
+     "PP1-admission:399d39788f31f3bd6c20005ec0b1f3fc7c9fc0ba5fc59f1fdff422b5ac966dc8"
+    ],
+    "unattempted_or_failed_pending": [
+     "PP1-admission:7194c44bad183b4e79a9deb0a820d2838825f08dce6a03186bae816ef72c4c5e",
+     "PP1-admission:8ba7197c0128b20b5cad4be6a7bd7b47f7a1575982d14dc676b57b704be3a4cc",
+     "PP1-admission:1023adbe2550a1126fc8b6277cb701ee3150b48aed13e19552f754c361657f16",
+     "PP1-admission:aef80c3c50147a9bb4a4d0ce318ffe1905e6e5a0043a09e8ecee555d2e960f35",
+     "PP1-admission:6fc336eb498585dd921400026f227895afa06141fb57ade349062c00f54fb468",
+     "PP1-admission:4a577349688abe1c59b61019c721a2f8e3213b66055d9825926c193e150ec6c3",
+     "PP1-admission:6809988b7c3bb9a9e3fe8cd3682dfed72bd3846d787b572eca789766bc4b2fb8"
+    ],
+    "validated_calls": 9,
+    "wall_seconds": 190.0
+   },
+   "name": "D8: PP1 stops at the third length (call 9); truncated kept; 7 unattempted pending",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "detail": {
+    "calls": 5,
+    "last_budget": 100.0,
+    "reason": "TimeoutError: call 5 exceeded its 100s budget",
+    "wall": 1200.0
+   },
+   "name": "D9: 1,200 s total budget: the last call only gets the remaining time; nothing starts after it",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "process",
+   "detail": {
+    "error": "AdmissionError: worker hard deadline",
+    "orphans": [],
+    "seconds": 6.0
+   },
+   "name": "E1: the supervisor's hard deadline kills the hung worker and its child (same process group)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "process",
+   "detail": {
+    "orphans": [],
+    "reason": "AdmissionError: GPU occupied by another process; stop own job only"
+   },
+   "name": "E2: a worker that ignores SIGTERM is still removed when the job stops (SIGKILL escalation)",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "process",
+   "detail": {
+    "orphans": [
+     1822085
+    ],
+    "reason": null
+   },
+   "name": "E3: when the worker itself dies, its children in the same process group are also removed",
+   "ok": false,
+   "severity": "low"
+  },
+  {
+   "area": "process",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START",
+     "STOP",
+     null
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false
+   },
+   "name": "E4_parent_SIGINT: Ctrl-C stops the job, journals STOP, kills the worker at once",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "process",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E5_parent_SIGTERM: after the supervisor is killed, the worker must not keep running (no orphan)",
+   "ok": false,
+   "severity": "high"
+  },
+  {
+   "area": "process",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E5_parent_SIGTERM: no new call is issued after the supervisor dies",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E5_parent_SIGTERM: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "process",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E6_parent_SIGKILL: after the supervisor is killed, the worker must not keep running (no orphan)",
+   "ok": false,
+   "severity": "medium"
+  },
+  {
+   "area": "process",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E6_parent_SIGKILL: no new call is issued after the supervisor dies",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "detail": {
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "generate_calls": 2,
+    "orphans_end": [],
+    "waited": true,
+    "worker_alive_2s_after_signal": true,
+    "worker_finished_current_call": true
+   },
+   "name": "E6_parent_SIGKILL: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "retry",
+   "detail": {
+    "claims": 2,
+    "first": "AdmissionError: worker exited without complete response",
+    "second_outcome": "returned",
+    "second_status": "FINISHED",
+    "total_generate_calls": 6
+   },
+   "name": "F1: a second approval for the same plan must not re-run requests whose START is unresolved",
+   "ok": false,
+   "severity": "high"
+  },
+  {
+   "area": "retry",
+   "detail": "BlockingIOError: [Errno 11] Resource temporarily unavailable",
+   "name": "F2: a second job cannot start while one holds the exclusive lock",
+   "ok": true,
+   "severity": null
+  },
+  {
+   "area": "admission",
+   "detail": {
+    "err": [
+     "metacom_pm.rl1v3.generator.limited_run.AdmissionError: internal worker requires admitted supervisor"
+    ],
+    "rc": [
+     1,
+     1
+    ]
+   },
+   "name": "F3: the real worker module refuses to start without (or with a forged) supervisor pid, before torch",
+   "ok": true,
+   "severity": null
+  }
+ ],
+ "harness": {
+  "python": "3.11.15",
+  "replaced": [
+   "HF worker -> B dummy",
+   "nvidia-smi -> B fake",
+   "DATA -> temp",
+   "model byte list -> config.json"
+  ]
+ },
+ "sut": {
+  "code_head": "575011b43947f4aaf73d6bb31f376bf4c36405fc",
+  "head": "46349ccf02fef477bfc8fd76114bf1e38044e1d3",
+  "modules": [
+   "generator/limited_run.py",
+   "generator/limited_hf_worker.py",
+   "scripts/rl1v3/limited_g0e_run.py"
+  ],
+  "pr": 21
+ },
+ "totals": {
+  "checks": 47,
+  "failed": 4,
+  "passed": 43
+ }
+}

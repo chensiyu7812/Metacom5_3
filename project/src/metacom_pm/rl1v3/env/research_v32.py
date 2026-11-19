@@ -18,6 +18,7 @@ reward only at STOP) and adds what the V3.2 brief requires before research use:
 """
 from __future__ import annotations
 
+import copy
 import dataclasses
 from dataclasses import dataclass
 
@@ -89,7 +90,9 @@ class BoundEpisode:
         if action not in E.ACTIONS:
             return self._invalid(s, action, "unknown_action")
         if action == E.STOP:
-            return s, dict(stop=True)
+            # R3 (round 13): STOP ends the episode; later actions are typed ``after_stop``.  The terminal key is
+            # unchanged because it depends on the readings, not on the done flag.
+            return dataclasses.replace(s, done=True), dict(stop=True)
         head = E.HEAD_OF[action]
         if head in s.order:
             return self._invalid(s, action, "already_read")
@@ -141,14 +144,20 @@ class ReplayCache:
         return AB.asof_terminal_key_sha256(c0_key_sha256, binding)
 
     def put(self, c0_key_sha256: str, binding, value: dict) -> str:
+        """Write-once; an identical retry is idempotent (R4, round 13).  The stored row is a deep copy."""
         k = self.key(c0_key_sha256, binding)
-        if k in self._rows and self._rows[k] != value:
-            raise ValueError("write-once: a different value for the same identity")
-        self._rows[k] = dict(value, binding_sha256=binding.sha256, binding_tier=binding.tier)
+        row = copy.deepcopy(dict(value, binding_sha256=binding.sha256, binding_tier=binding.tier))
+        if k in self._rows:
+            if self._rows[k] != row:
+                raise ValueError("write-once: a different value for the same identity")
+            return k
+        self._rows[k] = row
         return k
 
     def get(self, c0_key_sha256: str, binding):
-        return self._rows.get(self.key(c0_key_sha256, binding))
+        """Returns a deep copy, so callers cannot alias the stored row (R4, round 13)."""
+        row = self._rows.get(self.key(c0_key_sha256, binding))
+        return copy.deepcopy(row) if row is not None else None
 
     def migrate(self, *_a, **_k):
         raise PermissionError("outcomes are never migrated to a new writer/snapshot/G/decode/renderer identity")

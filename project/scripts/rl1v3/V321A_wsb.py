@@ -145,7 +145,7 @@ def step_e2e(args):
     from metacom_pm.rl1v3.review import pp1_tool as T
     work = RUNS / f"e2e_{time.strftime('%Y%m%d_%H%M%S')}"
     work.mkdir(parents=True)
-    out = OUT / "pp1_e2e"
+    out = Path(os.environ.get("PP1_E2E_OUT", OUT / "pp1_e2e"))
     if out.exists():
         shutil.rmtree(out)
     (out / "exports").mkdir(parents=True)
@@ -317,8 +317,11 @@ def step_e2e(args):
         note="Times in procedure_metrics_sim are robot times (seconds), not human estimates; they only prove the "
              "timing pipeline works.  The F-A page is non-blind by design and is excluded from the blind-page scan.")
     jdump(out / "E2E_REPORT.json", report)
-    manifest("pp1_e2e", {}, sorted(p for p in out.rglob("*") if p.is_file() and p.name != "MANIFEST.json"),
-             TOOL_CODE + [REVIEW / "pp1_sim.py", PROJECT / "scripts/rl1v3/V321A_pp1_e2e.mjs"])
+    man = build_manifest(task="V321A_wsb_pp1_e2e", root=PROJECT, inputs={},
+                         code=[Path(__file__)] + TOOL_CODE + [REVIEW / "pp1_sim.py", PROJECT / "scripts/rl1v3/V321A_pp1_e2e.mjs"],
+                         code_sha=head_sha(),
+                         outputs=sorted(p for p in out.rglob("*") if p.is_file() and p.name != "MANIFEST.json"))
+    jdump(out / "MANIFEST.json", man)
     print(json.dumps(report["totals"]), json.dumps(node_errors)[:400])
     failed = [c for c in allc if not c["ok"]]
     for c in failed:

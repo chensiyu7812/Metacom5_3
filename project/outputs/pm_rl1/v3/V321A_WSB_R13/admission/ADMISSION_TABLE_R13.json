@@ -1,0 +1,517 @@
+{
+ "counts": {
+  "BLOCKED": 31,
+  "PASS": 6,
+  "PENDING": 27
+ },
+ "gates": {
+  "FC-ME": "BLOCKED",
+  "FC-MP": "BLOCKED",
+  "FC-MS": "BLOCKED",
+  "FC-RS": "BLOCKED",
+  "G-ENG": "BLOCKED",
+  "G-RWD": "BLOCKED",
+  "PP1": "BLOCKED"
+ },
+ "prs": {
+  "10": {
+   "base": "pmrl1-v3/integration",
+   "draft": false,
+   "head": "73fdb12f29b6970a268eeda704d73e1bd35b1c3e",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "15": {
+   "base": "pmrl1-v3/integration",
+   "draft": false,
+   "head": "b63635f3621f3a5d252099efcd58ae2d1958dce2",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "16": {
+   "base": "pmrl1-v3/ws-b-s3",
+   "draft": true,
+   "head": "a9cf0cca0fecd044a5a4e2a4066355a9a8123dc5",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "17": {
+   "base": "pmrl1-v3/ws-b-v32-p0p2",
+   "draft": true,
+   "head": "3dafb2aa6e861846aa77a96d99a02c66e4fade7d",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "18": {
+   "base": "pmrl1-v3/ws-a-asof-cpu-20261118",
+   "draft": true,
+   "head": "0a91ff3329dc0d091fbb9e234035638efb45146c",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "19": {
+   "base": "pmrl1-v3/ws-a-resource-qualification-20261118",
+   "draft": true,
+   "head": "4ac9ab3d23d04cd8ec9435ea239995ae85a3e610",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "20": {
+   "base": "pmrl1-v3/ws-b-v32-rq1-qual",
+   "draft": true,
+   "head": "4624600de57bbb61f872d54540234f07d907c1ed",
+   "merged_at": null,
+   "state": "OPEN"
+  }
+ },
+ "rows": [
+  {
+   "gate": "G-ENG",
+   "id": "E1",
+   "owner": "integration owner / 研究者",
+   "reason": "研究者拟固定 #10 73fdb12f 为研究级 G0e 身份；正式冻结签收待办（不等于 merge）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "G-ENG",
+   "id": "E2",
+   "owner": "WS-A（执行）/ 研究者（授权）",
+   "reason": "A0 尚未实测（需 GPU 授权）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "G-ENG",
+   "id": "E3",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "gate": "G-ENG",
+   "id": "E4",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "gate": "G-ENG",
+   "id": "E5",
+   "owner": "研究者",
+   "reason": "尚无授权",
+   "state": "PENDING"
+  },
+  {
+   "gate": "G-ENG",
+   "id": "E6",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "gate": "PP1",
+   "id": "P1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "PP1",
+   "id": "P2",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "gate": "PP1",
+   "id": "P3",
+   "owner": "研究者（指派）/ 整理者",
+   "reason": "需要一名筛查整理者（约 1.5 小时）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "PP1",
+   "id": "P4",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "gate": "PP1",
+   "id": "P5",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "PP1",
+   "id": "P6",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "M1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "M2",
+   "owner": "WS-A（导出）/ WS-B（核验）",
+   "reason": "PR #18 只覆盖 8 个前缀（已核验通过）；正式样本前缀尚未导出",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "M3",
+   "owner": "WS-A",
+   "reason": "as-of 检索身份未冻结",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "M4",
+   "owner": "研究者",
+   "reason": "待研究者确认",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "0 条标签；90 条初筛执行包已备（两名整理者，约 15–29 小时）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "研究者倾向统一使用 #21 line-quote-1；待签署并在正式 DP 样本上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "候选通过，待正式 DP 样本复验；研究者倾向采纳",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MS",
+   "id": "C10",
+   "owner": "WS-A / 研究者",
+   "reason": "研究者倾向：A 人工选材为主、Rule-DP 为次要基线；A 工具需补齐覆盖/时效/阶段字段与角色约束",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "MP1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "MP2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "PR #18：64 条候选 0 批准（43 pending / 21 quarantined）；p3 无 MP 候选",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "0 条标签；90 条初筛执行包已备（两名整理者，约 15–29 小时）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "研究者倾向统一使用 #21 line-quote-1；待签署并在正式 DP 样本上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "候选通过，待正式 DP 样本复验；研究者倾向采纳",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-MP",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "ME1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "ME2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "同上，ME 候选 0 批准",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "0 条标签；90 条初筛执行包已备（两名整理者，约 15–29 小时）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "研究者倾向统一使用 #21 line-quote-1；待签署并在正式 DP 样本上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "候选通过，待正式 DP 样本复验；研究者倾向采纳",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-ME",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "RS1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "RS2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "2 张 METHOD 与 1 条 CASE 的许可、适用、关联均 pending",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "0 条标签；90 条初筛执行包已备（两名整理者，约 15–29 小时）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "研究者倾向统一使用 #21 line-quote-1；待签署并在正式 DP 样本上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "候选通过，待正式 DP 样本复验；研究者倾向采纳",
+   "state": "PENDING"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "FC-RS",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究者原则同意版本 A；研究决定回执候选待签署（decision/）",
+   "state": "PENDING"
+  },
+  {
+   "gate": "G-RWD",
+   "id": "R1",
+   "owner": "WS-B / 研究者",
+   "reason": "尚无正式比较",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "G-RWD",
+   "id": "R2",
+   "owner": "WS-B",
+   "reason": "无人工标签",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "G-RWD",
+   "id": "R3",
+   "owner": "研究者",
+   "reason": "待研究者决定",
+   "state": "PENDING"
+  },
+  {
+   "gate": "G-RWD",
+   "id": "R4",
+   "owner": "WS-B（修复）/ WS-A（签收）",
+   "reason": "已确认 5/5，未修复",
+   "state": "BLOCKED"
+  },
+  {
+   "gate": "G-RWD",
+   "id": "R5",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  }
+ ]
+}
