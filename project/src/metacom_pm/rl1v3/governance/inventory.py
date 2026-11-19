@@ -70,9 +70,11 @@ def scan(repo: Path, refs: list[str], fps: dict, *, min_hits: int = 3, max_bytes
     where = defaultdict(set)                      # blob -> {(ref, path)}
     sizes = {}
     for ref in refs:
-        r = subprocess.run(["git", "ls-tree", "-r", "-l", ref], cwd=repo, capture_output=True, text=True, check=True)
-        for line in r.stdout.splitlines():
-            meta, path = line.split("\t", 1)
+        r = subprocess.run(["git", "ls-tree", "-r", "-l", "-z", ref], cwd=repo, capture_output=True, check=True)
+        for entry in r.stdout.decode("utf-8", "surrogateescape").split("\0"):
+            if not entry:
+                continue
+            meta, path = entry.split("\t", 1)
             mode, typ, blob, size = meta.split()
             if typ == "blob" and size != "-":
                 where[blob].add((ref, path))

@@ -400,6 +400,12 @@ def step_admission(_):
                                f"高 2、中 1、低 1 项缺陷待 A 修复后复跑）"
             if it["id"] == "C7":
                 it["reason"] = "候选通过，待正式 DP 样本复验；研究者倾向采纳"
+            if it["id"] == "E1":
+                it["reason"] = "研究者拟固定 #10 73fdb12f 为研究级 G0e 身份；正式冻结签收待办（不等于 merge）"
+            if it["id"] in ("C1", "C9", "P5"):
+                it["reason"] = "研究者原则同意版本 A；研究决定回执候选待签署（decision/）"
+            if it["id"] == "C6":
+                it["reason"] = "研究者倾向统一使用 #21 line-quote-1；待签署并在正式 DP 样本上复验"
             if it["id"] == "C10":
                 it["reason"] = "研究者倾向：A 人工选材为主、Rule-DP 为次要基线；A 工具需补齐覆盖/时效/阶段字段与角色约束"
     rows = [dict(gate=g["gate"], id=i["id"], state=i["state"], reason=i.get("reason"), owner=i.get("unblock_owner"))
