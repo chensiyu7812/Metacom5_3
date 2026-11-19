@@ -184,9 +184,12 @@ def gates_v321a(f: dict) -> list[dict]:
                                 f.get("executor_accepted", False), reason="WS-A 的 CPU 参考状态机不是完整执行器；未验收",
                                 owner="WS-A（实现）/ WS-B（验收）"))
     extra = [
-        V._item("C7", "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）",
-                f.get("renderer_accepted", False), reason="A 尚未提交统一 renderer 候选；验收计划已备",
-                owner="WS-A（候选）/ WS-B（验收）/ 研究者（决定转义）"),
+        V._item("C7", "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）并经研究者采纳",
+                f.get("renderer_accepted", False),
+                reason=("B 对 #21 候选的机械回执通过（8 前缀预览）；待研究者采纳，并在正式样本请求导出后复跑"
+                        if f.get("renderer_receipt_pass") else "A 尚未提交统一 renderer 候选；验收计划已备"),
+                owner="WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+                pending=bool(f.get("renderer_receipt_pass"))),
         V._item("C8", "生成结果封存与设计改动 ledger 就位（公开仓库前不推送）", f.get("sealed_storage", False),
                 reason="封存位置与 ledger 待协调人建立", owner="研究者 / WS-B"),
         V._item("C9", "主比较族与多重比较规则在生成前冻结", f.get("family_frozen", False), reason="版本 A 候选待批准",

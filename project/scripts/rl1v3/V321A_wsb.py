@@ -16,6 +16,7 @@ Steps (each writes under outputs/pm_rl1/v3/V321A_WSB/<step>/):
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -455,8 +456,20 @@ def _facts():
     f.update(g0e_identity=prs["10"]["state"] == "MERGED", instrument=(OUT / "pp1_e2e/E2E_REPORT.json").exists() and
              json.loads((OUT / "pp1_e2e/E2E_REPORT.json").read_text())["totals"]["failed"] == 0,
              requests_checked=prs["19"]["head"].startswith("4ac9ab3d"), executor_accepted=False,
-             renderer_accepted=False, sealed_storage=False, family_frozen=False, dp_rule=False)
+             renderer_accepted=False, renderer_receipt_pass=_pr21_pass(), sealed_storage=False, family_frozen=False,
+             dp_rule=False)
     return f, prs
+
+
+def _pr21_pass() -> bool:
+    f = OUT / "pr21_renderer_receipt/RENDERER_RECEIPT_PR21.json"
+    t = OUT / "pr21_renderer_receipt/PR21_TOKENIZE_CHECK.json"
+    if not (f.exists() and t.exists()):
+        return False
+    r, k = json.loads(f.read_text()), json.loads(t.read_text())
+    v = r["new_family"]["verdict"]
+    return (r["renderer_id_matches"] and r["legacy_equal_to_pp1"] and k["matched"] == k["requests"]
+            and all(v[x] == "PASS" for x in ("RA1", "RA2", "RA3", "RA5", "RA6", "RA7")))
 
 
 def step_protocol(_):
@@ -604,6 +617,108 @@ def step_renderer(_):
     print(json.dumps(dict(census=cen, verdict=dry["verdict"], family=dry["family"])))
 
 
+PR21_SHA = "46349ccf02fef477bfc8fd76114bf1e38044e1d3"     # WS-A Draft PR #21 HEAD (pmrl1-v3/ws-a-runprep-fcms-20261119)
+PR21_DIR = "project/outputs/pm_rl1/v3/runprep_fcms_20261119/cpu_v2"
+
+
+def _git_show(ref: str, path: str) -> str:
+    return subprocess.run(["git", "show", f"{ref}:{path}"], cwd=REPO, capture_output=True, text=True, check=True).stdout
+
+
+def _pr21_rows():
+    return [json.loads(x) for x in _git_show(PR21_SHA, f"{PR21_DIR}/RENDERER_PREVIEWS_32.jsonl").splitlines() if x.strip()]
+
+
+def step_pr21(_):
+    """Independent receipt for the FC-MS renderer candidate in WS-A Draft PR #21 (renderer scope only)."""
+    from metacom_pm.rl1v3.asof import e1_receipt as E
+    from metacom_pm.rl1v3.asof import renderer_acceptance as RA
+    from metacom_pm.rl1v3.io import object_sha256 as osha
+    import V321_wsb_pr18_receipt as S
+    raw = E.Raw(json.loads(S.ARTIFACT.read_text()))
+    census = {c["prefix_id"]: c for c in map(json.loads, S.CENSUS.read_text().splitlines())}
+    g0e = json.loads(_git_show(S.G0E_REF, S.G0E_PATH))
+    pp1 = [json.loads(x) for x in _git_show(S.PP1_SHA, S.PP1_REQ).splitlines() if x.strip()]
+    comp = json.loads(_git_show(PR21_SHA, f"{PR21_DIR}/RENDERER_COMPARISON.json"))
+    rows = _pr21_rows()
+    prefixes = {}
+    for r in rows:
+        c = census[r["prefix_id"]]
+        prefixes[r["prefix_id"]] = dict(c, turns=raw.sessions[(c["owner_id"], c["session_id"])]["turns"][:c["cut_turn"] + 1])
+    legacy = [r for r in rows if r["renderer_id"].startswith("renderer:")]
+    new = [r for r in rows if r["renderer_id"].startswith("renderer-fcms:")]
+    pp1_by = {(r["prefix_id"], r["condition"]): r for r in pp1}
+    leg_eq = []
+    for r in legacy:
+        q = pp1_by.get((r["prefix_id"], "OFF" if r["arm"] == "OFF" else "RET-MS"))
+        leg_eq.append(dict(prefix=r["prefix_id"][:12], arm=r["arm"],
+                           messages_equal=bool(q) and q["model_input"]["messages"] == r["model_input"]["messages"],
+                           input_ids_equal=bool(q) and q["model_input"]["input_ids"] == r["model_input"]["input_ids"]))
+    off_g0e = {r["prefix_id"]: r["model_input"]["messages"] for r in pp1 if r["condition"] == "OFF"}
+    fam_new = RA.check_family(new, prefixes, raw, g0e, g0e_off=off_g0e, old_renderer_id="renderer:" + "e04b6de4")
+    fam_leg = RA.check_family(legacy, prefixes, raw, g0e, g0e_off=off_g0e)
+    rid = "renderer-fcms:" + osha(comp["policy"])
+    same_source = []
+    for r in new:
+        if r["arm"] == "OFF":
+            continue
+        a = next(x for x in fam_new["rows"] if x["prefix_id"] == r["prefix_id"][:12] and x["condition"] != "OFF")
+        b = next(x for x in fam_leg["rows"] if x["prefix_id"] == r["prefix_id"][:12] and x["condition"] != "OFF")
+        same_source.append(a.get("source_session") == b.get("source_session"))
+    pp1_ids = {r["request_id"] for r in pp1}
+    out = dict(
+        object=dict(pr=21, head=PR21_SHA, file=f"{PR21_DIR}/RENDERER_PREVIEWS_32.jsonl",
+                    file_sha256=hashlib.sha256(_git_show(PR21_SHA, f"{PR21_DIR}/RENDERER_PREVIEWS_32.jsonl")
+                                               .encode()).hexdigest()),
+        independence="B 未导入或执行 A 的 renderer 代码；载荷按 #21 公布的 POLICY 用 B 自己的解码器还原并与 RAW 逐轮比对",
+        renderer_id_recomputed=rid, renderer_id_in_rows=sorted({r["renderer_id"] for r in new}),
+        renderer_id_matches=sorted({r["renderer_id"] for r in new}) == [rid],
+        legacy_rows=len(legacy), legacy_equal_to_pp1=all(x["messages_equal"] and x["input_ids_equal"] for x in leg_eq),
+        legacy_detail=leg_eq, new_family=fam_new, legacy_family_verdict=fam_leg["verdict"],
+        same_evidence_session_across_renderers=all(same_source), n_same_source=len(same_source),
+        new_request_ids_distinct_from_pp1=not ({r["request_id"] for r in new} & pp1_ids),
+        census=RA.entity_census(raw),
+        header_note="每个证据块开头的 [MS; reported 日期] 也位于引文内，方括号被编码为 \\u005b/\\u005d；DP 与 RET 相同，不构成单因素问题",
+        dp_rows_present=any(normalise_cond(r) == "DP-MS" for r in new))
+    d = OUT / "pr21_renderer_receipt"
+    jdump(d / "RENDERER_RECEIPT_PR21.json", out)
+    manifest("pr21_renderer_receipt", {}, [d / "RENDERER_RECEIPT_PR21.json"],
+             [PROJECT / "src/metacom_pm/rl1v3/asof/renderer_acceptance.py"])
+    print(json.dumps(dict(rid=out["renderer_id_matches"], legacy=out["legacy_equal_to_pp1"], verdict=fam_new["verdict"],
+                          fam={k: fam_new["family"][k] for k in ("payload_modes", "entities_total", "u_escapes_total",
+                                                                  "framing_variants", "rows_with_problems")},
+                          same_source=out["same_evidence_session_across_renderers"],
+                          distinct=out["new_request_ids_distinct_from_pp1"], lq=out["census"]["altered_by_line_quote_1"])))
+    for x in fam_new["rows"]:
+        if x["problems"]:
+            print("PROBLEM", x)
+
+
+def normalise_cond(r):
+    a = r.get("arm") or r.get("condition")
+    return "OFF" if a == "OFF" else ("DP-MS" if "DP" in str(a) else "RET-MS")
+
+
+def step_pr21tok(_):
+    """G0e tokenizer files only (run with the py312 env); no weights."""
+    import V321_wsb_pr18_receipt as S
+    from transformers import AutoTokenizer
+    tok = AutoTokenizer.from_pretrained(str(S.MODEL_DIR))
+    res = []
+    for r in _pr21_rows():
+        m = r["model_input"]
+        ids = tok.apply_chat_template(m["messages"], tokenize=True, add_generation_prompt=True)
+        if hasattr(ids, "keys"):
+            ids = ids["input_ids"]
+        res.append(dict(request_id=r["request_id"], arm=r["arm"], renderer=r["renderer_id"][:22], n=len(m["input_ids"]),
+                        match=list(ids) == m["input_ids"], capacity_ok=len(m["input_ids"]) + 320 <= 16384))
+    import transformers
+    out = dict(model_dir=str(S.MODEL_DIR), weights_loaded=False, transformers=transformers.__version__, rows=res,
+               matched=sum(x["match"] for x in res), requests=len(res), capacity_ok=all(x["capacity_ok"] for x in res))
+    jdump(OUT / "pr21_renderer_receipt/PR21_TOKENIZE_CHECK.json", out)
+    print(json.dumps({k: v for k, v in out.items() if k != "rows"}))
+
+
 LICENSE_EVIDENCE = dict(
     checked_on="2026-11-19", method="GitHub API (gh api) for repository metadata, LICENSE and README; Zenodo record page "
                                    "read once via a web fetch (the API refused automated access); local artifact counts",
@@ -681,7 +796,8 @@ def step_admission(_):
 
 
 STEPS = dict(tool=step_tool, e2e=step_e2e, protocol=step_protocol, fcms=step_fcms, screenpack=step_screenpack,
-             renderer=step_renderer, license=step_license, admission=step_admission)
+             renderer=step_renderer, license=step_license, admission=step_admission, pr21=step_pr21,
+             pr21tok=step_pr21tok)
 
 
 def main():

@@ -25,9 +25,36 @@ DELIMS = ("<resource", "</resource", "<Notes", "</Notes", "<ExternalEvidence", "
 BLOCK = re.compile(r"(<resource\b[^>]*>|<ExternalEvidence\b[^>]*>)(.*?)(</resource>|</ExternalEvidence>)", re.S)
 
 
+_LQ_RESERVED = set("\\<>[]")
+_LQ_BIDI = set(range(0x202a, 0x202f)) | set(range(0x2066, 0x206a)) | {0x200e, 0x200f, 0x061c}
+
+
+def lq_altered(text: str) -> bool:
+    """Would the published line-quote-1 rule (#21 POLICY.escape) encode any character of this text?  B's own reading
+    of the spec: backslash, angle/square brackets, C0 except LF, DEL, U+2028/2029, bidi controls; quotes unchanged."""
+    return any(c in _LQ_RESERVED or (ord(c) < 32 and c != "\n") or ord(c) == 127 or ord(c) in (0x2028, 0x2029)
+               or ord(c) in _LQ_BIDI for c in text)
+
+
+def lq_decode(payload: str) -> str | None:
+    """Independent decoder for line-quote-1 payloads: every line must start with '| '; \\uXXXX decoded once."""
+    lines = payload.strip("\n").split("\n")
+    if not lines or not all(x.startswith("| ") for x in lines):
+        return None
+    return re.sub(r"\\u([0-9a-f]{4})", lambda m: chr(int(m.group(1), 16)), "\n".join(x[2:] for x in lines))
+
+
+def lq_session(decoded: str, raw: E.Raw, owner: str) -> dict | None:
+    body = [x for x in decoded.split("\n") if x.startswith(("supporter: ", "seeker: "))]
+    for s in raw.by_owner[owner]:
+        if body == [f"{t['role']}: {t['text']}" for t in s["turns"] if t["text"]]:
+            return dict(session_id=s["session_id"], rank=s["rank"], date=s["date"])
+    return None
+
+
 def entity_census(raw: E.Raw) -> dict:
     """How many RAW turns a given escaping policy would alter (what G would see differently)."""
-    n = esc_full = esc_min = 0
+    n = esc_full = esc_min = esc_lq = 0
     chars = Counter()
     delim_hits = 0
     for ss in raw.by_owner.values():
@@ -39,9 +66,10 @@ def entity_census(raw: E.Raw) -> dict:
                     chars[c] += c in x
                 esc_full += html.escape(x, quote=True) != x
                 esc_min += html.escape(x, quote=False) != x
+                esc_lq += lq_altered(x)
                 delim_hits += any(d.lower() in x.lower() for d in DELIMS)
     return dict(turns=n, turns_with_char=dict(chars), altered_by_html_escape_quote_true=esc_full,
-                altered_by_minimal_escape_amp_lt_gt=esc_min, altered_by_verbatim=0,
+                altered_by_minimal_escape_amp_lt_gt=esc_min, altered_by_line_quote_1=esc_lq, altered_by_verbatim=0,
                 turns_containing_a_delimiter=delim_hits,
                 share_altered_full=round(esc_full / n, 3), share_altered_minimal=round(esc_min / n, 4))
 
@@ -54,6 +82,7 @@ def _split(row):
 def check_family(rows: list[dict], prefixes: dict, raw: E.Raw, g0e: dict, *, g0e_off: dict | None = None,
                  old_renderer_id: str | None = None) -> dict:
     """rows: every request of one experimental family (all arms, all prefixes)."""
+    rows = [normalise_row(r) for r in rows]
     by_prefix = defaultdict(dict)
     for r in rows:
         by_prefix[r["prefix_id"]][r["condition"]] = r
@@ -86,15 +115,26 @@ def check_family(rows: list[dict], prefixes: dict, raw: E.Raw, g0e: dict, *, g0e
                         open_tag, payload, close_tag = blocks[0]
                         if any(d.lower() in payload.lower() for d in DELIMS):
                             prob.append("RA2_delimiter_inside_payload")
-                        src = E.identify_raw_session(payload, raw, pre["owner_id"])
+                        decoded = lq_decode(payload)
+                        if decoded is not None:
+                            src = lq_session(decoded, raw, pre["owner_id"])
+                            mode = "line_quote_1"
+                            if re.search(r"[<>\[\]]", payload.replace(open_tag, "")):
+                                prob.append("RA2_unescaped_reserved_char_in_line_quote")
+                        else:
+                            src = E.identify_raw_session(payload, raw, pre["owner_id"])
+                            mode = None
                         if src is None:
                             prob.append("RA1_payload_not_a_verbatim_owner_session")
                         else:
                             sess = raw.sessions[(pre["owner_id"], src["session_id"])]
-                            verbatim = all(f"{t['role']}: {t['text']}" in payload for t in sess["turns"] if t["text"])
-                            ent = len(ENTITY.findall(payload))
-                            note.update(source_session=src["session_id"], source_rank=src["rank"],
-                                        payload_mode="verbatim" if verbatim else "html_escaped", entities=ent)
+                            if mode is None:
+                                verbatim = all(f"{t['role']}: {t['text']}" in payload for t in sess["turns"] if t["text"])
+                                mode = "verbatim" if verbatim else "html_escaped"
+                            note.update(source_session=src["session_id"], source_rank=src["rank"], payload_mode=mode,
+                                        entities=len(ENTITY.findall(payload)),
+                                        u_escapes=len(re.findall(r"\\u[0-9a-f]{4}", payload)),
+                                        apostrophes_verbatim=payload.count("'"))
                             if not src["rank"] < pre["cutoff_rank"]:
                                 prob.append("RA6_source_not_strictly_past")
                         frame = inserted[0]["content"].replace(payload, "<PAYLOAD>")
@@ -116,6 +156,7 @@ def check_family(rows: list[dict], prefixes: dict, raw: E.Raw, g0e: dict, *, g0e
         entities_total=sum(x.get("entities", 0) for x in per_row),
         renderer_changed_vs_old=(old_renderer_id is not None and renderer_ids != {old_renderer_id}),
         rows_with_problems=sum(bool(x["problems"]) for x in per_row))
+    fam["u_escapes_total"] = sum(x.get("u_escapes", 0) for x in per_row)
     verdict = dict(
         RA1="DECISION_NEEDED" if fam["payload_modes"].get("html_escaped") else "PASS",
         RA2="PASS" if not any(p.startswith("RA2") for x in per_row for p in x["problems"]) else "FAIL",
@@ -125,6 +166,16 @@ def check_family(rows: list[dict], prefixes: dict, raw: E.Raw, g0e: dict, *, g0e
         RA6="PASS" if not any(p.startswith("RA6") for x in per_row for p in x["problems"]) else "FAIL",
         RA7="PASS" if not any(p.startswith("RA7") for x in per_row for p in x["problems"]) else "FAIL")
     return dict(family=fam, verdict=verdict, rows=per_row)
+
+
+def normalise_row(r: dict) -> dict:
+    """Map preview rows (#21: arm/authorized) onto the request-row fields the checks read."""
+    if "condition" in r and "execution_authorized" in r:
+        return r
+    arm = r.get("condition") or r.get("arm")
+    cond = "OFF" if arm == "OFF" else ("DP-MS" if "DP" in str(arm) else "RET-MS")
+    return dict(r, condition=cond, arm=arm, execution_authorized=bool(r.get("authorized", r.get("execution_authorized"))),
+                result=r.get("result"), reward=r.get("reward"), order=r.get("order", 0))
 
 
 PLAN = [

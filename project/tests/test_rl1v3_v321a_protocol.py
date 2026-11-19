@@ -74,11 +74,12 @@ def _raw():
 G0E = dict(common=dict(system_prompt="SYS", decode={"max_new_tokens": 320}, step2_id="s2"))
 
 
-def _row(cond, payload=None, label="MS"):
+def _row(cond, payload=None, label="MS", header=True):
     conv = [dict(role="user", content="Back again")]
     m = [dict(role="system", content="SYS")]
     if payload is not None:
-        m.append(dict(role="user", content=f'Notes.\n<Notes>\n<resource head="{label}">[MS; reported 2030-01-01]\n'
+        head = "[MS; reported 2030-01-01]\n" if header else ""
+        m.append(dict(role="user", content=f'Notes.\n<Notes>\n<resource head="{label}">{head}'
                                            f"{payload}</resource>\n</Notes>"))
     m += conv
     ids = [1, 2, 3]
@@ -113,3 +114,15 @@ def test_renderer_checks_detect_escape_framing_and_delimiters():
 def test_entity_census_counts_alterations():
     c = RA.entity_census(_raw())
     assert c["turns"] == 4 and c["altered_by_html_escape_quote_true"] == 2 and c["altered_by_minimal_escape_amp_lt_gt"] == 0
+
+
+def test_line_quote_payloads_are_decoded_independently():
+    raw = _raw()
+    lq = "\n| \\u005bMS; reported 2030-01-01\\u005d\n| seeker: I can't sleep\n| supporter: That's hard\n"
+    ok = RA.check_family([_row("OFF"), _row("RET-MS", lq, header=False)], PREFIX, raw, G0E)
+    assert ok["verdict"]["RA1"] == "PASS" and ok["family"]["payload_modes"] == {"line_quote_1": 1}
+    assert ok["family"]["u_escapes_total"] == 2 and ok["family"]["entities_total"] == 0
+    bad = RA.check_family([_row("OFF"), _row("RET-MS", lq.replace("That's", "<b>That's"), header=False)], PREFIX, raw,
+                          G0E)
+    assert bad["verdict"]["RA2"] == "FAIL"
+    assert RA.lq_altered("a [b]") and not RA.lq_altered("it's \"fine\"")
