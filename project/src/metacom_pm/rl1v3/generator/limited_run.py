@@ -49,7 +49,7 @@ class Journal:
         self.prev=write_once(self.path/("%03d-%s.json"%(self.seq,event)),row);self.seq+=1
         return self.prev
 
-def read_plan(root,path):
+def read_plan(root,path,executor_binding=None):
     root=Path(root);path=Path(path);plan=parse_json(path.read_text())
     require(plan["protocol"]==PROTOCOL and plan["job_kind"] in {"A0_MIN","PP1"},"unknown job")
     require(plan["authorized"] is False and plan["research_qualified"] is False,"proposal state changed")
@@ -60,9 +60,12 @@ def read_plan(root,path):
         p=(root/rel).resolve();require(p.is_relative_to(root.resolve()),"source path escapes root")
         require(file_sha256(p)==sha,"bound file changed: "+rel)
     for rel,sha in plan["executor_files_sha256"].items():
-        require(file_sha256(root/rel)==sha,"executor source changed: "+rel)
+        if executor_binding is None:
+            require(file_sha256(root/rel)==sha,"executor source changed: "+rel)
         blob=subprocess.check_output(["git","show",plan["executor_source_head"]+":"+rel],cwd=root)
         require(hashlib.sha256(blob).hexdigest()==sha,"executor commit/file mismatch")
+    if executor_binding is not None:
+        check_executor_binding(root,plan,executor_binding)
     rows=[parse_json(x) for x in (root/plan["requests_path"]).read_text().splitlines()]
     require([x["request_id"] for x in rows]==plan["ordered_request_ids"],"order/request set changed")
     require(len(rows)==plan["max_calls"]==(16 if plan["job_kind"]=="PP1" else 4),"wrong budget")
@@ -88,10 +91,25 @@ def read_plan(root,path):
     require(plan["global_seconds"]==1200 and plan["load_seconds"]==600 and plan["request_seconds"]==300,"deadline changed")
     return plan,rows,baseline
 
-def authorize(root,plan,auth):
+def check_executor_binding(root,plan,binding):
+    require(binding.get("protocol")=="pmrl1-executor-repair-binding-1","executor binding protocol")
+    require(binding.get("authorized") is False and binding.get("research_qualified") is False,"binding is not authorization")
+    require(binding.get("original_plan_sha256")==object_sha256(plan),"binding original plan SHA")
+    require(binding.get("original_executor_source_head")==plan["executor_source_head"],"binding original executor")
+    paths=set(plan["executor_files_sha256"]) | {"project/src/metacom_pm/rl1v3/generator/limited_worker_guard.py"}
+    require(set(binding.get("executor_files_sha256",{}))==paths,"executor binding file set")
+    for rel,sha in binding["executor_files_sha256"].items():
+        require(file_sha256(Path(root)/rel)==sha,"executor source changed: "+rel)
+        blob=subprocess.check_output(["git","show",binding["executor_source_head"]+":"+rel],cwd=root)
+        require(hashlib.sha256(blob).hexdigest()==sha,"repair executor commit/file mismatch")
+
+def authorize(root,plan,auth,executor_binding=None):
     require(auth.get("authorized") is True,"no explicit authorization")
     require(auth.get("job_kind")==plan["job_kind"],"A0/PP1 authorization cannot transfer")
     require(auth.get("plan_sha256")==object_sha256(plan),"authorization plan SHA")
+    require(auth.get("executor_binding_sha256")==
+            (object_sha256(executor_binding) if executor_binding is not None else None),
+            "authorization executor binding SHA")
     require(auth.get("max_calls")==plan["max_calls"],"authorization call budget")
     require(bool(auth.get("researcher")) and bool(auth.get("decision_evidence")),"researcher signature/evidence missing")
     head=subprocess.check_output(["git","rev-parse","HEAD"],cwd=root,text=True).strip()
@@ -253,8 +271,9 @@ class SubprocessHF:
         self.error=(self.out/"worker.stderr.log").open("xb")
         env=dict(os.environ,PYTHONPATH=str(self.root/"project/src"),CUDA_VISIBLE_DEVICES=GPU,
                  CUBLAS_WORKSPACE_CONFIG=":4096:8",HF_HUB_OFFLINE="1",TRANSFORMERS_OFFLINE="1",PYTHONNOUSERSITE="1",
-                 PMRL1_LIMITED_SUPERVISOR_PID=str(os.getpid()))
-        self.p=subprocess.Popen([self.plan["python"],"-m","metacom_pm.rl1v3.generator.limited_hf_worker"],
+                 PMRL1_LIMITED_SUPERVISOR_PID=str(os.getpid()),PMRL1_LIMITED_DEADLINE=str(self.deadline))
+        self.p=subprocess.Popen([sys.executable,"-m","metacom_pm.rl1v3.generator.limited_worker_guard",
+            self.plan["python"],"-m","metacom_pm.rl1v3.generator.limited_hf_worker"],
             cwd=self.out,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=self.error,env=env,start_new_session=True)
         report=json.loads((self.root/self.plan["checkpoint_path"]).read_text())
         return self._exchange({"operation":"load","model_path":self.plan["model_path"],
@@ -266,15 +285,34 @@ class SubprocessHF:
         if self.p is not None:
             # Process group contains only the worker started by this supervisor.
             if self.p.poll() is None:
-                os.killpg(self.p.pid,signal.SIGTERM)
+                try:os.killpg(self.p.pid,signal.SIGTERM)
+                except ProcessLookupError:pass
                 try:self.p.wait(timeout=2)
-                except subprocess.TimeoutExpired:os.killpg(self.p.pid,signal.SIGKILL);self.p.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    try:os.killpg(self.p.pid,signal.SIGKILL)
+                    except ProcessLookupError:pass
+                    self.p.wait(timeout=5)
             self.p.stdin.close();self.p.stdout.close()
         if self.error:self.error.close()
 
-def run(root,plan_path,approval_path,run_root):
-    root=Path(root).resolve();plan,rows,baseline=read_plan(root,plan_path)
-    auth=authorize(root,plan,parse_json(Path(approval_path).read_text())) # before device/model access
+def claim_request_set(plan,auth):
+    # A different approval or repaired executor cannot resurrect an attempted
+    # request set. Conservative whole-set reservation: pending stays pending.
+    identity={k:plan[k] for k in ("job_kind","requests_sha256","ordered_request_ids","baseline_sha256")}
+    key=object_sha256(identity)
+    directory=DATA/"tokkio_projects/pmrl1-validation/limited-g0e-claims"
+    for old in directory.glob("*.json"):
+        record=parse_json(old.read_text())  # malformed/partial claim also fails closed
+        if record.get("plan_sha256")==object_sha256(plan) or record.get("request_set_sha256")==key:
+            raise FileExistsError("request set already claimed; unresolved starts cannot retry")
+    return write_once(directory/(key+".json"),dict(approval_sha256=object_sha256(auth),
+        plan_sha256=object_sha256(plan),request_set_sha256=key,utc=utc(),no_retry=True))
+
+def run(root,plan_path,approval_path,run_root,executor_binding_path=None):
+    root=Path(root).resolve()
+    binding=parse_json(Path(executor_binding_path).read_text()) if executor_binding_path is not None else None
+    plan,rows,baseline=read_plan(root,plan_path,binding) if binding is not None else read_plan(root,plan_path)
+    auth=authorize(root,plan,parse_json(Path(approval_path).read_text()),binding) # before device/model access
     run_root=Path(run_root).resolve();storage=storage_guard(run_root)
     run_root.mkdir(parents=True,exist_ok=True)
     # Shared lock at a fixed location, not a caller-chosen directory.
@@ -282,11 +320,11 @@ def run(root,plan_path,approval_path,run_root):
     with lock_path.open("a") as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         initial=device_guard(initial=True)
-        claim=DATA/"tokkio_projects/pmrl1-validation/limited-g0e-claims"/(object_sha256(auth)+".json")
-        write_once(claim,{"approval_sha256":object_sha256(auth),"plan_sha256":object_sha256(plan),"utc":utc(),"no_retry":True})
+        claim_request_set(plan,auth)
         journal=Journal(run_root/("job-"+object_sha256(auth)))
         started=time.monotonic()
-        journal.add("RUN_START",approval=auth,plan_sha256=object_sha256(plan),storage=storage,gpu=initial)
+        journal.add("RUN_START",approval=auth,plan_sha256=object_sha256(plan),storage=storage,gpu=initial,
+                    executor_binding_sha256=object_sha256(binding) if binding is not None else None)
         # Fresh byte verification, bounded in chunks; never allocate tensor objects.
         try:
             for name,expected in baseline["spec"]["model"]["files"].items():
