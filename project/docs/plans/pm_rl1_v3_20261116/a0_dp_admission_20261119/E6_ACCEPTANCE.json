@@ -1,0 +1,62 @@
+{
+  "protocol": "pmrl1-wsa-e6-acceptance-receipt-1",
+  "accepted": true,
+  "status": "SIGNED",
+  "scope": "CPU 故障注入范围：执行器的准入、身份、守卫、日志、停止、进程清理、不重试；真实 worker 在真实模型上的“只加载一次”“原生 tokenizer 相等”须由 A0 日志证明",
+  "reviewer": "original WS-B",
+  "B_source_HEAD": "9e3da14f2358d148131e6488cc69e3415c67833e",
+  "receipt_url": "https://github.com/chensiyu7812/Metacom5_3/pull/23#issuecomment-7003746310",
+  "B_files_sha256": {
+    "E6_RECEIPT.json": "037c66115c429b712696ea9cbaac2841a8e3fe77f6fa6622f020430e462db757",
+    "E6_RECEIPT_PR23.json": "4885c6d26dd000a208a95065eb5fb6617133974cf46978f4929e82e2648cd630",
+    "E6_HARNESS_RESULT.json": "fc799c69201fd161bae1097aabb4d165c2e78f165b383a3f75696cb327d94f8d",
+    "E6_HARNESS_RESULT_PR23.json": "1420528ff5a2f2ed389df255f675825cfb72e304cb4f9995c1e69d3eebf3c3e2",
+    "E6_HARNESS_RESULT_PR23_PY312.json": "7c30441151c23aed1fa81bd23d90cdd3ff4a8dde7d6cb43c9288bee5db232d3a"
+  },
+  "object": {
+    "code_head": "26343dc69ba1616fad293319a26a86b0b1b0816d",
+    "executor_bindings": {
+      "A0": "c9eb9169897686c018b657c39b766689b78058441976774eb34107f8da0d65e1",
+      "PP1": "2a14cac2f2598fdbeb47c1ce6f9159fa2518ec592707d84d8999dd1bd6f71b2d"
+    },
+    "head": "67169816bddaf50206f9847300673d4887713c4d",
+    "original_plans": {
+      "A0": "43f175c5…",
+      "PP1": "bc51f931…"
+    },
+    "pr": 23
+  },
+  "totals": {
+    "py311": {
+      "checks": 49,
+      "failed": 0,
+      "passed": 49
+    },
+    "py312_process_paths": {
+      "checks": 20,
+      "failed": 0,
+      "passed": 20
+    }
+  },
+  "old_PR21": {
+    "head": "46349ccf02fef477bfc8fd76114bf1e38044e1d3",
+    "status": "NOT_SIGNED",
+    "passed": 43,
+    "failed": 4,
+    "preserved": true
+  },
+  "defects_closed": {
+    "E6-D1": "E5 通过：SIGTERM 后 worker 2 秒内消失，不再继续计算",
+    "E6-D2": "E6 通过：SIGKILL 后同上（pidfd 监护在 worker 进程组内）",
+    "E6-D3": "F1 通过：同一计划的新授权被请求集合 claim 拒绝，物理调用不增加",
+    "E6-D4": "E3 通过：worker 退出后，进程组内子进程被清理"
+  },
+  "remaining_observations": [
+    "SIGTERM 仍不写 STOP/SUMMARY（未决 START 是持久记录，并已强制不可重试）",
+    "FAILED 无逐请求事件（建议 failed_request_id）",
+    "executor_review_evidence 仍只检查非空：授权文件应引用本回执 URL、#23 HEAD 与 binding SHA"
+  ],
+  "engineering_ready": true,
+  "research_qualified": false,
+  "authorized": false
+}
