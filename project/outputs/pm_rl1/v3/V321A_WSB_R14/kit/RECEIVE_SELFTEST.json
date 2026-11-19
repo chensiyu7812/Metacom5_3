@@ -1,0 +1,47 @@
+{
+ "checks": [
+  {
+   "detail": [
+    "{\"package\": \"SIM\", \"head\": \"2d516945fe39a890\", \"locked\": true, \"submitted\": 9}"
+   ],
+   "name": "a verified, locked curator export is received",
+   "ok": true
+  },
+  {
+   "detail": [
+    "REFUSED: event 9: hash mismatch"
+   ],
+   "name": "an edited export is refused",
+   "ok": true
+  },
+  {
+   "detail": [
+    "REFUSED: export does not belong to any issued package"
+   ],
+   "name": "an export of a package that was not issued is refused",
+   "ok": true
+  },
+  {
+   "detail": {
+    "counts": {
+     "S0": 2,
+     "S1": 3,
+     "S2": 1,
+     "S7": 1,
+     "unclear": 2
+    },
+    "time": {
+     "median_min": 0.00085,
+     "p90_min": 0.0038833333333333333,
+     "total_hours": 0.0
+    }
+   },
+   "name": "the report counts the received labels and time",
+   "ok": true
+  }
+ ],
+ "note": "只用模拟材料验证收件与报告流程；不涉及任何真实任务包或标签",
+ "passed": 4,
+ "simulated": true,
+ "total": 4
+}
