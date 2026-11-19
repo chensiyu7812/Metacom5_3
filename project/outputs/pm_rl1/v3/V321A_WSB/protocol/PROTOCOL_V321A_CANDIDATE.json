@@ -1,0 +1,1420 @@
+{
+ "analysis": {
+  "decisions": {
+   "inconclusive": "其余情形，包括 CI 同时覆盖 0 与 -margin；表示精度不足，不是“无效”也不是“非劣”",
+   "inferior": "95% CI 上界 < 0",
+   "non_inferior": "95% CI 下界 > -margin（margin 须研究者事先确认）",
+   "superior": "95% CI 下界 > 0"
+  },
+  "estimator": "每组先对其 S1 前缀的配对得分（+1/0/−1，两名审阅者取均值）求平均，再对组等权平均",
+  "family": {
+   "exploratory": [
+    "S2/S0 分层",
+    "分项偏好",
+    "QH 背景使用率",
+    "盲态探针",
+    "提及率",
+    "任何事后切分"
+   ],
+   "gate_rule": "固定顺序：主检验 superior 时，次要两项以 Holm（α = 0.05）检验；否则次要只报告估计与区间，不下检验结论",
+   "guards": "Q0、F 各自报告估计与区间；F 的两个配对有害检验（DP−OFF、RET−OFF）在 F 族内 Holm",
+   "primary": [
+    "FC-MS-1-P"
+   ],
+   "secondary_gated": [
+    "FC-MS-1-S1",
+    "FC-MS-1-S2"
+   ]
+  },
+  "lock": "主比较、主指标、分析集、缺失处理在第一份 FC-MS 生成结果出现前冻结；之后的改动只能作为探索性分析报告",
+  "missing": "技术失败记 pending，按臂报告；不确定按全胜/全负给出边界，不插补；缺一名审阅者的对只进入边界",
+  "primary_test": "精确符号翻转检验（组均值，双侧 α = 0.05）；95% 区间用组 bootstrap（10,000 次，种子固定），并报告 t 区间（df = 组数 − 1）作敏感性",
+  "unit": "owner 组（17 组：p13 与 p18 共享 esconv_1198 合并）；组内前缀不视为独立"
+ },
+ "answers": {
+  "credible_effect": "17 组、每组 2 个 S1 时，80% 把握可检出的净偏好约 0.38（ICC 0.1）；每组 4 个约 0.29；实际可用组数 k_S1 若降到 12 或 8，MDE 分别升到约 0.36/0.47（m = 4）",
+  "mechanism_first": "先做机制验证：FC-MS-1 预注册单一主检验，结论限定为“对 G0e、本 renderer、18 个人物，直接提供合适历史在 S1 上的 QH 增量”；不承担“系统有效”或“PM 有效”的确认性结论。理由：DP 是诊断条件；组数少；renderer与转义尚未定；PP1 前没有评审一致性数据；S1 数量未知",
+  "more_owners": "需要：k 是唯一能压低下限的量（k = 34 时 ICC 0.1 下限约 0.11），也是外推性的来源；但现有数据只有 18 个人物（17 组），新增独立人物需要新的纵向数据与许可，属于后续工作；本轮结论限定在这 18 个构造人物上",
+  "more_prefixes_same_owner": "不够：同一 owner 的前缀共享历史与人物，ICC > 0 时 MDE 有下限 √(d·ICC/k)×(t+t)。17 组在 ICC 0.1 下限约 0.16、ICC 0.2 约 0.23；m 超过 4–6 后几乎不再下降",
+  "s1_shortfall": "见 S1_SHORTFALL：只用生成前标签决定扩筛和是否降级；不改定义、不放宽、不看回复"
+ },
+ "arms": {
+  "DP_MS": "Direct Provision 诊断条件：生成前由独立选材者（不看检索排名、不看任何回复）从全部合法过去会话中选出的一段完整会话 RAW（#19 DP_PENDING 的 selection_policy）；它衡量“若把合适的历史直接给 G”能带来什么，不是检索成绩，也不是已经学会的 PM",
+  "OFF": "真实 OFF：同一前缀、同一 G/decode/renderer，没有任何额外资源块",
+  "RET_MS": "真实检索条件：lexical-v0 Top-1 的完整会话 RAW（as-of 检索身份）；不得改名为 DP"
+ },
+ "base": {
+  "frozen_p2_v1": "2b6057c8dde4b443c08fd3ff281cb6c22c3ebd1f4d1a02eab8ac948a7bd4c81f",
+  "pp1_v321_sha256": "b23b91eb2a9d9abf849d481f5952d591abfd5fea8ec55f0bdcffb28da987d2e3",
+  "v321": {
+   "protocol": "pmrl1v3-v321-resource-effect-qual-candidate-1",
+   "sha256": "d2fde5db53185f8632b7489bfe21aea6a8ae7d5ace1ea9f55261bce3b3ed7cca"
+  },
+  "v32_candidate": {
+   "protocol": "pmrl1v3-v32-resource-effect-qual-v1-candidate",
+   "sha256_prefix": "b28cf37b"
+  }
+ },
+ "boundary": {
+  "applicability_prompt": "若以后加入更强的 applicability 提示，必须作为新的 renderer/Generator 版本，单独作为一个因素评价；不得并入现有实验族，也不得在正式比较之间临时修改",
+  "generator": "隐式判断资源是否适用、是否使用、是否显式提及；这是 G 的行为，不是 PM 的动作",
+  "no_tuning": "不得依据正式比较结果反复调整 prompt、资源内容、渲染方式或样本；任何此类修改都开启新的实验族并登记",
+  "not_errors": [
+   "Generator 没有提及历史本身不算错误",
+   "资源真实、相关，不等于此刻必须引用"
+  ],
+  "pm_step1": "学习何时获取、获取哪些资源、何时 STOP（GET_MS / GET_MP / GET_ME / GET_RS / STOP）",
+  "step2": "维持 no-plan（pmrl1v3-g0e-no-plan-1）：不额外输出计划，不增加学习动作",
+  "version": "A：隐式 Step-2（研究者已确认）；本阶段不增加独立的 PM Step-2 规划器"
+ },
+ "channels": {
+  "F": "约束：事实、历史误用（F1–F6）与安全（F7–F8）；每个“有”都要逐字引用回复并给出依据",
+  "Q0": "保护：即时同理心、自然度、需求理解；不显示历史",
+  "QH": "主要：了解此人过往后的长期支持质量；背景 = 完整 as-of RAW + 中性索引，同一前缀所有条件相同，生成前冻结",
+  "margins": "−0.10 非劣界与 +0.05 严重错误率差不作为已成立门槛；报告效果量、区间、严重错误率上界与精度限制；不显著只能写 inconclusive",
+  "rules": [
+   "三通道不合成总分",
+   "未提及记忆不算遗漏错误",
+   "需要标签与 span 角色只进入密封审计 ledger，不向审阅者或 G 暴露",
+   "所有审阅者看不到条件、资源、读取内容、需要标签、旧分数和模型评判"
+  ]
+ },
+ "conclusion_tiers": [
+  {
+   "fc_ms_1": true,
+   "limits": "只对 S1、对 G0e、对本 renderer、对 18 个 EvoEmo 人物成立",
+   "supported_by": "DP-MS vs OFF（FC-MS-1-P）",
+   "tier": "资源潜在价值"
+  },
+  {
+   "fc_ms_1": true,
+   "limits": "lexical-v0 Top-1；换检索器是新实验族",
+   "supported_by": "DP-MS vs RET-MS、RET-MS vs OFF",
+   "tier": "检索质量"
+  },
+  {
+   "fc_ms_1": false,
+   "limits": "FC-MS-1 固定 renderer，不能回答",
+   "supported_by": "同一选材、两个 renderer 身份的配对比较（单独实验族）",
+   "tier": "renderer 效应"
+  },
+  {
+   "fc_ms_1": false,
+   "limits": "需要先有 FC 结果与合格奖励（G-RWD）；FC-MS-1 不回答",
+   "supported_by": "已学习的 PM 策略 vs Fixed/OneShot/Always/Never 基线，在留出 owner 上",
+   "tier": "PM Step-1 策略增益"
+  }
+ ],
+ "design_change_ledger": {
+  "record": [
+   "时间戳",
+   "改动内容（设计、抽样、比较、参数、表单、renderer、prompt）",
+   "改动人",
+   "理由",
+   "改动时该实验族是否已有任何生成结果",
+   "是否已有任何人工或模型评价结果",
+   "受影响的分析"
+  ],
+  "replaces": "不再以“研究者是否看过数据”作为排除条件",
+  "rule": "生成结果出现前的改动正常生效；之后的改动，受影响的分析一律标为探索性；数据曝光（看过 RAW、旧评审等）照常登记，不排除",
+  "schema": {
+   "affected": [
+    "analysis id"
+   ],
+   "by": "str",
+   "change": "str",
+   "evaluations_existed": "bool",
+   "family": "FC-MS-1|PP1|...",
+   "id": "str",
+   "outputs_existed": "bool",
+   "t": "ISO-8601",
+   "why": "str"
+  }
+ },
+ "diff": [
+  {
+   "area": "研究边界",
+   "gate": "FC-* C9；G-RWD",
+   "id": "A1",
+   "v321": "未单列 Step-2 与 G 的分工",
+   "version_a": "版本 A：Step-1 学获取与 STOP；Step-2 no-plan；G 隐式决定适用/使用/提及；不提及不算错；applicability 提示须版本化单独评价；禁止按正式结果调 prompt/资源/样本",
+   "why": "研究者确认版本 A"
+  },
+  {
+   "area": "FC-MS 主比较",
+   "gate": "FC-MS C9",
+   "id": "A2",
+   "v321": "FC-MS 比较 OFF/DP-MS/RET-MS，按 S1/S2/S0/S7 分层，未指定唯一主比较",
+   "version_a": "主：S1 中 DP-MS − OFF 的 QH 净偏好；次：RET−OFF、DP−RET（S1，门控 Holm）；保护：Q0、F；S2/S0 描述",
+   "why": "先冻结主比较，避免按结果方向换主指标"
+  },
+  {
+   "area": "结论分层",
+   "gate": "—",
+   "id": "A3",
+   "v321": "未区分",
+   "version_a": "资源潜在价值 / 检索质量 / renderer 效应 / PM 策略增益 四类；FC-MS-1 只回答前两类",
+   "why": "防止把 DP 结果写成 PM 成绩"
+  },
+  {
+   "area": "臂定义",
+   "gate": "FC-MS C10",
+   "id": "A4",
+   "v321": "DP-MS = MS-RAW-direct（固定规则）",
+   "version_a": "DP-MS = 生成前独立选材（采用 #19 selection_policy），B 提议用表单 S 的 span 标签确定性选材；RET-MS = lexical-v0 Top-1，不改名；OFF = 真实无资源",
+   "why": "DP 应是“合适历史”的诊断条件；规则可复现"
+  },
+  {
+   "area": "S7",
+   "gate": "—",
+   "id": "A5",
+   "v321": "S7 作为 FC-MS 分层之一",
+   "version_a": "MS 族中 S7 无合法 MS：请求与 OFF 相同即结构性零效应，只核验请求同一性与确定性，不做人评",
+   "why": "节省人工，避免评审同一回复"
+  },
+  {
+   "area": "正确使用 vs 引用",
+   "gate": "G-RWD",
+   "id": "A6",
+   "v321": "未明确",
+   "version_a": "主指标 QH 偏好；F1–F5 误用；F6 强行提及；提及率只作锁定后描述，永不作奖励",
+   "why": "未提及 ≠ 遗漏"
+  },
+  {
+   "area": "margin",
+   "gate": "C1",
+   "id": "A7",
+   "v321": "−0.10/+0.05 为讨论候选",
+   "version_a": "不采纳为门槛；只有研究者事先确认的 margin 才能给出 non_inferior",
+   "why": "17 组下不可达"
+  },
+  {
+   "area": "多重比较",
+   "gate": "C9",
+   "id": "A8",
+   "v321": "未定",
+   "version_a": "单一主检验；次要固定顺序 + Holm；F 族内 Holm；其余探索",
+   "why": "生成前冻结"
+  },
+  {
+   "area": "S1 不足",
+   "gate": "C2",
+   "id": "A9",
+   "v321": "Phase B/C 扩展，仍不足即报告缺口",
+   "version_a": "增加：生成前一次登记的上限修订；k_S1 < 8 或 S1 < 17 时主比较降为描述性；从不改定义",
+   "why": "标签驱动、与结果无关"
+  },
+  {
+   "area": "曝光 vs 设计改动",
+   "gate": "C8",
+   "id": "A10",
+   "v321": "曝光只登记不排除",
+   "version_a": "新增设计改动 ledger：生成结果出现后的改动，受影响分析一律探索性",
+   "why": "真正需要控制的是结果出现后的设计改动"
+  },
+  {
+   "area": "评审机制",
+   "gate": "P6、C8",
+   "id": "A11",
+   "v321": "位置 sha256(协议|pair|通道)，表单结构",
+   "version_a": "分包与阶段锚点；秘密 salt （先登记 sha）；每通道完全平衡 + 第二名审阅者镜像；生成结果在锁定前封存（公开仓库）；审阅者代码化",
+   "why": "盲态与锁定可核验"
+  },
+  {
+   "area": "翻译",
+   "gate": "P5",
+   "id": "A12",
+   "v321": "未规定",
+   "version_a": "原文为准；按句映射；同一方法同一译者；背景生成前冻结；回复由不知条件者翻译；译者不兼审阅者",
+   "why": "防止译文成为提示"
+  },
+  {
+   "area": "PP1 地位",
+   "gate": "C4",
+   "id": "A13",
+   "v321": "PP1 可书面豁免",
+   "version_a": "保留为正式大规模人评的前置流程（默认不豁免）；不阻塞生成；默认不并入统计",
+   "why": "研究者倾向"
+  },
+  {
+   "area": "表单 S",
+   "gate": "C2",
+   "id": "A14",
+   "v321": "S-4 摘录 + S-5 主题",
+   "version_a": "S-4 span 只进审计 ledger；删除 S-5 主题（QH 不再使用整理者文字）；样本层（cue/other）对整理者隐藏；同一 owner 按时间顺序",
+   "why": "避免层信息诱导 S1"
+  },
+  {
+   "area": "Gate",
+   "gate": "全部",
+   "id": "A15",
+   "v321": "G-ENG E1–E5；FC C1–C6",
+   "version_a": "G-ENG 增 E6 执行器验收；FC 增 C7 renderer 验收、C8 封存与 ledger、C9 主比较族冻结、C10 DP 规则；P6 由工具完成转为 PASS",
+   "why": "补齐本轮新增要求"
+  }
+ ],
+ "dp_selection": {
+  "needs": "WS-A 对齐（#19 DP_PENDING 的 selector 字段）；研究者确认",
+  "rule": "选材者 = 该前缀的筛查整理者（非该前缀审阅者），在表单 S 中完成：DP 会话 = 含“必要”片段最多的合法过去会话；无“必要”片段时取含“相关但可选”片段最多者；仍无则取最近一次合法会话；并列取较近者",
+  "s0_note": "S0 中的 DP 会话按同一规则取最近会话，它代表“直接给一段与此刻无关的真实历史”，用于检查打扰与误用",
+  "why": "与 #19 的“独立选材、全部合法 RAW、生成前、无排名”一致，并把选材变成可复现的标签规则，不新增人工步骤"
+ },
+ "gate_amendments": [
+  {
+   "area": "Gate",
+   "gate": "全部",
+   "id": "A15",
+   "v321": "G-ENG E1–E5；FC C1–C6",
+   "version_a": "G-ENG 增 E6 执行器验收；FC 增 C7 renderer 验收、C8 封存与 ledger、C9 主比较族冻结、C10 DP 规则；P6 由工具完成转为 PASS",
+   "why": "补齐本轮新增要求"
+  }
+ ],
+ "not_authorised": "本文件不授权 GPU、Generator、Judge、奖励训练或合并",
+ "power": {
+  "grid": {
+   "decisive": 0.5,
+   "floors": [
+    {
+     "floor": 0.182,
+     "icc": 0.05,
+     "k": 8
+    },
+    {
+     "floor": 0.258,
+     "icc": 0.1,
+     "k": 8
+    },
+    {
+     "floor": 0.365,
+     "icc": 0.2,
+     "k": 8
+    },
+    {
+     "floor": 0.14,
+     "icc": 0.05,
+     "k": 12
+    },
+    {
+     "floor": 0.199,
+     "icc": 0.1,
+     "k": 12
+    },
+    {
+     "floor": 0.281,
+     "icc": 0.2,
+     "k": 12
+    },
+    {
+     "floor": 0.114,
+     "icc": 0.05,
+     "k": 17
+    },
+    {
+     "floor": 0.162,
+     "icc": 0.1,
+     "k": 17
+    },
+    {
+     "floor": 0.229,
+     "icc": 0.2,
+     "k": 17
+    },
+    {
+     "floor": 0.078,
+     "icc": 0.05,
+     "k": 34
+    },
+    {
+     "floor": 0.111,
+     "icc": 0.1,
+     "k": 34
+    },
+    {
+     "floor": 0.157,
+     "icc": 0.2,
+     "k": 34
+    },
+    {
+     "floor": 0.063,
+     "icc": 0.05,
+     "k": 51
+    },
+    {
+     "floor": 0.089,
+     "icc": 0.1,
+     "k": 51
+    },
+    {
+     "floor": 0.127,
+     "icc": 0.2,
+     "k": 51
+    }
+   ],
+   "groups_needed": [
+    {
+     "groups": 25,
+     "icc": 0.05,
+     "m": 2,
+     "target": 0.3
+    },
+    {
+     "groups": 26,
+     "icc": 0.1,
+     "m": 2,
+     "target": 0.3
+    },
+    {
+     "groups": 15,
+     "icc": 0.05,
+     "m": 4,
+     "target": 0.3
+    },
+    {
+     "groups": 17,
+     "icc": 0.1,
+     "m": 4,
+     "target": 0.3
+    },
+    {
+     "groups": 54,
+     "icc": 0.05,
+     "m": 2,
+     "target": 0.2
+    },
+    {
+     "groups": 56,
+     "icc": 0.1,
+     "m": 2,
+     "target": 0.2
+    },
+    {
+     "groups": 31,
+     "icc": 0.05,
+     "m": 4,
+     "target": 0.2
+    },
+    {
+     "groups": 34,
+     "icc": 0.1,
+     "m": 4,
+     "target": 0.2
+    },
+    {
+     "groups": 94,
+     "icc": 0.05,
+     "m": 2,
+     "target": 0.15
+    },
+    {
+     "groups": 98,
+     "icc": 0.1,
+     "m": 2,
+     "target": 0.15
+    },
+    {
+     "groups": 53,
+     "icc": 0.05,
+     "m": 4,
+     "target": 0.15
+    },
+    {
+     "groups": 59,
+     "icc": 0.1,
+     "m": 4,
+     "target": 0.15
+    },
+    {
+     "groups": 208,
+     "icc": 0.05,
+     "m": 2,
+     "target": 0.1
+    },
+    {
+     "groups": 218,
+     "icc": 0.1,
+     "m": 2,
+     "target": 0.1
+    },
+    {
+     "groups": 115,
+     "icc": 0.05,
+     "m": 4,
+     "target": 0.1
+    },
+    {
+     "groups": 130,
+     "icc": 0.1,
+     "m": 4,
+     "target": 0.1
+    }
+   ],
+   "note": "d = 决定率（非“一样/不确定”的比例）；ICC = 同组前缀配对得分的组内相关；MDE 为双侧 α 0.05、80% 把握",
+   "rows": [
+    {
+     "icc": 0.0,
+     "k": 8,
+     "m": 1,
+     "mde": 0.815
+    },
+    {
+     "icc": 0.05,
+     "k": 8,
+     "m": 1,
+     "mde": 0.815
+    },
+    {
+     "icc": 0.1,
+     "k": 8,
+     "m": 1,
+     "mde": 0.815
+    },
+    {
+     "icc": 0.2,
+     "k": 8,
+     "m": 1,
+     "mde": 0.815
+    },
+    {
+     "icc": 0.0,
+     "k": 8,
+     "m": 2,
+     "mde": 0.576
+    },
+    {
+     "icc": 0.05,
+     "k": 8,
+     "m": 2,
+     "mde": 0.591
+    },
+    {
+     "icc": 0.1,
+     "k": 8,
+     "m": 2,
+     "mde": 0.605
+    },
+    {
+     "icc": 0.2,
+     "k": 8,
+     "m": 2,
+     "mde": 0.631
+    },
+    {
+     "icc": 0.0,
+     "k": 8,
+     "m": 4,
+     "mde": 0.408
+    },
+    {
+     "icc": 0.05,
+     "k": 8,
+     "m": 4,
+     "mde": 0.437
+    },
+    {
+     "icc": 0.1,
+     "k": 8,
+     "m": 4,
+     "mde": 0.465
+    },
+    {
+     "icc": 0.2,
+     "k": 8,
+     "m": 4,
+     "mde": 0.516
+    },
+    {
+     "icc": 0.0,
+     "k": 8,
+     "m": 8,
+     "mde": 0.288
+    },
+    {
+     "icc": 0.05,
+     "k": 8,
+     "m": 8,
+     "mde": 0.335
+    },
+    {
+     "icc": 0.1,
+     "k": 8,
+     "m": 8,
+     "mde": 0.376
+    },
+    {
+     "icc": 0.2,
+     "k": 8,
+     "m": 8,
+     "mde": 0.447
+    },
+    {
+     "icc": 0.0,
+     "k": 12,
+     "m": 1,
+     "mde": 0.628
+    },
+    {
+     "icc": 0.05,
+     "k": 12,
+     "m": 1,
+     "mde": 0.628
+    },
+    {
+     "icc": 0.1,
+     "k": 12,
+     "m": 1,
+     "mde": 0.628
+    },
+    {
+     "icc": 0.2,
+     "k": 12,
+     "m": 1,
+     "mde": 0.628
+    },
+    {
+     "icc": 0.0,
+     "k": 12,
+     "m": 2,
+     "mde": 0.444
+    },
+    {
+     "icc": 0.05,
+     "k": 12,
+     "m": 2,
+     "mde": 0.455
+    },
+    {
+     "icc": 0.1,
+     "k": 12,
+     "m": 2,
+     "mde": 0.466
+    },
+    {
+     "icc": 0.2,
+     "k": 12,
+     "m": 2,
+     "mde": 0.487
+    },
+    {
+     "icc": 0.0,
+     "k": 12,
+     "m": 4,
+     "mde": 0.314
+    },
+    {
+     "icc": 0.05,
+     "k": 12,
+     "m": 4,
+     "mde": 0.337
+    },
+    {
+     "icc": 0.1,
+     "k": 12,
+     "m": 4,
+     "mde": 0.358
+    },
+    {
+     "icc": 0.2,
+     "k": 12,
+     "m": 4,
+     "mde": 0.397
+    },
+    {
+     "icc": 0.0,
+     "k": 12,
+     "m": 8,
+     "mde": 0.222
+    },
+    {
+     "icc": 0.05,
+     "k": 12,
+     "m": 8,
+     "mde": 0.258
+    },
+    {
+     "icc": 0.1,
+     "k": 12,
+     "m": 8,
+     "mde": 0.29
+    },
+    {
+     "icc": 0.2,
+     "k": 12,
+     "m": 8,
+     "mde": 0.344
+    },
+    {
+     "icc": 0.0,
+     "k": 17,
+     "m": 1,
+     "mde": 0.512
+    },
+    {
+     "icc": 0.05,
+     "k": 17,
+     "m": 1,
+     "mde": 0.512
+    },
+    {
+     "icc": 0.1,
+     "k": 17,
+     "m": 1,
+     "mde": 0.512
+    },
+    {
+     "icc": 0.2,
+     "k": 17,
+     "m": 1,
+     "mde": 0.512
+    },
+    {
+     "icc": 0.0,
+     "k": 17,
+     "m": 2,
+     "mde": 0.362
+    },
+    {
+     "icc": 0.05,
+     "k": 17,
+     "m": 2,
+     "mde": 0.371
+    },
+    {
+     "icc": 0.1,
+     "k": 17,
+     "m": 2,
+     "mde": 0.38
+    },
+    {
+     "icc": 0.2,
+     "k": 17,
+     "m": 2,
+     "mde": 0.397
+    },
+    {
+     "icc": 0.0,
+     "k": 17,
+     "m": 4,
+     "mde": 0.256
+    },
+    {
+     "icc": 0.05,
+     "k": 17,
+     "m": 4,
+     "mde": 0.274
+    },
+    {
+     "icc": 0.1,
+     "k": 17,
+     "m": 4,
+     "mde": 0.292
+    },
+    {
+     "icc": 0.2,
+     "k": 17,
+     "m": 4,
+     "mde": 0.324
+    },
+    {
+     "icc": 0.0,
+     "k": 17,
+     "m": 8,
+     "mde": 0.181
+    },
+    {
+     "icc": 0.05,
+     "k": 17,
+     "m": 8,
+     "mde": 0.21
+    },
+    {
+     "icc": 0.1,
+     "k": 17,
+     "m": 8,
+     "mde": 0.236
+    },
+    {
+     "icc": 0.2,
+     "k": 17,
+     "m": 8,
+     "mde": 0.28
+    },
+    {
+     "icc": 0.0,
+     "k": 34,
+     "m": 1,
+     "mde": 0.35
+    },
+    {
+     "icc": 0.05,
+     "k": 34,
+     "m": 1,
+     "mde": 0.35
+    },
+    {
+     "icc": 0.1,
+     "k": 34,
+     "m": 1,
+     "mde": 0.35
+    },
+    {
+     "icc": 0.2,
+     "k": 34,
+     "m": 1,
+     "mde": 0.35
+    },
+    {
+     "icc": 0.0,
+     "k": 34,
+     "m": 2,
+     "mde": 0.248
+    },
+    {
+     "icc": 0.05,
+     "k": 34,
+     "m": 2,
+     "mde": 0.254
+    },
+    {
+     "icc": 0.1,
+     "k": 34,
+     "m": 2,
+     "mde": 0.26
+    },
+    {
+     "icc": 0.2,
+     "k": 34,
+     "m": 2,
+     "mde": 0.271
+    },
+    {
+     "icc": 0.0,
+     "k": 34,
+     "m": 4,
+     "mde": 0.175
+    },
+    {
+     "icc": 0.05,
+     "k": 34,
+     "m": 4,
+     "mde": 0.188
+    },
+    {
+     "icc": 0.1,
+     "k": 34,
+     "m": 4,
+     "mde": 0.2
+    },
+    {
+     "icc": 0.2,
+     "k": 34,
+     "m": 4,
+     "mde": 0.221
+    },
+    {
+     "icc": 0.0,
+     "k": 34,
+     "m": 8,
+     "mde": 0.124
+    },
+    {
+     "icc": 0.05,
+     "k": 34,
+     "m": 8,
+     "mde": 0.144
+    },
+    {
+     "icc": 0.1,
+     "k": 34,
+     "m": 8,
+     "mde": 0.161
+    },
+    {
+     "icc": 0.2,
+     "k": 34,
+     "m": 8,
+     "mde": 0.192
+    },
+    {
+     "icc": 0.0,
+     "k": 51,
+     "m": 1,
+     "mde": 0.283
+    },
+    {
+     "icc": 0.05,
+     "k": 51,
+     "m": 1,
+     "mde": 0.283
+    },
+    {
+     "icc": 0.1,
+     "k": 51,
+     "m": 1,
+     "mde": 0.283
+    },
+    {
+     "icc": 0.2,
+     "k": 51,
+     "m": 1,
+     "mde": 0.283
+    },
+    {
+     "icc": 0.0,
+     "k": 51,
+     "m": 2,
+     "mde": 0.2
+    },
+    {
+     "icc": 0.05,
+     "k": 51,
+     "m": 2,
+     "mde": 0.205
+    },
+    {
+     "icc": 0.1,
+     "k": 51,
+     "m": 2,
+     "mde": 0.21
+    },
+    {
+     "icc": 0.2,
+     "k": 51,
+     "m": 2,
+     "mde": 0.219
+    },
+    {
+     "icc": 0.0,
+     "k": 51,
+     "m": 4,
+     "mde": 0.141
+    },
+    {
+     "icc": 0.05,
+     "k": 51,
+     "m": 4,
+     "mde": 0.152
+    },
+    {
+     "icc": 0.1,
+     "k": 51,
+     "m": 4,
+     "mde": 0.161
+    },
+    {
+     "icc": 0.2,
+     "k": 51,
+     "m": 4,
+     "mde": 0.179
+    },
+    {
+     "icc": 0.0,
+     "k": 51,
+     "m": 8,
+     "mde": 0.1
+    },
+    {
+     "icc": 0.05,
+     "k": 51,
+     "m": 8,
+     "mde": 0.116
+    },
+    {
+     "icc": 0.1,
+     "k": 51,
+     "m": 8,
+     "mde": 0.13
+    },
+    {
+     "icc": 0.2,
+     "k": 51,
+     "m": 8,
+     "mde": 0.155
+    }
+   ]
+  },
+  "plans": [
+   {
+    "cannot_support": [
+     "小于约 0.55–0.75 的净偏好差异（每组只有 1 个 S1）",
+     "S2/S0 分层结论",
+     "严重错误率低于约 0.12–0.15（0 例时）",
+     "任何检验结论：按 S1_SHORTFALL 预计会降为描述性估计",
+     "PM Step-1 策略增益（FC-MS-1 不训练、不比较 PM）",
+     "renderer 效应（renderer 固定）",
+     "18 个 EvoEmo 构造人物之外的外推",
+     "−0.10 非劣（ICC ≥ 约 0.04 时任何 m 都不可达）",
+     "“没有显著差异 = 没有效果”"
+    ],
+    "design": "每组最多 1 个 S1；S2、S0 共约 1 个/组作保护样本；筛查限于冻结的 162",
+    "id": "conservative",
+    "label": "保守",
+    "scenarios": {
+     "high": {
+      "cost": {
+       "fcms_prefixes": 26.1,
+       "generator_calls": 78,
+       "pairs": 69,
+       "replies": 78,
+       "review_hours": {
+        "lower": 44.4,
+        "upper": 44.4
+       },
+       "screening_hours": {
+        "lower": 17.7,
+        "upper": 37.0
+       },
+       "total_hours": {
+        "lower": 62.1,
+        "upper": 81.3
+       }
+      },
+      "downgraded": true,
+      "k_s1": 16,
+      "m_s1": 1.0,
+      "primary_mde": {
+       "icc_0.05": 0.53,
+       "icc_0.1": 0.53,
+       "icc_0.2": 0.53
+      },
+      "screen": {
+       "groups_s0": 5.29,
+       "groups_s2": 4.39,
+       "k_s1": 16.46,
+       "mean_m_in_groups_with_s1": 1.0,
+       "s1": 16.46,
+       "screened": 93.22
+      },
+      "serious_upper_0_events_per_arm": 0.148
+     },
+     "low": {
+      "cost": {
+       "fcms_prefixes": 26.4,
+       "generator_calls": 79,
+       "pairs": 62,
+       "replies": 79,
+       "review_hours": {
+        "lower": 43.8,
+        "upper": 43.8
+       },
+       "screening_hours": {
+        "lower": 19.8,
+        "upper": 49.1
+       },
+       "total_hours": {
+        "lower": 63.5,
+        "upper": 92.9
+       }
+      },
+      "downgraded": true,
+      "k_s1": 9,
+      "m_s1": 1.0,
+      "primary_mde": {
+       "icc_0.05": 0.753,
+       "icc_0.1": 0.753,
+       "icc_0.2": 0.753
+      },
+      "screen": {
+       "groups_s0": 12.36,
+       "groups_s2": 11.42,
+       "k_s1": 9.42,
+       "mean_m_in_groups_with_s1": 1.0,
+       "s1": 9.42,
+       "screened": 123.82
+      },
+      "serious_upper_0_events_per_arm": 0.148
+     },
+     "mid": {
+      "cost": {
+       "fcms_prefixes": 30.8,
+       "generator_calls": 92,
+       "pairs": 76,
+       "replies": 92,
+       "review_hours": {
+        "lower": 51.6,
+        "upper": 51.6
+       },
+       "screening_hours": {
+        "lower": 18.4,
+        "upper": 41.3
+       },
+       "total_hours": {
+        "lower": 70.0,
+        "upper": 92.8
+       }
+      },
+      "downgraded": true,
+      "k_s1": 14,
+      "m_s1": 1.0,
+      "primary_mde": {
+       "icc_0.05": 0.573,
+       "icc_0.1": 0.573,
+       "icc_0.2": 0.573
+      },
+      "screen": {
+       "groups_s0": 8.76,
+       "groups_s2": 7.83,
+       "k_s1": 14.23,
+       "mean_m_in_groups_with_s1": 1.0,
+       "s1": 14.23,
+       "screened": 104.03
+      },
+      "serious_upper_0_events_per_arm": 0.123
+     }
+    }
+   },
+   {
+    "cannot_support": [
+     "小于约 0.37–0.45 的净偏好差异",
+     "S2/S0 分层显著性",
+     "严重错误率低于约 0.07–0.08（0 例时）",
+     "PM Step-1 策略增益（FC-MS-1 不训练、不比较 PM）",
+     "renderer 效应（renderer 固定）",
+     "18 个 EvoEmo 构造人物之外的外推",
+     "−0.10 非劣（ICC ≥ 约 0.04 时任何 m 都不可达）",
+     "“没有显著差异 = 没有效果”"
+    ],
+    "design": "每组最多 2 个 S1；S2、S0 各约 1 个/组；筛查到 Phase C（每 owner cue 最多 4+8）",
+    "id": "medium",
+    "label": "中等",
+    "scenarios": {
+     "high": {
+      "cost": {
+       "fcms_prefixes": 50.5,
+       "generator_calls": 152,
+       "pairs": 135,
+       "replies": 152,
+       "review_hours": {
+        "lower": 68.0,
+        "upper": 86.0
+       },
+       "screening_hours": {
+        "lower": 18.3,
+        "upper": 40.5
+       },
+       "total_hours": {
+        "lower": 86.3,
+        "upper": 126.5
+       }
+      },
+      "downgraded": false,
+      "k_s1": 17,
+      "m_s1": 2.0,
+      "primary_mde": {
+       "icc_0.05": 0.371,
+       "icc_0.1": 0.38,
+       "icc_0.2": 0.397
+      },
+      "screen": {
+       "groups_s0": 8.92,
+       "groups_s2": 7.62,
+       "k_s1": 17.0,
+       "mean_m_in_groups_with_s1": 2.0,
+       "s1": 33.97,
+       "screened": 102.15
+      },
+      "serious_upper_0_events_per_arm": 0.079
+     },
+     "low": {
+      "cost": {
+       "fcms_prefixes": 56.2,
+       "generator_calls": 169,
+       "pairs": 138,
+       "replies": 169,
+       "review_hours": {
+        "lower": 70.0,
+        "upper": 93.9
+       },
+       "screening_hours": {
+        "lower": 25.6,
+        "upper": 83.8
+       },
+       "total_hours": {
+        "lower": 95.6,
+        "upper": 177.7
+       }
+      },
+      "downgraded": false,
+      "k_s1": 15,
+      "m_s1": 1.7,
+      "primary_mde": {
+       "icc_0.05": 0.429,
+       "icc_0.1": 0.436,
+       "icc_0.2": 0.45
+      },
+      "screen": {
+       "groups_s0": 15.66,
+       "groups_s2": 15.08,
+       "k_s1": 14.99,
+       "mean_m_in_groups_with_s1": 1.7,
+       "s1": 25.44,
+       "screened": 211.33
+      },
+      "serious_upper_0_events_per_arm": 0.07
+     },
+     "mid": {
+      "cost": {
+       "fcms_prefixes": 57.6,
+       "generator_calls": 173,
+       "pairs": 148,
+       "replies": 173,
+       "review_hours": {
+        "lower": 71.9,
+        "upper": 97.3
+       },
+       "screening_hours": {
+        "lower": 20.7,
+        "upper": 54.9
+       },
+       "total_hours": {
+        "lower": 92.6,
+        "upper": 152.2
+       }
+      },
+      "downgraded": false,
+      "k_s1": 17,
+      "m_s1": 1.95,
+      "primary_mde": {
+       "icc_0.05": 0.375,
+       "icc_0.1": 0.384,
+       "icc_0.2": 0.4
+      },
+      "screen": {
+       "groups_s0": 12.97,
+       "groups_s2": 11.86,
+       "k_s1": 16.83,
+       "mean_m_in_groups_with_s1": 1.95,
+       "s1": 32.79,
+       "screened": 138.38
+      },
+      "serious_upper_0_events_per_arm": 0.068
+     }
+    }
+   },
+   {
+    "cannot_support": [
+     "小于约 0.28–0.34 的净偏好差异（再加前缀也降不到 17 组下限：ICC 0.1 约 0.16）",
+     "严重错误率低于约 0.04–0.05（0 例时）",
+     "PM Step-1 策略增益（FC-MS-1 不训练、不比较 PM）",
+     "renderer 效应（renderer 固定）",
+     "18 个 EvoEmo 构造人物之外的外推",
+     "−0.10 非劣（ICC ≥ 约 0.04 时任何 m 都不可达）",
+     "“没有显著差异 = 没有效果”"
+    ],
+    "design": "每组最多 4 个 S1；S2、S0 各约 1 个/组；需在生成前登记修订，把 Phase C 上限提到每 owner +16",
+    "id": "extended",
+    "label": "扩展",
+    "scenarios": {
+     "high": {
+      "cost": {
+       "fcms_prefixes": 93.0,
+       "generator_calls": 279,
+       "pairs": 254,
+       "replies": 279,
+       "review_hours": {
+        "lower": 97.0,
+        "upper": 159.2
+       },
+       "screening_hours": {
+        "lower": 21.9,
+        "upper": 61.6
+       },
+       "total_hours": {
+        "lower": 118.9,
+        "upper": 220.7
+       }
+      },
+      "downgraded": false,
+      "k_s1": 17,
+      "m_s1": 4.0,
+      "primary_mde": {
+       "icc_0.05": 0.274,
+       "icc_0.1": 0.292,
+       "icc_0.2": 0.324
+      },
+      "screen": {
+       "groups_s0": 13.15,
+       "groups_s2": 11.86,
+       "k_s1": 17.0,
+       "mean_m_in_groups_with_s1": 4.0,
+       "s1": 67.96,
+       "screened": 155.23
+      },
+      "serious_upper_0_events_per_arm": 0.043
+     },
+     "low": {
+      "cost": {
+       "fcms_prefixes": 81.9,
+       "generator_calls": 246,
+       "pairs": 212,
+       "replies": 246,
+       "review_hours": {
+        "lower": 87.8,
+        "upper": 138.5
+       },
+       "screening_hours": {
+        "lower": 38.8,
+        "upper": 162.6
+       },
+       "total_hours": {
+        "lower": 126.7,
+        "upper": 301.0
+       }
+      },
+      "downgraded": false,
+      "k_s1": 16,
+      "m_s1": 2.94,
+      "primary_mde": {
+       "icc_0.05": 0.324,
+       "icc_0.1": 0.338,
+       "icc_0.2": 0.364
+      },
+      "screen": {
+       "groups_s0": 16.9,
+       "groups_s2": 16.79,
+       "k_s1": 16.38,
+       "mean_m_in_groups_with_s1": 2.94,
+       "s1": 48.19,
+       "screened": 409.87
+      },
+      "serious_upper_0_events_per_arm": 0.049
+     },
+     "mid": {
+      "cost": {
+       "fcms_prefixes": 97.3,
+       "generator_calls": 292,
+       "pairs": 260,
+       "replies": 292,
+       "review_hours": {
+        "lower": 99.1,
+        "upper": 165.8
+       },
+       "screening_hours": {
+        "lower": 28.1,
+        "upper": 99.0
+       },
+       "total_hours": {
+        "lower": 127.3,
+        "upper": 264.8
+       }
+      },
+      "downgraded": false,
+      "k_s1": 17,
+      "m_s1": 3.87,
+      "primary_mde": {
+       "icc_0.05": 0.278,
+       "icc_0.1": 0.295,
+       "icc_0.2": 0.326
+      },
+      "screen": {
+       "groups_s0": 16.07,
+       "groups_s2": 15.47,
+       "k_s1": 16.99,
+       "mean_m_in_groups_with_s1": 3.87,
+       "s1": 65.79,
+       "screened": 249.51
+      },
+      "serious_upper_0_events_per_arm": 0.041
+     }
+    }
+   }
+  ]
+ },
+ "pp1": {
+  "exploratory": "PP1 的 Q0/QH/F 方向只作探索性记录，不改变正式研究的主比较、阈值、样本和缺失处理",
+  "focus": [
+   "工具能否可靠运行",
+   "实际单件耗时",
+   "通读完整历史是否现实（与检索式略读对照：由 QH 页面的检索/展开记录得到）",
+   "不确定率、分歧率、一致性",
+   "证据引用是否准确（逐字引用 + 依据）",
+   "Q0 先于 QH 的顺序效应风险"
+  ],
+  "not_blocking": "PP1 不阻塞 FC-MS 的生成；生成结果在人评开始前封存、不查看",
+  "order_effect": "PP1 无法估计顺序效应（无反向顺序组）；只登记风险：Q0 先看到两份回复，QH 时已熟悉文本。正式研究保留 Q0→QH 顺序（不让历史污染 Q0），并在 FC-MS 中把 QH 与 Q0 方向一致率作为描述性诊断",
+  "pooling": "默认不并入 FC-MS 统计",
+  "prerequisite": "PP1 保留为正式大规模人评的前置流程（研究者倾向），默认不豁免"
+ },
+ "protocol": "pmrl1v3-v321a-working-protocol-candidate-1",
+ "protocol_sha256": "27df254fcf287156736559851e131122de3b8c73d79b814e81e0d45e15cde859",
+ "questions": {
+  "correct_use_vs_mention": "“正确使用资源”与“引用资源”是不同指标：主指标是 QH 偏好；F1–F5 记录误用；F6 记录强行提及；提及率只在审计侧锁定后描述性计算，永不作为奖励或成功标准",
+  "fixed_within_family": [
+   "G0e 身份（权重、tokenizer、chat template）",
+   "decode（greedy，max_new_tokens 320）",
+   "合法前缀与 as-of 截断",
+   "renderer 身份（含转义策略、证据块框架与标签，DP 与 RET 完全相同）",
+   "Step-2 no-plan",
+   "评审规则与表单版本",
+   "QH 背景（完整 as-of RAW + 中性索引，生成前冻结）"
+  ],
+  "guards": [
+   {
+    "id": "FC-MS-1-G1",
+    "role": "保护指标：报告效果与区间，不作为成功标准",
+    "what": "Q0（即时同理心、自然度、需求理解）：DP−OFF、RET−OFF，S1 与 S2/S0 分开"
+   },
+   {
+    "id": "FC-MS-1-G2",
+    "role": "约束：报告有害信号；不显著不等于安全",
+    "what": "F 严重错误：各臂率与 Clopper–Pearson 上界；配对“仅该臂出现严重错误”的符号检验"
+   }
+  ],
+  "primary": {
+   "channel": "QH",
+   "contrast": "DP-MS − OFF",
+   "estimand": "S1 前缀上，按 owner 组等权的配对净偏好均值 Δ = P(DP 更好) − P(OFF 更好)，两名审阅者取均值；不确定按规则处理（见 missing）",
+   "id": "FC-MS-1-P",
+   "question": "当生成前人工确认此刻需要历史时，把合适的历史直接交给 G，是否提高了解此人过往的支持者眼中的回复质量？",
+   "reads_as": "资源潜在价值（mechanism）；不是检索质量，也不是 PM 学习收益",
+   "stratum": "S1（生成前人工确认）"
+  },
+  "secondary": [
+   {
+    "channel": "QH",
+    "contrast": "RET-MS − OFF",
+    "id": "FC-MS-1-S1",
+    "reads_as": "真实检索条件下的增量（检索 + G 使用的联合效果）",
+    "stratum": "S1"
+   },
+   {
+    "channel": "QH",
+    "contrast": "DP-MS − RET-MS",
+    "id": "FC-MS-1-S2",
+    "reads_as": "检索选材造成的差距（同一 renderer、同一 G 下只改变选中的会话）",
+    "stratum": "S1"
+   }
+  ],
+  "strata": {
+   "S0": "有历史但无关：看误用与侵入",
+   "S2": "资源相关但不必主动提：看是否打扰、自然度与事实安全",
+   "S7": "无合法 MS：DP-MS/RET-MS 的请求若与 OFF 字节相同，效应结构性为 0，只做请求同一性与确定性核验，不做人评；若 renderer 插入“无记录”提示则属于 renderer 因素，另行评价",
+   "reporting": "S2/S0 只报告估计与区间，不作显著性结论"
+  }
+ },
+ "review": {
+  "display": "回复按生成原文纯文本显示，不解释 HTML 实体",
+  "packages": "按角色分包：整理者（S）/ 审阅者第一部分（Q0，无历史）/ 第二部分（QH、探针、F；含历史）/ 裁决者 / 审计侧 F-A",
+  "positions": "位置与页面顺序由审计侧秘密 salt 决定；每个通道恰好一半对照在“回复甲”，第二名审阅者为镜像（完全平衡）；salt 只先登记 sha256，全部锁定后公开",
+  "pseudonyms": "审阅者以代码出现（R1、R2…），真实身份只在研究者处",
+  "sealed_outputs": "仓库是公开的：生成结果和审计映射在全部评审锁定前不得推送到仓库或任何审阅者可访问的位置；只登记文件哈希",
+  "stage_gate": "第二部分只能载入到“Q0 锁定事件哈希 = 协调人登记锚点”的记录中；锚点在收到 Q0 阶段文件时登记",
+  "translation": "若提供中文译文：原文为准并始终显示；按句映射（原文 sha、译文 sha）；同一方法、同一译者完成全部条件；背景与前缀在生成前译好并冻结，回复在生成后由不知条件的译者翻译；不得润色或删减；译者不担任审阅者；本轮未提供译文（需要研究者决定由人或授权的 MT 完成）"
+ },
+ "s1_shortfall": {
+  "downgrade": "若 k_S1 < 8 或 S1 前缀 < 17：主比较降为描述性机制估计（只报告估计与区间，不报告检验结论）；这一降级由标签计数决定，与任何回复无关",
+  "never": [
+   "把 S2 改称 S1",
+   "放宽 S1 定义",
+   "按回复质量挑选样本",
+   "以 RET-MS 是否检索到相关会话来筛选前缀"
+  ],
+  "steps": [
+   "按冻结规则做 Phase B（162 内）与 Phase C（自然框架 cue 层，每 owner 最多 +8）",
+   "仍不足：在 FC-MS 生成前，可用一次登记的修订把 Phase C 上限提高（例如每 owner +16）；修订只改变筛查数量，不改变 S1 定义、表单或判定标准",
+   "按实际 k_S1（含至少 1 个 S1 的组数）和每组 S1 数重新计算精度并公布，然后才生成"
+  ],
+  "trigger": "只看生成前标签计数，在任何 FC-MS 生成之前判定"
+ },
+ "status": "PROPOSED_NOT_ADOPTED",
+ "supersedes": "nothing; V3.2.1 d2fde5db, #17 b28cf37b, P2 v1 2b6057c8 unchanged"
+}
