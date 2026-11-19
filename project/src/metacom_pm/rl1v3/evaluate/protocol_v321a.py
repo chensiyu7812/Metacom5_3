@@ -290,12 +290,14 @@ def plan_cost(sim: dict, *, guard_prefixes: int, words_item: float, words_owner_
     calls = 3 * prefixes
     pairs = 3 * s1 + 2 * guard_prefixes
     replies = 3 * prefixes
+    owner_once = n_groups * 1.06 * rd(words_owner_full)          # every owner's full history read once
     screen_upper = sim["screened"] * (rd(words_item) + EST["label"])
-    screen_lower = n_groups * 1.06 * rd(words_owner_full) + sim["screened"] * (EST["label"] + EST["prefix_skim"])
+    screen_lower = min(sim["screened"] * rd(words_item), owner_once) + sim["screened"] * (EST["label"] + EST["prefix_skim"])
     q_fixed = pairs * (EST["q0_pair"] + EST["qh_pair"])
-    rev_upper = 2 * (q_fixed + prefixes * rd(words_item)) + replies * EST["f_reply"] + prefixes * rd(words_item)
-    rev_lower = 2 * (q_fixed + n_groups * 1.06 * rd(words_owner_full)) + replies * EST["f_reply"] + \
-        n_groups * 1.06 * rd(words_owner_full)
+    read_item = prefixes * rd(words_item)
+    read_low = min(read_item, owner_once)
+    rev_upper = 2 * (q_fixed + read_item) + replies * EST["f_reply"] + read_item
+    rev_lower = 2 * (q_fixed + read_low) + replies * EST["f_reply"] + read_low
     audit = math.ceil(0.25 * replies) * EST["adj_item"] + 0.5 * replies * EST["fa_error"]
     h = lambda x: round(x / 60, 1)                    # noqa: E731
     return dict(fcms_prefixes=round(prefixes, 1), generator_calls=round(calls), pairs=round(pairs), replies=round(replies),
