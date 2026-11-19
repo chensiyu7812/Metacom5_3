@@ -146,11 +146,14 @@ def child(args):
             return _V(v, cfg["root_free_bytes"]) if os.path.realpath(path) == "/" else v
         L.os.statvfs = fake
     real_read = L.read_plan
+    brel = cfg.get("binding")
+    binding = json.loads((wt / brel).read_text()) if brel else None
     model_file = Path("/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3/config.json")
     msha = hashlib.sha256(model_file.read_bytes()).hexdigest()
 
-    def read_plan(root, path):
-        plan, rows, baseline = real_read(root, path)                 # full, unmodified admission of the real plan
+    def read_plan(root, path, executor_binding=None):
+        plan, rows, baseline = (real_read(root, path, executor_binding) if executor_binding is not None
+                                else real_read(root, path))           # full, unmodified admission of the real plan
         plan = dict(plan, python=str(S / "dummy_worker.py"))
         baseline = json.loads(json.dumps(baseline))
         baseline["spec"]["model"]["files"] = {"config.json": dict(bytes=model_file.stat().st_size,
@@ -160,7 +163,7 @@ def child(args):
     out = dict(name=cfg["name"])
     try:
         if cfg["kind"] == "run":
-            plan, _rows, _b = read_plan(wt, wt / cfg["plan"])
+            plan, _rows, _b = read_plan(wt, wt / cfg["plan"], binding)
             head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=wt, text=True).strip()
             auth = dict(authorized=True, job_kind=plan["job_kind"], plan_sha256=object_sha256(plan),
                         max_calls=plan["max_calls"], researcher="TEST-ONLY (WS-B E6 harness; not a researcher)",
@@ -168,6 +171,8 @@ def child(args):
                         executor_checkout_head=head, executor_review_evidence="TEST-ONLY",
                         g0e_identity_decision=dict(source_head=L.G0E_HEAD, signed_by="TEST-ONLY", evidence="TEST-ONLY",
                                                    route="researcher_written_limited"))
+            if binding is not None:
+                auth["executor_binding_sha256"] = object_sha256(binding)
             for k, v in cfg.get("auth_patch", {}).items():
                 if v is None:
                     auth.pop(k, None)
@@ -175,12 +180,18 @@ def child(args):
                     auth[k] = v
             if cfg.get("auth_plan_unmodified"):
                 auth["plan_sha256"] = object_sha256(real_read(wt, wt / cfg["plan"])[0])
+            if cfg.get("drop_binding_at_run"):
+                binding_for_run = None
+            else:
+                binding_for_run = (wt / brel) if brel else None
             ap = S / ("approval_%s.json" % cfg.get("salt", "0"))
             ap.write_text(json.dumps(auth))
-            res = L.run(wt, wt / cfg["plan"], ap, run_root)
+            res = (L.run(wt, wt / cfg["plan"], ap, run_root, binding_for_run) if binding_for_run is not None
+                   else L.run(wt, wt / cfg["plan"], ap, run_root))
             out.update(outcome="returned", summary=res)
         elif cfg["kind"] == "drive":
-            plan, rows, baseline = real_read(wt, wt / cfg["plan"])
+            plan, rows, baseline = (real_read(wt, wt / cfg["plan"], binding) if binding is not None
+                                    else real_read(wt, wt / cfg["plan"]))
             t = [0.0]
             clock = lambda: t[0]                                           # noqa: E731
             calls = []
@@ -215,7 +226,7 @@ def child(args):
             res = L.drive(plan, rows, baseline, j, Fake(), clock=clock, started=0.0)
             out.update(outcome="returned", summary=res, fake_calls=calls)
         elif cfg["kind"] == "subprocess_deadline":
-            plan, rows, baseline = read_plan(wt, wt / cfg["plan"])
+            plan, rows, baseline = read_plan(wt, wt / cfg["plan"], binding)
             L.device_guard = lambda own_pid=None, initial=False: {"gpu_uuid": GPU}
             outdir = S / "journal"
             outdir.mkdir()
@@ -348,7 +359,7 @@ def main(args):
     wt, base = Path(args.wt), Path(args.out)
     base.mkdir(parents=True, exist_ok=True)
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=wt, text=True).strip()
-    assert head == HEAD, f"worktree is at {head}, expected {HEAD}"
+    assert head == args.head, f"worktree is at {head}, expected {args.head}"
     checks = []
 
     def ck(area, name, ok, detail=None, severity=None):
@@ -361,6 +372,9 @@ def main(args):
         return only is None or n in only
 
     def sc(name, **cfg):
+        if args.binding and "binding" not in cfg:
+            plan = cfg.get("plan", A0_PLAN)
+            cfg["binding"] = args.binding if plan == A0_PLAN else args.binding.replace("A0_MIN_", "PP1_")
         return Scenario(base, wt, name, **cfg)
 
     # ---------------- A: admission (refused before any device query, claim, journal or worker)
@@ -383,6 +397,15 @@ def main(args):
         ck("admission", f"{n}: refused before device/claim/journal/worker",
            r["outcome"] == "raised" and "AdmissionError" in r.get("error", "") and r["nvidia_smi_calls"] == 0
            and r["claims"] == 0 and not r["events"] and not r["dummy"], r.get("error"))
+    if args.binding:
+        for n, cfg in (("A12_approval_without_binding_sha", dict(auth_patch=dict(executor_binding_sha256=None))),
+                       ("A13_run_without_binding", dict(drop_binding_at_run=True))):
+            if not want(n):
+                continue
+            r = sc(n, **cfg).run()
+            ck("admission", f"{n}: refused before device/claim/journal/worker",
+               r["outcome"] == "raised" and r["nvidia_smi_calls"] == 0 and r["claims"] == 0 and not r["dummy"],
+               r.get("error"))
     # bound-file and executor-file tampering (temporary edits inside the worktree, always restored)
     for n, rel, why in (("A9_bound_request_file_changed",
                          "project/outputs/pm_rl1/v3/runprep_fcms_20261119/cpu_v2/A0_CALLS_4.jsonl", "bound file changed"),
@@ -611,7 +634,7 @@ def main(args):
            r.returncode != 0 and "supervisor" in r.stderr and r2.returncode != 0 and "torch" not in r.stderr.split("Error")[0],
            dict(rc=(r.returncode, r2.returncode), err=r.stderr.strip().splitlines()[-1:]))
 
-    report = dict(sut=dict(pr=21, head=HEAD, code_head="575011b43947f4aaf73d6bb31f376bf4c36405fc",
+    report = dict(sut=dict(pr=args.pr, head=args.head, binding=args.binding,
                            modules=["generator/limited_run.py", "generator/limited_hf_worker.py", "scripts/rl1v3/limited_g0e_run.py"]),
                   harness=dict(python=sys.version.split()[0], replaced=["HF worker -> B dummy", "nvidia-smi -> B fake",
                                                                        "DATA -> temp", "model byte list -> config.json"]),
@@ -628,5 +651,8 @@ if __name__ == "__main__":
     ap.add_argument("--scenario-dir")
     ap.add_argument("--out")
     ap.add_argument("--only")
+    ap.add_argument("--head", default=HEAD)
+    ap.add_argument("--pr", type=int, default=21)
+    ap.add_argument("--binding", help="executor binding (repo-relative), e.g. for #23")
     a = ap.parse_args()
     child(a) if a.child else main(a)

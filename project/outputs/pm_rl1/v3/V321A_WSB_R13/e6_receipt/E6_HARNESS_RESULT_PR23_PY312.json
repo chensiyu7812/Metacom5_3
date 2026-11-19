@@ -1,0 +1,347 @@
+{
+ "sut": {
+  "pr": 23,
+  "head": "67169816bddaf50206f9847300673d4887713c4d",
+  "binding": "project/docs/plans/pm_rl1_v3_20261116/e6_repair_20261119/A0_MIN_EXECUTOR_BINDING.json",
+  "modules": [
+   "generator/limited_run.py",
+   "generator/limited_hf_worker.py",
+   "scripts/rl1v3/limited_g0e_run.py"
+  ]
+ },
+ "harness": {
+  "python": "3.12.14",
+  "replaced": [
+   "HF worker -> B dummy",
+   "nvidia-smi -> B fake",
+   "DATA -> temp",
+   "model byte list -> config.json"
+  ]
+ },
+ "totals": {
+  "checks": 20,
+  "passed": 20,
+  "failed": 0
+ },
+ "checks": [
+  {
+   "area": "guards",
+   "name": "B8_gpu_taken_mid_run: another process on the GPU stops the job; no further START; worker gone",
+   "ok": true,
+   "detail": {
+    "reason": "AdmissionError: GPU occupied by another process; stop own job only",
+    "starts": 0,
+    "orphans": []
+   },
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "C1: FINISHED with exactly 4 physical calls (no warm-up, no extra call)",
+   "ok": true,
+   "detail": {
+    "job_kind": "A0_MIN",
+    "status": "FINISHED",
+    "reason": null,
+    "backend": "hf_real",
+    "plan_sha256": "405cda0edf32a435740753b1a7b01026ed03670f1dd8f5ce7a63b465c1f0f821",
+    "baseline_sha256": "d8a1613ae2240c3b9adf9a7197d9ac2c9d68515abf11bd3dcd8a3f997f1d0132",
+    "physical_calls": 4,
+    "validated_calls": 4,
+    "pending": [],
+    "unattempted_or_failed_pending": [],
+    "truncated_pending": [],
+    "length_count": 0,
+    "wall_seconds": 3.1914729736745358,
+    "deterministic_pairs_equal": true,
+    "research_qualified": false,
+    "last_journal_sha256": "9c395b2185402327a10fa85e65f54fd7dc135442d37d78b316578f19b7b6f423"
+   },
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "C1: event order RUN_START…LOAD_OK, then START/RETURNED/VALIDATED ×4, SUMMARY last",
+   "ok": true,
+   "detail": [
+    "RUN_START",
+    "MODEL_BYTES_VERIFIED",
+    "LOAD_START",
+    "LOAD_OK",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    "REQUEST_START",
+    "REQUEST_RETURNED",
+    "REQUEST_VALIDATED",
+    null
+   ],
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "C1: every REQUEST_START is durable on disk before the worker receives that request",
+   "ok": true,
+   "detail": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "C1: hash chain re-computed by B from file bytes",
+   "ok": true,
+   "detail": null,
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "C1: worker received the pinned GPU UUID and the supervisor pid; exited after the run",
+   "ok": true,
+   "detail": null,
+   "severity": null
+  },
+  {
+   "area": "retry",
+   "name": "C1b: the same approval cannot run twice (claim is write-once)",
+   "ok": true,
+   "detail": "FileExistsError: request set already claimed; unresolved starts cannot retry",
+   "severity": null
+  },
+  {
+   "area": "failure",
+   "name": "D2_worker_crash: STOPPED at call 2; no later START; pending recorded; worker gone",
+   "ok": true,
+   "detail": {
+    "reason": "AdmissionError: worker exited without complete response",
+    "gens": 2,
+    "pending": 3,
+    "orphans": []
+   },
+   "severity": null
+  },
+  {
+   "area": "process",
+   "name": "E1: the supervisor's hard deadline kills the hung worker and its child (same process group)",
+   "ok": true,
+   "detail": {
+    "error": "AdmissionError: worker hard deadline",
+    "seconds": 6.0,
+    "orphans": []
+   },
+   "severity": null
+  },
+  {
+   "area": "process",
+   "name": "E2: a worker that ignores SIGTERM is still removed when the job stops (SIGKILL escalation)",
+   "ok": true,
+   "detail": {
+    "reason": "AdmissionError: GPU occupied by another process; stop own job only",
+    "orphans": []
+   },
+   "severity": null
+  },
+  {
+   "area": "process",
+   "name": "E3: when the worker itself dies, its children in the same process group are also removed",
+   "ok": true,
+   "detail": {
+    "orphans": [],
+    "reason": "AdmissionError: worker exited without complete response"
+   },
+   "severity": "low"
+  },
+  {
+   "area": "process",
+   "name": "E4_parent_SIGINT: Ctrl-C stops the job, journals STOP, kills the worker at once",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START",
+     "STOP",
+     null
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": null
+  },
+  {
+   "area": "process",
+   "name": "E5_parent_SIGTERM: after the supervisor is killed, the worker must not keep running (no orphan)",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": "high"
+  },
+  {
+   "area": "process",
+   "name": "E5_parent_SIGTERM: no new call is issued after the supervisor dies",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "E5_parent_SIGTERM: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": null
+  },
+  {
+   "area": "process",
+   "name": "E6_parent_SIGKILL: after the supervisor is killed, the worker must not keep running (no orphan)",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": "medium"
+  },
+  {
+   "area": "process",
+   "name": "E6_parent_SIGKILL: no new call is issued after the supervisor dies",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": null
+  },
+  {
+   "area": "journal",
+   "name": "E6_parent_SIGKILL: an interrupted run leaves an unresolved START (no RESULT) that blocks reuse of the same approval",
+   "ok": true,
+   "detail": {
+    "waited": true,
+    "events": [
+     "RUN_START",
+     "MODEL_BYTES_VERIFIED",
+     "LOAD_START",
+     "LOAD_OK",
+     "REQUEST_START",
+     "REQUEST_RETURNED",
+     "REQUEST_VALIDATED",
+     "REQUEST_START"
+    ],
+    "worker_alive_2s_after_signal": false,
+    "worker_finished_current_call": false,
+    "generate_calls": 2,
+    "orphans_end": []
+   },
+   "severity": null
+  },
+  {
+   "area": "retry",
+   "name": "F1: a second approval for the same plan must not re-run requests whose START is unresolved",
+   "ok": true,
+   "detail": {
+    "first": "AdmissionError: worker exited without complete response",
+    "second_outcome": "raised",
+    "second_status": null,
+    "total_generate_calls": 2,
+    "claims": 1
+   },
+   "severity": "high"
+  },
+  {
+   "area": "retry",
+   "name": "F2: a second job cannot start while one holds the exclusive lock",
+   "ok": true,
+   "detail": "BlockingIOError: [Errno 11] Resource temporarily unavailable",
+   "severity": null
+  }
+ ]
+}

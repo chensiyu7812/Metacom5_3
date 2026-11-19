@@ -51,6 +51,10 @@ def manifest(step, inputs, outputs, code):
 
 
 # ------------------------------------------------------------------ e6
+PR23_HEAD = "67169816bddaf50206f9847300673d4887713c4d"
+PR23_CODE = "26343dc69ba1616fad293319a26a86b0b1b0816d"
+PR23_BINDINGS = dict(A0="c9eb9169897686c018b657c39b766689b78058441976774eb34107f8da0d65e1",
+                     PP1="2a14cac2f2598fdbeb47c1ce6f9159fa2518ec592707d84d8999dd1bd6f71b2d")
 DEFECTS = [
     dict(id="E6-D1", severity="high", scenario="E5_parent_SIGTERM",
          finding="SIGTERM to the supervisor ends it without STOP/SUMMARY; the worker runs in its own session, survives as "
@@ -108,8 +112,31 @@ def step_e6(_):
         consequence="E6 未签收：按研究者要求，A0 与 PP1 都不能批准；修复后 B 用同一 harness 在新的固定 HEAD 上复跑",
         retest="python scripts/rl1v3/V321A_e6_harness.py --wt <worktree at fixed HEAD> --out <dir>")
     jdump(d / "E6_RECEIPT.json", verdict)
-    manifest("e6_receipt", {}, [d / "E6_HARNESS_RESULT.json", d / "E6_RECEIPT.json"],
+    # re-test on WS-A's repair (#23) with the same harness: Python 3.11 (all scenarios) + Python 3.12 (process paths)
+    r23 = json.loads((d / "E6_HARNESS_RESULT_PR23.json").read_text())
+    r23b = json.loads((d / "E6_HARNESS_RESULT_PR23_PY312.json").read_text())
+    ok23 = r23["totals"]["failed"] == 0 and r23b["totals"]["failed"] == 0 and r23["sut"]["head"] == PR23_HEAD
+    v23 = dict(object=dict(pr=23, head=PR23_HEAD, code_head=PR23_CODE, executor_bindings=PR23_BINDINGS,
+                           original_plans=dict(A0="43f175c5…", PP1="bc51f931…")),
+               method=verdict["method"] + "；同一 harness 在 #23 上复跑，另加 2 项（授权缺 binding SHA、运行不带 binding）；"
+                                          "进程类场景另用实际执行环境 Python 3.12（无 os.pidfd_open，走 ctypes 路径）复跑",
+               totals=dict(py311=r23["totals"], py312_process_paths=r23b["totals"]),
+               defects_closed={"E6-D1": "E5 通过：SIGTERM 后 worker 2 秒内消失，不再继续计算",
+                               "E6-D2": "E6 通过：SIGKILL 后同上（pidfd 监护在 worker 进程组内）",
+                               "E6-D3": "F1 通过：同一计划的新授权被请求集合 claim 拒绝，物理调用不增加",
+                               "E6-D4": "E3 通过：worker 退出后，进程组内子进程被清理"},
+               verdict="SIGNED" if ok23 else "NOT_SIGNED",
+               scope="CPU 故障注入范围：执行器的准入、身份、守卫、日志、停止、进程清理、不重试；真实 worker 在真实模型上的"
+                     "“只加载一次”“原生 tokenizer 相等”须由 A0 日志证明",
+               remaining_observations=["SIGTERM 仍不写 STOP/SUMMARY（未决 START 是持久记录，并已强制不可重试）",
+                                       "FAILED 无逐请求事件（建议 failed_request_id）",
+                                       "executor_review_evidence 仍只检查非空：授权文件应引用本回执 URL、#23 HEAD 与 binding SHA"],
+               not_an_authorization="E6 签收不构成 A0 或 PP1 的运行授权；授权须另签 binding SHA 与最终 checkout HEAD")
+    jdump(d / "E6_RECEIPT_PR23.json", v23)
+    manifest("e6_receipt", {}, [d / "E6_HARNESS_RESULT.json", d / "E6_RECEIPT.json", d / "E6_HARNESS_RESULT_PR23.json",
+                                d / "E6_HARNESS_RESULT_PR23_PY312.json", d / "E6_RECEIPT_PR23.json"],
              [PROJECT / "scripts/rl1v3/V321A_e6_harness.py"])
+    print("PR23", v23["verdict"], v23["totals"])
     print(json.dumps(dict(totals=res["totals"], failed=verdict["failed_checks"], verdict=verdict["verdict"])))
 
 
@@ -378,7 +405,8 @@ def step_decision(_):
         ],
         not_changed_by_this_receipt=dict(
             license="许可与公开仓库处理仍待研究者决定（governance/）", staff="整理者、审阅者、裁决者尚未指定",
-            gpu="A0、PP1、FC-MS 生成均未授权", e6=f"E6 {e6['verdict']}（见 e6_receipt）",
+            gpu="A0、PP1、FC-MS 生成均未授权",
+            e6="E6：#21 不签收；#23 HEAD 67169816 复跑签收（CPU 故障注入范围，见 e6_receipt）；签收不是运行授权",
             g0e_identity="研究者拟固定 #10 73fdb12f 为研究级 G0e 身份；正式冻结签收待办（不等于 merge，也不授予运行许可）"),
         frozen_evidence_untouched=["P2 v1 2b6057c8", "#17 b28cf37b", "V3.2.1 d2fde5db", "V3.2.1-A 27df254f（本回执不修改）"])
     body["receipt_sha256"] = object_sha256(body)
@@ -391,13 +419,19 @@ def step_decision(_):
 def step_admission(_):
     from metacom_pm.rl1v3.evaluate import protocol_v321a as P
     facts, prs = W._facts()
-    gates = P.gates_v321a(facts)
     e6 = json.loads((OUT / "e6_receipt/E6_RECEIPT.json").read_text())
+    e23 = json.loads((OUT / "e6_receipt/E6_RECEIPT_PR23.json").read_text())
+    facts["executor_accepted"] = e23["verdict"] == "SIGNED"
+    gates = P.gates_v321a(facts)
     for g in gates:
         for it in g["items"]:
             if it["id"] == "E6":
-                it["reason"] = f"B 的 E6 回执：{e6['verdict']}（{e6['totals']['passed']}/{e6['totals']['checks']}；" \
-                               f"高 2、中 1、低 1 项缺陷待 A 修复后复跑）"
+                it["evidence"] = (f"#21 {e6['verdict']}（{e6['totals']['passed']}/{e6['totals']['checks']}）；"
+                                  f"#23 HEAD {PR23_HEAD[:8]} 复跑 {e23['verdict']}（3.11：{e23['totals']['py311']['passed']}/"
+                                  f"{e23['totals']['py311']['checks']}；3.12 进程路径：{e23['totals']['py312_process_paths']['passed']}/"
+                                  f"{e23['totals']['py312_process_paths']['checks']}）；CPU 故障注入范围")
+                if not facts["executor_accepted"]:
+                    it["reason"] = "B 的 E6 回执：#23 复跑未通过"
             if it["id"] == "C7":
                 it["reason"] = "候选通过，待正式 DP 样本复验；研究者倾向采纳"
             if it["id"] == "E1":

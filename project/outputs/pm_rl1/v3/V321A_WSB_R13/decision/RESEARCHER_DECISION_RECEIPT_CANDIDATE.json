@@ -1,0 +1,86 @@
+{
+ "adopted_in_principle": [
+  {
+   "item": "A1–A15 总体结构",
+   "reason": "版本 A：资源获取由 PM Step-1 负责，Step-2 no-plan，G 隐式使用资源",
+   "scope": "FC-MS-1 及后续同族比较"
+  },
+  {
+   "item": "QH 为长期支持主指标；Q0 即时质量保护；F 事实与安全约束；三者不合成总分",
+   "reason": "与研究目标一致；未提及记忆不算错误",
+   "scope": "全部 FC 族"
+  },
+  {
+   "item": "唯一主比较：S1 中 DP-MS 对 OFF 的 QH",
+   "reason": "先回答资源潜在价值；单一主检验避免结果驱动换指标",
+   "scope": "FC-MS-1"
+  },
+  {
+   "item": "次要机制比较：RET−OFF、DP−RET（主检验 superior 后 Holm）",
+   "reason": "区分检索质量与资源价值",
+   "scope": "FC-MS-1"
+  },
+  {
+   "item": "不采用 −0.10 非劣界",
+   "reason": "17 组下 ICC ≥ 0.05 不可达；不显著只写 inconclusive",
+   "scope": "FC-MS-1"
+  },
+  {
+   "item": "PP1 只作程序试点，不并入 FC-MS",
+   "reason": "旧 renderer 与新 renderer 不同；PP1 只测程序",
+   "scope": "PP1"
+  },
+  {
+   "item": "Step-2 维持 G0e no-plan；新 applicability prompt 不进入当前实验族",
+   "reason": "单因素；版本化另评",
+   "scope": "当前实验族"
+  }
+ ],
+ "based_on": {
+  "pr": 22,
+  "pr22_head": "e46d978d",
+  "protocol": "pmrl1v3-v321a-working-protocol-candidate-1",
+  "protocol_sha256": "27df254fcf287156736559851e131122de3b8c73d79b814e81e0d45e15cde859"
+ },
+ "frozen_evidence_untouched": [
+  "P2 v1 2b6057c8",
+  "#17 b28cf37b",
+  "V3.2.1 d2fde5db",
+  "V3.2.1-A 27df254f（本回执不修改）"
+ ],
+ "kind": "researcher decision receipt CANDIDATE (WS-B record of the researcher's round-13 message; needs the researcher's explicit sign-off to become final)",
+ "not_changed_by_this_receipt": {
+  "e6": "E6：#21 不签收；#23 HEAD 67169816 复跑签收（CPU 故障注入范围，见 e6_receipt）；签收不是运行授权",
+  "g0e_identity": "研究者拟固定 #10 73fdb12f 为研究级 G0e 身份；正式冻结签收待办（不等于 merge，也不授予运行许可）",
+  "gpu": "A0、PP1、FC-MS 生成均未授权",
+  "license": "许可与公开仓库处理仍待研究者决定（governance/）",
+  "staff": "整理者、审阅者、裁决者尚未指定"
+ },
+ "receipt_sha256": "95dfae50a4ac8b4355b67d73b31ab7690311f3c0981a38281f0030e4d8732329",
+ "selected": [
+  {
+   "caveats": [
+    "只有 3 轮 RAW 字符被编码，但每个 MS 请求约 15–20% 的 token 改变（见 renderer_diff）",
+    "行为层面的注入防护与情感支持效应未实测",
+    "PP1 旧 renderer 的回复不得并入新 renderer 的 FC-MS"
+   ],
+   "item": "FC-MS renderer = #21 renderer-fcms:e675b435（line-quote-1）",
+   "sha": "renderer-fcms:e675b43535843b6d0a9f0410d14294249572290c60325a11f8081678c61880dc",
+   "status": "候选通过，待正式 DP 样本复验"
+  },
+  {
+   "item": "主要 DP-MS = A 的人工选材（#21 DP 选材工具）",
+   "sha": "46349ccf02fef477bfc8fd76114bf1e38044e1d3",
+   "status": "待补齐：单会话覆盖、时效、阶段字段；选择者≠审阅者；选择时间早于生成（见 dp_alignment）"
+  },
+  {
+   "item": "B 的确定性规则 = Rule-DP 次要诊断基线（暂不增加模型调用）",
+   "status": "只计算选材，不生成"
+  },
+  {
+   "item": "预算暂定中等方案",
+   "status": "在 90 条真实 S 标签产生后、任何 FC-MS 生成结果出现前最终冻结（fcms_replan）"
+  }
+ ],
+ "status": "CANDIDATE_PENDING_RESEARCHER_SIGNATURE"
+}
