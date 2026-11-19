@@ -611,7 +611,8 @@ def step_renderer(_):
     out = OUT / "renderer"
     jdump(out / "RENDERER_ACCEPTANCE_PLAN.json", dict(plan=RA.PLAN, entity_census=cen,
                                                        dry_run_on_pr19=dict(head=S.PP1_SHA, **{k: v for k, v in dry.items()}),
-                                                       candidate_status="WS-A 尚未提交统一 renderer 候选（#10/#18/#19 HEAD 与共享目录均无）"))
+                                                       candidate_status="WS-A Draft PR #21（46349ccf）已提交候选 renderer-fcms:e675b435（line-quote-1）；"
+                                                                        "B 的回执见 pr21_renderer_receipt/"))
     manifest("renderer", {}, [out / "RENDERER_ACCEPTANCE_PLAN.json"],
              [PROJECT / "src/metacom_pm/rl1v3/asof/renderer_acceptance.py"])
     print(json.dumps(dict(census=cen, verdict=dry["verdict"], family=dry["family"])))
