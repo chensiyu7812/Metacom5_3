@@ -151,6 +151,12 @@ async function fillCurator(page, key, i, submit = true) {
   } else {
     const need = ['S1', 'S2', 'S0', 'unclear'][i % 4];
     await choose(page, 'need', need);
+    if (need === 'S1' || need === 'S2') {
+      const sn = i % 2 ? 'multiple' : 'one';
+      if (!(await page.eval(`(document.querySelector('input[data-field="sessions_needed"][value="${sn}"]')||{}).checked`))) {
+        await choose(page, 'sessions_needed', sn);
+      }
+    }
     if (need === 'S1') {
       await page.type('textarea[data-field="reason"]', 'Simulated reason: without the earlier talk the reply would repeat a failed idea.');
       await page.select('select[data-span]', 'required');
@@ -236,7 +242,8 @@ async function phaseCurator() {
     await page.click('[data-act="submit"]');
     await page.waitFor(`document.querySelector('#msg')`);
     const msg = await page.text('#msg');
-    check('curator: S1 without reason and required span is refused', msg.includes('未填写') && msg.includes('必要'), msg.slice(0, 200));
+    check('curator: S1 without reason, sessions-needed and required span is refused',
+      msg.includes('未填写') && msg.includes('必要') && msg.includes('多个过去会话'), msg.slice(0, 300));
   }
   for (let i = 0; i < 4; i++) await fillCurator(page, keys[i], i);
   await fillCurator(page, keys[4], 4, false);      // draft only

@@ -142,7 +142,7 @@ def _q_form(fid, title, instruction, extra_sub=()):
 
 
 FORMS = {
-    "S": dict(id="S", title="表单 S：生成前筛查（有历史的前缀）",
+    "S": dict(id="S", version="S-v2", title="表单 S：生成前筛查（有历史的前缀）",
               instruction="请先阅读左侧的当前会话，再按需要查阅右侧的过往对话（只包含此刻之前的对话）。判断：要给出合适的回复，"
                           "是否需要知道这些历史。你看不到任何回复。你的标签会封存在审计侧，评审者和生成模型都看不到。",
               fields=[
@@ -153,6 +153,10 @@ FORMS = {
                       ("unclear", "无法判断")]),
                   _text("reason", "S-2 理由：如果回复者不知道这段历史，回复会怎样出错？", required=False,
                         required_if=dict(field="need", **{"in": ["S1"]}), min_chars=10),
+                  _ch("sessions_needed", "S-2b 满足这一需要，是否必须结合多个过去会话？",
+                      [("one", "一个会话即可"), ("multiple", "必须结合多个会话"), ("unclear", "无法判断")],
+                      required=False, required_if=dict(field="need", **{"in": ["S1"]}),
+                      show_if=dict(field="need", **{"in": ["S1", "S2"]})),
                   dict(id="risk", type="multi", label="S-3 风险标签（可多选）", required=True, exclusive="none",
                        options=[dict(v="stale", label="历史中的信息可能已过时"),
                                 dict(v="advice", label="可能诱发不当建议"),
