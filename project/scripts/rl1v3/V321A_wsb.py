@@ -163,10 +163,19 @@ def step_e2e(args):
     reps, pairs, resources = SIM.replies(cases)
     forbidden = [r["reply_key"] for r in reps] + [p[0] for p in pairs] + [c["case_key"] for c in cases] + \
                 ["sim-owner-", "RET-MS"]
+    zh = bool(os.environ.get("PP1_E2E_ZH"))          # R15: Chinese-first display with sentence-aligned translation
+    tr_kw = dict(translate=SIM.translate, translation_method="mock (test only)")
+    rank0 = SIM.rank0_case()
+    if zh:
+        import V321A_r15 as R15
+        cases = R15._sim_with_zh(cases)
+        reps = [dict(r, zh_seg=R15.sim_zh(r["text"])) for r in reps]
+        rank0 = R15._sim_with_zh([rank0])[0]
+        tr_kw = dict(translation_method="hand-written zh for synthetic text (test only)")
 
     # curator
-    cur_pkg, cur_map = T.curator_package(cases + [SIM.rank0_case()], assignee="CUR1", protocol=proto, simulated=True,
-                                         salt=SIM.SIM_SALT, translate=SIM.translate, translation_method="mock (test only)")
+    cur_pkg, cur_map = T.curator_package(cases + [rank0], assignee="CUR1", protocol=proto, simulated=True,
+                                         salt=SIM.SIM_SALT, **tr_kw)
     ck("curator package passes the blind scan", not T.blind_scan(cur_pkg, forbidden_ids=forbidden, role="curator"),
        T.blind_scan(cur_pkg, forbidden_ids=forbidden, role="curator")[:3])
     cur_file = jdump(work / "curator.package.json", cur_pkg, pretty=False)
@@ -177,8 +186,7 @@ def step_e2e(args):
     revs, audits, make2 = {}, {}, {}
     for rid in ("R1", "R2"):
         p1, mk, au = T.reviewer_packages(cases, reps, pairs, assignee=rid, protocol=proto, simulated=True,
-                                         salt=SIM.SIM_SALT, mirror=rid == "R2", translate=SIM.translate,
-                                         translation_method="mock (test only)")
+                                         salt=SIM.SIM_SALT, mirror=rid == "R2", **tr_kw)
         hits = T.blind_scan(p1, forbidden_ids=forbidden)
         ck(f"{rid} part 1 passes the blind scan", not hits, hits[:3])
         ck(f"{rid} part 1 carries no history", all(c["history"] is None for c in p1["cases"].values()))
@@ -191,9 +199,11 @@ def step_e2e(args):
        all(audits["R1"]["pairs"][p]["positions"][ch]["A"]["condition"] != audits["R2"]["pairs"][p]["positions"][ch]["A"]["condition"]
            for p in audits["R1"]["pairs"] for ch in ("Q0", "QH")))
 
-    base = dict(chrome=CHROME, generic_html=str(generic), tmpdir=str(work))
+    base = dict(chrome=CHROME, generic_html=str(generic), tmpdir=str(work), zh=zh)
+    first = cur_pkg["stages"][0]["items"][0]["case_id"]
     cfg = dict(base, out=str(work / "res_curator.json"), curator=dict(
         html=str(cur_html), package_file=str(cur_file), n_items=len(cur_pkg["stages"][0]["items"]),
+        first_case=first, first_check=T.case_check(cur_pkg["cases"][first]),
         profile1=str(work / "prof_cur1"), profile2=str(work / "prof_cur2"), profile3=str(work / "prof_cur3"),
         downloads=str(work / "dl_cur")))
     res = {"curator": _node("curator", cfg, work / "cfg_curator.json", logs / "node_curator.log")}

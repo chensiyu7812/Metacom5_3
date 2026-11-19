@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>练习：生成前筛查（模拟）· CUR1</title>
+<style>:root { --bg: #f6f7f9; --panel: #fff; --ink: #1d2330; --muted: #5d6677; --line: #d9dde5; --accent: #2457c5;
+  --ok: #1d7a46; --warn: #a15c00; --bad: #b3261e; --soft: #eef2fb; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 -apple-system, "PingFang SC", "Noto Sans CJK SC",
+  "Microsoft YaHei", sans-serif; }
+button { font: inherit; cursor: pointer; border: 1px solid var(--line); background: var(--panel); border-radius: 6px;
+  padding: 4px 12px; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.danger { background: var(--bad); color: #fff; border-color: var(--bad); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.top { position: sticky; top: 0; z-index: 5; background: var(--panel); border-bottom: 1px solid var(--line);
+  padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+.top h1 { font-size: 16px; margin: 0; }
+.top .meta { color: var(--muted); font-size: 13px; }
+.top .spacer { flex: 1; }
+.sim { background: var(--bad); color: #fff; text-align: center; padding: 4px; font-weight: 600; }
+.banner { background: #fff4e5; color: var(--warn); padding: 6px 16px; border-bottom: 1px solid var(--line); }
+.wrap { display: grid; grid-template-columns: 260px 1fr; min-height: calc(100vh - 50px); }
+.side { border-right: 1px solid var(--line); background: var(--panel); padding: 12px; overflow-y: auto; max-height: calc(100vh - 50px);
+  position: sticky; top: 50px; }
+.side h2 { font-size: 14px; margin: 14px 0 6px; }
+.side .st { font-size: 12px; color: var(--muted); }
+.side ul { list-style: none; padding: 0; margin: 0; }
+.side li button { width: 100%; text-align: left; margin: 2px 0; display: flex; justify-content: space-between; }
+.side li button.cur { border-color: var(--accent); background: var(--soft); }
+.badge { font-size: 12px; border-radius: 10px; padding: 0 8px; background: #eee; color: var(--muted); }
+.badge.locked { background: #e3f3ea; color: var(--ok); }
+.badge.draft { background: #fff1d6; color: var(--warn); }
+.main { padding: 16px 20px 80px; max-width: 1280px; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 0 0 12px; }
+.instr { background: var(--soft); border-color: #c9d6f3; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.turn { margin: 4px 0; padding: 4px 8px; border-left: 3px solid var(--line); white-space: pre-wrap; word-break: break-word; }
+.turn.seeker { border-left-color: #8aa6e0; }
+.turn .who { font-size: 12px; color: var(--muted); margin-right: 6px; }
+.turn .zh { display: block; color: var(--muted); font-size: 13px; }
+.turn .tools { float: right; font-size: 12px; }
+.turn.marked { background: #fff8e6; }
+.reply { white-space: pre-wrap; word-break: break-word; font-size: 15px; }
+.reply-box h3 { margin: 0 0 6px; font-size: 15px; }
+.hist-index { border-collapse: collapse; font-size: 13px; margin-bottom: 8px; }
+.hist-index td, .hist-index th { border: 1px solid var(--line); padding: 2px 8px; }
+details.sess { border: 1px solid var(--line); border-radius: 6px; margin: 4px 0; padding: 2px 8px; }
+details.sess summary { cursor: pointer; color: var(--muted); }
+mark { background: #ffe58a; }
+.field { margin: 10px 0; }
+.field .lab { font-weight: 600; display: block; margin-bottom: 2px; }
+.field .hint { color: var(--muted); font-size: 13px; }
+.opts label { display: inline-block; margin: 2px 14px 2px 0; }
+.fitem { border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; margin: 6px 0; }
+.fitem.active { border-color: var(--accent); box-shadow: 0 0 0 2px #c9d6f3; }
+.chip { display: inline-block; background: #eef; border-radius: 10px; padding: 0 8px; margin: 2px; font-size: 12px; }
+textarea { width: 100%; min-height: 56px; font: inherit; padding: 6px; border: 1px solid var(--line); border-radius: 6px; }
+.err { color: var(--bad); }
+.okmsg { color: var(--ok); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.readonly { color: var(--muted); }
+.foot { position: fixed; bottom: 0; left: 0; right: 0; background: var(--panel); border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--muted); padding: 4px 16px; }
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 20; }
+.modal[hidden] { display: none; }
+.modal .card { background: var(--panel); border-radius: 10px; padding: 18px 20px; max-width: 560px; width: calc(100% - 32px); }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; word-break: break-all; }
+@media (max-width: 900px) { .wrap { grid-template-columns: 1fr; } .side { position: static; max-height: none; }
+  .cols { grid-template-columns: 1fr; } }
+.turn .zhp { display: block; }
+.reply.zhp { font-size: 15px; }
+details.en { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+details.en summary { cursor: pointer; font-size: 12px; }
+details.en .seg { display: grid; grid-template-columns: 1fr 1fr auto; gap: 2px 10px; padding: 2px 0; border-top: 1px dotted var(--line); }
+details.en .en-s { color: var(--ink); }
+details.en .cite-q { font-size: 12px; padding: 0 6px; height: 22px; }
+</style>
+</head>
+<body>
+<div id="app"><noscript>本工具需要启用 JavaScript（完全离线运行，不联网）。</noscript></div>
+<div id="modal" class="modal" hidden></div>
+<input type="file" id="file-package" accept=".json,application/json" hidden>
+<input type="file" id="file-import" accept=".json,application/json" hidden>
+<input type="file" id="file-part" accept=".json,application/json" hidden>
+<script type="application/json" id="pp1-package">{"assignee":"练习-CUR1","cases":{"c4e47d4cb36":{"group":"人物 4","history":{"index":[{"date":"2030-01-11","order":1,"ref":"h1","turns":5,"words":56},{"date":"2030-02-11","order":2,"ref":"h2","turns":5,"words":56},{"date":"2030-03-11","order":3,"ref":"h3","turns":5,"words":56}],"sessions":[{"date":"2030-01-11","order":1,"ref":"h1","turns":[{"ref":"h1:t1","seg":["Simulated session 1: I want to talk about moving to a new city."],"speaker":"求助者","text":"Simulated session 1: I want to talk about moving to a new city.","zh":"模拟第 1 次会话：我想聊聊搬到一个新城市。","zh_seg":["模拟第 1 次会话：我想聊聊搬到一个新城市。"]},{"ref":"h1:t2","seg":["Simulated supporter: thank you for sharing about moving to a new city. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about moving to a new city. How are you feeling?","zh":"模拟支持者：谢谢你分享搬到一个新城市的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享搬到一个新城市的事。","你现在感觉怎么样？"]},{"ref":"h1:t3","seg":["Simulated: honestly I still know nobody here."],"speaker":"求助者","text":"Simulated: honestly I still know nobody here.","zh":"模拟：说实话，我在这里还一个人都不认识。","zh_seg":["模拟：说实话，我在这里还一个人都不认识。"]},{"ref":"h1:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h1:t5","seg":["Simulated: joining a running club felt awkward last time."],"speaker":"求助者","text":"Simulated: joining a running club felt awkward last time.","zh":"模拟：上次加入跑步俱乐部时觉得很尴尬。","zh_seg":["模拟：上次加入跑步俱乐部时觉得很尴尬。"]}]},{"date":"2030-02-11","order":2,"ref":"h2","turns":[{"ref":"h2:t1","seg":["Simulated session 2: I want to talk about moving to a new city."],"speaker":"求助者","text":"Simulated session 2: I want to talk about moving to a new city.","zh":"模拟第 2 次会话：我想聊聊搬到一个新城市。","zh_seg":["模拟第 2 次会话：我想聊聊搬到一个新城市。"]},{"ref":"h2:t2","seg":["Simulated supporter: thank you for sharing about moving to a new city. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about moving to a new city. How are you feeling?","zh":"模拟支持者：谢谢你分享搬到一个新城市的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享搬到一个新城市的事。","你现在感觉怎么样？"]},{"ref":"h2:t3","seg":["Simulated: honestly I still know nobody here."],"speaker":"求助者","text":"Simulated: honestly I still know nobody here.","zh":"模拟：说实话，我在这里还一个人都不认识。","zh_seg":["模拟：说实话，我在这里还一个人都不认识。"]},{"ref":"h2:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h2:t5","seg":["Simulated: joining a running club felt awkward last time."],"speaker":"求助者","text":"Simulated: joining a running club felt awkward last time.","zh":"模拟：上次加入跑步俱乐部时觉得很尴尬。","zh_seg":["模拟：上次加入跑步俱乐部时觉得很尴尬。"]}]},{"date":"2030-03-11","order":3,"ref":"h3","turns":[{"ref":"h3:t1","seg":["Simulated session 3: I want to talk about moving to a new city."],"speaker":"求助者","text":"Simulated session 3: I want to talk about moving to a new city.","zh":"模拟第 3 次会话：我想聊聊搬到一个新城市。","zh_seg":["模拟第 3 次会话：我想聊聊搬到一个新城市。"]},{"ref":"h3:t2","seg":["Simulated supporter: thank you for sharing about moving to a new city. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about moving to a new city. How are you feeling?","zh":"模拟支持者：谢谢你分享搬到一个新城市的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享搬到一个新城市的事。","你现在感觉怎么样？"]},{"ref":"h3:t3","seg":["Simulated: honestly I still know nobody here."],"speaker":"求助者","text":"Simulated: honestly I still know nobody here.","zh":"模拟：说实话，我在这里还一个人都不认识。","zh_seg":["模拟：说实话，我在这里还一个人都不认识。"]},{"ref":"h3:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h3:t5","seg":["Simulated: joining a running club felt awkward last time."],"speaker":"求助者","text":"Simulated: joining a running club felt awkward last time.","zh":"模拟：上次加入跑步俱乐部时觉得很尴尬。","zh_seg":["模拟：上次加入跑步俱乐部时觉得很尴尬。"]}]}],"words":168},"label":"前缀 4","prefix":[{"ref":"p:t1","seg":["Simulated today: things around moving to a new city came back this week."],"speaker":"求助者","text":"Simulated today: things around moving to a new city came back this week.","zh":"模拟今天：这周，和搬到一个新城市有关的事又冒出来了。","zh_seg":["模拟今天：这周，和搬到一个新城市有关的事又冒出来了。"]},{"ref":"p:t2","seg":["Simulated supporter: I am here. ","What happened?"],"speaker":"支持者","text":"Simulated supporter: I am here. What happened?","zh":"模拟支持者：我在这里。发生了什么？","zh_seg":["模拟支持者：我在这里。","发生了什么？"]},{"ref":"p:t3","seg":["Simulated today: I still know nobody here again and I do not know what to do."],"speaker":"求助者","text":"Simulated today: I still know nobody here again and I do not know what to do.","zh":"模拟今天：又是我在这里还一个人都不认识，我不知道该怎么办。","zh_seg":["模拟今天：又是我在这里还一个人都不认识，我不知道该怎么办。"]}]},"c8434490950":{"group":"人物 2","history":null,"label":"前缀 2","prefix":[{"ref":"p:t1","speaker":"求助者","text":"Simulated first talk: I just want someone to listen today."}]},"c8f64379f67":{"group":"人物 1","history":{"index":[{"date":"2030-01-10","order":1,"ref":"h1","turns":5,"words":61},{"date":"2030-02-10","order":2,"ref":"h2","turns":5,"words":61}],"sessions":[{"date":"2030-01-10","order":1,"ref":"h1","turns":[{"ref":"h1:t1","seg":["Simulated session 1: I want to talk about starting a new job at a bakery."],"speaker":"求助者","text":"Simulated session 1: I want to talk about starting a new job at a bakery.","zh":"模拟第 1 次会话：我想聊聊在面包店开始一份新工作。","zh_seg":["模拟第 1 次会话：我想聊聊在面包店开始一份新工作。"]},{"ref":"h1:t2","seg":["Simulated supporter: thank you for sharing about starting a new job at a bakery. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about starting a new job at a bakery. How are you feeling?","zh":"模拟支持者：谢谢你分享在面包店开始一份新工作的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享在面包店开始一份新工作的事。","你现在感觉怎么样？"]},{"ref":"h1:t3","seg":["Simulated: honestly my manager seems strict."],"speaker":"求助者","text":"Simulated: honestly my manager seems strict.","zh":"模拟：说实话，我的经理好像很严格。","zh_seg":["模拟：说实话，我的经理好像很严格。"]},{"ref":"h1:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h1:t5","seg":["Simulated: I tried waking up earlier but it did not help."],"speaker":"求助者","text":"Simulated: I tried waking up earlier but it did not help.","zh":"模拟：我试过早点起床，但没有用。","zh_seg":["模拟：我试过早点起床，但没有用。"]}]},{"date":"2030-02-10","order":2,"ref":"h2","turns":[{"ref":"h2:t1","seg":["Simulated session 2: I want to talk about starting a new job at a bakery."],"speaker":"求助者","text":"Simulated session 2: I want to talk about starting a new job at a bakery.","zh":"模拟第 2 次会话：我想聊聊在面包店开始一份新工作。","zh_seg":["模拟第 2 次会话：我想聊聊在面包店开始一份新工作。"]},{"ref":"h2:t2","seg":["Simulated supporter: thank you for sharing about starting a new job at a bakery. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about starting a new job at a bakery. How are you feeling?","zh":"模拟支持者：谢谢你分享在面包店开始一份新工作的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享在面包店开始一份新工作的事。","你现在感觉怎么样？"]},{"ref":"h2:t3","seg":["Simulated: honestly my manager seems strict."],"speaker":"求助者","text":"Simulated: honestly my manager seems strict.","zh":"模拟：说实话，我的经理好像很严格。","zh_seg":["模拟：说实话，我的经理好像很严格。"]},{"ref":"h2:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h2:t5","seg":["Simulated: I tried waking up earlier but it did not help."],"speaker":"求助者","text":"Simulated: I tried waking up earlier but it did not help.","zh":"模拟：我试过早点起床，但没有用。","zh_seg":["模拟：我试过早点起床，但没有用。"]}]}],"words":122},"label":"前缀 1","prefix":[{"ref":"p:t1","seg":["Simulated today: things around starting a new job at a bakery came back this week."],"speaker":"求助者","text":"Simulated today: things around starting a new job at a bakery came back this week.","zh":"模拟今天：这周，和在面包店开始一份新工作有关的事又冒出来了。","zh_seg":["模拟今天：这周，和在面包店开始一份新工作有关的事又冒出来了。"]},{"ref":"p:t2","seg":["Simulated supporter: I am here. ","What happened?"],"speaker":"支持者","text":"Simulated supporter: I am here. What happened?","zh":"模拟支持者：我在这里。发生了什么？","zh_seg":["模拟支持者：我在这里。","发生了什么？"]},{"ref":"p:t3","seg":["Simulated today: my manager seems strict again and I do not know what to do."],"speaker":"求助者","text":"Simulated today: my manager seems strict again and I do not know what to do.","zh":"模拟今天：又是我的经理好像很严格，我不知道该怎么办。","zh_seg":["模拟今天：又是我的经理好像很严格，我不知道该怎么办。"]}]},"c98f60829db":{"group":"人物 3","history":{"index":[{"date":"2030-01-12","order":1,"ref":"h1","turns":5,"words":54},{"date":"2030-02-12","order":2,"ref":"h2","turns":5,"words":54}],"sessions":[{"date":"2030-01-12","order":1,"ref":"h1","turns":[{"ref":"h1:t1","seg":["Simulated session 1: I want to talk about my sister's wedding planning."],"speaker":"求助者","text":"Simulated session 1: I want to talk about my sister's wedding planning.","zh":"模拟第 1 次会话：我想聊聊我姐姐的婚礼筹备。","zh_seg":["模拟第 1 次会话：我想聊聊我姐姐的婚礼筹备。"]},{"ref":"h1:t2","seg":["Simulated supporter: thank you for sharing about my sister's wedding planning. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about my sister's wedding planning. How are you feeling?","zh":"模拟支持者：谢谢你分享我姐姐的婚礼筹备的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享我姐姐的婚礼筹备的事。","你现在感觉怎么样？"]},{"ref":"h1:t3","seg":["Simulated: honestly everyone keeps asking me to help."],"speaker":"求助者","text":"Simulated: honestly everyone keeps asking me to help.","zh":"模拟：说实话，大家一直找我帮忙。","zh_seg":["模拟：说实话，大家一直找我帮忙。"]},{"ref":"h1:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h1:t5","seg":["Simulated: I said no to organising the music."],"speaker":"求助者","text":"Simulated: I said no to organising the music.","zh":"模拟：我拒绝了安排音乐的事。","zh_seg":["模拟：我拒绝了安排音乐的事。"]}]},{"date":"2030-02-12","order":2,"ref":"h2","turns":[{"ref":"h2:t1","seg":["Simulated session 2: I want to talk about my sister's wedding planning."],"speaker":"求助者","text":"Simulated session 2: I want to talk about my sister's wedding planning.","zh":"模拟第 2 次会话：我想聊聊我姐姐的婚礼筹备。","zh_seg":["模拟第 2 次会话：我想聊聊我姐姐的婚礼筹备。"]},{"ref":"h2:t2","seg":["Simulated supporter: thank you for sharing about my sister's wedding planning. ","How are you feeling?"],"speaker":"支持者","text":"Simulated supporter: thank you for sharing about my sister's wedding planning. How are you feeling?","zh":"模拟支持者：谢谢你分享我姐姐的婚礼筹备的事。你现在感觉怎么样？","zh_seg":["模拟支持者：谢谢你分享我姐姐的婚礼筹备的事。","你现在感觉怎么样？"]},{"ref":"h2:t3","seg":["Simulated: honestly everyone keeps asking me to help."],"speaker":"求助者","text":"Simulated: honestly everyone keeps asking me to help.","zh":"模拟：说实话，大家一直找我帮忙。","zh_seg":["模拟：说实话，大家一直找我帮忙。"]},{"ref":"h2:t4","seg":["Simulated supporter: that sounds hard. ","What have you tried so far?"],"speaker":"支持者","text":"Simulated supporter: that sounds hard. What have you tried so far?","zh":"模拟支持者：听起来很不容易。到目前为止你试过什么办法？","zh_seg":["模拟支持者：听起来很不容易。","到目前为止你试过什么办法？"]},{"ref":"h2:t5","seg":["Simulated: I said no to organising the music."],"speaker":"求助者","text":"Simulated: I said no to organising the music.","zh":"模拟：我拒绝了安排音乐的事。","zh_seg":["模拟：我拒绝了安排音乐的事。"]}]}],"words":108},"label":"前缀 3","prefix":[{"ref":"p:t1","seg":["Simulated today: things around my sister's wedding planning came back this week."],"speaker":"求助者","text":"Simulated today: things around my sister's wedding planning came back this week.","zh":"模拟今天：这周，和我姐姐的婚礼筹备有关的事又冒出来了。","zh_seg":["模拟今天：这周，和我姐姐的婚礼筹备有关的事又冒出来了。"]},{"ref":"p:t2","seg":["Simulated supporter: I am here. ","What happened?"],"speaker":"支持者","text":"Simulated supporter: I am here. What happened?","zh":"模拟支持者：我在这里。发生了什么？","zh_seg":["模拟支持者：我在这里。","发生了什么？"]},{"ref":"p:t3","seg":["Simulated today: everyone keeps asking me to help again and I do not know what to do."],"speaker":"求助者","text":"Simulated today: everyone keeps asking me to help again and I do not know what to do.","zh":"模拟今天：又是大家一直找我帮忙，我不知道该怎么办。","zh_seg":["模拟今天：又是大家一直找我帮忙，我不知道该怎么办。"]}]}},"forms":{"S":{"fields":[{"id":"need","label":"S-1 需要标签","options":[{"label":"S1 必要：不知道这段历史，回复很可能答错、答非所问或伤害对方","v":"S1"},{"label":"S2 相关：历史与此刻有关，但不必主动提及","v":"S2"},{"label":"S0 无关：有历史，但与这一轮无关","v":"S0"},{"label":"无法判断","v":"unclear"}],"required":true,"type":"choice"},{"id":"reason","label":"S-2 理由：如果回复者不知道这段历史，回复会怎样出错？","max_chars":1200,"min_chars":10,"required":false,"required_if":{"field":"need","in":["S1"]},"type":"text"},{"id":"sessions_needed","label":"S-2b 满足这一需要，是否必须结合多个过去会话？","options":[{"label":"一个会话即可","v":"one"},{"label":"必须结合多个会话","v":"multiple"},{"label":"无法判断","v":"unclear"}],"required":false,"required_if":{"field":"need","in":["S1"]},"show_if":{"field":"need","in":["S1","S2"]},"type":"choice"},{"exclusive":"none","id":"risk","label":"S-3 风险标签（可多选）","options":[{"label":"历史中的信息可能已过时","v":"stale"},{"label":"可能诱发不当建议","v":"advice"},{"label":"对方曾拒绝某建议，或尝试后失败","v":"refused"},{"label":"涉及第三人或外部案例，容易与对方本人混淆","v":"third"},{"label":"以上都没有","v":"none"}],"required":true,"type":"multi"},{"id":"spans","label":"S-4 历史片段标注（在历史中点“标注”添加）","options":[{"label":"必要","v":"required"},{"label":"相关但可选","v":"optional"},{"label":"回复不得与之矛盾","v":"contradict"}],"require_role_if":{"field":"need","in":["S1"],"role":"required"},"required":false,"type":"spans"},{"id":"note","label":"备注（选填）","max_chars":1200,"required":false,"type":"text"}],"id":"S","instruction":"请先阅读左侧的当前会话，再按需要查阅右侧的过往对话（只包含此刻之前的对话）。判断：要给出合适的回复，是否需要知道这些历史。你看不到任何回复。你的标签会封存在审计侧，评审者和生成模型都看不到。","title":"表单 S：生成前筛查（有历史的前缀）","version":"S-v2"},"S7":{"fields":[{"id":"s7_confirm","label":"确认","options":[{"label":"确认：此前没有任何个人历史","v":"none"},{"label":"有异常","v":"anomaly"}],"required":true,"type":"choice"},{"id":"note","label":"备注（有异常时必填）","max_chars":1200,"min_chars":5,"required":false,"required_if":{"field":"s7_confirm","in":["anomaly"]},"type":"text"}],"id":"S7","instruction":"这一前缀属于对方的第一次对话，此前没有个人历史。请确认。","title":"表单 S：生成前筛查（无个人历史的前缀）"}},"notes_zh":["你只看到当前会话和此刻之前的过往对话，看不到任何回复。","同一人物的前缀按时间先后排列，请按顺序完成。","提交即锁定，不能回改；中途可以随时关闭，进度保存在本机，也请定期导出进度文件备份。"],"package_sha256":"c198eb8a5b57bcf66aa2cb003b450630c05276f9c358abac173ab154259982f8","protocol":{"id":"pmrl1v3-v321a-pp1-sim","note":"simulated acceptance run","sha256":"0000000000000000000000000000000000000000000000000000000000000000"},"role":"curator","schema":"pmrl1v3-pp1-review-package-1","simulated":true,"stages":[{"form":"S","id":"S","items":[{"case_id":"c8f64379f67","form":"S","key":"S:c8f64379f67"},{"case_id":"c8434490950","form":"S7","key":"S:c8434490950"},{"case_id":"c98f60829db","form":"S","key":"S:c98f60829db"},{"case_id":"c4e47d4cb36","form":"S","key":"S:c4e47d4cb36"}],"note":"完成全部前缀后锁定本阶段并导出文件交给协调人。标签封存，评审者看不到。","title":"筛查"}],"title":"生成前筛查","tool":"pp1-tool-1","translation":{"mapping_sha256":"0e3c9afcb8415539aa139516f1ce7ff1e68209c041915cdec8f4ae109b0f5576","method":"练习材料：模拟句子的中文由 WS-B 手写（不是真实翻译流程）","provided":true,"rule":"原文为准；全部译文由同一方法、同一译者完成","translator_role":"WS-B（练习）","units":44}}</script>
+<script>/* PP1 blind-review tool: core logic (no DOM).
+ *
+ * Runs in a browser (window.PP1Core) and in Node (module.exports), so the same code is exercised by the
+ * offline HTML tool and by the CPU tests.  A Python verifier (review/pp1_tool.py) re-implements the
+ * hashing and replay rules independently; tests cross-check both.
+ *
+ * Integrity model
+ *   - Every package carries package_sha256 = sha256(canon(package without package_sha256)).
+ *   - The work log is append-only: event.h = sha256(event.prev + canon(body)); the first prev is
+ *     "genesis:" + base package sha.  A later package part (e.g. the QH/F part, which adds the history)
+ *     can only be loaded when the log contains the anchoring stage_lock event named in part.requires.
+ *   - replay() is the single rule book: stage order, lock immutability, answer validity.  The UI only
+ *     appends events that replay() accepts.  An edited export fails replay or the chain check.
+ *   - Without a secret key the log is tamper-evident, not tamper-proof: a full rewrite is caught by the
+ *     coordinator's anchors (stage exports whose head hashes are recorded on receipt).
+ */
+(function (root, factory) {
+  'use strict';
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.PP1Core = factory();
+}(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var SCHEMA_EXPORT = 'pmrl1v3-pp1-review-export-1';
+  var CORE_VERSION = 'pp1-core-1';
+
+  // ------------------------------------------------------------------ SHA-256 (FIPS 180-4) over UTF-8
+  var K = [
+    0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+    0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+    0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+    0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+
+  function rotr(x, n) { return (x >>> n) | (x << (32 - n)); }
+
+  function utf8(s) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(s);
+    return Uint8Array.from(Buffer.from(s, 'utf8'));  // eslint-disable-line no-undef
+  }
+
+  function sha256Bytes(msg) {
+    var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+    var l = msg.length;
+    var total = (((l + 9) + 63) >> 6) << 6;
+    var buf = new Uint8Array(total);
+    buf.set(msg);
+    buf[l] = 0x80;
+    var dv = new DataView(buf.buffer);
+    var bits = l * 8;
+    dv.setUint32(total - 8, Math.floor(bits / 0x100000000));
+    dv.setUint32(total - 4, bits >>> 0);
+    var W = new Array(64);
+    for (var off = 0; off < total; off += 64) {
+      var i;
+      for (i = 0; i < 16; i++) W[i] = dv.getUint32(off + i * 4);
+      for (i = 16; i < 64; i++) {
+        var a15 = W[i - 15], a2 = W[i - 2];
+        var s0 = rotr(a15, 7) ^ rotr(a15, 18) ^ (a15 >>> 3);
+        var s1 = rotr(a2, 17) ^ rotr(a2, 19) ^ (a2 >>> 10);
+        W[i] = (W[i - 16] + s0 + W[i - 7] + s1) >>> 0;
+      }
+      var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+      for (i = 0; i < 64; i++) {
+        var S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+        var ch = (e & f) ^ (~e & g);
+        var t1 = (h + S1 + ch + K[i] + W[i]) >>> 0;
+        var S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+        var maj = (a & b) ^ (a & c) ^ (b & c);
+        var t2 = (S0 + maj) >>> 0;
+        h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+      }
+      H[0] = (H[0] + a) >>> 0; H[1] = (H[1] + b) >>> 0; H[2] = (H[2] + c) >>> 0; H[3] = (H[3] + d) >>> 0;
+      H[4] = (H[4] + e) >>> 0; H[5] = (H[5] + f) >>> 0; H[6] = (H[6] + g) >>> 0; H[7] = (H[7] + h) >>> 0;
+    }
+    var out = '';
+    for (var j = 0; j < 8; j++) out += ('00000000' + H[j].toString(16)).slice(-8);
+    return out;
+  }
+
+  function sha256(str) { return sha256Bytes(utf8(str)); }
+
+  // ------------------------------------------------------------------ canonical JSON
+  // Sorted keys, compact separators, UTF-8 kept (no \u escapes beyond JSON.stringify's own), integers
+  // only, printable-ASCII keys, no lone surrogates.  Python: json.dumps(sort_keys=True,
+  // separators=(",", ":"), ensure_ascii=False) with the same restrictions gives identical text.
+  var LONE = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(^|[^\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+
+  function canon(v) {
+    if (v === null) return 'null';
+    var t = typeof v;
+    if (t === 'boolean') return v ? 'true' : 'false';
+    if (t === 'number') {
+      if (!Number.isSafeInteger(v)) throw new Error('canon: only safe integers allowed, got ' + v);
+      return String(v);
+    }
+    if (t === 'string') {
+      if (LONE.test(v)) throw new Error('canon: lone surrogate');
+      return JSON.stringify(v);
+    }
+    if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+    if (t === 'object') {
+      var keys = Object.keys(v).sort();
+      return '{' + keys.map(function (k) {
+        if (!/^[\x20-\x7e]+$/.test(k)) throw new Error('canon: non-ASCII key ' + k);
+        return JSON.stringify(k) + ':' + canon(v[k]);
+      }).join(',') + '}';
+    }
+    throw new Error('canon: unsupported value of type ' + t);
+  }
+
+  function packageSha(pkg) {
+    var body = {};
+    Object.keys(pkg).forEach(function (k) { if (k !== 'package_sha256') body[k] = pkg[k]; });
+    return sha256(canon(body));
+  }
+
+  function verifyPackage(pkg) {
+    if (!pkg || typeof pkg !== 'object') return 'not an object';
+    if (pkg.schema !== 'pmrl1v3-pp1-review-package-1') return 'unknown schema ' + pkg.schema;
+    var got = packageSha(pkg);
+    if (got !== pkg.package_sha256) return 'package_sha256 mismatch (file ' + pkg.package_sha256 + ', computed ' + got + ')';
+    return null;
+  }
+
+  // ------------------------------------------------------------------ text helpers
+  function norm(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
+
+  function isQuoteOf(quote, text) {
+    var q = norm(quote);
+    return q.length >= 2 && norm(text).indexOf(q) !== -1;
+  }
+
+  // ------------------------------------------------------------------ merged view of loaded packages
+  function mergedView(pkgs) {
+    var v = { cases: {}, replies: {}, pairs: {}, stages: [], forms: {}, items: {}, disputes: {}, audit: {} };
+    pkgs.forEach(function (p) {
+      Object.keys(p.forms || {}).forEach(function (k) { v.forms[k] = p.forms[k]; });
+      Object.keys(p.cases || {}).forEach(function (k) {
+        var c = v.cases[k] || {};
+        var n = p.cases[k];
+        Object.keys(n).forEach(function (f) { c[f] = n[f]; });
+        v.cases[k] = c;
+      });
+      ['replies', 'pairs', 'disputes', 'audit'].forEach(function (sect) {
+        Object.keys(p[sect] || {}).forEach(function (k) { v[sect][k] = p[sect][k]; });
+      });
+      (p.stages || []).forEach(function (st) {
+        v.stages.push(st);
+        st.items.forEach(function (it) { v.items[it.key] = { stage: st.id, form: it.form || st.form, ref: it }; });
+      });
+    });
+    return v;
+  }
+
+  function historyRefs(view, caseId) {
+    var c = view.cases[caseId];
+    var refs = {};
+    if (c && c.history) c.history.sessions.forEach(function (s) {
+      refs[s.ref] = true;
+      s.turns.forEach(function (t) { refs[t.ref] = true; });
+    });
+    return refs;
+  }
+
+  // Text an F/ADJ quote must come from.
+  function itemReplyText(view, item) {
+    var rid = item.ref.reply_id;
+    return rid && view.replies[rid] ? view.replies[rid].text : null;
+  }
+
+  // ------------------------------------------------------------------ answer validation
+  function fieldVisible(field, ans) {
+    if (!field.show_if) return true;
+    var v = ans[field.show_if.field];
+    return field.show_if['in'].indexOf(v) !== -1;
+  }
+
+  function fieldRequired(field, ans) {
+    if (field.required_if) {
+      var v = ans[field.required_if.field];
+      return field.required_if['in'].indexOf(v) !== -1;
+    }
+    return !!field.required;
+  }
+
+  function optionValues(field) { return (field.options || []).map(function (o) { return o.v; }); }
+
+  // Returns a list of problems (empty = valid).  complete=false checks types only (drafts).
+  function validateAnswer(view, item, ans, complete) {
+    var form = view.forms[item.form];
+    var errs = [];
+    if (!form) return ['unknown form ' + item.form];
+    if (!ans || typeof ans !== 'object' || Array.isArray(ans)) return ['answer must be an object'];
+    var known = {};
+    form.fields.forEach(function (f) { known[f.id] = true; });
+    Object.keys(ans).forEach(function (k) { if (!known[k]) errs.push('unknown field ' + k); });
+    var caseId = item.ref.case_id;
+    var refs = historyRefs(view, caseId);
+    var replyText = itemReplyText(view, item);
+    form.fields.forEach(function (f) {
+      var v = ans[f.id];
+      var present = v !== undefined && v !== null && !(typeof v === 'string' && norm(v) === '') &&
+        !(Array.isArray(v) && v.length === 0);
+      if (!present) {
+        if (complete && fieldVisible(f, ans) && fieldRequired(f, ans)) errs.push(f.id + ': required');
+        if (complete && f.type === 'spans' && f.require_role_if &&
+            f.require_role_if['in'].indexOf(ans[f.require_role_if.field]) !== -1) {
+          errs.push(f.id + ': at least one ' + f.require_role_if.role + ' span required');
+        }
+        return;
+      }
+      if (!fieldVisible(f, ans)) { errs.push(f.id + ': answered but not applicable'); return; }
+      if (f.type === 'choice') {
+        if (optionValues(f).indexOf(v) === -1) errs.push(f.id + ': invalid option ' + v);
+      } else if (f.type === 'multi') {
+        if (!Array.isArray(v)) { errs.push(f.id + ': must be a list'); return; }
+        var ok = optionValues(f);
+        var seen = {};
+        v.forEach(function (x) {
+          if (ok.indexOf(x) === -1) errs.push(f.id + ': invalid option ' + x);
+          if (seen[x]) errs.push(f.id + ': duplicate ' + x);
+          seen[x] = true;
+        });
+        if (f.exclusive && v.indexOf(f.exclusive) !== -1 && v.length > 1) errs.push(f.id + ': ' + f.exclusive + ' is exclusive');
+      } else if (f.type === 'text') {
+        if (typeof v !== 'string') errs.push(f.id + ': must be text');
+        else if (f.max_chars && v.length > f.max_chars) errs.push(f.id + ': longer than ' + f.max_chars);
+        if (complete && f.min_chars && norm(v).length < f.min_chars) errs.push(f.id + ': shorter than ' + f.min_chars);
+      } else if (f.type === 'spans') {
+        if (!Array.isArray(v)) { errs.push(f.id + ': must be a list'); return; }
+        var roles = optionValues(f);
+        var seenRef = {};
+        v.forEach(function (x) {
+          if (!x || !refs[x.ref]) errs.push(f.id + ': unknown history ref ' + (x && x.ref));
+          else if (roles.indexOf(x.role) === -1) errs.push(f.id + ': invalid role ' + x.role);
+          else if (seenRef[x.ref]) errs.push(f.id + ': ref listed twice ' + x.ref);
+          if (x) seenRef[x.ref] = true;
+        });
+        if (complete && f.require_role_if) {
+          var need = ans[f.require_role_if.field];
+          if (f.require_role_if['in'].indexOf(need) !== -1 &&
+              !v.some(function (x) { return x && x.role === f.require_role_if.role; })) {
+            errs.push(f.id + ': at least one ' + f.require_role_if.role + ' span required');
+          }
+        }
+      } else if (f.type === 'fitem') {
+        if (typeof v !== 'object' || Array.isArray(v)) { errs.push(f.id + ': must be an object'); return; }
+        var allowed = { presence: 1, severity: 1, quote: 1, sources: 1, no_source: 1 };
+        Object.keys(v).forEach(function (k) { if (!allowed[k]) errs.push(f.id + ': unknown key ' + k); });
+        if (['yes', 'no', 'cannot'].indexOf(v.presence) === -1) { errs.push(f.id + ': presence required'); return; }
+        if (v.presence !== 'yes') {
+          if (v.severity || v.quote || (v.sources && v.sources.length) || v.no_source) {
+            errs.push(f.id + ': details only allowed when presence = yes');
+          }
+          return;
+        }
+        if (v.severity !== undefined && ['serious', 'minor'].indexOf(v.severity) === -1) errs.push(f.id + ': invalid severity');
+        if (v.sources !== undefined) {
+          if (!Array.isArray(v.sources)) errs.push(f.id + ': sources must be a list');
+          else v.sources.forEach(function (r) { if (!refs[r]) errs.push(f.id + ': unknown history ref ' + r); });
+        }
+        if (v.no_source && !f.allow_no_source) errs.push(f.id + ': no_source not allowed for this item');
+        if (complete) {
+          if (v.quote !== undefined && replyText !== null && norm(v.quote) !== '' && !isQuoteOf(v.quote, replyText)) {
+            errs.push(f.id + ': quote is not a verbatim part of the reply');
+          }
+          if (!v.severity) errs.push(f.id + ': severity required');
+          if (!v.quote || norm(v.quote) === '') errs.push(f.id + ': quote required');
+          var hasSrc = (v.sources && v.sources.length > 0) || v.no_source;
+          if (f.needs_source && !hasSrc) errs.push(f.id + ': evidence source required');
+        }
+      } else {
+        errs.push(f.id + ': unknown field type ' + f.type);
+      }
+    });
+    return errs;
+  }
+
+  // ------------------------------------------------------------------ event log + replay
+  function eventBody(ev) {
+    return { seq: ev.seq, t: ev.t, kind: ev.kind, item: ev.item === undefined ? null : ev.item,
+             data: ev.data === undefined ? null : ev.data };
+  }
+
+  function eventHash(prev, ev) { return sha256(prev + canon(eventBody(ev))); }
+
+  var KINDS = { session_start: 1, package_load: 1, view: 1, leave: 1, ui: 1, draft: 1, submit: 1,
+                stage_lock: 1, export: 1, 'import': 1, note: 1 };
+
+  function newState(pkgs) {
+    return { pkgs: pkgs.slice(0, 1), view: mergedView(pkgs.slice(0, 1)), items: {}, stages: {}, head: null,
+             seq: -1, lastT: null, warnings: [], viewing: {}, ui: {} };
+  }
+
+  function stageOpen(state, stageId) {
+    var st = state.view.stages;
+    for (var i = 0; i < st.length; i++) {
+      if (st[i].id === stageId) return true;
+      if (!(state.stages[st[i].id] && state.stages[st[i].id].locked)) return false;
+    }
+    return false;
+  }
+
+  function itemState(state, key) {
+    if (!state.items[key]) state.items[key] = { status: 'new', answer: null, submitted_at: null, first_view: null,
+                                                view_ms: 0, drafts: 0 };
+    return state.items[key];
+  }
+
+  // Applies one event to the state (mutating).  Throws Error with a readable message when the event is
+  // not allowed.  allPkgs = every package the log may reference (by sha).
+  function apply(state, ev, allPkgs) {
+    if (!KINDS[ev.kind]) throw new Error('unknown event kind ' + ev.kind);
+    if (ev.seq !== state.seq + 1) throw new Error('sequence gap at ' + ev.seq);
+    var expectPrev = state.head === null ? 'genesis:' + state.pkgs[0].package_sha256 : state.head;
+    if (ev.prev !== expectPrev) throw new Error('chain break at seq ' + ev.seq);
+    if (ev.h !== eventHash(ev.prev, ev)) throw new Error('hash mismatch at seq ' + ev.seq);
+    if (typeof ev.t !== 'string' || isNaN(Date.parse(ev.t))) throw new Error('bad timestamp at seq ' + ev.seq);
+    if (state.lastT && ev.t < state.lastT) state.warnings.push('clock went backwards at seq ' + ev.seq);
+    var key = ev.item;
+    var it;
+    switch (ev.kind) {
+      case 'session_start':
+      case 'export':
+      case 'import':
+      case 'note':
+        break;
+      case 'package_load': {
+        var sha = ev.data && ev.data.package_sha256;
+        var pkg = (allPkgs || []).filter(function (p) { return p.package_sha256 === sha; })[0];
+        if (!pkg) throw new Error('package_load of unknown package ' + sha);
+        if (state.pkgs.some(function (p) { return p.package_sha256 === sha; })) throw new Error('package loaded twice');
+        var req = pkg.requires;
+        if (!req) throw new Error('only continuation parts can be loaded into a log');
+        if (!state.pkgs.some(function (p) { return p.package_sha256 === req.package_sha256; })) {
+          throw new Error('required base package not loaded');
+        }
+        var lockEv = state.stages[req.stage_locked];
+        if (!lockEv || !lockEv.locked || lockEv.lock_h !== req.lock_event_h) {
+          throw new Error('anchor mismatch: stage ' + req.stage_locked + ' lock event differs from the coordinator anchor');
+        }
+        if (pkg.assignee !== state.pkgs[0].assignee || pkg.role !== state.pkgs[0].role) {
+          throw new Error('continuation part belongs to another assignee or role');
+        }
+        state.pkgs.push(pkg);
+        state.view = mergedView(state.pkgs);
+        break;
+      }
+      case 'view':
+        it = state.view.items[key];
+        if (!it) throw new Error('view of unknown item ' + key);
+        if (!stageOpen(state, it.stage)) throw new Error('item ' + key + ' is in a stage that is not open');
+        if (state.stages[it.stage] && state.stages[it.stage].locked) {
+          throw new Error('item ' + key + ' belongs to locked stage ' + it.stage + ' and can no longer be viewed');
+        }
+        var is = itemState(state, key);
+        if (!is.first_view) is.first_view = ev.t;
+        state.viewing[key] = ev.t;
+        break;
+      case 'leave':
+        if (state.viewing[key]) {
+          var ms = Date.parse(ev.t) - Date.parse(state.viewing[key]);
+          if (ms > 0) itemState(state, key).view_ms += ms;
+          delete state.viewing[key];
+        }
+        break;
+      case 'ui':
+        it = state.view.items[key];
+        if (key !== null && !it) throw new Error('ui event on unknown item ' + key);
+        if (key !== null) {
+          state.ui[key] = state.ui[key] || {};
+          var name = ev.data && ev.data.name;
+          if (typeof name !== 'string') throw new Error('ui event needs data.name');
+          state.ui[key][name] = (state.ui[key][name] || 0) + 1;
+        }
+        break;
+      case 'draft':
+      case 'submit': {
+        it = state.view.items[key];
+        if (!it) throw new Error(ev.kind + ' of unknown item ' + key);
+        if (!stageOpen(state, it.stage)) throw new Error(ev.kind + ' rejected: stage ' + it.stage + ' is not open');
+        if (state.stages[it.stage] && state.stages[it.stage].locked) throw new Error(ev.kind + ' rejected: stage locked');
+        var st = itemState(state, key);
+        if (st.status === 'locked') throw new Error(ev.kind + ' rejected: item ' + key + ' is already locked');
+        var ans = ev.data && ev.data.answer;
+        var errs = validateAnswer(state.view, it, ans, ev.kind === 'submit');
+        if (errs.length) throw new Error(ev.kind + ' rejected for ' + key + ': ' + errs.join('; '));
+        st.answer = ans;
+        if (ev.kind === 'draft') { st.status = 'draft'; st.drafts += 1; }
+        else { st.status = 'locked'; st.submitted_at = ev.t; st.submit_h = ev.h; }
+        break;
+      }
+      case 'stage_lock': {
+        var stage = state.view.stages.filter(function (s) { return s.id === key; })[0];
+        if (!stage) throw new Error('unknown stage ' + key);
+        if (!stageOpen(state, key)) throw new Error('stage ' + key + ' is not open');
+        if (state.stages[key] && state.stages[key].locked) throw new Error('stage ' + key + ' already locked');
+        var missing = stage.items.filter(function (x) { return !(state.items[x.key] && state.items[x.key].status === 'locked'); });
+        if (missing.length) throw new Error('stage ' + key + ' has ' + missing.length + ' unsubmitted items');
+        state.stages[key] = { locked: true, locked_at: ev.t, lock_h: ev.h };
+        break;
+      }
+      default:
+        throw new Error('unhandled kind ' + ev.kind);
+    }
+    state.seq = ev.seq;
+    state.head = ev.h;
+    state.lastT = ev.t;
+    return state;
+  }
+
+  // Full verification of a log against the packages it uses.  Returns {ok, error, state}.
+  function replay(pkgs, events) {
+    if (!pkgs.length) return { ok: false, error: 'no package', state: null };
+    for (var i = 0; i < pkgs.length; i++) {
+      var bad = verifyPackage(pkgs[i]);
+      if (bad) return { ok: false, error: 'package ' + i + ': ' + bad, state: null };
+    }
+    var base = pkgs.filter(function (p) { return !p.requires; });
+    if (base.length !== 1) return { ok: false, error: 'exactly one base package expected', state: null };
+    var ordered = base.concat(pkgs.filter(function (p) { return p.requires; }));
+    var state = newState(ordered);
+    for (var j = 0; j < events.length; j++) {
+      try { apply(state, events[j], ordered); } catch (e) {
+        return { ok: false, error: 'event ' + j + ': ' + e.message, state: state };
+      }
+    }
+    return { ok: true, error: null, state: state };
+  }
+
+  // Builds a new event on top of the state (does not apply it).
+  function makeEvent(state, kind, item, data, t) {
+    var ev = { seq: state.seq + 1, t: t || new Date().toISOString(), kind: kind,
+               item: item === undefined ? null : item, data: data === undefined ? null : data };
+    ev.prev = state.head === null ? 'genesis:' + state.pkgs[0].package_sha256 : state.head;
+    ev.h = eventHash(ev.prev, ev);
+    return ev;
+  }
+
+  // ------------------------------------------------------------------ export / import
+  function summary(state) {
+    var stages = {};
+    state.view.stages.forEach(function (st) {
+      var done = st.items.filter(function (x) { return state.items[x.key] && state.items[x.key].status === 'locked'; }).length;
+      stages[st.id] = { items: st.items.length, submitted: done,
+                        locked: !!(state.stages[st.id] && state.stages[st.id].locked),
+                        locked_at: state.stages[st.id] ? state.stages[st.id].locked_at : null,
+                        lock_event_h: state.stages[st.id] ? state.stages[st.id].lock_h : null };
+    });
+    return stages;
+  }
+
+  function buildExport(state, events, kind, exportedAt) {
+    var answers = {};
+    Object.keys(state.items).forEach(function (k) {
+      var s = state.items[k];
+      if (s.status === 'locked') answers[k] = { answer: s.answer, submitted_at: s.submitted_at, view_ms: s.view_ms };
+    });
+    return {
+      schema: SCHEMA_EXPORT, core: CORE_VERSION, kind: kind, exported_at: exportedAt || new Date().toISOString(),
+      role: state.pkgs[0].role, assignee: state.pkgs[0].assignee, simulated: !!state.pkgs[0].simulated,
+      base_package_sha256: state.pkgs[0].package_sha256,
+      package_sha256s: state.pkgs.map(function (p) { return p.package_sha256; }),
+      packages: state.pkgs, head: state.head, n_events: events.length, stages: summary(state),
+      locked_answers: answers, warnings: state.warnings, events: events
+    };
+  }
+
+  // Verifies an export file; returns {ok, error, state}.  Optional expected = {base_package_sha256}.
+  function verifyExport(exp, expected) {
+    if (!exp || exp.schema !== SCHEMA_EXPORT) return { ok: false, error: 'not a PP1 export file' };
+    if (expected && expected.base_package_sha256 && exp.base_package_sha256 !== expected.base_package_sha256) {
+      return { ok: false, error: 'export belongs to another package' };
+    }
+    var r = replay(exp.packages || [], exp.events || []);
+    if (!r.ok) return r;
+    if (r.state.head !== exp.head) return { ok: false, error: 'head in file does not match the log', state: r.state };
+    if (r.state.pkgs[0].package_sha256 !== exp.base_package_sha256) return { ok: false, error: 'base package mismatch' };
+    return r;
+  }
+
+  // True when log b extends log a (same events for every seq of a).
+  function extendsLog(a, b) {
+    if (b.length < a.length) return false;
+    for (var i = 0; i < a.length; i++) if (a[i].h !== b[i].h) return false;
+    return true;
+  }
+
+  return {
+    CORE_VERSION: CORE_VERSION, SCHEMA_EXPORT: SCHEMA_EXPORT,
+    sha256: sha256, canon: canon, packageSha: packageSha, verifyPackage: verifyPackage, norm: norm,
+    isQuoteOf: isQuoteOf, mergedView: mergedView, validateAnswer: validateAnswer, fieldVisible: fieldVisible,
+    fieldRequired: fieldRequired, eventHash: eventHash, newState: newState, apply: apply, replay: replay,
+    makeEvent: makeEvent, stageOpen: stageOpen, buildExport: buildExport, verifyExport: verifyExport,
+    extendsLog: extendsLog, summary: summary, historyRefs: historyRefs
+  };
+}));
+</script>
+<script>/* PP1 blind-review tool: offline UI.  All rules live in PP1Core.apply(); this file only renders the package that
+ * the coordinator issued and appends events that the core accepts.  Nothing here knows about conditions. */
+(function () {
+  'use strict';
+  var C = window.PP1Core;
+  var STORE = 'pp1tool:v1:';
+  var ROLE = { curator: '筛查整理者', reviewer: '评审者', adjudicator: '裁决者', auditor: '审计侧（F-A）' };
+  var STATUS = { 'new': '未做', draft: '草稿', locked: '已提交' };
+  var S = null;
+  var app = document.getElementById('app');
+  var modal = document.getElementById('modal');
+
+  // ---------------------------------------------------------------- DOM helper
+  function h(tag, attrs, kids) {
+    var e = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'text') e.textContent = v;
+      else if (k === 'class') e.className = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else if (k === 'checked' || k === 'disabled' || k === 'open') e[k] = !!v;
+      else if (k === 'value') e.value = v;
+      else e.setAttribute(k, v === true ? '' : v);
+    });
+    (kids || []).forEach(function (c) {
+      if (c === null || c === undefined || c === false) return;
+      e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+    });
+    return e;
+  }
+  function clone(x) { return x === undefined ? undefined : JSON.parse(JSON.stringify(x)); }
+  function enOnly(o) {
+    if (Array.isArray(o)) return o.map(enOnly);
+    if (o && typeof o === 'object') {
+      var r = {};
+      Object.keys(o).forEach(function (k) { if (k !== 'zh' && k !== 'zh_seg' && k !== 'seg') r[k] = enOnly(o[k]); });
+      return r;
+    }
+    return o;
+  }
+  var checkCache = {};
+  function caseCheck(c) {
+    var body = { prefix: c.prefix === undefined ? null : c.prefix, history: c.history === undefined ? null : c.history };
+    var k = (c.label || '') + '|' + (c.group || '');
+    if (!checkCache[k]) checkCache[k] = C.sha256(C.canon(enOnly(body))).slice(0, 12);
+    return checkCache[k];
+  }
+  function short(x) { return x ? x.slice(0, 8) : '—'; }
+  function fmtTime(t) { return t ? t.replace('T', ' ').replace(/\.\d+Z$/, 'Z') : ''; }
+
+  // ---------------------------------------------------------------- storage
+  function storeKey(base) { return STORE + base.package_sha256; }
+  function readStore(base) {
+    try { var raw = localStorage.getItem(storeKey(base)); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+  }
+  function persist() {
+    var extra = S.pkgs.filter(function (p) { return !(S.embedded && p.package_sha256 === S.base.package_sha256); });
+    try {
+      localStorage.setItem(storeKey(S.base), JSON.stringify({ v: 1, events: S.events, extra: extra }));
+      S.savedAt = new Date().toISOString();
+      S.storageError = null;
+    } catch (e) {
+      S.storageError = '本机保存失败（' + e.name + '）。请立即点“导出进度”保存文件。';
+    }
+  }
+
+  // ---------------------------------------------------------------- events
+  function append(kind, item, data) {
+    var ev = C.makeEvent(S.state, kind, item, data);
+    C.apply(S.state, ev, S.pkgs);           // throws when the rule book refuses the event
+    S.events.push(ev);
+    persist();
+    return ev;
+  }
+  function tryAppend(kind, item, data) {
+    try { append(kind, item, data); return true; } catch (e) { flash(e.message, true); return false; }
+  }
+  function flash(msg, bad) { S.msg = { text: msg, bad: !!bad }; }
+
+  // ---------------------------------------------------------------- start / resume
+  function start(pkg, embedded) {
+    var bad = C.verifyPackage(pkg);
+    if (bad) return fatal('任务包校验失败：' + bad);
+    if (pkg.requires) return fatal('这是后续部分的任务包。请先打开第一部分（或导入进度文件），再点“载入后续任务包”。');
+    S = { base: pkg, pkgs: [pkg], embedded: embedded, events: [], state: null, current: null, work: {}, activeF: null,
+          showZh: true, showEn: false, enOpen: {}, quoteF: null, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
+    var stored = readStore(pkg);
+    if (stored && stored.events && stored.events.length) {
+      var pk = [pkg].concat((stored.extra || []).filter(function (p) {
+        return p.package_sha256 !== pkg.package_sha256 && !C.verifyPackage(p);
+      }));
+      var r = C.replay(pk, stored.events);
+      if (!r.ok) {
+        return fatal('本机保存的记录未通过校验（' + r.error + '）。没有覆盖它；请联系协调人，并导入最近一次导出的进度文件。',
+                     stored);
+      }
+      S.pkgs = pk; S.events = stored.events; S.state = r.state;
+      append('session_start', null, { resumed: true, tool: C.CORE_VERSION });
+      flash('已从本机恢复进度（' + S.events.length + ' 条记录）。');
+    } else {
+      S.state = C.newState([pkg]);
+      append('session_start', null, { resumed: false, tool: C.CORE_VERSION });
+    }
+    render();
+  }
+
+  function startFromExport(exp) {
+    var r = C.verifyExport(exp);
+    if (!r.ok) return fatal('进度文件校验失败：' + r.error);
+    var base = exp.packages.filter(function (p) { return !p.requires; })[0];
+    S = { base: base, pkgs: exp.packages.slice(), embedded: false, events: exp.events.slice(), state: r.state, current: null,
+          work: {}, activeF: null, showZh: true, showEn: false, enOpen: {}, quoteF: null, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
+    var stored = readStore(base);
+    if (stored && stored.events && stored.events.length && !C.extendsLog(stored.events, exp.events) &&
+        !stored.events.every(function (e) { return e.kind === 'session_start'; })) {
+      return fatal('本机已有这个任务包的另一份记录，与导入文件不一致。已拒绝导入；请联系协调人。');
+    }
+    append('import', null, { from_head: exp.head, n_events: exp.events.length });
+    flash('已导入进度文件（' + exp.events.length + ' 条记录，校验通过）。');
+    render();
+  }
+
+  function fatal(msg, raw) {
+    app.innerHTML = '';
+    var kids = [h('h1', { text: 'PP1 盲评工具' }), h('p', { class: 'err', id: 'fatal', text: msg })];
+    if (raw) kids.push(h('button', { onclick: function () { download('PP1_local_raw.json', JSON.stringify(raw)); },
+                                     text: '下载本机原始记录（交给协调人）' }));
+    kids.push(h('p', {}, [loaderButtons()]));
+    app.appendChild(h('div', { class: 'main' }, kids));
+  }
+
+  function loaderButtons() {
+    return h('span', {}, [
+      h('button', { 'data-act': 'open-package', onclick: function () { pick('file-package'); }, text: '打开任务包文件' }), ' ',
+      h('button', { 'data-act': 'import', onclick: function () { pick('file-import'); }, text: '导入进度文件' })]);
+  }
+
+  function pick(id) { var i = document.getElementById(id); i.value = ''; i.click(); }
+
+  function readFile(input, cb) {
+    var f = input.files && input.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      var obj;
+      try { obj = JSON.parse(rd.result); } catch (e) { alertBox('文件不是有效的 JSON：' + e.message); return; }
+      cb(obj);
+    };
+    rd.readAsText(f, 'utf-8');
+  }
+
+  document.getElementById('file-package').addEventListener('change', function (e) {
+    readFile(e.target, function (pkg) { start(pkg, false); });
+  });
+  document.getElementById('file-import').addEventListener('change', function (e) {
+    readFile(e.target, function (exp) {
+      if (!S) return startFromExport(exp);
+      importInto(exp);
+    });
+  });
+  document.getElementById('file-part').addEventListener('change', function (e) {
+    readFile(e.target, loadPart);
+  });
+
+  function importInto(exp) {
+    if (exp.base_package_sha256 !== S.base.package_sha256) return alertBox('这个进度文件属于另一个任务包，已拒绝。');
+    var r = C.verifyExport(exp, { base_package_sha256: S.base.package_sha256 });
+    if (!r.ok) return alertBox('进度文件校验失败，已拒绝：' + r.error);
+    var fresh = S.events.every(function (e) { return e.kind === 'session_start'; });
+    if (fresh || C.extendsLog(S.events, exp.events)) {
+      leaveCurrent();
+      S.pkgs = exp.packages.slice(); S.events = exp.events.slice(); S.state = r.state; S.current = null; S.work = {};
+      append('import', null, { from_head: exp.head, n_events: exp.events.length });
+      flash('已导入进度文件（校验通过）。');
+    } else if (C.extendsLog(exp.events, S.events)) {
+      flash('本机进度比导入文件更新，保留本机进度。');
+    } else {
+      return alertBox('导入文件与本机记录分叉（同一位置的记录不同），已拒绝。请联系协调人。');
+    }
+    render();
+  }
+
+  function loadPart(pkg) {
+    var bad = C.verifyPackage(pkg);
+    if (bad) return alertBox('任务包校验失败：' + bad);
+    if (!pkg.requires || pkg.requires.package_sha256 !== S.base.package_sha256) {
+      return alertBox('这个任务包不是当前任务的后续部分。');
+    }
+    if (S.pkgs.some(function (p) { return p.package_sha256 === pkg.package_sha256; }) &&
+        S.state.pkgs.some(function (p) { return p.package_sha256 === pkg.package_sha256; })) {
+      return alertBox('后续部分已经载入。');
+    }
+    var had = S.pkgs.slice();
+    S.pkgs = S.pkgs.filter(function (p) { return p.package_sha256 !== pkg.package_sha256; }).concat([pkg]);
+    try { append('package_load', null, { package_sha256: pkg.package_sha256 }); } catch (e) {
+      S.pkgs = had;
+      return alertBox('不能载入：' + e.message);
+    }
+    flash('已载入后续部分：' + pkg.title);
+    render();
+  }
+
+  // ---------------------------------------------------------------- export
+  function download(name, text) {
+    var blob = new Blob([text], { type: 'application/json' });
+    var a = h('a', { href: URL.createObjectURL(blob), download: name });
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function doExport(kind) {
+    leaveCurrent(true);
+    if (!tryAppend('export', null, { kind: kind })) return render();
+    var exp = C.buildExport(S.state, S.events, kind);
+    var name = 'PP1_' + S.base.role + '_' + S.base.assignee + '_' + kind + '_' + exp.head.slice(0, 8) + '.json';
+    download(name, JSON.stringify(exp));
+    if (S.current) tryAppend('view', S.current);
+    showModal('已导出', [h('p', { text: '文件：' + name }),
+      h('p', { text: '请把文件交给协调人。协调人会核对下面的校验码：' }), h('p', { class: 'mono', id: 'export-head', text: exp.head })],
+      [{ text: '知道了', act: 'close' }]);
+    render();
+  }
+
+  // ---------------------------------------------------------------- modal
+  function showModal(title, body, buttons) {
+    modal.innerHTML = '';
+    var btns = buttons.map(function (b) {
+      return h('button', { class: b.cls || '', 'data-act': b.act, onclick: function () { modal.hidden = true; if (b.fn) b.fn(); },
+                           text: b.text });
+    });
+    modal.appendChild(h('div', { class: 'card' }, [h('h3', { text: title })].concat(body).concat([h('div', { class: 'actions' }, btns)])));
+    modal.hidden = false;
+  }
+  function alertBox(msg) { showModal('提示', [h('p', { class: 'err', id: 'alert-text', text: msg })], [{ text: '关闭', act: 'close' }]); }
+
+  // ---------------------------------------------------------------- navigation / timing
+  function leaveCurrent(keep) {
+    if (!S.current) return;
+    flushText();
+    tryAppend('leave', S.current);
+    if (!keep) S.current = null;
+  }
+  function go(key) {
+    if (S.current === key) return;
+    leaveCurrent();
+    if (!tryAppend('view', key)) return render();
+    S.current = key;
+    var st = S.state.items[key];
+    S.work[key] = clone(st && st.answer) || {};
+    S.activeF = null;
+    window.scrollTo(0, 0);
+    render();
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!S || !S.current) return;
+    if (document.hidden) { flushText(); tryAppend('leave', S.current); }
+    else tryAppend('view', S.current);
+  });
+  window.addEventListener('beforeunload', function () {
+    if (S && S.current) { flushText(); tryAppend('leave', S.current); }
+  });
+
+  // ---------------------------------------------------------------- answers
+  function cleanAnswer(form, w) {
+    var out = {};
+    form.fields.forEach(function (f) {
+      var v = w[f.id];
+      if (v === undefined || v === null) return;
+      if (typeof v === 'string' && v.trim() === '') return;
+      if (Array.isArray(v) && !v.length) return;
+      if (!C.fieldVisible(f, w)) return;
+      if (f.type === 'fitem') {
+        var o = { presence: v.presence };
+        if (!v.presence) return;
+        if (v.presence === 'yes') {
+          if (v.severity) o.severity = v.severity;
+          if (v.quote && v.quote.trim()) o.quote = v.quote;
+          if (v.sources && v.sources.length) o.sources = v.sources.slice();
+          if (v.no_source) o.no_source = true;
+        }
+        out[f.id] = o;
+        return;
+      }
+      out[f.id] = clone(v);
+    });
+    return out;
+  }
+  function currentItem() { return S.current ? S.state.view.items[S.current] : null; }
+  function currentForm() { var it = currentItem(); return it ? S.state.view.forms[it.form] : null; }
+  function locked(key) { var s = S.state.items[key]; return !!(s && s.status === 'locked'); }
+
+  function saveDraft(silent) {
+    var it = currentItem();
+    if (!it || locked(S.current)) return;
+    var ans = cleanAnswer(currentForm(), S.work[S.current]);
+    var prev = S.state.items[S.current] && S.state.items[S.current].answer;
+    if (prev && C.canon(prev) === C.canon(ans)) return;
+    if (!prev && !Object.keys(ans).length) return;
+    if (tryAppend('draft', S.current, { answer: ans }) && !silent) flash('草稿已保存。');
+  }
+  var textDirty = false;
+  function flushText() { if (textDirty) { textDirty = false; saveDraft(true); } }
+
+  var ERR = { 'required': '未填写', 'quote is not a verbatim part of the reply': '引用的不是回复中的原句（请逐字复制）',
+              'severity required': '请选择严重程度', 'quote required': '请填写回复中的原句',
+              'evidence source required': '请在历史中点“引用为依据”标出依据（F5 可选“查无来源”）',
+              'at least one required span required': 'S1 需要在历史中至少标注一条“必要”片段' };
+  function zhErr(form, msg) {
+    var i = msg.indexOf(': ');
+    var fid = i > 0 ? msg.slice(0, i) : '';
+    var why = i > 0 ? msg.slice(i + 2) : msg;
+    var f = form.fields.filter(function (x) { return x.id === fid; })[0];
+    if (/^shorter than/.test(why)) why = '内容太短';
+    return (f ? '「' + f.label + '」' : '') + (ERR[why] || why);
+  }
+
+  function submit() {
+    var it = currentItem(), form = currentForm();
+    flushText();
+    var ans = cleanAnswer(form, S.work[S.current]);
+    var errs = C.validateAnswer(S.state.view, it, ans, true);
+    if (errs.length) {
+      S.msg = { text: '还不能提交：', list: errs.map(function (e) { return zhErr(form, e); }), bad: true };
+      return render();
+    }
+    showModal('提交并锁定', [h('p', { text: '提交后这一项将锁定，之后不能修改。确认提交？' })], [
+      { text: '确认提交', act: 'confirm', cls: 'primary', fn: function () {
+        var key = S.current;
+        tryAppend('leave', key);
+        if (tryAppend('submit', key, { answer: ans })) flash('已提交并锁定。');
+        else tryAppend('view', key);
+        render();
+      } },
+      { text: '取消', act: 'cancel' }]);
+  }
+
+  function lockStage(stage) {
+    showModal('锁定阶段', [h('p', { text: '锁定后，本阶段的所有项目都不能再查看或修改。确认锁定“' + stage.title + '”？' })], [
+      { text: '确认锁定', act: 'confirm', cls: 'danger', fn: function () {
+        if (S.current && S.state.view.items[S.current].stage === stage.id) leaveCurrent();
+        if (tryAppend('stage_lock', stage.id)) {
+          render();
+          showModal('阶段已锁定', [h('p', { text: '请立即导出阶段文件，交给协调人。' })], [
+            { text: '导出阶段文件', act: 'export-stage', cls: 'primary', fn: function () { doExport('stage-' + stage.id); } },
+            { text: '稍后', act: 'close' }]);
+        } else render();
+      } },
+      { text: '取消', act: 'cancel' }]);
+  }
+
+  // ---------------------------------------------------------------- render: chrome
+  function render() {
+    app.innerHTML = '';
+    var base = S.base;
+    if (base.simulated) app.appendChild(h('div', { class: 'sim', text: '模拟数据：仅用于验收测试，不是真实评审任务' }));
+    var tr = S.state.pkgs.some(function (p) { return p.translation && p.translation.provided; });
+    app.appendChild(h('div', { class: 'top' }, [
+      h('h1', { text: base.title || 'PP1 盲评' }),
+      h('span', { class: 'meta', text: ROLE[base.role] + ' ' + base.assignee + ' · 任务包 ' + short(base.package_sha256) }),
+      h('span', { class: 'spacer' }),
+      tr ? h('label', { class: 'meta' }, [h('input', { type: 'checkbox', 'data-act': 'toggle-zh', checked: S.showZh,
+        onchange: function (e) { S.showZh = e.target.checked; render(); } }), ' 中文优先（英文原文为准）']) : null,
+      tr && S.showZh ? h('label', { class: 'meta' }, [h('input', { type: 'checkbox', 'data-act': 'toggle-en', checked: S.showEn,
+        onchange: function (e) { S.showEn = e.target.checked; S.enOpen = {}; render(); } }), ' 展开全部英文原文']) : null,
+      base.role === 'reviewer' && S.state.pkgs.length < 2 ?
+        h('button', { 'data-act': 'load-part', onclick: function () { pick('file-part'); }, text: '载入后续任务包' }) : null,
+      h('button', { 'data-act': 'export', onclick: function () { doExport('progress'); }, text: '导出进度' }),
+      h('button', { 'data-act': 'import', onclick: function () { pick('file-import'); }, text: '导入进度' })]));
+    if (S.storageError) app.appendChild(h('div', { class: 'banner', text: S.storageError }));
+    var wrap = h('div', { class: 'wrap' }, [renderSide(), h('div', { class: 'main', id: 'main' }, [renderMain()])]);
+    app.appendChild(wrap);
+    app.appendChild(h('div', { class: 'foot', id: 'foot', text: '记录 ' + S.events.length + ' 条 · 当前校验码 ' + short(S.state.head) +
+      (S.savedAt ? ' · 本机已保存 ' + fmtTime(S.savedAt) : '') }));
+  }
+
+  function renderSide() {
+    var side = h('div', { class: 'side' });
+    S.state.view.stages.forEach(function (st) {
+      var open = C.stageOpen(S.state, st.id);
+      var lk = S.state.stages[st.id] && S.state.stages[st.id].locked;
+      var done = st.items.filter(function (x) { return locked(x.key); }).length;
+      side.appendChild(h('h2', { text: st.title }));
+      side.appendChild(h('div', { class: 'st', 'data-stage-status': st.id,
+        text: lk ? '已锁定 · ' + fmtTime(S.state.stages[st.id].locked_at) + ' · 不可再查看' :
+              (open ? '进行中 · 已提交 ' + done + '/' + st.items.length : '未开放（需先锁定上一阶段）') }));
+      if (open && !lk) {
+        var ul = h('ul');
+        st.items.forEach(function (x) {
+          var s = S.state.items[x.key];
+          var stt = s ? s.status : 'new';
+          ul.appendChild(h('li', {}, [h('button', { 'data-nav': x.key, class: S.current === x.key ? 'cur' : '',
+            onclick: function () { go(x.key); } }, [itemLabel(x), h('span', { class: 'badge ' + stt, text: STATUS[stt] })])]));
+        });
+        side.appendChild(ul);
+        if (done === st.items.length) {
+          side.appendChild(h('button', { class: 'danger', 'data-act': 'lock-stage', 'data-stage': st.id,
+            onclick: function () { lockStage(st); }, text: '锁定本阶段' }));
+        }
+      }
+    });
+    if (S.base.role === 'reviewer' && S.state.pkgs.length < 2) {
+      side.appendChild(h('h2', { text: '第二部分' }));
+      side.appendChild(h('div', { class: 'st', text: 'QH、探针、F：锁定 Q0 并把阶段文件交给协调人后领取，再点“载入后续任务包”。' }));
+    }
+    return side;
+  }
+
+  function itemLabel(x) {
+    var v = S.state.view;
+    var c = x.case_id && v.cases[x.case_id];
+    var lab = c ? c.label : '';
+    if (x.reply_id) lab = (lab ? lab + ' · ' : '') + '回复 ' + (Object.keys(v.replies).sort().indexOf(x.reply_id) + 1);
+    if (x.dispute_id) lab += ' · ' + v.disputes[x.dispute_id].fitem;
+    if (x.key.indexOf('FA:') === 0) lab += ' · ' + v.audit[x.key].fitem;
+    return lab || x.key;
+  }
+
+  // ---------------------------------------------------------------- render: main
+  function renderMain() {
+    var box = h('div');
+    if (S.msg) {
+      var m = h('div', { class: 'box ' + (S.msg.bad ? 'err' : 'okmsg'), id: 'msg', text: S.msg.text });
+      if (S.msg.list) m.appendChild(h('ul', {}, S.msg.list.map(function (t) { return h('li', { text: t }); })));
+      box.appendChild(m);
+      S.msg = null;
+    }
+    if (!S.current) {
+      box.appendChild(h('div', { class: 'box instr' }, [h('h2', { text: S.base.title })].concat(
+        (S.base.notes_zh || []).map(function (t) { return h('p', { text: t }); })).concat(
+        S.state.pkgs.slice(1).map(function (p) { return h('p', { text: p.title + '：' + (p.notes_zh || []).join(' ') }); })).concat(
+        [h('p', { class: 'meta', text: '请从左侧选择项目。' })])));
+      return box;
+    }
+    var it = currentItem();
+    var form = S.state.view.forms[it.form];
+    var ro = locked(S.current);
+    var st = S.state.view.stages.filter(function (s) { return s.id === it.stage; })[0];
+    var v = S.state.view;
+    var c = it.ref.case_id ? v.cases[it.ref.case_id] : null;
+    box.appendChild(h('div', { class: 'box instr' }, [h('h2', { text: form.title + ' · ' + itemLabel(it.ref) }),
+      S.base.role === 'curator' && c ? h('p', { class: 'meta', 'data-check': it.ref.case_id,
+        text: '题号 ' + (c.label || '') + ' · ' + (c.group || '') + ' · 来源校验码 ' + caseCheck(c) }) : null,
+      h('p', { text: form.instruction }), st.note ? h('p', { class: 'meta', text: st.note }) : null]));
+    if (it.form === 'FA') box.appendChild(renderAudit(v.audit[S.current]));
+    if (it.form === 'ADJ') box.appendChild(renderDispute(v.disputes[it.ref.dispute_id]));
+    var ctx = h('div', { class: 'cols' });
+    var left = h('div');
+    if (c) left.appendChild(renderPrefix(c));
+    var showHist = c && c.history && ['S', 'QH', 'F', 'ADJ', 'FA'].indexOf(it.form) !== -1;
+    var right = h('div');
+    if (it.ref.pair_id) right.appendChild(renderPair(v.pairs[it.ref.pair_id], it.form === 'Q0' ? 'Q0' : 'QH'));
+    else if (it.ref.reply_id) right.appendChild(renderReply(v.replies[it.ref.reply_id], '待检查的回复'));
+    if (showHist) (right.childNodes.length ? left : right).appendChild(renderHistory(c, it, ro));
+    ctx.appendChild(left); ctx.appendChild(right);
+    box.appendChild(ctx);
+    // forms without a reply (screening) sit under the current session, next to the long history column
+    if (!it.ref.pair_id && !it.ref.reply_id) left.appendChild(renderForm(it, form, ro));
+    else box.appendChild(renderForm(it, form, ro));
+    return box;
+  }
+
+  // English original, sentence by sentence next to its Chinese line; always available, collapsed by default.
+  function enDetails(key, seg, zhSeg, citeFn) {
+    var open = S.showEn || !!S.enOpen[key];
+    var d = h('details', { class: 'en', open: open, 'data-en': key,
+      ontoggle: function (e) { S.enOpen[key] = e.target.open; } }, [h('summary', { text: '英文原文（权威）' })]);
+    seg.forEach(function (sx, i) {
+      var row = [h('span', { class: 'en-s', 'data-seg': key + '#' + i, text: sx.trim() }),
+                 h('span', { class: 'zh-s', text: zhSeg[i] })];
+      if (citeFn) row.push(h('button', { class: 'cite-q', 'data-quote': key + '#' + i,
+        onclick: function () { citeFn(sx.trim()); }, text: '引用此句' }));
+      d.appendChild(h('div', { class: 'seg' }, row));
+    });
+    return d;
+  }
+
+  function unit(u, extra) {
+    var kids = [h('span', { class: 'who', text: u.speaker })];
+    if (S.showZh && u.zh_seg) {
+      kids.push(h('span', { class: 'zhp', text: u.zh }));
+      kids.push(enDetails(S.current + '|' + u.ref, u.seg, u.zh_seg, null));
+    } else {
+      kids.push(u.text);
+      if (S.showZh && u.zh) kids.push(h('span', { class: 'zh', text: '译：' + u.zh }));
+    }
+    var d = h('div', { class: 'turn' + (u.speaker === '求助者' ? ' seeker' : '') + (extra && extra.marked ? ' marked' : ''),
+                       'data-ref': u.ref }, extra && extra.tools ? [extra.tools].concat(kids) : kids);
+    return d;
+  }
+
+  // F: copy one English sentence of the reply into the quote box the reviewer last clicked (verbatim by construction).
+  function quoteInto(sentence) {
+    var fid = S.quoteF;
+    var w = S.work[S.current];
+    if (!fid || !w || !w[fid] || w[fid].presence !== 'yes') { alertBox('请先在下方选了“有”的检查项里点一下“原句”输入框，再点“引用此句”。'); return; }
+    var cur = (w[fid].quote || '').trim();
+    w[fid].quote = cur ? cur + ' ' + sentence : sentence;
+    saveDraft(true);
+    render();
+  }
+
+  function renderPrefix(c) {
+    return h('div', { class: 'box' }, [h('h3', { text: '当前会话（到此刻为止）' })].concat(c.prefix.map(function (u) { return unit(u); })));
+  }
+
+  function renderReply(r, title) {
+    var kids = [h('h3', { text: title })];
+    if (S.showZh && r.zh_seg) {
+      var it = currentItem();
+      var canCite = it && it.form === 'F' && !locked(S.current);
+      kids.push(h('div', { class: 'reply zhp', 'data-reply-zh': title, text: r.zh }));
+      var d = enDetails(S.current + '|reply|' + title, r.seg, r.zh_seg, canCite ? quoteInto : null);
+      d.setAttribute('data-reply', title);
+      kids.push(d);
+    } else {
+      kids.push(h('div', { class: 'reply', 'data-reply': title, text: r.text }));
+      if (S.showZh && r.zh) kids.push(h('div', { class: 'turn' }, [h('span', { class: 'zh', text: '译：' + r.zh })]));
+    }
+    return h('div', { class: 'box reply-box' }, kids);
+  }
+
+  function renderPair(p, ch) {
+    var m = p[ch];
+    var v = S.state.view;
+    return h('div', {}, [renderReply(v.replies[m.A], '回复甲'), renderReply(v.replies[m.B], '回复乙')]);
+  }
+
+  function renderDispute(d) {
+    var rows = d.labels.map(function (l) {
+      return h('li', { text: l.rater + '：' + ({ yes: '有', no: '无', cannot: '无法判断' }[l.presence] || '未答') +
+        (l.severity ? '（' + (l.severity === 'serious' ? '严重' : '轻微') + '）' : '') + (l.quote ? '；引用：' + l.quote : '') +
+        (l.sources ? '；依据：' + l.sources.join('、') : '') + (l.no_source ? '；查无来源' : '') });
+    });
+    return h('div', { class: 'box' }, [h('h3', { text: '分歧项：' + d.fitem + ' ' + d.fitem_label }), h('ul', {}, rows)]);
+  }
+
+  function renderAudit(a) {
+    return h('div', { class: 'box' }, [h('h3', { text: '审计信息（非盲）' }),
+      h('p', { text: '条件：' + a.condition + '；检查项：' + a.fitem }),
+      h('p', { text: '该回复实际收到的材料：' }), h('div', { class: 'reply', text: a.resource_text }),
+      h('p', { text: '评审标签：' + a.labels.map(function (l) {
+        return l.rater + ' ' + (l.severity === 'serious' ? '严重' : '轻微') + (l.quote ? ' 「' + l.quote + '」' : '');
+      }).join('；') })]);
+  }
+
+  function renderHistory(c, it, ro) {
+    var key = S.current;
+    var hist = c.history;
+    var q = (S.searched[key] || '').toLowerCase();
+    var spans = {};
+    var w = S.work[key] || {};
+    (w.spans || []).forEach(function (s) { spans[s.ref] = s.role; });
+    var box = h('div', { class: 'box', id: 'history' }, [h('h3', { text: '过往对话（只到此刻之前；按时间排列）' })]);
+    var tbl = h('table', { class: 'hist-index' }, [h('tr', {}, [h('th', { text: '次序' }), h('th', { text: '日期' }),
+      h('th', { text: '轮数' }), h('th', { text: '词数' })])]);
+    hist.index.forEach(function (x) {
+      tbl.appendChild(h('tr', {}, [h('td', { text: '第 ' + x.order + ' 次' }), h('td', { text: x.date || '未知' }),
+        h('td', { text: String(x.turns) }), h('td', { text: String(x.words) })]));
+    });
+    box.appendChild(tbl);
+    box.appendChild(h('div', {}, [h('input', { type: 'search', placeholder: '在过往对话中搜索', 'data-act': 'hist-search',
+      value: S.searched[key] || '', onchange: function (e) {
+        S.searched[key] = e.target.value;
+        if (e.target.value) tryAppend('ui', key, { name: 'history_search' });
+        render();
+      } }), ' ', h('button', { 'data-act': 'expand-all', onclick: function () { S.expandAll = !S.expandAll; markOpen(); render(); },
+      text: S.expandAll ? '全部收起' : '全部展开' })]));
+    hist.sessions.forEach(function (s) {
+      var turns = s.turns.filter(function (t) { return !q || t.text.toLowerCase().indexOf(q) !== -1 ||
+        (t.zh && t.zh.toLowerCase().indexOf(q) !== -1); });
+      if (q && !turns.length) return;
+      var det = h('details', { class: 'sess', open: S.expandAll || !!q, 'data-session': s.ref,
+        ontoggle: function (e) { if (e.target.open) markOpen(); } },
+        [h('summary', { text: '第 ' + s.order + ' 次对话 · ' + (s.date || '日期未知') + ' · ' + s.turns.length + ' 轮' +
+          (q ? ' · 匹配 ' + turns.length + ' 轮' : '') })]);
+      turns.forEach(function (t) {
+        var tools = null;
+        if (!ro && it.form === 'S') {
+          var sel = h('select', { 'data-span': t.ref, onchange: function (e) { setSpan(t.ref, e.target.value); } },
+            [['', '标注…'], ['required', '必要'], ['optional', '相关但可选'], ['contradict', '不得矛盾']].map(function (o) {
+              return h('option', { value: o[0], text: o[1] });
+            }));
+          sel.value = spans[t.ref] || '';
+          tools = h('span', { class: 'tools' }, [sel]);
+        } else if (!ro && (it.form === 'F')) {
+          tools = h('span', { class: 'tools' }, [h('button', { 'data-cite': t.ref, onclick: function () { cite(t.ref); },
+            text: '引用为依据' })]);
+        }
+        det.appendChild(unit(t, { tools: tools, marked: !!spans[t.ref] }));
+      });
+      box.appendChild(det);
+    });
+    return box;
+  }
+
+  function markOpen() {
+    if (!S.histOpened[S.current]) { S.histOpened[S.current] = true; tryAppend('ui', S.current, { name: 'history_open' }); }
+  }
+
+  function setSpan(ref, role) {
+    var w = S.work[S.current];
+    var list = (w.spans || []).filter(function (s) { return s.ref !== ref; });
+    if (role) list.push({ ref: ref, role: role });
+    w.spans = list;
+    saveDraft(true);
+    render();
+  }
+
+  function cite(ref) {
+    var w = S.work[S.current];
+    if (!S.activeF) { alertBox('请先在下方某个选了“有”的检查项里点“设为当前引用项”。'); return; }
+    var v = w[S.activeF] || {};
+    v.sources = (v.sources || []).filter(function (r) { return r !== ref; }).concat([ref]);
+    v.no_source = undefined;
+    w[S.activeF] = v;
+    saveDraft(true);
+    render();
+  }
+
+  // ---------------------------------------------------------------- render: form
+  function renderForm(it, form, ro) {
+    var key = S.current;
+    var w = S.work[key];
+    var box = h('div', { class: 'box', id: 'form' }, [h('h3', { text: ro ? '你的答案（已提交，锁定）' : '作答' })]);
+    if (ro) box.appendChild(h('p', { class: 'readonly', text: '提交时间：' + fmtTime(S.state.items[key].submitted_at) }));
+    form.fields.forEach(function (f) {
+      if (!C.fieldVisible(f, w)) return;
+      box.appendChild(renderField(f, w, ro));
+    });
+    if (!ro) {
+      box.appendChild(h('div', { class: 'actions' }, [
+        h('button', { 'data-act': 'save', onclick: function () { flushText(); saveDraft(false); render(); }, text: '保存草稿' }),
+        h('button', { class: 'primary', 'data-act': 'submit', onclick: submit, text: '提交并锁定' })]));
+    }
+    var st = S.state.view.stages.filter(function (s) { return s.id === it.stage; })[0];
+    var keys = st.items.map(function (x) { return x.key; });
+    var i = keys.indexOf(key);
+    box.appendChild(h('div', { class: 'actions' }, [
+      h('button', { 'data-act': 'prev', disabled: i <= 0, onclick: function () { go(keys[i - 1]); }, text: '上一项' }),
+      h('button', { 'data-act': 'next', disabled: i >= keys.length - 1, onclick: function () { go(keys[i + 1]); }, text: '下一项' })]));
+    return box;
+  }
+
+  function onChoice(fid, val) {
+    var w = S.work[S.current];
+    w[fid] = val;
+    var form = currentForm();
+    form.fields.forEach(function (f) { if (!C.fieldVisible(f, w)) delete w[f.id]; });
+    saveDraft(true);
+    render();
+  }
+
+  function renderField(f, w, ro) {
+    var v = w[f.id];
+    var lab = h('span', { class: 'lab', text: f.label + (f.required ? ' *' : '') });
+    var wrap = h('div', { class: 'field', 'data-fieldwrap': f.id }, [lab]);
+    if (f.hint) wrap.appendChild(h('div', { class: 'hint', text: f.hint }));
+    if (f.type === 'choice') {
+      wrap.appendChild(h('div', { class: 'opts' }, f.options.map(function (o) {
+        return h('label', {}, [h('input', { type: 'radio', name: S.current + '::' + f.id, 'data-field': f.id, value: o.v,
+          checked: v === o.v, disabled: ro, onchange: function () { onChoice(f.id, o.v); } }), ' ' + o.label]);
+      })));
+    } else if (f.type === 'multi') {
+      var cur = v || [];
+      wrap.appendChild(h('div', { class: 'opts' }, f.options.map(function (o) {
+        return h('label', {}, [h('input', { type: 'checkbox', 'data-field': f.id, value: o.v, checked: cur.indexOf(o.v) !== -1,
+          disabled: ro, onchange: function (e) {
+            var list = (S.work[S.current][f.id] || []).filter(function (x) { return x !== o.v; });
+            if (e.target.checked) {
+              if (o.v === f.exclusive) list = [o.v];
+              else list = list.filter(function (x) { return x !== f.exclusive; }).concat([o.v]);
+            }
+            S.work[S.current][f.id] = list;
+            saveDraft(true);
+            render();
+          } }), ' ' + o.label]);
+      })));
+    } else if (f.type === 'text') {
+      wrap.appendChild(h('textarea', { 'data-field': f.id, disabled: ro, maxlength: f.max_chars || null, value: v || '',
+        oninput: function (e) { S.work[S.current][f.id] = e.target.value; textDirty = true; },
+        onchange: function () { flushText(); } }));
+    } else if (f.type === 'spans') {
+      var roles = {};
+      f.options.forEach(function (o) { roles[o.v] = o.label; });
+      var list = (v || []).map(function (s) {
+        return h('span', { class: 'chip', 'data-spanchip': s.ref, text: s.ref + ' · ' + roles[s.role] });
+      });
+      wrap.appendChild(h('div', {}, list.length ? list : [h('span', { class: 'hint', text: '尚未标注（在左侧历史中逐句选择“标注…”）' })]));
+    } else if (f.type === 'fitem') {
+      wrap = renderFItem(f, v || {}, ro);
+    }
+    return wrap;
+  }
+
+  function renderFItem(f, v, ro) {
+    var fid = f.id;
+    var setV = function (patch) {
+      var w = S.work[S.current];
+      var cur = w[fid] || {};
+      Object.keys(patch).forEach(function (k) { cur[k] = patch[k]; });
+      if (cur.presence !== 'yes') { cur = { presence: cur.presence }; if (S.activeF === fid) S.activeF = null; }
+      w[fid] = cur;
+    };
+    var box = h('div', { class: 'fitem' + (S.activeF === fid ? ' active' : ''), 'data-fitem': fid }, [
+      h('span', { class: 'lab', text: f.label + ' *' })]);
+    box.appendChild(h('div', { class: 'opts' }, [['yes', '有'], ['no', '无'], ['cannot', '无法判断']].map(function (o) {
+      return h('label', {}, [h('input', { type: 'radio', name: S.current + '::' + fid, 'data-fitem': fid, 'data-sub': 'presence',
+        value: o[0], checked: v.presence === o[0], disabled: ro, onchange: function () { setV({ presence: o[0] }); saveDraft(true); render(); } }),
+        ' ' + o[1]]);
+    })));
+    if (v.presence === 'yes') {
+      box.appendChild(h('div', { class: 'opts' }, [h('span', { class: 'hint', text: '严重程度：' })].concat(
+        [['serious', '严重'], ['minor', '轻微']].map(function (o) {
+          return h('label', {}, [h('input', { type: 'radio', name: S.current + '::' + fid + '::sev', 'data-fitem': fid,
+            'data-sub': 'severity', value: o[0], checked: v.severity === o[0], disabled: ro,
+            onchange: function () { setV({ severity: o[0] }); saveDraft(true); render(); } }), ' ' + o[1]]);
+        }))));
+      box.appendChild(h('div', { class: 'hint', text: '逐字复制回复中的原句：' }));
+      box.appendChild(h('div', { class: 'hint', text: '（中文只作辅助：请展开回复的“英文原文”，点“引用此句”，或逐字复制英文原句）' }));
+      box.appendChild(h('textarea', { 'data-fitem': fid, 'data-sub': 'quote', disabled: ro, value: v.quote || '',
+        onfocus: function () { S.quoteF = fid; }, onclick: function () { S.quoteF = fid; },
+        oninput: function (e) { setV({ quote: e.target.value }); textDirty = true; }, onchange: function () { flushText(); } }));
+      if (f.needs_source || f.allow_no_source) {
+        var src = (v.sources || []).map(function (r) { return h('span', { class: 'chip', 'data-srcchip': r, text: r }); });
+        box.appendChild(h('div', {}, [h('span', { class: 'hint', text: '历史中的依据：' })].concat(src.length ? src : [h('span', { class: 'hint', text: '（无）' })])));
+        if (!ro) {
+          box.appendChild(h('button', { 'data-act': 'activate', 'data-fitem': fid,
+            onclick: function () { S.activeF = fid; render(); }, text: S.activeF === fid ? '当前引用项（在历史中点“引用为依据”）' : '设为当前引用项' }));
+          if (v.sources && v.sources.length) {
+            box.appendChild(h('button', { 'data-act': 'clear-src', onclick: function () { setV({ sources: [] }); saveDraft(true); render(); },
+              text: '清除依据' }));
+          }
+        }
+        if (f.allow_no_source) {
+          box.appendChild(h('label', {}, [h('input', { type: 'checkbox', 'data-fitem': fid, 'data-sub': 'no_source',
+            checked: !!v.no_source, disabled: ro, onchange: function (e) {
+              setV({ no_source: e.target.checked ? true : undefined, sources: e.target.checked ? [] : v.sources });
+              saveDraft(true); render(); } }), ' 查无来源：历史中找不到对应内容']));
+        }
+      }
+    }
+    return box;
+  }
+
+  // ---------------------------------------------------------------- boot
+  var emb = document.getElementById('pp1-package');
+  if (emb) {
+    var pkg;
+    try { pkg = JSON.parse(emb.textContent); } catch (e) { fatal('内置任务包无法解析：' + e.message); return; }
+    start(pkg, true);
+  } else {
+    app.innerHTML = '';
+    app.appendChild(h('div', { class: 'main' }, [h('h1', { text: 'PP1 盲评工具（离线）' }),
+      h('p', { text: '请打开协调人发给你的任务包文件，或导入之前导出的进度文件。本工具不联网，所有记录只保存在本机浏览器中，请定期导出。' }),
+      loaderButtons()]));
+  }
+  window.PP1UI = { state: function () { return S; } };   // read-only handle for diagnostics and tests
+}());
+</script>
+</body>
+</html>
