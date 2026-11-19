@@ -1,6 +1,6 @@
 # 首轮真实生成与人评：一页准入表（V3.2.1-A，2026-11-19）
 
-- **门禁状态**：7 个 Gate 全部是 BLOCKED。逐项共 PASS 5、PENDING 23、BLOCKED 36；明细见 [ADMISSION_TABLE.json](ADMISSION_TABLE.json) 和 [GATES_V321A.json](../gates/GATES_V321A.json)。
+- **门禁状态**：7 个 Gate 全部是 BLOCKED。逐项共 PASS 5、PENDING 27、BLOCKED 32；明细见 [ADMISSION_TABLE.json](ADMISSION_TABLE.json) 和 [GATES_V321A.json](../gates/GATES_V321A.json)。
 - **本轮用量**：GPU 0、Generator 0、Judge 0、付费 API 0、合并 0。
 
 ## 已通过
@@ -12,6 +12,7 @@
 | PP1 的 8 份 QH 背景生成前冻结（P2） | [QH_BACKGROUNDS.json](../../V321_WSB/pp1/QH_BACKGROUNDS.json) |
 | **PP1 盲评工具（P6）**：离线中文工具，含模拟端到端验收 101/101 | [工具](../pp1_tool/PP1_REVIEW_TOOL.html)、[验收报告](../pp1_e2e/E2E_REPORT_ZH.md) |
 | 奖励分量分开登记（G-RWD R5） | 沿用 |
+| **#21 的 FC-MS renderer 候选通过 B 的机械回执**（RA1–RA7 全部通过，原生 token 32/32；C7 转为待研究者采纳） | [#21 回执](../pr21_renderer_receipt/WSB_RECEIPT_PR21_RENDERER_ZH.md) |
 | 版本 A 协议、FC-MS 主比较与预算、90 条执行包、renderer 验收计划、许可证据表、R1–R5 计划 | 见 [交付总览](../REPORT_ZH.md) |
 
 ## 待人工
@@ -20,7 +21,7 @@
 |---|---|---|
 | 研究者 | 批准版本 A（A1–A15）、QH/Q0/F 分工、主比较族；选择预算方案 | C1、C9；PP1 P5 |
 | 研究者 + WS-A | DP 选材规则（A4） | C10 |
-| 研究者 | 转义策略，以及 FC-MS 统一使用的 renderer | C6、C7 |
+| 研究者 | 是否采纳 #21 的 `renderer-fcms:e675b435…`（B 建议采纳：只改变 3 轮 RAW，现行转义改变 5,242 轮）；FC-MS 统一使用该 renderer | C6、C7 |
 | 研究者 | 许可：确认非商业学术用途；人工审阅共享的条件；公开仓库中原始数据的处理 | M4 |
 | 研究者 | 指派 1 名 PP1 整理者、2 名审阅者、1 名裁决者；正式筛查的 1–2 名整理者 | P3、P4、C2、C5 |
 | 研究者 | 是否提供译文；如提供，由人工还是 MT 完成 | P5 |
@@ -34,7 +35,8 @@
 | 研究者（授权）/ WS-A（执行） | A0 实测（GPU） | E2 |
 | WS-A（实现）/ WS-B（验收） | 最终执行器：加载守卫、持久日志、STOP，以及与获批协议绑定 | E6 |
 | 研究者 | 单独授权 PP1 的 16 次调用（GPU 上限 20 分钟） | E5 |
-| WS-A | 统一 renderer 候选；正式样本的 DP-MS 导出；as-of 检索身份 | C7、M2、M3 |
+| WS-A | 正式样本的 DP-MS 导出（renderer 候选已在 #21 中提交）；as-of 检索身份 | M2、M3 |
+| WS-B | 审查 #21 的执行器（limited_run 等）；DP 行出现后复跑 renderer 检查器 | E6、C7 |
 | WS-B | 筛查后构建正式样本的 QH 背景；R1–R5 修复（单独 PR） | C3；G-RWD R4 |
 | 研究者 / WS-B | 生成结果的封存位置；设计改动 ledger | C8 |
 
@@ -43,7 +45,11 @@
 1. **现在就可以做，不需要 GPU**：研究者指派整理者，并确认人工审阅共享的许可条件。之后可以同时开始：
    - PP1 的 8 条 S 表（任务包已备好，在仓库外）；
    - 90 条正式初筛（两份任务包已备好）。
-2. **现在就可以做**：研究者批准版本 A，或其中的部分；WS-A 提交统一 renderer 候选和 DP 选材对齐，B 用现成的检查器出具回执。
+2. **现在就可以做**：
+   - 研究者批准版本 A，或其中的部分；
+   - 研究者决定是否采纳 #21 的 renderer；
+   - 研究者在 A 的 DP 选材界面和 B 的确定性规则之间选一种；
+   - B 审查 #21 的执行器（E6）。
 3. **E1、E2、E6 都满足之后**：研究者授权 PP1 的 16 次调用，最多 20 分钟 GPU。生成结果封存后，两名审阅者完成 Q0 → QH → F，每人约 2.7–4.1 小时。
 4. **PP1 通过程序验收、90 条标签齐全之后**：按真实的 S1 出现率选定预算方案（中等方案约 150–175 次调用、约 90–150 人时），冻结 FC-MS-1，再授权生成。
 

@@ -14,7 +14,7 @@
 | 4 | 评审人员职责模板和操作说明 | [ROLES_AND_SOP_ZH.md](pp1_tool/ROLES_AND_SOP_ZH.md) |
 | 5 | FC-MS 主比较、统计功效与预算 | [FCMS_DESIGN_POWER_BUDGET_ZH.md](fcms/FCMS_DESIGN_POWER_BUDGET_ZH.md) |
 | 6 | 90 条正式筛查执行包 | [SCREEN90_EXECUTION_ZH.md](screen90/SCREEN90_EXECUTION_ZH.md) |
-| 7 | A renderer 候选的独立验收计划 | [RENDERER_ACCEPTANCE_PLAN_ZH.md](renderer/RENDERER_ACCEPTANCE_PLAN_ZH.md)（A 的候选尚未提交） |
+| 7 | A renderer 候选的独立验收计划与回执 | [RENDERER_ACCEPTANCE_PLAN_ZH.md](renderer/RENDERER_ACCEPTANCE_PLAN_ZH.md)；A 在本轮期间提交了 #21，B 回执 [WSB_RECEIPT_PR21_RENDERER_ZH.md](pr21_renderer_receipt/WSB_RECEIPT_PR21_RENDERER_ZH.md)：PASS_WITH_NOTES，RA1–RA7 全部通过，原生 token 32/32 |
 | 8 | 一页准入表 | [ADMISSION_ONE_PAGE_ZH.md](admission/ADMISSION_ONE_PAGE_ZH.md) |
 | — | R1–R5 修复计划 | [R1_R5_REPAIR_PLAN_ZH.md](r1r5/R1_R5_REPAIR_PLAN_ZH.md) |
 | — | EvoEmo 来源与许可证据表 | [LICENSE_EVIDENCE_ZH.md](license/LICENSE_EVIDENCE_ZH.md) |
@@ -32,7 +32,10 @@
    - Q0 部分不含历史；QH/F 部分只能在协调人登记 Q0 锚点之后载入；
    - 位置完全平衡，两名审阅者镜像；
    - 锁定后不能修改；导出文件由 Python 独立复核。
-4. **转义**：现行 `html.escape` 改变了 56% 的 RAW 轮次。建议统一 renderer 采用原文加边界检查，并让 DP 与 RET 使用相同的块框架。
+4. **转义与统一 renderer**：
+   - 现行 `html.escape` 改变了 56% 的 RAW 轮次；
+   - #21 的 line-quote-1 候选只改变 3 轮，撇号保持原样，DP 与 RET 使用同一框架；
+   - B 的机械回执通过，建议研究者采纳；PP1 继续使用旧 renderer。
 5. **许可**：本仓库是公开的，已经包含 ESConv 与 EvoEmo 的原始数据。ESConv 是 CC BY-NC 4.0 并注明“仅限学术研究”，EvoEmo 数据本身没有明确的许可。公开再分发尚未确立，需要研究者决定。本轮新生成的任务包都放在仓库外。
 
 ## 运行与复现

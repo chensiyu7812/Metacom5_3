@@ -1,6 +1,6 @@
 # 统一 renderer 候选的独立验收计划（FC-MS Gate C7）
 
-- **现状**：截至 2026-11-19，WS-A 尚未提交统一 renderer 候选。我核对了 #10（`73fdb12f`）、#18（`0a91ff33`）、#19（`4ac9ab3d`）的 HEAD，以及共享目录 `ms-pp1-20261119`，都没有找到。
+- **现状（更新）**：WS-A 在本轮期间提交了 Draft PR #21（`46349ccf`），其中包含候选 `renderer-fcms:e675b435…`（line-quote-1）。B 已按本计划完成机械验收：**PASS_WITH_NOTES**，RA1–RA7 全部通过，原生 token 32/32 一致。回执见 [WSB_RECEIPT_PR21_RENDERER_ZH.md](../pr21_renderer_receipt/WSB_RECEIPT_PR21_RENDERER_ZH.md)。DP 行出现、正式样本请求导出后需要复跑。
 - **本轮准备**：
   - 写好验收检查器 [renderer_acceptance.py](../../../../../src/metacom_pm/rl1v3/asof/renderer_acceptance.py)；
   - 统计 RAW 中会被各种转义策略改变的轮次；
