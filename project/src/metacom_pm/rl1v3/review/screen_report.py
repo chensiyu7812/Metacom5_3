@@ -66,3 +66,47 @@ def screen_report(exports: dict[str, dict], audit_maps: dict[str, dict], group_o
                          searched_share=round(sum(r["history_searched"] for r in hist) / max(1, len(hist)), 3)),
         curators=curators, rows=rows,
         note="标签按提交原样统计；本报告不改变任何标签，也不读取任何回复或模型结果")
+
+
+def overlap_agreement(primary_rows: list[dict], overlap_rows: list[dict]) -> dict:
+    """Agreement between the primary curator's labels and the blind second labels on the pre-fixed overlap items.
+    Descriptive only; the primary labels stay as frozen (the second labels never replace them)."""
+    prim = {r["prefix_id"]: r for r in primary_rows}
+    pairs = [(prim[r["prefix_id"]], r) for r in overlap_rows if r["prefix_id"] in prim]
+    if not pairs:
+        return dict(items=0)
+    cats = ["S1", "S2", "S0", "unclear"]
+    agree = sum(a["need"] == b["need"] for a, b in pairs)
+    n = len(pairs)
+    pa = Counter(a["need"] for a, _ in pairs)
+    pb = Counter(b["need"] for _, b in pairs)
+    pe = sum(pa[c] * pb[c] for c in cats) / (n * n)
+    kappa = (agree / n - pe) / (1 - pe) if pe < 1 else None
+    s1_any = [(a, b) for a, b in pairs if "S1" in (a["need"], b["need"])]
+    sess = [(a, b) for a, b in pairs if a["need"] == b["need"] == "S1"]
+    return dict(items=n, need_agreement=round(agree / n, 3), cohen_kappa=round(kappa, 3) if kappa is not None else None,
+                confusion=dict(Counter(f"{a['need']}|{b['need']}" for a, b in pairs)),
+                s1_disagreements=sum(a["need"] != b["need"] for a, b in s1_any),
+                sessions_needed_agreement_on_joint_s1=(round(sum(a["sessions_needed"] == b["sessions_needed"] for a, b in sess)
+                                                             / len(sess), 3) if sess else None),
+                rule="描述性；主要标签保持冻结，第二人的标签不替换、不改写主要标签")
+
+
+def fixed_order(ids: list[str], *, salt: str) -> list[str]:
+    """A registered salted-hash order; fixed before any label exists."""
+    import hashlib
+    return sorted(ids, key=lambda p: hashlib.sha256((salt + "|" + p).encode()).hexdigest())
+
+
+def prefixed_overlap(items: list[dict], slot: str, *, salt: str, share: float = 0.15) -> list[str]:
+    """Pre-fixed overlap for one curator set: items with history only, salted order, first ceil(share * n)."""
+    import math
+    pool = [r["prefix_id"] for r in items if r["slot"] == slot and r["stratum_hidden_from_curator"] != "S7_rank0"]
+    return fixed_order(pool, salt=salt)[:math.ceil(share * len(pool))]
+
+
+def dp_overlap_from_labels(order: list[str], labels: dict[str, str], *, share: float = 0.15) -> list[str]:
+    """After S labels are frozen: the first ceil(share * n) S1/S2 prefixes in the pre-fixed order."""
+    import math
+    need = [p for p in order if labels.get(p) in ("S1", "S2")]
+    return need[:math.ceil(share * len(need))]
