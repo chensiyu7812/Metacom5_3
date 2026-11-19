@@ -11,7 +11,6 @@ import hashlib
 import json
 import re
 import subprocess
-import tempfile
 from collections import defaultdict
 from pathlib import Path
 
@@ -49,30 +48,65 @@ def fingerprints(artifact: dict, esconv: list, *, n_evo: int = 400, n_esc_in_evo
     return out
 
 
-def scan(repo: Path, refs: list[str], fps: dict, *, min_hits: int = 3) -> dict:
-    """{path: {kind: {ref: distinct fingerprints matched}}} for files with >= min_hits distinct fingerprints."""
-    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
-        f.write("\n".join(fps))
-        pat = f.name
-    hits = defaultdict(lambda: defaultdict(lambda: defaultdict(set)))
+WORD = re.compile(r"[a-z0-9']+")
+
+
+def _words(text: str) -> list[str]:
+    return WORD.findall(text.replace("&#x27;", "'").replace("\\u0027", "'").lower())
+
+
+def _shingles(words: list[str], n: int = 8):
+    return {" ".join(words[i:i + n]) for i in range(len(words) - n + 1)}
+
+
+def scan(repo: Path, refs: list[str], fps: dict, *, min_hits: int = 3, max_bytes: int = 400 * 1024 ** 2) -> dict:
+    """Blob-deduplicated scan: every unique blob of every ref is read once (git cat-file --batch) and matched by
+    8-word shingles of the fingerprints.  Returns {path: {kind: {ref: distinct fingerprints}}} for files with
+    >= min_hits distinct fingerprints of a kind."""
+    sh = {}
+    for text, (kind, fid) in fps.items():
+        for s in _shingles(_words(text)):
+            sh[s] = (kind, fid)
+    where = defaultdict(set)                      # blob -> {(ref, path)}
+    sizes = {}
+    for ref in refs:
+        r = subprocess.run(["git", "ls-tree", "-r", "-l", ref], cwd=repo, capture_output=True, text=True, check=True)
+        for line in r.stdout.splitlines():
+            meta, path = line.split("\t", 1)
+            mode, typ, blob, size = meta.split()
+            if typ == "blob" and size != "-":
+                where[blob].add((ref, path))
+                sizes[blob] = int(size)
+    blobs = [b for b in where if sizes[b] <= max_bytes]
+    found = {}
+    p = subprocess.Popen(["git", "cat-file", "--batch"], cwd=repo, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     try:
-        for ref in refs:
-            r = subprocess.run(["git", "grep", "-F", "-o", "-I", "-f", pat, ref, "--", "."], cwd=repo,
-                               capture_output=True, text=True, errors="replace")
-            for line in r.stdout.splitlines():
-                head, _, match = line.rpartition(":")
-                _ref, _, path = head.partition(":")
-                k = fps.get(match)
-                if k:
-                    hits[path][k[0]][ref].add(k[1])
+        for b in blobs:
+            p.stdin.write((b + "\n").encode())
+            p.stdin.flush()
+            header = p.stdout.readline().split()
+            n = int(header[2])
+            data = p.stdout.read(n)
+            p.stdout.read(1)
+            if b"\0" in data[:8192]:
+                continue
+            got = defaultdict(set)
+            for s in _shingles(_words(data.decode("utf-8", "ignore"))):
+                if s in sh:
+                    k, fid = sh[s]
+                    got[k].add(fid)
+            if got and max(len(v) for v in got.values()) >= min_hits:
+                found[b] = {k: len(v) for k, v in got.items()}
     finally:
-        Path(pat).unlink()
-    out = {}
-    for path, kinds in hits.items():
-        best = {kind: max(len(v) for v in by_ref.values()) for kind, by_ref in kinds.items()}
-        if max(best.values()) >= min_hits:
-            out[path] = {kind: {ref: len(v) for ref, v in by_ref.items()} for kind, by_ref in kinds.items()}
-    return out
+        p.stdin.close()
+        p.wait()
+    out = defaultdict(lambda: defaultdict(dict))
+    for b, kinds in found.items():
+        for ref, path in where[b]:
+            for k, n in kinds.items():
+                out[path][k][ref] = n
+    return {path: {k: dict(v) for k, v in kinds.items()} for path, kinds in out.items()}, \
+        dict(unique_blobs=len(where), scanned_blobs=len(blobs), skipped_large=len(where) - len(blobs))
 
 
 def git_history(repo: Path, path: str) -> dict:

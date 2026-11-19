@@ -164,7 +164,7 @@ def step_inventory(_):
     refs = subprocess.run(["git", "for-each-ref", "refs/remotes/origin", "--format=%(refname:short)"], cwd=REPO,
                           capture_output=True, text=True, check=True).stdout.split()
     refs = [r for r in refs if r != "origin/HEAD"]
-    hits = I.scan(REPO, refs, fps)
+    hits, scan_stats = I.scan(REPO, refs, fps)
     prs = json.loads(subprocess.run(["gh", "api", "repos/chensiyu7812/Metacom5_3/pulls?state=all&per_page=100", "--jq",
                                      "[.[] | {n: .number, head: .head.ref, base: .base.ref, state: .state, merged: (.merged_at != null)}]"],
                                     cwd=REPO, capture_output=True, text=True, check=True).stdout)
@@ -197,10 +197,10 @@ def step_inventory(_):
         by_cat[f["category"]]["bytes"] += f["bytes"] or 0
     out = dict(method="指纹：从 sanitized artifact 与 ESConv.json 中按 sha 排序确定性抽取 ≥50 字符的纯 ASCII 句子"
                       "（EvoEmo 生成会话 400、ESConv 派生会话 150、只在 ESConv 中的 300；另加 html 转义变体），"
-                      "用 git grep -F -o 搜索每个远端分支的树；某文件在任一分支命中 ≥3 个不同指纹即记为含 RAW。"
+                      "对每个远端分支的全部 blob 去重后逐一读取，按 8 词片段匹配（已把 &#x27; 还原为撇号）；某文件命中 ≥3 个不同指纹即记为含 RAW。"
                       "输出只含路径、计数与提交信息，不含任何原文",
                fingerprints=dict(total=len(fps), sha256=object_sha256(sorted(I._sha(x)[:16] for x in fps))),
-               branches_scanned=len(refs), repo_visibility="public",
+               branches_scanned=len(refs), scan_stats=scan_stats, repo_visibility="public",
                files=files, by_category=dict(by_cat), actions_artifacts=arts, releases=rel,
                notes=["GitHub 为每个 PR 保留 refs/pull/N/head；分支删除后这些提交仍可通过 PR 访问",
                       "任何人都可以下载公开分支的源码压缩包；已存在的 fork 与克隆无法收回",

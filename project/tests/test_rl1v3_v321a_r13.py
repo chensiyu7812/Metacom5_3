@@ -125,6 +125,7 @@ def test_fingerprints_and_scan_on_a_tiny_repo(tmp_path):
     (repo / "b.txt").write_text("nothing here")
     subprocess.run(["git", "add", "."], cwd=repo, check=True)
     subprocess.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", "x"], cwd=repo, check=True)
-    hits = I.scan(repo, ["main"], fps, min_hits=1)
+    hits, stats = I.scan(repo, ["main"], fps, min_hits=1)
+    assert stats["unique_blobs"] == 2
     assert set(hits) == {"a.json"}
     assert "fingerprint" not in json.dumps(hits) and "wedding" not in json.dumps(hits)   # no RAW text in the output

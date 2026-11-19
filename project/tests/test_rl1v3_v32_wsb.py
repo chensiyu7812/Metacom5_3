@@ -557,3 +557,35 @@ def test_wsa_adapter_accepts_exact_raw_frontier_and_rejects_violations(world):
     bad = _sidecar(world, p)
     bad["as_of"]["prefix_context_sha256"] = "0" * 64
     assert WA.check_sidecar([bad], reg, rows)["rows"][0]["problems"] == ["prefix_context_not_a_legal_B0_prefix"]
+
+
+# ------------------------------------------------------------------ R3 / R4 fixes (round 13; WS-A sign-off pending)
+def test_r3_stop_ends_the_episode_and_a_later_get_is_after_stop(world):
+    prefix = prefix_of(world, AB3D17)
+    env, _ = env_for(world, prefix)
+    ep = RV.BoundEpisode(env, legacy_binding(world, prefix, env))
+    s1, _ = ep.try_step(ep.reset(), "GET_ME")
+    s2, info = ep.try_step(s1, E.STOP)
+    assert info == dict(stop=True) and s2.done and s2.order == s1.order
+    assert ep.composite_key(s2) == ep.composite_key(s1)
+    s3, inv = ep.try_step(s2, "GET_RS")
+    assert isinstance(inv, RV.Invalid) and inv.reason == "after_stop" and s3 == s2
+    assert ep.try_step(s2, E.STOP)[1].reason == "after_stop"
+
+
+def test_r4_identical_retry_is_idempotent_and_values_are_isolated(world):
+    prefix = prefix_of(world, AB3D17)
+    env, _ = env_for(world, prefix)
+    b = legacy_binding(world, prefix, env)
+    cache = RV.ReplayCache()
+    v = dict(response_sha256="r1", tokens=[1, 2])
+    k = cache.put("3" * 64, b, v)
+    assert cache.put("3" * 64, b, dict(response_sha256="r1", tokens=[1, 2])) == k        # identical retry: no error
+    v["tokens"].append(3)                                                                  # caller alias after put
+    got = cache.get("3" * 64, b)
+    got["response_sha256"] = "tampered"
+    got["tokens"].append(9)                                                                # caller alias after get
+    again = cache.get("3" * 64, b)
+    assert again["response_sha256"] == "r1" and again["tokens"] == [1, 2]
+    with pytest.raises(ValueError):
+        cache.put("3" * 64, b, dict(response_sha256="r1", tokens=[1, 2, 3]))
