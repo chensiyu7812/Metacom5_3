@@ -670,7 +670,7 @@ def step_admission(_):
     for gate in g["gates"]:
         for it in gate["items"]:
             rows.append(dict(gate=gate["gate"], id=it["id"], state=it["state"], evidence=it["evidence"],
-                             reason=it.get("reason"), owner=it.get("owner")))
+                             reason=it.get("reason"), owner=it.get("unblock_owner")))
     summ = dict(protocol_sha256=g["protocol_sha256"], prs=g["prs"], gates={x["gate"]: x["state"] for x in g["gates"]},
                 counts={s: sum(r["state"] == s for r in rows) for s in ("PASS", "PENDING", "BLOCKED")},
                 e2e=e2e["totals"], rows=rows)

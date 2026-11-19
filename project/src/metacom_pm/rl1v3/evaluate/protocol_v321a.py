@@ -170,12 +170,15 @@ def gates_v321a(f: dict) -> list[dict]:
         for it in g["items"]:
             if it["id"] == "C4":
                 it.update(evidence="PP1 完成并通过程序验收（研究者倾向不豁免；书面豁免须另行登记）",
-                          reason="PP1 未执行", owner="研究者 / WS-B")
+                          reason="PP1 未执行", unblock_owner="研究者 / WS-B")
+            if it["id"] == "C2" and it["state"] != "PASS":
+                it.update(reason="0 条标签；90 条初筛执行包已备（两名整理者，约 15–29 小时）",
+                          unblock_owner="研究者（指派整理者）/ 整理者")
             if it["id"] == "P6":
                 ok = f.get("instrument")
                 it.update(state="PASS" if ok else "BLOCKED",
                           evidence="离线中文盲评工具 + 模拟端到端验收（填表、退出、导入、重开、锁定、导出、SHA、盲态）",
-                          reason=None if ok else "工具未完成", owner="WS-B")
+                          reason=None if ok else "工具未完成", unblock_owner=None if ok else "WS-B")
     eng = by["G-ENG"]
     eng["items"].append(V._item("E6", "最终执行器验收：加载守卫、持久日志、STOP 规则、请求 SHA 与获批协议绑定",
                                 f.get("executor_accepted", False), reason="WS-A 的 CPU 参考状态机不是完整执行器；未验收",
