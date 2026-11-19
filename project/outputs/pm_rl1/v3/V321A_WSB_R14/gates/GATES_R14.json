@@ -1,0 +1,581 @@
+{
+ "counts": {
+  "BLOCKED": 31,
+  "PASS": 7,
+  "PENDING": 26
+ },
+ "gates": {
+  "FC-ME": "BLOCKED",
+  "FC-MP": "BLOCKED",
+  "FC-MS": "BLOCKED",
+  "FC-RS": "BLOCKED",
+  "G-ENG": "BLOCKED",
+  "G-RWD": "BLOCKED",
+  "PP1": "BLOCKED"
+ },
+ "prs": {
+  "10": {
+   "base": "pmrl1-v3/integration",
+   "draft": false,
+   "head": "73fdb12f29b6970a268eeda704d73e1bd35b1c3e",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "15": {
+   "base": "pmrl1-v3/integration",
+   "draft": false,
+   "head": "b63635f3621f3a5d252099efcd58ae2d1958dce2",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "16": {
+   "base": "pmrl1-v3/ws-b-s3",
+   "draft": true,
+   "head": "a9cf0cca0fecd044a5a4e2a4066355a9a8123dc5",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "17": {
+   "base": "pmrl1-v3/ws-b-v32-p0p2",
+   "draft": true,
+   "head": "3dafb2aa6e861846aa77a96d99a02c66e4fade7d",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "18": {
+   "base": "pmrl1-v3/ws-a-asof-cpu-20261118",
+   "draft": true,
+   "head": "0a91ff3329dc0d091fbb9e234035638efb45146c",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "19": {
+   "base": "pmrl1-v3/ws-a-resource-qualification-20261118",
+   "draft": true,
+   "head": "4ac9ab3d23d04cd8ec9435ea239995ae85a3e610",
+   "merged_at": null,
+   "state": "OPEN"
+  },
+  "20": {
+   "base": "pmrl1-v3/ws-b-v32-rq1-qual",
+   "draft": true,
+   "head": "4624600de57bbb61f872d54540234f07d907c1ed",
+   "merged_at": null,
+   "state": "OPEN"
+  }
+ },
+ "rows": [
+  {
+   "evidence": "G0e 身份冻结：PR #10 合入，或研究者书面固定 G0e 身份（g_id/renderer/step2/decode）",
+   "gate": "G-ENG",
+   "id": "E1",
+   "owner": "integration owner / 研究者",
+   "reason": "研究者拟固定 #10 73fdb12f；随研究决定回执签署登记",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "A0 实测：加载前重新计算权重 hash、环境证明、2 次确定性重复调用一致、超时/OOM 行为已记录",
+   "gate": "G-ENG",
+   "id": "E2",
+   "owner": "WS-A（执行）/ 研究者（授权）",
+   "reason": "A0 尚未实测（需 GPU 授权）",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "本作业全部请求包已导出（messages、input_ids、decode），并通过 B 独立投影检查",
+   "gate": "G-ENG",
+   "id": "E3",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "输出缓存 write-once、无自动重试、技术失败记为 pending",
+   "gate": "G-ENG",
+   "id": "E4",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "研究者对该作业的 GPU/Generator 单独授权（列出调用数上限）",
+   "gate": "G-ENG",
+   "id": "E5",
+   "owner": "研究者",
+   "reason": "尚无授权",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "SIGNED：#23 HEAD 67169816（A0 binding c9eb9169、PP1 binding 2a14cac2）；CPU 故障注入 49/49 + 3.12 进程路径 20/20；#21 46349ccf 不签收的记录保留",
+   "gate": "G-ENG",
+   "id": "E6",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "G-ENG 对 PP1 的 16 次调用成立",
+   "gate": "PP1",
+   "id": "P1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "8 个前缀的 QH 背景（完整 as-of RAW，与资源臂无关）在生成前冻结",
+   "gate": "PP1",
+   "id": "P2",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "8 个前缀的生成前筛查标签（表单 S）由非审阅者完成并封存",
+   "gate": "PP1",
+   "id": "P3",
+   "owner": "研究者（指派）/ 整理者",
+   "reason": "任务包已备（仓库外）；待研究者指定人员、确认受限共享范围并分配匿名代码",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "两名审阅者已排期；F 第三人或 Q 锁定后的分工已确定",
+   "gate": "PP1",
+   "id": "P4",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "PP1 协议获批（流程、停止条件、与正式分析分离）",
+   "gate": "PP1",
+   "id": "P5",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "离线中文盲评工具 + 模拟端到端验收（填表、退出、导入、重开、锁定、导出、SHA、盲态）",
+   "gate": "PP1",
+   "id": "P6",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "G-ENG 对正式 MS 作业成立",
+   "gate": "FC-MS",
+   "id": "M1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "DP-MS 材料：正式样本每个前缀的 MS-RAW-direct（固定规则、非检索）通过 B 机械核验",
+   "gate": "FC-MS",
+   "id": "M2",
+   "owner": "WS-A（导出）/ WS-B（核验）",
+   "reason": "PR #18 只覆盖 8 个前缀（已核验通过）；正式样本前缀尚未导出",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "RET-MS 使用 as-of 检索身份（不含未来会话）",
+   "gate": "FC-MS",
+   "id": "M3",
+   "owner": "WS-A",
+   "reason": "as-of 检索身份未冻结",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "研究者决定：非商业学术用途；仓库继续公开；文档引用来源；上游许可的不确定性照常登记（不是新许可）",
+   "gate": "FC-MS",
+   "id": "M4",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  },
+  {
+   "evidence": "正式协议冻结并获批：主比较、主指标、margin（如采用）、样本、缺失与不确定处理",
+   "gate": "FC-MS",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "正式样本筛查标签冻结（90 初筛 + 预设扩展），覆盖达到预设目标或缺口已报告",
+   "gate": "FC-MS",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "任务包已备（仓库外）；待研究者指定人员、确认受限共享范围并分配匿名代码",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式样本 QH 背景（完整 as-of RAW）全部冻结",
+   "gate": "FC-MS",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "PP1 完成并通过程序验收（研究者倾向不豁免；书面豁免须另行登记）",
+   "gate": "FC-MS",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "审阅人力满足工作量估计",
+   "gate": "FC-MS",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "同一实验族所有臂使用同一 renderer 身份，html.escape 等展示属性已明确决定",
+   "gate": "FC-MS",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）并经研究者采纳",
+   "gate": "FC-MS",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "生成结果封存与设计改动 ledger 就位（公开仓库前不推送）",
+   "gate": "FC-MS",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "主比较族与多重比较规则在生成前冻结",
+   "gate": "FC-MS",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "DP-MS 选材规则确认（选材者、规则、与 #19 对齐）",
+   "gate": "FC-MS",
+   "id": "C10",
+   "owner": "WS-A / 研究者",
+   "reason": "人工 DP-MS 为主；A 工具需补齐覆盖/时效/阶段字段、选择者≠审阅者、选择早于生成",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "G-ENG 成立",
+   "gate": "FC-MP",
+   "id": "MP1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "MP 候选逐项人工语义审核（主体、阶段、有效性）",
+   "gate": "FC-MP",
+   "id": "MP2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "PR #18：64 条候选 0 批准（43 pending / 21 quarantined）；p3 无 MP 候选",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式协议冻结并获批：主比较、主指标、margin（如采用）、样本、缺失与不确定处理",
+   "gate": "FC-MP",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "正式样本筛查标签冻结（90 初筛 + 预设扩展），覆盖达到预设目标或缺口已报告",
+   "gate": "FC-MP",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "任务包已备（仓库外）；待研究者指定人员、确认受限共享范围并分配匿名代码",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式样本 QH 背景（完整 as-of RAW）全部冻结",
+   "gate": "FC-MP",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "PP1 完成并通过程序验收（研究者倾向不豁免；书面豁免须另行登记）",
+   "gate": "FC-MP",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "审阅人力满足工作量估计",
+   "gate": "FC-MP",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "同一实验族所有臂使用同一 renderer 身份，html.escape 等展示属性已明确决定",
+   "gate": "FC-MP",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）并经研究者采纳",
+   "gate": "FC-MP",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "生成结果封存与设计改动 ledger 就位（公开仓库前不推送）",
+   "gate": "FC-MP",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "主比较族与多重比较规则在生成前冻结",
+   "gate": "FC-MP",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "G-ENG 成立",
+   "gate": "FC-ME",
+   "id": "ME1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "ME 候选逐项人工语义审核（主体、阶段、有效性）",
+   "gate": "FC-ME",
+   "id": "ME2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "同上，ME 候选 0 批准",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式协议冻结并获批：主比较、主指标、margin（如采用）、样本、缺失与不确定处理",
+   "gate": "FC-ME",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "正式样本筛查标签冻结（90 初筛 + 预设扩展），覆盖达到预设目标或缺口已报告",
+   "gate": "FC-ME",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "任务包已备（仓库外）；待研究者指定人员、确认受限共享范围并分配匿名代码",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式样本 QH 背景（完整 as-of RAW）全部冻结",
+   "gate": "FC-ME",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "PP1 完成并通过程序验收（研究者倾向不豁免；书面豁免须另行登记）",
+   "gate": "FC-ME",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "审阅人力满足工作量估计",
+   "gate": "FC-ME",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "同一实验族所有臂使用同一 renderer 身份，html.escape 等展示属性已明确决定",
+   "gate": "FC-ME",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）并经研究者采纳",
+   "gate": "FC-ME",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "生成结果封存与设计改动 ledger 就位（公开仓库前不推送）",
+   "gate": "FC-ME",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "主比较族与多重比较规则在生成前冻结",
+   "gate": "FC-ME",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "G-ENG 成立",
+   "gate": "FC-RS",
+   "id": "RS1",
+   "owner": "见 G-ENG",
+   "reason": "G-ENG 未通过",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "RS 候选逐项人工语义审核（主体、阶段、有效性）",
+   "gate": "FC-RS",
+   "id": "RS2",
+   "owner": "研究者指派的审核者 / WS-A",
+   "reason": "2 张 METHOD 与 1 条 CASE 的许可、适用、关联均 pending",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式协议冻结并获批：主比较、主指标、margin（如采用）、样本、缺失与不确定处理",
+   "gate": "FC-RS",
+   "id": "C1",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "正式样本筛查标签冻结（90 初筛 + 预设扩展），覆盖达到预设目标或缺口已报告",
+   "gate": "FC-RS",
+   "id": "C2",
+   "owner": "研究者（指派整理者）/ 整理者",
+   "reason": "任务包已备（仓库外）；待研究者指定人员、确认受限共享范围并分配匿名代码",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "正式样本 QH 背景（完整 as-of RAW）全部冻结",
+   "gate": "FC-RS",
+   "id": "C3",
+   "owner": "WS-B",
+   "reason": "尚未构建（机械，可在筛查后生成）",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "PP1 完成并通过程序验收（研究者倾向不豁免；书面豁免须另行登记）",
+   "gate": "FC-RS",
+   "id": "C4",
+   "owner": "研究者 / WS-B",
+   "reason": "PP1 未执行",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "审阅人力满足工作量估计",
+   "gate": "FC-RS",
+   "id": "C5",
+   "owner": "研究者",
+   "reason": "审阅者未排期",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "同一实验族所有臂使用同一 renderer 身份，html.escape 等展示属性已明确决定",
+   "gate": "FC-RS",
+   "id": "C6",
+   "owner": "WS-A / 研究者",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "统一 renderer 候选通过 B 独立验收（实体、来源边界、单因素、原生 token、请求身份）并经研究者采纳",
+   "gate": "FC-RS",
+   "id": "C7",
+   "owner": "WS-A（候选）/ WS-B（验收）/ 研究者（采纳、决定转义）",
+   "reason": "line-quote-1 已选定；待签署并在正式 DP 请求上复验",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "生成结果封存与设计改动 ledger 就位（公开仓库前不推送）",
+   "gate": "FC-RS",
+   "id": "C8",
+   "owner": "研究者 / WS-B",
+   "reason": "封存位置与 ledger 待协调人建立",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "主比较族与多重比较规则在生成前冻结",
+   "gate": "FC-RS",
+   "id": "C9",
+   "owner": "研究者",
+   "reason": "研究决定最终签署候选待研究者签署（R14 decision/）",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "至少一个实验族的正式比较完成，且结论按 DECISIONS 报告",
+   "gate": "G-RWD",
+   "id": "R1",
+   "owner": "WS-B / 研究者",
+   "reason": "尚无正式比较",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "J1 用人工 Q0/QH/F 标签独立验证（不得自证）",
+   "gate": "G-RWD",
+   "id": "R2",
+   "owner": "WS-B",
+   "reason": "无人工标签",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "J1 decode 上限 8,192 / 16,384 决定",
+   "gate": "G-RWD",
+   "id": "R3",
+   "owner": "研究者",
+   "reason": "待研究者决定",
+   "state": "PENDING"
+  },
+  {
+   "evidence": "#16 接口问题 R1–R5（来源局部身份、episode 入口验证、STOP、缓存幂等、RELATION）修复并 A/B 签收",
+   "gate": "G-RWD",
+   "id": "R4",
+   "owner": "WS-B（修复）/ WS-A（签收）",
+   "reason": "已确认 5/5，未修复",
+   "state": "BLOCKED"
+  },
+  {
+   "evidence": "奖励各分量分开登记；pending 不填 0",
+   "gate": "G-RWD",
+   "id": "R5",
+   "owner": null,
+   "reason": null,
+   "state": "PASS"
+  }
+ ]
+}

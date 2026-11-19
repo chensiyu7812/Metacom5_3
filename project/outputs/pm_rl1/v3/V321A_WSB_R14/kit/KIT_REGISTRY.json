@@ -1,0 +1,103 @@
+{
+ "distribution_rule": "研究者确定人员并确认受限研究共享范围之后，才把占位代码换成真实匿名代码并分发",
+ "dp_overlap": {
+  "order_sha256": "d38bd1e81a424bfe8a28021c17b2e493aed2e37c424a96f4df37b397ab7d21fa",
+  "rule": "顺序现在固定：S 标签冻结后，取该顺序中前 15%（向上取整）的 S1/S2 前缀做双人独立 DP 选材；第二人的选择不改变已冻结的主要选择",
+  "salt_sha256": "c7a871f98caf8327116ffe4257c3012e179ff6a59beb1b95111743d2652d1c34",
+  "share": 0.15
+ },
+ "form_version": "S-v2",
+ "kind": "final human-screening kit (form S-v2); RAW-bearing packages stay off the public repository",
+ "labels_rule": "正式 S1/S2/S0 标签只能由人工整理者给出；任何模型不得生成或预填标签",
+ "overlap": {
+  "items": {
+   "CUR1": [
+    "48f7f5c9908a2d6514e67440f444fb46daa335fafabed9f91349e7dbe9a54389",
+    "3da2dc404b2ebb8235891d5390dd9ed71e675d681748f2aff262864179991a8e",
+    "117e8aa66aebea628b1eef52e731424a5ab870e13b3359a59568d04707200ee6",
+    "ee3abfabd0442e994f86ed9d82c47a149e39981b66bde2a7bb240d112e78910b",
+    "4fc7f86bf992f8c05491844e6a217b5f8125c818c8ef4999477d6ffa71857f0c"
+   ],
+   "CUR2": [
+    "24353a206bcc1a87957c76d67179df11b415ffadc02c8a7135f48995aa606bcc",
+    "b5d80a665c933554e6d7c157554709c148c0eaf8b2d579ce2f7f6c4c2d77ee8f",
+    "0f904d5c565ef792223d3317986d104d809fb76d721db75e15a3984d4f3e8121",
+    "1a79ba6dcd810db82bb2b4acd57ac51dec543498639ad6ae1f368655aa397455",
+    "8c18729067894e0d0dd0eaa8b0d2120af6b67f4e27f070e04a806553685773ea",
+    "4fa4d23352a9b23ae4baa5e69c526673dec22a7a30c1743353e7b230a84a1311"
+   ]
+  },
+  "n": {
+   "CUR1": 5,
+   "CUR2": 6
+  },
+  "order_sha256": "3467b2c7935874c00fd2651fc50fa92b763207dd056b3ee4082a4f6e164a83ce",
+  "rule": "每名整理者的有历史条目中，按登记的 salt 哈希顺序取前 15%（向上取整），交给另一名整理者独立盲标；不看主要标签；结果只用于报告一致性与分歧，不改写主要标签",
+  "salt_sha256": "4ecd805f76219ccf05edee2c843c5ebf78728f5b726da0ff3710fe85053e7538",
+  "share": 0.15
+ },
+ "packages": {
+  "PP1_CURATOR_CURP": {
+   "assignee": "CURP",
+   "blind_scan_hits": 0,
+   "html_sha256": "3179decca8ac3cb529b48649de35559c175b961e6dce8086e87cedb4f13829fe",
+   "items": 8,
+   "kind": "PP1",
+   "package_sha256": "bc43ba5e703f5541614d48f4835d2ae3227ea3e5e11bdd7ec638fa8f3849593f",
+   "private_path": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14/PP1_CURATOR_CURP.html",
+   "slot": "PP1"
+  },
+  "SCREEN90_CUR1": {
+   "assignee": "CUR1",
+   "blind_scan_hits": 0,
+   "html_sha256": "00e4e1c67524cbcc855a89482b24dc40477d904a8fa5e7d01da0dc66d448997e",
+   "items": 40,
+   "kind": "primary",
+   "package_sha256": "afc6020953cd44b1078c23d99a9e0fdb474a584eb5f232421a3df29780e62e94",
+   "private_path": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14/SCREEN90_CUR1.html",
+   "slot": "CUR1"
+  },
+  "SCREEN90_CUR2": {
+   "assignee": "CUR2",
+   "blind_scan_hits": 0,
+   "html_sha256": "cd2ad37851e7b3b7e077eea7301371657dbfe639cd6342ad28133ab7542b64ae",
+   "items": 50,
+   "kind": "primary",
+   "package_sha256": "6f577ca59c31d72a55471c553e6e8ce424fe97d2bfe67a94111d2655aac3d97e",
+   "private_path": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14/SCREEN90_CUR2.html",
+   "slot": "CUR2"
+  },
+  "SCREEN90_OVERLAP_CUR1": {
+   "assignee": "CUR1-OVL",
+   "blind_scan_hits": 0,
+   "covers_slot": "CUR2",
+   "html_sha256": "bee3cfbe34311ebf947fb6f30f269b77b4e427bb488473078f2c65c2072f761e",
+   "items": 6,
+   "kind": "overlap",
+   "package_sha256": "ac48e7b1da3c3b181571f200bfcd886d2aa001ee20edb7569bb3ea79a72f057d",
+   "private_path": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14/SCREEN90_OVERLAP_CUR1.html",
+   "slot": "CUR1"
+  },
+  "SCREEN90_OVERLAP_CUR2": {
+   "assignee": "CUR2-OVL",
+   "blind_scan_hits": 0,
+   "covers_slot": "CUR1",
+   "html_sha256": "050f0f9e95380cf8047790e3e671e03527d6bdca62fd430138d5dd6c1e0c1c7b",
+   "items": 5,
+   "kind": "overlap",
+   "package_sha256": "1ade502ab169b9fb5b3c4ac86af10fd564d10affd19acb3a6ed2f7a4990aab97",
+   "private_path": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14/SCREEN90_OVERLAP_CUR2.html",
+   "slot": "CUR2"
+  }
+ },
+ "placeholder_codes": true,
+ "practice": {
+  "PRACTICE_CURATOR.html": "5d5b73955d739071cb612c2a7acda78d013dea9a667880ce2e56241ee8516c0f",
+  "PRACTICE_REVIEWER_PART1.html": "cbee635670fc60b90f1c3925627221b0eb74add299b0c36026d4c7ddbd8aa501"
+ },
+ "private_dir": "/opt/tokkio-data0/tokkio_projects/pmrl1-validation/wsb-v321a-private/r14",
+ "protocol": {
+  "id": "pmrl1v3-v321a-working-protocol-candidate-1",
+  "sha256": "27df254fcf287156736559851e131122de3b8c73d79b814e81e0d45e15cde859"
+ }
+}
