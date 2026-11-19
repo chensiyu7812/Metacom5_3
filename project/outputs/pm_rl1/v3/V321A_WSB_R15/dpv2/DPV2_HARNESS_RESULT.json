@@ -1,0 +1,584 @@
+{
+ "object": {
+  "pr": 26,
+  "head": "df21b11c96165c1a3dd8ef0edf76df2788ee3e45",
+  "clean_checkout": true
+ },
+ "harness": "project/scripts/rl1v3/V321A_dpv2_harness.py",
+ "results": [
+  {
+   "id": "A1",
+   "name": "v2 wrap of #21's 8-prefix bundle validates; pools byte-identical to v1; binds v1 SHA",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "A2",
+   "name": "v2 bundle holds 87 candidate sessions over 8 prefixes",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "A3",
+   "name": "selector page embeds only the whitelisted pool view (no ranking/score/retrieval/result keys; source_rank is the session's time order, equal to reported_at.session_rank)",
+   "ok": true,
+   "detail": {
+    "bad": [],
+    "source_rank_is_time_order": true
+   },
+   "kind": "check"
+  },
+  {
+   "id": "A4",
+   "name": "rehashed bundle with a future session is refused (as-of rechecked)",
+   "ok": true,
+   "detail": "AdmissionError: candidate not as-of",
+   "kind": "check"
+  },
+  {
+   "id": "A5",
+   "name": "rehashed bundle with edited session text is refused (RAW span coverage)",
+   "ok": true,
+   "detail": "AdmissionError: RAW span coverage",
+   "kind": "check"
+  },
+  {
+   "id": "A6",
+   "name": "OBSERVATION: a rehashed bundle that silently drops one legal past session is NOT refused (completeness is not rechecked against the snapshot)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "A7",
+   "name": "a v1 bundle cannot be used to freeze a v2 choice",
+   "ok": true,
+   "detail": "AdmissionError: v2 bundle required; never relabel v1 receipts",
+   "kind": "check"
+  },
+  {
+   "id": "B1",
+   "name": "selected + full coverage + empty missing_need is accepted",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "check"
+  },
+  {
+   "id": "B2",
+   "name": "full coverage with a missing need is refused",
+   "ok": true,
+   "detail": "AdmissionError: full coverage contradicts missing need",
+   "kind": "check"
+  },
+  {
+   "id": "B3",
+   "name": "partial coverage without missing_need is refused",
+   "ok": true,
+   "detail": "AdmissionError: required field: missing_need",
+   "kind": "check"
+  },
+  {
+   "id": "B4",
+   "name": "staleness_issue as the string 'true' is refused (explicit boolean)",
+   "ok": true,
+   "detail": "AdmissionError: explicit boolean: staleness_issue",
+   "kind": "check"
+  },
+  {
+   "id": "B5",
+   "name": "staleness_issue=true without detail is refused",
+   "ok": true,
+   "detail": "AdmissionError: required field: staleness_detail",
+   "kind": "check"
+  },
+  {
+   "id": "B6",
+   "name": "stage_issue=true without detail is refused",
+   "ok": true,
+   "detail": "AdmissionError: required field: stage_detail",
+   "kind": "check"
+  },
+  {
+   "id": "B7",
+   "name": "rankings_not_seen=false is refused",
+   "ok": true,
+   "detail": "AdmissionError: selector must not see outputs, comparisons or retrieval rankings",
+   "kind": "check"
+  },
+  {
+   "id": "B8",
+   "name": "outcomes_not_seen=false is refused",
+   "ok": true,
+   "detail": "AdmissionError: selector must not see outputs, comparisons or retrieval rankings",
+   "kind": "check"
+  },
+  {
+   "id": "B9",
+   "name": "missing_need=None is refused",
+   "ok": true,
+   "detail": "AdmissionError: required field: missing_need",
+   "kind": "check"
+  },
+  {
+   "id": "B10",
+   "name": "unknown coverage value is refused",
+   "ok": true,
+   "detail": "AdmissionError: single_session_coverage",
+   "kind": "check"
+  },
+  {
+   "id": "B11",
+   "name": "a source outside the lawful pool is refused",
+   "ok": true,
+   "detail": "AdmissionError: choice outside lawful pool",
+   "kind": "check"
+  },
+  {
+   "id": "B12",
+   "name": "OBSERVATION: decision=selected with coverage=none is accepted (a chosen session that covers nothing)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "C1",
+   "name": "none_suitable carrying a source is refused",
+   "ok": true,
+   "detail": "AdmissionError: no selection has no coverage/source",
+   "kind": "check"
+  },
+  {
+   "id": "C2",
+   "name": "none_suitable with coverage=partial is refused",
+   "ok": true,
+   "detail": "AdmissionError: no selection has no coverage/source",
+   "kind": "check"
+  },
+  {
+   "id": "C3",
+   "name": "none_suitable without saying what is missing is refused",
+   "ok": true,
+   "detail": "AdmissionError: required field: missing_need",
+   "kind": "check"
+  },
+  {
+   "id": "F3",
+   "name": "the fixed 4-person registry (CUR1/CUR2 select; R1/R2 review Q0/QH/F) freezes every prefix",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "C4",
+   "name": "uncertain stays a pending DP-MS row (no input, status 'uncertain'); not turned into OFF or RET",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "C5",
+   "name": "the plan lists the uncertain DP-MS request as material_pending and never as runnable",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "C6",
+   "name": "substituting the RET source into the uncertain DP-MS row is refused",
+   "ok": true,
+   "detail": "AdmissionError: DP is the human choice, not RET/OFF fallback",
+   "kind": "check"
+  },
+  {
+   "id": "D0",
+   "name": "B's synthetic screening envelope (4 label fields) passes A's validate_sample",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "check"
+  },
+  {
+   "id": "D1",
+   "name": "simulated screening is refused",
+   "ok": true,
+   "detail": "AdmissionError: simulated screening cannot fix a formal sample",
+   "kind": "check"
+  },
+  {
+   "id": "D2",
+   "name": "a label row with an extra field (score) is refused",
+   "ok": true,
+   "detail": "AdmissionError: screening labels only; no outputs/rankings/scores",
+   "kind": "check"
+  },
+  {
+   "id": "D3",
+   "name": "a label hash that does not match is refused",
+   "ok": true,
+   "detail": "AdmissionError: screening labels hash",
+   "kind": "check"
+  },
+  {
+   "id": "D4",
+   "name": "a formal prefix labelled S7/unclear is refused",
+   "ok": true,
+   "detail": "AdmissionError: formal prefix not resolved in real screening",
+   "kind": "check"
+  },
+  {
+   "id": "D5",
+   "name": "a manifest bound to another screening receipt is refused",
+   "ok": true,
+   "detail": "AdmissionError: screening receipt binding",
+   "kind": "check"
+  },
+  {
+   "id": "D6",
+   "name": "a sample frozen before its screening is refused",
+   "ok": true,
+   "detail": "AdmissionError: sample precedes screening",
+   "kind": "check"
+  },
+  {
+   "id": "D7",
+   "name": "an unconfirmed sample is refused",
+   "ok": true,
+   "detail": "AdmissionError: formal sample not confirmed",
+   "kind": "check"
+  },
+  {
+   "id": "D8",
+   "name": "OBSERVATION: verified_by / verification_evidence are free text -- any non-empty string passes (human provenance is attested, not checked against B's receipt)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "D9",
+   "name": "a resealed plan with reordered requests is refused at check_start",
+   "ok": true,
+   "detail": "AdmissionError: formal plan/selection/request identity changed",
+   "kind": "check"
+  },
+  {
+   "id": "E1",
+   "name": "START at exactly the plan freeze time is refused (strictly later required)",
+   "ok": true,
+   "detail": "AdmissionError: plan must predate generation START",
+   "kind": "check"
+  },
+  {
+   "id": "E2",
+   "name": "START after the plan passes and states generation_started=false, authorized=false",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "E3",
+   "name": "START before the plan freeze is refused",
+   "ok": true,
+   "detail": "AdmissionError: plan must predate generation START",
+   "kind": "check"
+  },
+  {
+   "id": "E4",
+   "name": "a plan frozen before one selection was frozen is refused",
+   "ok": true,
+   "detail": "AdmissionError: selection freeze outside sample/plan order",
+   "kind": "check"
+  },
+  {
+   "id": "E5",
+   "name": "a selection frozen before the role registry is refused",
+   "ok": true,
+   "detail": "AdmissionError: roles not frozen before selection",
+   "kind": "check"
+  },
+  {
+   "id": "E6",
+   "name": "a declaration time after the freeze is refused",
+   "ok": true,
+   "detail": "AdmissionError: choice declaration after freeze",
+   "kind": "check"
+  },
+  {
+   "id": "E7",
+   "name": "a selection frozen before the sample freeze is refused",
+   "ok": true,
+   "detail": "AdmissionError: selection freeze outside sample/plan order",
+   "kind": "check"
+  },
+  {
+   "id": "E8",
+   "name": "OBSERVATION: freeze time is the machine clock (or a caller-supplied value); a back-dated freeze is only caught by the relative order checks",
+   "ok": true,
+   "detail": "AdmissionError: choice declaration after freeze",
+   "kind": "observation"
+  },
+  {
+   "id": "E9",
+   "name": "a second freeze of the same prefix into the same receipt directory is refused (write-once)",
+   "ok": true,
+   "detail": "FileExistsError: [Errno 17] File exists: '/opt/tokkio-data0/tokkio_runs/wsb_v321a/tmp/dpv2_q3pa79x1/receipts/94f75c80fa7c4df6033fcc5d442484d798ca8102ac11952fb4eb6031747a833f.json'",
+   "kind": "check"
+  },
+  {
+   "id": "F1",
+   "name": "the selector as a QH reviewer of the same prefix is refused",
+   "ok": true,
+   "detail": "AdmissionError: selector cannot review own prefix, including aliases",
+   "kind": "check"
+  },
+  {
+   "id": "F2",
+   "name": "an alias of the selector (same person) as F reviewer is refused",
+   "ok": true,
+   "detail": "AdmissionError: selector cannot review own prefix, including aliases",
+   "kind": "check"
+  },
+  {
+   "id": "F4",
+   "name": "a reviewer code without a person identity is refused",
+   "ok": true,
+   "detail": "AdmissionError: reviewer person identity",
+   "kind": "check"
+  },
+  {
+   "id": "F5",
+   "name": "a selector not assigned to the prefix is refused",
+   "ok": true,
+   "detail": "AdmissionError: selector not assigned to this prefix",
+   "kind": "check"
+  },
+  {
+   "id": "F6",
+   "name": "15% second selection works with a separate registry + separate directory; the frozen primary set and its requests are unchanged",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "F7",
+   "name": "a second-selector receipt cannot replace the primary one in the plan (role registry differs)",
+   "ok": true,
+   "detail": "AdmissionError: selector not assigned to this prefix",
+   "kind": "check"
+  },
+  {
+   "id": "F8",
+   "name": "OBSERVATION: the second selection is not a first-class role in v2 (no 'second_selector' field, no link between the two registries); it depends on a coordinator convention",
+   "ok": true,
+   "detail": null,
+   "kind": "observation"
+  },
+  {
+   "id": "F9",
+   "name": "check_reviewer passes R1 for QH of a prefix selected by CUR1",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "check"
+  },
+  {
+   "id": "F10",
+   "name": "check_reviewer refuses the selector as reviewer",
+   "ok": true,
+   "detail": "AdmissionError: reviewer not assigned to prefix/channel",
+   "kind": "check"
+  },
+  {
+   "id": "F11",
+   "name": "OBSERVATION: the F-adjudicator role is not modelled; CUR2 adjudicating a prefix that CUR2 selected (primary or 15% second) has to be refused by the adjudication-package builder (B enforces it)",
+   "ok": true,
+   "detail": null,
+   "kind": "observation"
+  },
+  {
+   "id": "H1",
+   "name": "B's distribution gate runs A's check_reviewer on all 18 (prefix, channel, reviewer) of the 4-person plan",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "check"
+  },
+  {
+   "id": "H2",
+   "name": "the gate refuses packaging a curator as reviewer",
+   "ok": true,
+   "detail": "GateRefused: CUR1 is not a reviewer code",
+   "kind": "check"
+  },
+  {
+   "id": "H3",
+   "name": "adjudicator CUR2 is blocked on prefixes CUR2 selected (primary or 15% second) and allowed elsewhere",
+   "ok": true,
+   "detail": {
+    "allowed": [
+     "d96f5d3bfacf33b0fa820bb47ba6a314eb8d8b1b0ebc6a0a0a6cbf8a1358a4b7"
+    ],
+    "blocked": [
+     "94f75c80fa7c4df6033fcc5d442484d798ca8102ac11952fb4eb6031747a833f",
+     "b03ed4b9a7bf7a1a224dda8a9846cd6a3cb3f08bd6177901f5756d3b13947442"
+    ],
+    "rule": "裁决者不得是该前缀的主选择者、15% 第二选择者或审阅者；被挡住的分歧记为“未裁决”，保留两名审阅者原始标签"
+   },
+   "kind": "check"
+  },
+  {
+   "id": "H4",
+   "name": "the non-blind coordinator CUR1 cannot adjudicate",
+   "ok": true,
+   "detail": "GateRefused: the non-blind coordinator cannot adjudicate",
+   "kind": "check"
+  },
+  {
+   "id": "A8",
+   "name": "every v2 pool equals the prefix's complete strictly-past RAW sessions (B's own RAW reader): 87 sessions, texts identical, chronological",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "G1",
+   "name": "FINDING: with \"选择一份完整会话\" the first (earliest) session is already selected before the person picks one",
+   "ok": true,
+   "detail": "rec-ownA-0",
+   "kind": "finding"
+  },
+  {
+   "id": "G2",
+   "name": "FINDING: the source list has no empty \"请选择\" option",
+   "ok": true,
+   "detail": null,
+   "kind": "finding"
+  },
+  {
+   "id": "G3",
+   "name": "none_suitable sets coverage=none and locks it",
+   "ok": true,
+   "detail": [
+    "none",
+    true
+   ],
+   "kind": "check"
+  },
+  {
+   "id": "G4",
+   "name": "download is blocked until both blind statements are ticked",
+   "ok": true,
+   "detail": "需要先确认没有查看 Generator 比较结果；若已查看，请停止并报告。",
+   "kind": "check"
+  },
+  {
+   "id": "G5",
+   "name": "full coverage with a missing need is blocked in the page",
+   "ok": true,
+   "detail": "完整覆盖与仍有缺失信息不一致，请检查。",
+   "kind": "check"
+  },
+  {
+   "id": "G6",
+   "name": "a complete choice downloads a draft file",
+   "ok": true,
+   "detail": "DP-choice-94f75c80fa7c.json",
+   "kind": "check"
+  },
+  {
+   "id": "G7",
+   "name": "OBSERVATION: the selector page shows the history only in English (no Chinese display layer)",
+   "ok": true,
+   "detail": 955,
+   "kind": "observation"
+  },
+  {
+   "id": "G8",
+   "name": "no condition / score / retrieval wording in the selector page text",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  },
+  {
+   "id": "G9",
+   "name": "browser run without errors",
+   "ok": true,
+   "detail": [],
+   "kind": "check"
+  },
+  {
+   "id": "G10",
+   "name": "the downloaded draft freezes through A's freeze_choice with the 4-person registry",
+   "ok": true,
+   "detail": null,
+   "kind": "check"
+  }
+ ],
+ "checks_passed": 61,
+ "checks_total": 61,
+ "findings": [
+  {
+   "id": "G1",
+   "name": "FINDING: with \"选择一份完整会话\" the first (earliest) session is already selected before the person picks one",
+   "ok": true,
+   "detail": "rec-ownA-0",
+   "kind": "finding"
+  },
+  {
+   "id": "G2",
+   "name": "FINDING: the source list has no empty \"请选择\" option",
+   "ok": true,
+   "detail": null,
+   "kind": "finding"
+  }
+ ],
+ "observations": [
+  {
+   "id": "A6",
+   "name": "OBSERVATION: a rehashed bundle that silently drops one legal past session is NOT refused (completeness is not rechecked against the snapshot)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "B12",
+   "name": "OBSERVATION: decision=selected with coverage=none is accepted (a chosen session that covers nothing)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "D8",
+   "name": "OBSERVATION: verified_by / verification_evidence are free text -- any non-empty string passes (human provenance is attested, not checked against B's receipt)",
+   "ok": true,
+   "detail": "accepted",
+   "kind": "observation"
+  },
+  {
+   "id": "E8",
+   "name": "OBSERVATION: freeze time is the machine clock (or a caller-supplied value); a back-dated freeze is only caught by the relative order checks",
+   "ok": true,
+   "detail": "AdmissionError: choice declaration after freeze",
+   "kind": "observation"
+  },
+  {
+   "id": "F8",
+   "name": "OBSERVATION: the second selection is not a first-class role in v2 (no 'second_selector' field, no link between the two registries); it depends on a coordinator convention",
+   "ok": true,
+   "detail": null,
+   "kind": "observation"
+  },
+  {
+   "id": "F11",
+   "name": "OBSERVATION: the F-adjudicator role is not modelled; CUR2 adjudicating a prefix that CUR2 selected (primary or 15% second) has to be refused by the adjudication-package builder (B enforces it)",
+   "ok": true,
+   "detail": null,
+   "kind": "observation"
+  },
+  {
+   "id": "G7",
+   "name": "OBSERVATION: the selector page shows the history only in English (no Chinese display layer)",
+   "ok": true,
+   "detail": 955,
+   "kind": "observation"
+  }
+ ]
+}

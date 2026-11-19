@@ -1,0 +1,192 @@
+{
+ "checks": [
+  {
+   "detail": null,
+   "name": "batches rebuild identically (same file SHA as the handover copy)",
+   "ok": true
+  },
+  {
+   "detail": [
+    "copied_english",
+    "digits_changed",
+    "missing",
+    "no_chinese",
+    "translator_note"
+   ],
+   "name": "line checks catch a missing line, a changed number, a translator note and copied English",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "a fix request listing only the bad lines is written",
+   "ok": true
+  },
+  {
+   "detail": [
+    "CUR1_01_CROSS6",
+    "CUR1_03_PP1_S8",
+    "CUR2_02_SCREEN50"
+   ],
+   "name": "packages needing the faulty batch are not built",
+   "ok": true
+  },
+  {
+   "detail": {
+    "CUR1_01_CROSS6": "built",
+    "CUR1_02_SCREEN40": "built",
+    "CUR1_03_PP1_S8": "built",
+    "CUR2_01_CROSS5": "built",
+    "CUR2_02_SCREEN50": "built"
+   },
+   "name": "after the fix file every package is built and passes the page checks",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "Chinese pages keep exactly the English source of the issued packages",
+   "ok": true
+  },
+  {
+   "detail": 8085,
+   "name": "one translation per source sentence (translation memory size = unique units)",
+   "ok": true
+  },
+  {
+   "detail": [
+    "package SHA matches its content",
+    "every sentence translated and aligned"
+   ],
+   "name": "page check refuses: edited translation without resealing",
+   "ok": true
+  },
+  {
+   "detail": [
+    "same English source as an issued package",
+    "translation mapping recorded (every line: source SHA + translation SHA)"
+   ],
+   "name": "page check refuses: English source edited and resealed",
+   "ok": true
+  },
+  {
+   "detail": [
+    "every sentence translated and aligned"
+   ],
+   "name": "page check refuses: sentence alignment broken and resealed",
+   "ok": true
+  },
+  {
+   "detail": [
+    "verified core logic unchanged (pp1_core.js)"
+   ],
+   "name": "page check refuses: page logic modified",
+   "ok": true
+  },
+  {
+   "detail": [
+    "no network references"
+   ],
+   "name": "page check refuses: external script added",
+   "ok": true
+  },
+  {
+   "detail": [
+    "same English source as an issued package",
+    "blind scan (no ids, conditions, labels, scores)"
+   ],
+   "name": "page check refuses: blinding term inserted and resealed",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "browser: page opens without error",
+   "ok": true
+  },
+  {
+   "detail": "S:ca29412ddf9",
+   "name": "browser: task list present",
+   "ok": true
+  },
+  {
+   "detail": {
+    "en": 443,
+    "zhp": 443
+   },
+   "name": "browser: Chinese shown first; every Chinese line has its English original (collapsed)",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "browser: English originals can all be expanded",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "browser: progress export downloads",
+   "ok": true
+  },
+  {
+   "detail": {
+    "head": "b801b561864abb9b896fe322f86c5ad9b7625fe76454157f4152ae2fdeeec398"
+   },
+   "name": "browser: import on a fresh machine restores the exported log (same head)",
+   "ok": true
+  },
+  {
+   "detail": null,
+   "name": "browser: Python independently verifies the exported progress file",
+   "ok": true
+  },
+  {
+   "detail": [],
+   "name": "browser: no errors",
+   "ok": true
+  },
+  {
+   "detail": [
+    "REFUSED: 请先收 CUR1 的交叉复核（6 条，已锁定）导出，再收 CUR2 的 50 条导出（CUR1 保管收件，不能先看到 CUR2 的标签）"
+   ],
+   "name": "receive refuses CUR2's 50 before CUR1's own cross-check is in",
+   "ok": true
+  },
+  {
+   "detail": [
+    "{\"package\": \"CUR1_01_CROSS6\", \"locked\": true, \"submitted\": 9, \"receipt\": \"0550720a8d28490d\"}"
+   ],
+   "name": "receive accepts CUR1's locked cross-check",
+   "ok": true
+  },
+  {
+   "detail": [
+    "{\"package\": \"CUR2_02_SCREEN50\", \"locked\": true, \"submitted\": 9, \"receipt\": \"0550720a8d28490d\"}"
+   ],
+   "name": "then CUR2's 50 is accepted",
+   "ok": true
+  },
+  {
+   "detail": [
+    "REFUSED: event 9: hash mismatch"
+   ],
+   "name": "receive refuses an edited export",
+   "ok": true
+  },
+  {
+   "detail": [
+    "/opt/tokkio-data0/tokkio_runs/wsb_v321a/tmp/r15_selftest_TEST_ONLY/hand/00_TRANSLATE/batches/CUR2_操作/Y01.txt 32 lines"
+   ],
+   "name": "PP1 reply batch: written for CUR2, no case/pair/condition/key in it",
+   "ok": true
+  },
+  {
+   "detail": [
+    "R1 /opt/tokkio-data0/tokkio_runs/wsb_v321a/tmp/r15_selftest_TEST_ONLY/hand/R1/R1_PP1_第一部分_Q0.html 3c7f410ee761",
+    "R2 /opt/tokkio-data0/tokkio_runs/wsb_v321a/tmp/r15_selftest_TEST_ONLY/hand/R2/R2_PP1_第一部分_Q0.html d019b122a38b"
+   ],
+   "name": "PP1 R1/R2 part 1 built (Chinese first, identical translation, mirrored, blind scan, page checks)",
+   "ok": true
+  }
+ ],
+ "note": "真实英文任务包 + 假译文（【测试译文·非真实】）；页面在测试结束后删除，不进入交接目录",
+ "passed": 27,
+ "test_only": true,
+ "total": 27
+}

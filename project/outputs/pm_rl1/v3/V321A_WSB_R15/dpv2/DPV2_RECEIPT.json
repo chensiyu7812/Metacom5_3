@@ -1,0 +1,73 @@
+{
+ "object": {
+  "pr": 26,
+  "head": "df21b11c96165c1a3dd8ef0edf76df2788ee3e45",
+  "clean_checkout": true,
+  "files_sha256": {
+   "src/metacom_pm/rl1v3/compile/dp_selection_v2.py": "2f06c82f38145160c5075e72549638f1813de8bb56c2365bc50c54c475785a45",
+   "src/metacom_pm/rl1v3/compile/dp_selector_v2.html": "b5d55c8dbe00d532cc2bd46af5ecdb369acbeb9f4ef4d611278ccacb57a33dfc",
+   "scripts/rl1v3/dp_ms_select_v2.py": "330056a4e4a46379e52a7666409db1c3169930b97085479d660b9f5bc4af83a1",
+   "src/metacom_pm/rl1v3/compile/dp_selection.py": "d6fde06b6b341a19608948ff14ffea9098aafc625b3b1ded2557ff2e20d10245"
+  }
+ },
+ "verdict": "BACKEND_PASS__SELECTOR_PAGE_NOT_SIGNED",
+ "verdict_zh": "后端（字段、none/uncertain、真实筛查绑定、时间顺序、角色、计划与 START 检查）通过；选材页有 1 项必须修正的缺陷（默认选中第一份会话），修正并补中文显示后用同一脚本复验，复验前不用于真实选材",
+ "checks": {
+  "passed": 61,
+  "total": 61
+ },
+ "findings": [
+  {
+   "id": "G1",
+   "name": "FINDING: with \"选择一份完整会话\" the first (earliest) session is already selected before the person picks one"
+  },
+  {
+   "id": "G2",
+   "name": "FINDING: the source list has no empty \"请选择\" option"
+  }
+ ],
+ "observations": [
+  {
+   "id": "A6",
+   "name": "OBSERVATION: a rehashed bundle that silently drops one legal past session is NOT refused (completeness is not rechecked against the snapshot)"
+  },
+  {
+   "id": "B12",
+   "name": "OBSERVATION: decision=selected with coverage=none is accepted (a chosen session that covers nothing)"
+  },
+  {
+   "id": "D8",
+   "name": "OBSERVATION: verified_by / verification_evidence are free text -- any non-empty string passes (human provenance is attested, not checked against B's receipt)"
+  },
+  {
+   "id": "E8",
+   "name": "OBSERVATION: freeze time is the machine clock (or a caller-supplied value); a back-dated freeze is only caught by the relative order checks"
+  },
+  {
+   "id": "F8",
+   "name": "OBSERVATION: the second selection is not a first-class role in v2 (no 'second_selector' field, no link between the two registries); it depends on a coordinator convention"
+  },
+  {
+   "id": "F11",
+   "name": "OBSERVATION: the F-adjudicator role is not modelled; CUR2 adjudicating a prefix that CUR2 selected (primary or 15% second) has to be refused by the adjudication-package builder (B enforces it)"
+  },
+  {
+   "id": "G7",
+   "name": "OBSERVATION: the selector page shows the history only in English (no Chinese display layer)"
+  }
+ ],
+ "harness": {
+  "path": "project/scripts/rl1v3/V321A_dpv2_harness.py",
+  "sha256": "62f1af46130ab76a126c93ce273d0598097f5a43507cd70cb816bb18b662a778",
+  "dist_gate": {
+   "path": "project/src/metacom_pm/rl1v3/review/dist_gate.py",
+   "sha256": "7e08eacc9aec0cce66ae043afae4ee681b1b0d3089a3063c647035b10ff06093"
+  },
+  "python": "3.11 (venv311)",
+  "browser": "headless Chrome (CDP)",
+  "oracle": "B's own fixtures and expectations; A's tests and helpers are not used"
+ },
+ "scope": "CPU, simulated material + the #21 8-prefix v1 bundle (87 sessions) checked against B's own RAW reader; no real selection, no formal sample, no generation",
+ "not_authorization": "本回执不是 DP 选材、正式样本、FC-MS 生成或任何 GPU 的授权",
+ "receipt_sha256": "6e4bfc1ab0c8f36910b984231693d0eb17d2ddf0b97e8ad4598648f8037f7107"
+}

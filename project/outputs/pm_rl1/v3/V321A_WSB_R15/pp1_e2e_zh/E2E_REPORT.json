@@ -1,0 +1,812 @@
+{
+ "checks": [
+  {
+   "by": "browser:curator",
+   "detail": 9,
+   "name": "curator: all screening items listed",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": {
+    "enN": 13,
+    "zhp": 13
+   },
+   "name": "zh: Chinese is shown first for every translated line; English collapsed by default",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": null,
+   "name": "zh: \"展开全部英文原文\" opens every English original, sentence by sentence",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": "题号 前缀 1 · 人物 1 · 来源校验码 dd24a9e505a9",
+   "name": "zh: curator item shows its number and the source check code (same as the coordinator list)",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": "还不能提交：\n「S-2 理由：如果回复者不知道这段历史，回复会怎样出错？」未填写\n「S-2b 满足这一需要，是否必须结合多个过去会话？」未填写\n「S-4 历史片段标注（在历史中点“标注”添加）」S1 需要在历史中至少标注一条“必要”片段",
+   "name": "curator: S1 without reason, sessions-needed and required span is refused",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": {
+    "evAfter": 36,
+    "evBefore": 34
+   },
+   "name": "curator: reopening restores the local log",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": 4,
+   "name": "curator: 4 submitted items survive the restart",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": null,
+   "name": "curator: the unsent draft is restored after restart",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": 0,
+   "name": "curator: a fresh machine starts empty",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": 4,
+   "name": "curator: import restores the 4 submitted items on the new machine",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": 0,
+   "name": "curator: a submitted item is read-only in the UI",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": "draft rejected: item S:c8f64379f67 is already locked",
+   "name": "curator: core refuses an edit of a locked item",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": 0,
+   "name": "curator: a locked stage can no longer be opened",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": "item S:c8434490950 belongs to locked stage S and can no longer be viewed",
+   "name": "curator: core refuses viewing an item of a locked stage",
+   "ok": true
+  },
+  {
+   "by": "browser:curator",
+   "detail": null,
+   "name": "generic tool: opens a package file",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": 8,
+   "name": "R1: 8 Q0 pairs",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": null,
+   "name": "R1: Q0 shows no history",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": null,
+   "name": "R1: QH not available before part 2",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": 8,
+   "name": "R2: 8 Q0 pairs",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": null,
+   "name": "R2: Q0 shows no history",
+   "ok": true
+  },
+  {
+   "by": "browser:q0",
+   "detail": null,
+   "name": "R2: QH not available before part 2",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": "不能载入：anchor mismatch: stage Q0 lock event differs from the coordinator anchor",
+   "name": "R1: part 2 with a wrong anchor is refused",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: Q0 items are no longer listed",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R1: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": "item Q0:pd69565f81e belongs to locked stage Q0 and can no longer be viewed",
+   "name": "R1: core refuses re-opening a Q0 item during QH",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 16,
+   "name": "R1: 16 F items",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": "还不能提交：\n「F5 虚构历史（提到历史中查不到的经历或说法）」引用的不是回复中的原句（请逐字复制）",
+   "name": "F: a quote that is not verbatim in the reply is refused at submit",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": {
+    "got": "Simulated reply: you mentioned before that a payment plan was rejected by the clinic, so let us not repeat that.",
+    "sent": "Simulated reply: you mentioned before that a payment plan was rejected by the clinic, so let us not repeat that."
+   },
+   "name": "zh: \"引用此句\" copies the English original sentence into F5",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": {
+    "got": "Simulated reply: you mentioned before that practising at night made me more nervous, so let us not repeat that.",
+    "sent": "Simulated reply: you mentioned before that practising at night made me more nervous, so let us not repeat that."
+   },
+   "name": "zh: \"引用此句\" copies the English original sentence into F6",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R1: restart keeps part 2 and F progress",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": "不能载入：anchor mismatch: stage Q0 lock event differs from the coordinator anchor",
+   "name": "R2: part 2 with a wrong anchor is refused",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: Q0 items are no longer listed",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 0,
+   "name": "R2: QH page starts empty (no Q0 answer shown)",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: QH page shows the history",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": "item Q0:p72d3ba64f6 belongs to locked stage Q0 and can no longer be viewed",
+   "name": "R2: core refuses re-opening a Q0 item during QH",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": 16,
+   "name": "R2: 16 F items",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": {
+    "got": "Simulated reply: it makes sense that I failed the parking part once feels heavy.",
+    "sent": "Simulated reply: it makes sense that I failed the parking part once feels heavy."
+   },
+   "name": "zh: \"引用此句\" copies the English original sentence into F6",
+   "ok": true
+  },
+  {
+   "by": "browser:rest",
+   "detail": null,
+   "name": "R2: import on a new machine restores part 2 and F progress",
+   "ok": true
+  },
+  {
+   "by": "browser:audit",
+   "detail": 1,
+   "name": "ADJ1: items listed",
+   "ok": true
+  },
+  {
+   "by": "browser:audit",
+   "detail": 3,
+   "name": "AUD1: items listed",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "curator package passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "R1 part 1 passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R1 part 1 carries no history",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "R2 part 1 passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R2 part 1 carries no history",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": {
+    "R1:Q0": {
+     "control_in_A": 4,
+     "pairs": 8
+    },
+    "R1:QH": {
+     "control_in_A": 4,
+     "pairs": 8
+    },
+    "R2:Q0": {
+     "control_in_A": 4,
+     "pairs": 8
+    },
+    "R2:QH": {
+     "control_in_A": 4,
+     "pairs": 8
+    }
+   },
+   "name": "positions exactly balanced per channel (4 of 8 control replies in slot 甲)",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "second reviewer sees every pair in the mirrored order",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "curator progress export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "curator stage export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "curator final export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "curator final export extends the earlier progress export",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R1 Q0 stage export re-verifies in Python and Q0 is locked",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "R1 part 2 passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R2 Q0 stage export re-verifies in Python and Q0 is locked",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "R2 part 2 passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R1 final export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R1 every stage locked",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R1 final export extends the anchored Q0 stage export",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R2 final export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R2 every stage locked",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "R2 final export extends the anchored Q0 stage export",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "adjudication package passes the blind scan",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "auditor package is non-blind by design (carries conditions)",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": "R2: not every stage is locked",
+   "name": "F-A cannot be built before every reviewer stage is locked",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "ADJ1 final export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": null,
+   "name": "AUD1 final export re-verifies in Python",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": 1,
+   "name": "planted F5 disagreement reaches adjudication",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "visible text of every blind page has no condition/label/score vocabulary or identifier",
+   "ok": true
+  },
+  {
+   "by": "python",
+   "detail": [],
+   "name": "curator pages show no condition vocabulary or identifier (need-label options are the curator's own form)",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 119: hash mismatch",
+   "name": "tamper: an edited locked answer breaks the hash chain",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 281: sequence gap",
+   "name": "tamper: a deleted event breaks the chain",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 12: sequence gap",
+   "name": "tamper: reordered events break the chain",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 105: anchor mismatch",
+   "name": "tamper: a fully re-hashed rewrite verifies alone but no longer extends the coordinator's Q0 anchor",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 473: draft not allowed for F:r5226890698",
+   "name": "tamper: a well-formed edit of a locked item is refused by the replay rules",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "export carries a package the coordinator did not issue",
+   "name": "tamper: an edited package fails its own hash",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "event 104: anchor mismatch",
+   "name": "tamper: removing the Q0 lock makes every later step illegal (stage order)",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": "export carries a package the coordinator did not issue",
+   "name": "tamper: a re-sealed package the coordinator never issued is rejected",
+   "ok": true
+  },
+  {
+   "by": "python-tamper",
+   "detail": [
+    {
+     "kind": "term",
+     "match": "condition",
+     "path": "$.replies.re97ff68af7.<key>"
+    },
+    {
+     "kind": "term",
+     "match": "RET-?MS",
+     "path": "$.replies.re97ff68af7.condition"
+    }
+   ],
+   "name": "tamper: a condition field injected into a reviewer package is caught by the blind scan",
+   "ok": true
+  }
+ ],
+ "chrome": "Google Chrome 156.0.8078.79",
+ "kind": "PP1 review tool end-to-end acceptance with SIMULATED data (headless Chrome + Python re-verification)",
+ "node": "v22.23.4",
+ "node_errors": {},
+ "note": "Times in procedure_metrics_sim are robot times (seconds), not human estimates; they only prove the timing pipeline works.  The F-A page is non-blind by design and is excluded from the blind-page scan.",
+ "packages": {
+  "R1": "dba1f7325bfa54bdd6f9952543c83b6d6ecea4022ec0999dc69b6ac5dfb60fa6",
+  "R1:2": "10c91bf3821c748d06452aa8b8f1df27e46ab797e0a68b742e37790459c82430",
+  "R2": "c500f36e11ce1a32224af4301b51e7566d043240601e38469e193317af38e10f",
+  "R2:2": "f50b588a0d990b3fc322173583942c47b2309e34f286b6a14f84c86e475dafd3",
+  "curator": "d860f1b70c62f7b458e9bd77e55e7a70b83325edf0b25b1c70b2c222d176f52b"
+ },
+ "position_balance": {
+  "R1:Q0": {
+   "control_in_A": 4,
+   "pairs": 8
+  },
+  "R1:QH": {
+   "control_in_A": 4,
+   "pairs": 8
+  },
+  "R2:Q0": {
+   "control_in_A": 4,
+   "pairs": 8
+  },
+  "R2:QH": {
+   "control_in_A": 4,
+   "pairs": 8
+  }
+ },
+ "procedure_metrics_sim": {
+  "agreement": {
+   "Q0": {
+    "aligned_agreement": 0.125,
+    "note": "位置标签（甲/乙）在两名评审者之间独立随机；一致率在审计侧按回复对齐后计算",
+    "pairs": 8,
+    "uncertain_rate": 0.125
+   },
+   "QH": {
+    "aligned_agreement": 0.125,
+    "note": "位置标签（甲/乙）在两名评审者之间独立随机；一致率在审计侧按回复对齐后计算",
+    "pairs": 8,
+    "uncertain_rate": 0.125
+   }
+  },
+  "evidence": {
+   "R1": {
+    "findings": 2,
+    "with_quote_and_source": 2
+   },
+   "R2": {
+    "findings": 1,
+    "with_quote_and_source": 1
+   }
+  },
+  "f_disputes_serious": 1,
+  "minutes_per_item": {
+   "F": {
+    "estimate": 4,
+    "median": 0.0,
+    "n": 32,
+    "p90": 0.0,
+    "ratio": 0.0
+   },
+   "PROBE": {
+    "estimate": 0.3,
+    "median": 0.0,
+    "n": 16,
+    "p90": 0.0,
+    "ratio": 0.0
+   },
+   "Q0": {
+    "estimate": 1.5,
+    "median": 0.0,
+    "n": 16,
+    "p90": 0.0,
+    "ratio": 0.0
+   },
+   "QH": {
+    "estimate": 3,
+    "median": 0.0,
+    "n": 16,
+    "p90": 0.0,
+    "ratio": 0.0
+   }
+  },
+  "probe": {
+   "R1": {
+    "guessed_resource_reply": 2,
+    "note": "描述性；回复自身提到过去时猜中是预期的，不说明表单泄露",
+    "pairs": 8,
+    "rate": 0.25
+   },
+   "R2": {
+    "guessed_resource_reply": 3,
+    "note": "描述性；回复自身提到过去时猜中是预期的，不说明表单泄露",
+    "pairs": 8,
+    "rate": 0.375
+   }
+  },
+  "raters": {
+   "R1": {
+    "all_stages_locked": true,
+    "items": 40,
+    "locked": 40
+   },
+   "R2": {
+    "all_stages_locked": true,
+    "items": 40,
+    "locked": 40
+   }
+  }
+ },
+ "simulated": true,
+ "totals": {
+  "browser": 69,
+  "checks": 107,
+  "failed": 0,
+  "passed": 107,
+  "python": 29,
+  "tamper": 9
+ },
+ "work_dir": "/opt/tokkio-data0/tokkio_runs/wsb_v321a/e2e_20261119_222740"
+}

@@ -30,6 +30,22 @@
     return e;
   }
   function clone(x) { return x === undefined ? undefined : JSON.parse(JSON.stringify(x)); }
+  function enOnly(o) {
+    if (Array.isArray(o)) return o.map(enOnly);
+    if (o && typeof o === 'object') {
+      var r = {};
+      Object.keys(o).forEach(function (k) { if (k !== 'zh' && k !== 'zh_seg' && k !== 'seg') r[k] = enOnly(o[k]); });
+      return r;
+    }
+    return o;
+  }
+  var checkCache = {};
+  function caseCheck(c) {
+    var body = { prefix: c.prefix === undefined ? null : c.prefix, history: c.history === undefined ? null : c.history };
+    var k = (c.label || '') + '|' + (c.group || '');
+    if (!checkCache[k]) checkCache[k] = C.sha256(C.canon(enOnly(body))).slice(0, 12);
+    return checkCache[k];
+  }
   function short(x) { return x ? x.slice(0, 8) : '—'; }
   function fmtTime(t) { return t ? t.replace('T', ' ').replace(/\.\d+Z$/, 'Z') : ''; }
 
@@ -68,7 +84,7 @@
     if (bad) return fatal('任务包校验失败：' + bad);
     if (pkg.requires) return fatal('这是后续部分的任务包。请先打开第一部分（或导入进度文件），再点“载入后续任务包”。');
     S = { base: pkg, pkgs: [pkg], embedded: embedded, events: [], state: null, current: null, work: {}, activeF: null,
-          showZh: false, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
+          showZh: true, showEn: false, enOpen: {}, quoteF: null, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
     var stored = readStore(pkg);
     if (stored && stored.events && stored.events.length) {
       var pk = [pkg].concat((stored.extra || []).filter(function (p) {
@@ -94,7 +110,7 @@
     if (!r.ok) return fatal('进度文件校验失败：' + r.error);
     var base = exp.packages.filter(function (p) { return !p.requires; })[0];
     S = { base: base, pkgs: exp.packages.slice(), embedded: false, events: exp.events.slice(), state: r.state, current: null,
-          work: {}, activeF: null, showZh: false, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
+          work: {}, activeF: null, showZh: true, showEn: false, enOpen: {}, quoteF: null, msg: null, savedAt: null, storageError: null, searched: {}, histOpened: {} };
     var stored = readStore(base);
     if (stored && stored.events && stored.events.length && !C.extendsLog(stored.events, exp.events) &&
         !stored.events.every(function (e) { return e.kind === 'session_start'; })) {
@@ -343,7 +359,9 @@
       h('span', { class: 'meta', text: ROLE[base.role] + ' ' + base.assignee + ' · 任务包 ' + short(base.package_sha256) }),
       h('span', { class: 'spacer' }),
       tr ? h('label', { class: 'meta' }, [h('input', { type: 'checkbox', 'data-act': 'toggle-zh', checked: S.showZh,
-        onchange: function (e) { S.showZh = e.target.checked; render(); } }), ' 显示中文参考译文（以原文为准）']) : null,
+        onchange: function (e) { S.showZh = e.target.checked; render(); } }), ' 中文优先（英文原文为准）']) : null,
+      tr && S.showZh ? h('label', { class: 'meta' }, [h('input', { type: 'checkbox', 'data-act': 'toggle-en', checked: S.showEn,
+        onchange: function (e) { S.showEn = e.target.checked; S.enOpen = {}; render(); } }), ' 展开全部英文原文']) : null,
       base.role === 'reviewer' && S.state.pkgs.length < 2 ?
         h('button', { 'data-act': 'load-part', onclick: function () { pick('file-part'); }, text: '载入后续任务包' }) : null,
       h('button', { 'data-act': 'export', onclick: function () { doExport('progress'); }, text: '导出进度' }),
@@ -417,10 +435,12 @@
     var form = S.state.view.forms[it.form];
     var ro = locked(S.current);
     var st = S.state.view.stages.filter(function (s) { return s.id === it.stage; })[0];
-    box.appendChild(h('div', { class: 'box instr' }, [h('h2', { text: form.title + ' · ' + itemLabel(it.ref) }),
-      h('p', { text: form.instruction }), st.note ? h('p', { class: 'meta', text: st.note }) : null]));
     var v = S.state.view;
     var c = it.ref.case_id ? v.cases[it.ref.case_id] : null;
+    box.appendChild(h('div', { class: 'box instr' }, [h('h2', { text: form.title + ' · ' + itemLabel(it.ref) }),
+      S.base.role === 'curator' && c ? h('p', { class: 'meta', 'data-check': it.ref.case_id,
+        text: '题号 ' + (c.label || '') + ' · ' + (c.group || '') + ' · 来源校验码 ' + caseCheck(c) }) : null,
+      h('p', { text: form.instruction }), st.note ? h('p', { class: 'meta', text: st.note }) : null]));
     if (it.form === 'FA') box.appendChild(renderAudit(v.audit[S.current]));
     if (it.form === 'ADJ') box.appendChild(renderDispute(v.disputes[it.ref.dispute_id]));
     var ctx = h('div', { class: 'cols' });
@@ -439,12 +459,44 @@
     return box;
   }
 
+  // English original, sentence by sentence next to its Chinese line; always available, collapsed by default.
+  function enDetails(key, seg, zhSeg, citeFn) {
+    var open = S.showEn || !!S.enOpen[key];
+    var d = h('details', { class: 'en', open: open, 'data-en': key,
+      ontoggle: function (e) { S.enOpen[key] = e.target.open; } }, [h('summary', { text: '英文原文（权威）' })]);
+    seg.forEach(function (sx, i) {
+      var row = [h('span', { class: 'en-s', 'data-seg': key + '#' + i, text: sx.trim() }),
+                 h('span', { class: 'zh-s', text: zhSeg[i] })];
+      if (citeFn) row.push(h('button', { class: 'cite-q', 'data-quote': key + '#' + i,
+        onclick: function () { citeFn(sx.trim()); }, text: '引用此句' }));
+      d.appendChild(h('div', { class: 'seg' }, row));
+    });
+    return d;
+  }
+
   function unit(u, extra) {
-    var kids = [h('span', { class: 'who', text: u.speaker }), u.text];
-    if (S.showZh && u.zh) kids.push(h('span', { class: 'zh', text: '译：' + u.zh }));
+    var kids = [h('span', { class: 'who', text: u.speaker })];
+    if (S.showZh && u.zh_seg) {
+      kids.push(h('span', { class: 'zhp', text: u.zh }));
+      kids.push(enDetails(S.current + '|' + u.ref, u.seg, u.zh_seg, null));
+    } else {
+      kids.push(u.text);
+      if (S.showZh && u.zh) kids.push(h('span', { class: 'zh', text: '译：' + u.zh }));
+    }
     var d = h('div', { class: 'turn' + (u.speaker === '求助者' ? ' seeker' : '') + (extra && extra.marked ? ' marked' : ''),
                        'data-ref': u.ref }, extra && extra.tools ? [extra.tools].concat(kids) : kids);
     return d;
+  }
+
+  // F: copy one English sentence of the reply into the quote box the reviewer last clicked (verbatim by construction).
+  function quoteInto(sentence) {
+    var fid = S.quoteF;
+    var w = S.work[S.current];
+    if (!fid || !w || !w[fid] || w[fid].presence !== 'yes') { alertBox('请先在下方选了“有”的检查项里点一下“原句”输入框，再点“引用此句”。'); return; }
+    var cur = (w[fid].quote || '').trim();
+    w[fid].quote = cur ? cur + ' ' + sentence : sentence;
+    saveDraft(true);
+    render();
   }
 
   function renderPrefix(c) {
@@ -452,8 +504,18 @@
   }
 
   function renderReply(r, title) {
-    var kids = [h('h3', { text: title }), h('div', { class: 'reply', 'data-reply': title, text: r.text })];
-    if (S.showZh && r.zh) kids.push(h('div', { class: 'turn' }, [h('span', { class: 'zh', text: '译：' + r.zh })]));
+    var kids = [h('h3', { text: title })];
+    if (S.showZh && r.zh_seg) {
+      var it = currentItem();
+      var canCite = it && it.form === 'F' && !locked(S.current);
+      kids.push(h('div', { class: 'reply zhp', 'data-reply-zh': title, text: r.zh }));
+      var d = enDetails(S.current + '|reply|' + title, r.seg, r.zh_seg, canCite ? quoteInto : null);
+      d.setAttribute('data-reply', title);
+      kids.push(d);
+    } else {
+      kids.push(h('div', { class: 'reply', 'data-reply': title, text: r.text }));
+      if (S.showZh && r.zh) kids.push(h('div', { class: 'turn' }, [h('span', { class: 'zh', text: '译：' + r.zh })]));
+    }
     return h('div', { class: 'box reply-box' }, kids);
   }
 
@@ -654,7 +716,9 @@
             onchange: function () { setV({ severity: o[0] }); saveDraft(true); render(); } }), ' ' + o[1]]);
         }))));
       box.appendChild(h('div', { class: 'hint', text: '逐字复制回复中的原句：' }));
+      box.appendChild(h('div', { class: 'hint', text: '（中文只作辅助：请展开回复的“英文原文”，点“引用此句”，或逐字复制英文原句）' }));
       box.appendChild(h('textarea', { 'data-fitem': fid, 'data-sub': 'quote', disabled: ro, value: v.quote || '',
+        onfocus: function () { S.quoteF = fid; }, onclick: function () { S.quoteF = fid; },
         oninput: function (e) { setV({ quote: e.target.value }); textDirty = true; }, onchange: function () { flushText(); } }));
       if (f.needs_source || f.allow_no_source) {
         var src = (v.sources || []).map(function (r) { return h('span', { class: 'chip', 'data-srcchip': r, text: r }); });

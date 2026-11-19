@@ -196,6 +196,8 @@ async function fillF(page, key, rater, i, opts = {}) {
       await page.click(`input[data-fitem="${f}"][data-sub="severity"][value="${f === 'F5' ? 'serious' : 'minor'}"]`);
       if (opts.badQuote && f === 'F5') {
         await page.type(`textarea[data-fitem="${f}"][data-sub="quote"]`, 'this sentence is not in the reply at all');
+      } else if (cfg.zh) {
+        await citeFirst(page, f);
       } else {
         await page.type(`textarea[data-fitem="${f}"][data-sub="quote"]`, reply.slice(0, 28));
       }
@@ -211,9 +213,19 @@ async function fillF(page, key, rater, i, opts = {}) {
     await page.waitFor(`document.querySelector('#msg')`);
     const msg = await page.text('#msg');
     check('F: a quote that is not verbatim in the reply is refused at submit', msg.includes('原句'), msg.slice(0, 160));
-    await page.type(`textarea[data-fitem="F5"][data-sub="quote"]`, reply.slice(0, 28));
+    if (cfg.zh) { await page.type(`textarea[data-fitem="F5"][data-sub="quote"]`, ''); await citeFirst(page, 'F5'); }
+    else await page.type(`textarea[data-fitem="F5"][data-sub="quote"]`, reply.slice(0, 28));
   }
   await submitItem(page);
+}
+
+// zh mode: the reviewer reads Chinese, then clicks the quote box and "引用此句" on the English original of the reply.
+async function citeFirst(page, f) {
+  await page.click(`textarea[data-fitem="${f}"][data-sub="quote"]`);
+  const sent = await page.eval(`document.querySelector('[data-reply="待检查的回复"] .en-s').textContent`);
+  await page.click('[data-reply="待检查的回复"] [data-quote]');
+  const got = await page.eval(`document.querySelector('textarea[data-fitem="${f}"][data-sub="quote"]').value`);
+  check(`zh: "引用此句" copies the English original sentence into ${f}`, got === sent && /[A-Za-z]/.test(got), { got, sent });
 }
 
 async function refusedByCore(page, kind, item, answer) {
@@ -236,6 +248,20 @@ async function phaseCurator() {
   // validation: S1 without reason/spans cannot be submitted
   await page.click(`[data-nav="${keys[0]}"]`);
   await page.waitFor(`document.querySelector('#form')`);
+  if (cfg.zh) {
+    const zhp = await page.count('.turn .zhp');
+    const enClosed = await page.eval(`[...document.querySelectorAll('details.en')].every(d => !d.open)`);
+    const enN = await page.count('details.en');
+    check('zh: Chinese is shown first for every translated line; English collapsed by default', zhp > 0 && zhp === enN && enClosed, { zhp, enN });
+    await page.click('[data-act="toggle-en"]');
+    const opened = await page.eval(`[...document.querySelectorAll('details.en')].every(d => d.open)`);
+    const segOk = await page.eval(`[...document.querySelectorAll('details.en .en-s')].length > 0`);
+    check('zh: "展开全部英文原文" opens every English original, sentence by sentence', opened && segOk);
+    await page.click('[data-act="toggle-en"]');
+    const code = await page.text(`[data-check="${P.first_case}"]`);
+    check('zh: curator item shows its number and the source check code (same as the coordinator list)',
+      code.includes(P.first_check) && code.includes('题号'), code);
+  }
   if (await page.exists('input[data-field="need"]')) {
     await choose(page, 'need', 'S1');
     await page.click('input[data-field="risk"][value="none"]');

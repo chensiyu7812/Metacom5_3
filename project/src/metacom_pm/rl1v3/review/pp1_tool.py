@@ -219,7 +219,7 @@ FORBIDDEN_TERMS = [r"\bOFF\b", r"RET-?MS", r"DP-?MS", r"MS-RAW", r"\bRET\b", r"\
                    r"condition", r"NeedCard", r"\bJ1\b", r"\bJ2\b", r"ESC-?RANK", r"score", r"\bS1\b", r"\bS2\b",
                    r"\bS0\b", r"\bS7\b", r"required", r"must_not_contradict", r"relevant_optional", r"stratum",
                    r"\bcue\b", r"request_id", r"terminal", r"job_id", r"session_id", r"subset", r"renderer"]
-CONTENT_KEYS = {"text", "zh"}            # free text (dialogue/replies): only exact-identifier scan
+CONTENT_KEYS = {"text", "zh", "seg", "zh_seg"}   # free text (dialogue/replies + aligned translation): exact ids only
 
 
 def blind_scan(obj, *, forbidden_ids=(), role="reviewer") -> list[dict]:
@@ -280,6 +280,79 @@ def page_text_scan(texts: list[str], forbidden_ids=()) -> list[dict]:
 
 
 # ------------------------------------------------------------------ case material
+# ------------------------------------------------------------------ sentence alignment (display only)
+_ABBR = {"mr", "mrs", "ms", "dr", "st", "vs", "etc", "e.g", "i.e", "jr", "sr", "prof", "approx"}
+_END = re.compile(r"[.!?\u2026]+[\"'\u201d\u2019)\]]*(?=\s|$)\s*|\n\s*")
+
+
+def segments(text: str) -> list[str]:
+    """Lossless English sentence split: ''.join(segments(t)) == t.  Empty / blank text -> [] (nothing to translate).
+    Segments without a letter or digit are merged into the previous one, so every line carries content."""
+    if not text or not text.strip():
+        return []
+    out, start = [], 0
+    for m in _END.finditer(text):
+        if m.group(0)[:1] == ".":
+            word = re.search(r"([A-Za-z.]+)$", text[start:m.start()])
+            if word and word.group(1).lower().rstrip(".") in _ABBR and text[m.end():m.end() + 1].strip():
+                continue
+        if text[start:m.end()].strip():
+            out.append(text[start:m.end()])
+            start = m.end()
+    if start < len(text):
+        if out and not text[start:].strip():
+            out[-1] += text[start:]
+        else:
+            out.append(text[start:])
+    merged = []
+    for x in out:
+        if merged and not re.search(r"[A-Za-z0-9]", x):
+            merged[-1] += x
+        else:
+            merged.append(x)
+    if merged and len(merged) > 1 and not re.search(r"[A-Za-z0-9]", merged[0]):
+        merged[1] = merged[0] + merged[1]
+        merged = merged[1:]
+    assert "".join(merged) == text
+    return merged
+
+
+def join_zh(seg: list[str], zh_seg: list[str]) -> str:
+    """Chinese display text: the aligned pieces, keeping the English line breaks."""
+    return "".join(z + ("\n" if "\n" in s[len(s.rstrip()):] else "") for s, z in zip(seg, zh_seg)).rstrip("\n")
+
+
+def _unit(ref: str, t: dict, translate=None) -> dict:
+    u = dict(ref=ref, speaker=_speaker(t["role"]), text=t["text"])
+    if t.get("zh_seg") is not None:
+        seg = segments(t["text"])
+        zs = list(t["zh_seg"])
+        if len(seg) != len(zs) or not all(isinstance(z, str) and z.strip() for z in zs):
+            raise ValueError(f"{ref}: translation is not aligned sentence by sentence")
+        if seg:
+            u.update(seg=seg, zh_seg=zs, zh=join_zh(seg, zs))
+    elif translate and translate(t["text"]):
+        u["zh"] = translate(t["text"])
+    return u
+
+
+EN_ONLY_DROP = ("zh", "zh_seg", "seg")
+
+
+def en_only(o):
+    """The package content without any translation layer (identity of the English source)."""
+    if isinstance(o, dict):
+        return {k: en_only(v) for k, v in o.items() if k not in EN_ONLY_DROP}
+    if isinstance(o, list):
+        return [en_only(v) for v in o]
+    return o
+
+
+def case_check(case: dict) -> str:
+    """Source check code shown on each curator item (the same function runs in the page)."""
+    return sha(canon(en_only({"prefix": case.get("prefix"), "history": case.get("history")})))[:12]
+
+
 def neutral_history(sessions: list[dict], *, translate=None) -> dict:
     """sessions: [{date, turns:[{role, text}]}] in chronological order -> neutral index + refs (no ids)."""
     idx, out = [], []
@@ -287,10 +360,7 @@ def neutral_history(sessions: list[dict], *, translate=None) -> dict:
         ref = f"h{n}"
         turns = []
         for j, t in enumerate(s["turns"], start=1):
-            u = dict(ref=f"{ref}:t{j}", speaker=_speaker(t["role"]), text=t["text"])
-            if translate and translate(t["text"]):
-                u["zh"] = translate(t["text"])
-            turns.append(u)
+            turns.append(_unit(f"{ref}:t{j}", t, translate))
         idx.append(dict(ref=ref, order=n, date=s.get("date") or "", turns=len(turns),
                         words=sum(len(t["text"].split()) for t in s["turns"])))
         out.append(dict(ref=ref, order=n, date=s.get("date") or "", turns=turns))
@@ -302,13 +372,7 @@ def _speaker(role: str) -> str:
 
 
 def prefix_units(turns: list[dict], *, translate=None) -> list[dict]:
-    out = []
-    for j, t in enumerate(turns, start=1):
-        u = dict(ref=f"p:t{j}", speaker=_speaker(t["role"]), text=t["text"])
-        if translate and translate(t["text"]):
-            u["zh"] = translate(t["text"])
-        out.append(u)
-    return out
+    return [_unit(f"p:t{j}", t, translate) for j, t in enumerate(turns, start=1)]
 
 
 def translation_block(units: list[dict], *, method: str | None, translator_role: str | None) -> dict:
@@ -325,7 +389,7 @@ def _base(role, assignee, protocol, *, simulated, title, notes):
 
 
 def curator_package(cases: list[dict], *, assignee: str, protocol: dict, simulated: bool, salt: str,
-                    translate=None, translation_method=None) -> tuple[dict, dict]:
+                    translate=None, translation_method=None, translator_role=None) -> tuple[dict, dict]:
     """cases: [{case_key, owner_key, order_key, prefix:[{role,text}], history:[sessions] or []}].
 
     Order: owner-blocked, cutoff ascending inside an owner (as-of reading never shows a later session first);
@@ -356,7 +420,7 @@ def curator_package(cases: list[dict], *, assignee: str, protocol: dict, simulat
                        "同一人物的前缀按时间先后排列，请按顺序完成。",
                        "提交即锁定，不能回改；中途可以随时关闭，进度保存在本机，也请定期导出进度文件备份。"])
     pkg.update(cases=pkg_cases, stages=stages, forms={k: FORMS[k] for k in ("S", "S7")},
-               translation=translation_block(units_all, method=translation_method, translator_role=None))
+               translation=translation_block(units_all, method=translation_method, translator_role=translator_role))
     return seal(pkg), amap
 
 
@@ -379,7 +443,7 @@ def balanced_positions(pairs: list[tuple], cond: dict, *, salt: str, protocol_sh
 
 def reviewer_packages(cases: list[dict], replies: list[dict], pairs: list[tuple], *, assignee: str, protocol: dict,
                       simulated: bool, salt: str, mirror: bool = False, translate=None,
-                      translation_method=None) -> tuple[dict, callable, dict]:
+                      translation_method=None, translator_role=None) -> tuple[dict, callable, dict]:
     """cases: [{case_key, prefix, history}], replies: [{reply_key, case_key, condition, text}],
     pairs: [(pair_key, case_key, reply_key_x, reply_key_y)].
 
@@ -408,10 +472,11 @@ def reviewer_packages(cases: list[dict], replies: list[dict], pairs: list[tuple]
         cases1[cid[c["case_key"]]] = dict(label=labels[c["case_key"]], prefix=pre, history=None)
         hist = neutral_history(c["history"], translate=translate) if c["history"] else None
         cases2[cid[c["case_key"]]] = dict(history=hist)
-    rep = {rid[r["reply_key"]]: dict(case_id=cid[r["case_key"]], text=r["text"]) for r in replies}
+    rep = {}
     for r in replies:
-        if translate and translate(r["text"]):
-            rep[rid[r["reply_key"]]]["zh"] = translate(r["text"])
+        u = _unit("reply", dict(role="reply", text=r["text"], zh_seg=r.get("zh_seg")), translate)
+        rep[rid[r["reply_key"]]] = dict(case_id=cid[r["case_key"]], text=r["text"],
+                                        **{k: u[k] for k in ("seg", "zh_seg", "zh") if k in u})
     pair_order = sorted(pairs_out, key=lambda p: keyed(salt, assignee, "pair-order", p))
     f_order = sorted(rep, key=lambda r: keyed(salt, assignee, "f-order", r))
     part1 = _base("reviewer", assignee, protocol, simulated=simulated, title="评审 第一部分：Q0",
@@ -423,7 +488,7 @@ def reviewer_packages(cases: list[dict], replies: list[dict], pairs: list[tuple]
                               items=[dict(key=f"Q0:{p}", pair_id=p, case_id=pairs_out[p]["case_id"]) for p in pair_order])],
                  forms={"Q0": FORMS["Q0"]},
                  translation=translation_block(units1 + [dict(ref=k, **v) for k, v in rep.items()],
-                                               method=translation_method, translator_role=None))
+                                               method=translation_method, translator_role=translator_role))
     part1 = seal(part1)
 
     def make_part2(lock_event_h: str) -> dict:
@@ -439,7 +504,7 @@ def reviewer_packages(cases: list[dict], replies: list[dict], pairs: list[tuple]
                           dict(id="F", form="F", title="F 事实与安全", note=STAGE_NOTES["F"],
                                items=[dict(key=f"F:{r}", reply_id=r, case_id=rep[r]["case_id"]) for r in f_order])],
                   forms={k: FORMS[k] for k in ("QH", "PROBE", "F")},
-                  translation=translation_block(units2, method=translation_method, translator_role=None))
+                  translation=translation_block(units2, method=translation_method, translator_role=translator_role))
         return seal(p2)
 
     audit = dict(assignee=assignee, part1_sha256=part1["package_sha256"], reply_ids={r: k for k, r in rid.items()},
