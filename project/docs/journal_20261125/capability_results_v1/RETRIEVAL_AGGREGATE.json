@@ -1,0 +1,173 @@
+{
+  "by_method": {
+    "RET-v1-end-history": {
+      "cold_query_ms": {
+        "max": 4.131725989282131,
+        "median": 2.763258060440421
+      },
+      "coverage_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 10,
+        "evidence_insufficient": 10,
+        "reference_pending_or_scope_conflict": 5
+      },
+      "covered_sufficient_groups": 35,
+      "future_report_count": 24,
+      "hot_query_ms": {
+        "max": 3.8772509433329105,
+        "median": 2.666664309799671
+      },
+      "reading_tokens": {
+        "max": 3366,
+        "median": 2869.5,
+        "total": 86250
+      },
+      "selected_conflict_source_count": 1,
+      "strict_sensitivity_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 10,
+        "evidence_insufficient": 8,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "supported_necessary_atoms": 59,
+      "tasks": 30,
+      "tasks_with_future_reports": 8,
+      "unknown_necessary_atoms": 6
+    },
+    "strict-bge-v1": {
+      "cold_query_ms": {
+        "max": 32.15004922822118,
+        "median": 16.576465452089906
+      },
+      "coverage_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 13,
+        "evidence_insufficient": 5,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "covered_sufficient_groups": 40,
+      "future_report_count": 0,
+      "hot_query_ms": {
+        "max": 4.576602950692177,
+        "median": 2.521790564060211
+      },
+      "reading_tokens": {
+        "max": 3305,
+        "median": 2789.5,
+        "total": 84421
+      },
+      "selected_conflict_source_count": 0,
+      "strict_sensitivity_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 13,
+        "evidence_insufficient": 5,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "supported_necessary_atoms": 57,
+      "tasks": 30,
+      "tasks_with_future_reports": 0,
+      "unknown_necessary_atoms": 8
+    },
+    "strict-hybrid-rrf-v1": {
+      "cold_query_ms": {
+        "max": 23.03819265216589,
+        "median": 19.03392351232469
+      },
+      "coverage_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 14,
+        "evidence_insufficient": 4,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "covered_sufficient_groups": 43,
+      "future_report_count": 0,
+      "hot_query_ms": {
+        "max": 7.9756793566048145,
+        "median": 3.933187108486891
+      },
+      "reading_tokens": {
+        "max": 3288,
+        "median": 2863.0,
+        "total": 85380
+      },
+      "selected_conflict_source_count": 1,
+      "strict_sensitivity_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 14,
+        "evidence_insufficient": 4,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "supported_necessary_atoms": 57,
+      "tasks": 30,
+      "tasks_with_future_reports": 0,
+      "unknown_necessary_atoms": 8
+    },
+    "strict-lexical-v1": {
+      "cold_query_ms": {
+        "max": 3.9703380316495895,
+        "median": 2.2045059595257044
+      },
+      "coverage_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 12,
+        "evidence_insufficient": 6,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "covered_sufficient_groups": 42,
+      "future_report_count": 0,
+      "hot_query_ms": {
+        "max": 3.8754548877477646,
+        "median": 2.1472210064530373
+      },
+      "reading_tokens": {
+        "max": 3475,
+        "median": 2865.0,
+        "total": 87325
+      },
+      "selected_conflict_source_count": 1,
+      "strict_sensitivity_status": {
+        "archive_absence_review": 5,
+        "documented_groups_covered": 12,
+        "evidence_insufficient": 6,
+        "reference_pending_or_scope_conflict": 7
+      },
+      "supported_necessary_atoms": 57,
+      "tasks": 30,
+      "tasks_with_future_reports": 0,
+      "unknown_necessary_atoms": 8
+    }
+  },
+  "date_scope_counts": {
+    "end_history_only": 22,
+    "explicit_day": 7,
+    "explicit_month_interval": 1
+  },
+  "evaluation_audit_sha256": "e8b1b46d8bdb7b734f5fc2669c8f7560db939dee52b12b60672ac6d8493efc87",
+  "frozen_rankings_sha256": "e0036732ef9d93a573ebb2865afcc932800fc7d9204e22b4273d93670821c270",
+  "limits": [
+    "RET-v1 retains official end-history scope; later reports are only a strict-date sensitivity, not retrospectively reclassified as leakage.",
+    "Four owners in three prior development family groups; no held-out effectiveness estimate.",
+    "Month-only cutoffs remain an interval; lower-bound primary and upper-bound sensitivity are both retained.",
+    "BGE max chunk similarity favors some longer sessions; no tuning or alternative pooling search was performed.",
+    "Recency is report order, not event resolution; entity matching is a capitalization proxy.",
+    "Cold-query timing uses a resident index with an uncached query; model/index startup is separate, not end-to-end latency.",
+    "No method selected after observing coverage; no generation, training labels or formal rewards."
+  ],
+  "month_upper_sensitivity_rows": 3,
+  "months_keep_interval": true,
+  "original_RET_v1_full_history_reproduced": 30,
+  "protocol": "pmrl1-j-temporal-retrieval-comparison-v1",
+  "qualification": "Reference sidecar is same-model assistant source review, not independent human qualification; coverage is source-group delivery, not answer quality or reward.",
+  "source_sessions": 91,
+  "source_time_order_verified": true,
+  "tasks": 30,
+  "timing": {
+    "device": "cpu",
+    "document_chunks": 179,
+    "generator_calls": 0,
+    "index_model_prepare_seconds": 34.438664730638266,
+    "thread_count": 4,
+    "tokenizer_identity": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+    "total_retrieval_stage_seconds": 37.72963683819398
+  }
+}

@@ -38,3 +38,25 @@ def test_partial_job_keeps_every_arm_and_unknown_outcomes(tmp_path):
 def test_reject_hidden_retry_or_extra_call(tmp_path,request_id,reason):
     with pytest.raises(ValueError,match=reason):
         collect(*fixture(tmp_path,dict(event='REQUEST_START',request_id=request_id)))
+
+
+@pytest.mark.parametrize('tamper',[False,True])
+def test_identical_logical_reuse_is_not_an_extra_call_or_token_cost(tmp_path,tamper):
+    requests,job,output=fixture(tmp_path)
+    rows=[json.loads(x) for x in requests.read_text().splitlines()]
+    # The one returned OFF call supplies both OFF and DP; keep all four arms.
+    physical=[r for r in rows if r['arm']!='DP']
+    requests.write_text('\n'.join(json.dumps(x) for x in physical)+'\n')
+    logical=[physical[0],dict(physical[0],arm='DP'),*physical[1:]]
+    if tamper:logical[1]['model_input']={'input_ids':[9]}
+    lp=tmp_path/'logical.jsonl';lp.write_text('\n'.join(json.dumps(x) for x in logical)+'\n')
+    (job/'0002.json').unlink()
+    (job/'SUMMARY.json').write_text(json.dumps(dict(physical_calls=1,status='STOPPED',wall_seconds=1)))
+    if tamper:
+        with pytest.raises(ValueError,match='nonidentical logical reuse'):collect(requests,job,output,lp)
+        return
+    result=collect(requests,job,output,lp)
+    assert result['logical_arms']==4 and result['exact_reused_arms']==1
+    assert result['physical_calls']==1 and result['total_input_tokens']==2
+    assert result['total_output_tokens']==1 and result['total_generation_seconds']==.5
+    assert result['pairs'][0]['all_arms_requested']

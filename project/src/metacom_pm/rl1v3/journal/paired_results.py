@@ -13,7 +13,7 @@ from pathlib import Path
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def collect(requests, job, output):
+def collect(requests, job, output, logical_requests=None):
     requests,job,output=Path(requests),Path(job),Path(output)
     output.mkdir(parents=True,exist_ok=False)
     rows=[json.loads(x) for x in requests.read_text().splitlines()]
@@ -32,8 +32,18 @@ def collect(requests, job, output):
     if not set(started)<=request_ids:raise ValueError('unrequested physical start')
     if not set(returned)<=set(started):raise ValueError('return without matching start')
     if len(started)!=summary['physical_calls']:raise ValueError('journal/summary call count mismatch')
-    result=[];pairs=defaultdict(list)
-    for row in rows:
+    logical=rows
+    if logical_requests is not None:
+        logical=[json.loads(x) for x in Path(logical_requests).read_text().splitlines()]
+        physical={r['request_id']:r for r in rows}
+        if {r['request_id'] for r in logical}!=request_ids:raise ValueError('logical/physical identities differ')
+        if len({(r['domain'],r['task_id'],r['arm']) for r in logical})!=len(logical):raise ValueError('duplicate logical arm')
+        for row in logical:
+            p=physical[row['request_id']]
+            if row['payload_sha256']!=p['payload_sha256'] or row['model_input']!=p['model_input']:
+                raise ValueError('nonidentical logical reuse')
+    result=[];pairs=defaultdict(list);seen=set()
+    for row in logical:
         key=row['request_id'];value=returned.get(key)
         status='not_started' if key not in started else 'started_no_return'
         if value:status='returned_eos' if value['finish_reason']=='eos' else 'technical_'+value['finish_reason']
@@ -46,6 +56,8 @@ def collect(requests, job, output):
             finish_reason=value['finish_reason'] if value else None,
             evaluation_status='uncertain_pending_evidence_review',reward=None)
         if value and item['input_tokens']!=value['input_tokens']:raise ValueError('input token disagreement')
+        if logical_requests is not None:item['exact_physical_reuse']=key in seen
+        seen.add(key)
         result.append(item);pairs[(row['domain'],row['task_id'])].append(item)
     required={'memory':{'OFF','DP','RET','matched-other'},'rs':{'R0','Generic','Legacy-RS','Professional-RAW','Method','F-resident'}}
     complete=[]
@@ -66,16 +78,21 @@ def collect(requests, job, output):
         requests=len(rows),physical_calls=summary['physical_calls'],returned=len(returned),
         technical_counts=dict(Counter(x['technical_status'] for x in result)),
         model_load=load,total_wall_seconds=summary['wall_seconds'],
-        total_input_tokens=sum(x['input_tokens'] for x in result if x['response'] is not None),
-        total_output_tokens=sum(x['output_tokens'] or 0 for x in result),
-        total_generation_seconds=sum(x['generation_seconds'] or 0 for x in result),
+        total_input_tokens=sum(x['input_tokens'] for x in result if x['response'] is not None and not x.get('exact_physical_reuse')),
+        total_output_tokens=sum(x['output_tokens'] or 0 for x in result if not x.get('exact_physical_reuse')),
+        total_generation_seconds=sum(x['generation_seconds'] or 0 for x in result if not x.get('exact_physical_reuse')),
         pairs=complete,semantic_evaluation='pending_separate_evidence_review',reward_qualified=False,
         source_files_sha256={str(requests):sha(requests),str(job/'SUMMARY.json'):sha(job/'SUMMARY.json')},
         latency_scope='local synchronized calls; excludes client/network/TTS; load and overall job separately reported')
+    if logical_requests is not None:
+        report.update(logical_arms=len(logical),exact_reused_arms=len(logical)-len(rows),
+            technical_counts_scope='logical arms; all token/time totals count physical calls only')
+        report['source_files_sha256'][str(logical_requests)]=sha(logical_requests)
     (output/'MEASUREMENTS.json').write_text(json.dumps(report,indent=2)+'\n')
     return report
 
 
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--requests',required=True);p.add_argument('--job',required=True);p.add_argument('--output',required=True)
-    a=p.parse_args();print(json.dumps(collect(a.requests,a.job,a.output),indent=2))
+    p.add_argument('--logical-requests')
+    a=p.parse_args();print(json.dumps(collect(a.requests,a.job,a.output,a.logical_requests),indent=2))
