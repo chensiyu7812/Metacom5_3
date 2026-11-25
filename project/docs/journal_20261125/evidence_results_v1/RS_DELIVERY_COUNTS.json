@@ -1,0 +1,136 @@
+{
+  "F_resident_full_library_checks": 24,
+  "actual_selected_skills": {
+    "skill:adjust_after_refusal": 6,
+    "skill:autonomy": 3,
+    "skill:both_sides": 5,
+    "skill:reflection": 2,
+    "skill:user_plan": 8
+  },
+  "by_arm": {
+    "F-resident": {
+      "input_tokens": {
+        "max": 1190,
+        "median": 1121.0,
+        "min": 1040
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 943,
+        "median": 943.0,
+        "min": 943
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 786,
+        "median": 786.0,
+        "min": 786
+      }
+    },
+    "Generic": {
+      "input_tokens": {
+        "max": 418,
+        "median": 349.0,
+        "min": 268
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 171,
+        "median": 171.0,
+        "min": 171
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 50,
+        "median": 50.0,
+        "min": 50
+      }
+    },
+    "Legacy-RS": {
+      "input_tokens": {
+        "max": 3021,
+        "median": 1684.5,
+        "min": 925
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 2857,
+        "median": 1494.0,
+        "min": 716
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 2495,
+        "median": 1271.0,
+        "min": 559
+      }
+    },
+    "Method": {
+      "input_tokens": {
+        "max": 508,
+        "median": 438.5,
+        "min": 339
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 277,
+        "median": 261.0,
+        "min": 242
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 144,
+        "median": 140.0,
+        "min": 117
+      }
+    },
+    "Professional-RAW": {
+      "input_tokens": {
+        "max": 458,
+        "median": 390.0,
+        "min": 287
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 228,
+        "median": 215.0,
+        "min": 190
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 111,
+        "median": 96.0,
+        "min": 73
+      }
+    },
+    "R0": {
+      "input_tokens": {
+        "max": 247,
+        "median": 178.0,
+        "min": 97
+      },
+      "marginal_input_tokens_vs_R0": {
+        "max": 0,
+        "median": 0.0,
+        "min": 0
+      },
+      "n": 24,
+      "resource_tokens": {
+        "max": 0,
+        "median": 0.0,
+        "min": 0
+      }
+    }
+  },
+  "direct_versus_retrieval": {
+    "F_resident": "all six method candidates always present; no retrieval and no gold-target selection",
+    "Legacy_RS": "real visible-text lexical Top1 of preserved legacy case bank",
+    "Method": "real lexical Top1 from visible user text; not intended-skill oracle",
+    "Professional_RAW": "the exact original paragraphs belonging to the SAME real-retrieved method",
+    "direct_intended_skill_diagnostic_in_original_144": false
+  },
+  "exact_native_token_checks": 144,
+  "exact_reading_content_checks": 144,
+  "interpretation": "RAW versus Method compares original narrative with a nonclinical procedural adaptation; it is not a pure compression contrast. F-resident supplies more content/tokens.",
+  "preserved_methods": 6,
+  "preserved_requests": 144,
+  "preserved_tasks": 24,
+  "protocol": "pmrl1-j-rs-source-delivery-audit-v1",
+  "raw_method_same_paragraph_checks": 24,
+  "truncation_or_missing_content": 0
+}

@@ -13,19 +13,54 @@ from ..generator.g0e import DECODE, SYSTEM
 from ..io import file_sha256, object_sha256
 
 PROTOCOL='pmrl1-j-smoke-run-v1'
+BATCH_PROTOCOL='pmrl1-j-paired-batch-v1'
+PAIRED_ARMS={'memory':{'OFF','DP','RET','matched-other'},
+    'rs':{'R0','Generic','Legacy-RS','Professional-RAW','Method','F-resident'}}
+
+
+def check_pairing(plan, rows, logical, prior):
+    """A small complete-task batch, with byte-identical abs arms reused once."""
+    ids=[r['request_id'] for r in rows]
+    L.require(1<=len(rows)<=20 and len(rows)==len(set(ids))==plan['max_calls'],
+        'paired batch exact physical cardinality')
+    L.require(1<=len(logical)<=20 and len(logical)==plan['logical_requests'],
+        'paired batch logical cardinality')
+    L.require(not set(ids)&{r['request_id'] for r in prior},'already executed request cannot repeat')
+    by_id={r['request_id']:r for r in rows};groups={};logical_ids=set()
+    for row in logical:
+        key=(row['domain'],row['task_id']);arm=row['arm']
+        L.require(row['domain'] in PAIRED_ARMS,'unknown paired domain')
+        L.require(row['logical_id']==':'.join((*key,arm)) and row['logical_id'] not in logical_ids,
+            'duplicate or changed logical identity')
+        logical_ids.add(row['logical_id']);groups.setdefault(key,[]).append(arm)
+        L.require(row['request_id'] in by_id,'logical request missing physical payload')
+        physical=by_id[row['request_id']]
+        L.require(row['model_input']==physical['model_input'] and
+            row['payload_sha256']==physical['payload_sha256'],'reuse requires identical payload')
+    L.require(set(ids)=={r['request_id'] for r in logical},'unpaired physical request')
+    for (domain,_),arms in groups.items():
+        L.require(len(arms)==len(set(arms)) and set(arms)==PAIRED_ARMS[domain],
+            'incomplete task arm pairing')
+    L.require([dict(domain=d,task_id=t) for d,t in sorted(groups)]==plan['paired_tasks'],
+        'paired task identity changed')
 
 
 def check(path):
     path=Path(path).resolve();plan=json.loads(path.read_text())
-    L.require(plan['protocol']==PROTOCOL and plan['job_kind']=='JOURNAL_SMOKE','journal identity required')
+    batch=plan['protocol']==BATCH_PROTOCOL and plan['job_kind']=='JOURNAL_PAIRED_BATCH'
+    L.require(batch or (plan['protocol']==PROTOCOL and plan['job_kind']=='JOURNAL_SMOKE'),'journal identity required')
     L.require(plan['authorized'] is False,'proposal must remain immutable')
-    L.require(plan['max_calls']==20 and plan['max_model_loads']==1 and plan['warmup_calls']==0,'bounded smoke scope')
+    L.require((1<=plan['max_calls']<=20 if batch else plan['max_calls']==20) and
+        plan['max_model_loads']==1 and plan['warmup_calls']==0,'bounded smoke scope')
     L.require(plan['global_seconds']==1200 and plan['load_seconds']==600 and plan['request_seconds']==300,'hard deadline changed')
     L.require(plan['automatic_retry'] is False,'no retry')
     L.require(plan['python']=='/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python','frozen Python')
     L.require(plan['model_path']=='/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3','frozen model')
     root=Path(plan['executor_root']).resolve()
     L.require({plan['requests_path'],plan['baseline_path'],plan['checkpoint_path']} <= set(plan['files_sha256']),'unbound run input')
+    if batch:
+        L.require({plan['logical_requests_path'],plan['prior_requests_path']}<=set(plan['files_sha256']),
+            'unbound paired identities')
     required_executor={
         'project/src/metacom_pm/rl1v3/journal/run.py',
         'project/src/metacom_pm/rl1v3/journal/renderer.py',
@@ -50,7 +85,12 @@ def check(path):
     L.require(spec['runtime']['gpu_uuid']==L.GPU and spec['runtime']['backend']=='hf','fixed GPU/backend')
     L.require(spec['decode']==DECODE and spec['system_prompt']==SYSTEM,'fixed decoding/system')
     L.require([r['request_id'] for r in rows]==plan['ordered_request_ids'],'ordered requests changed')
-    L.require(len(rows)==20 and len({r['request_id'] for r in rows})==20,'request cardinality')
+    if batch:
+        logical=[json.loads(x) for x in Path(plan['logical_requests_path']).read_text().splitlines()]
+        prior=[json.loads(x) for x in Path(plan['prior_requests_path']).read_text().splitlines()]
+        check_pairing(plan,rows,logical,prior)
+    else:
+        L.require(len(rows)==20 and len({r['request_id'] for r in rows})==20,'request cardinality')
     for row in rows:
         payload=row['model_input']
         L.require(set(payload)=={'messages','input_ids','decode'},'payload allowlist')
@@ -66,9 +106,13 @@ def check(path):
 
 def admit(plan,auth):
     L.require(auth.get('authorized') is True,'new explicit journal approval required')
-    L.require(auth.get('protocol')==PROTOCOL and auth.get('job_kind')=='JOURNAL_SMOKE','A0/PP1 approval does not transfer')
+    L.require(auth.get('protocol')==plan['protocol'] and
+        auth.get('job_kind')==plan.get('job_kind') and
+        (plan['protocol'],plan.get('job_kind')) in {
+            (PROTOCOL,'JOURNAL_SMOKE'),(BATCH_PROTOCOL,'JOURNAL_PAIRED_BATCH')},
+        'A0/PP1/smoke/batch approvals do not transfer')
     L.require(auth.get('plan_sha256')==object_sha256(plan),'approval plan hash')
-    L.require(auth.get('max_calls')==20 and auth.get('max_model_loads')==1,'approval scope')
+    L.require(auth.get('max_calls')==plan['max_calls'] and auth.get('max_model_loads')==1,'approval scope')
     L.require(auth.get('researcher') and auth.get('decision_evidence'),'actual researcher decision required')
 
 
