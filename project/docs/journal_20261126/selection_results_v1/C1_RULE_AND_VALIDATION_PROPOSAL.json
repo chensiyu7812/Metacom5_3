@@ -1,0 +1,55 @@
+{
+  "protocol": "selective-memory-C1-development-proposal-v1",
+  "base_commit": "35650aa2d63a52d59e73d549a19ac64996b9314a",
+  "created_after_J06_outputs": true,
+  "old_rule_changed": false,
+  "code_sha256": "e4f5cf746a4921a9b465bf14b168d756e94085c017779d170d75be552a715268",
+  "policy_input": [
+    "current visible query text only"
+  ],
+  "rule": "STOP iff the current text contains an explicit quoted earlier report, the request is scoped to reflecting/acknowledging that report, and no separate historical question follows; otherwise request MS, subject to original legal mask/budget.",
+  "forbidden_features": [
+    "demand stratum",
+    "gold",
+    "owner ID",
+    "task ID",
+    "unread content",
+    "retrieval scores",
+    "generated outcomes"
+  ],
+  "limitation": "Explicit report/scope cue is not semantic proof that G will complete every required fact or support goal. Current English pattern is restricted; unrecognized paraphrases fall back to MS.",
+  "independent_validation": {
+    "status": "protocol proposal only; no source text read or new task/G package constructed",
+    "exclusion": "All six J06 source families and their sessions/variants are excluded from independent policy validation.",
+    "original_family_closure_and_splits_preserved": true,
+    "reserve": "Historical test fold 6 remains sealed (three owner families). If those sources have prior exposure in another line, disclose it; independence from J06 is not universal unseen-data status.",
+    "source_rule": "Use the existing source registry and strict AsOf legality. Freeze source identities, task/reference/scorer and wording before any new generation; do not choose from generated successes.",
+    "conditions": [
+      "current report explicitly sufficient for requested fields",
+      "historical fact absent from current view",
+      "current report partial or a separate history question",
+      "no personal fact lookup required"
+    ],
+    "wording": "Multiple prewritten paraphrases; include exact and unquoted/current-dialogue forms, extra history requirements, and incomplete or conflicting visible material. Do not give every positive case the J06 supplied-in-full marker.",
+    "required_answer": "Make any required exact fact explicit in the new controlled task; keep a distinct natural-support track where exhaustive fact restatement is not automatically necessary.",
+    "baselines": [
+      "always STOP",
+      "always MS",
+      "fixed C1"
+    ],
+    "evaluation": [
+      "paired task completion and new errors",
+      "input/output tokens and actual total latency separately",
+      "saving on shared confirmed successes",
+      "saving on confirmed failures",
+      "unknown selection and coverage",
+      "source-group results"
+    ],
+    "inference": "At most three held-out source families give limited precision; report group results, no iid task confidence interval or automatic noninferiority claim.",
+    "stop_rule": "Any confirmed success loss or unresolved safety/meaning tradeoff defeats an unqualified cost-saving claim. Retain results; no same-set rule retuning or task replacement.",
+    "qualified_reward": false,
+    "new_GPU_authorized": false,
+    "extra_model_calls_this_turn": 0
+  },
+  "sequential_claim": "No read-conditioned next-resource decision or matched OneShot comparison exists in J06. C1 is a static acquisition candidate, not a sequential policy."
+}

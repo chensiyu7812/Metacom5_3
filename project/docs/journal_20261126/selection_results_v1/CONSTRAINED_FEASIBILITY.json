@@ -1,0 +1,56 @@
+{
+  "protocol": "structured-constrained-budget-v2",
+  "batches": [
+    {
+      "batch": 1,
+      "input_tokens": 13225,
+      "output_token_hard_cap": 5760,
+      "original_measurements": {
+        "original_calls": 18,
+        "original_output_tokens": 1039,
+        "original_generation_seconds": 80.12049126718193,
+        "minimum_measured_tokens_per_second": 12.374041294583787,
+        "original_job_wall_seconds": 152.26010383712128
+      }
+    },
+    {
+      "batch": 2,
+      "input_tokens": 13648,
+      "output_token_hard_cap": 5760,
+      "original_measurements": {
+        "original_calls": 18,
+        "original_output_tokens": 1027,
+        "original_generation_seconds": 79.85099987825379,
+        "minimum_measured_tokens_per_second": 12.279148287444755,
+        "original_job_wall_seconds": 147.30882302904502
+      }
+    }
+  ],
+  "previous20": {
+    "file_sha256": "8c59c511fd9e3a58b23d75d2493eca00ead951a88bb2e3d1851762d7beb2d1de",
+    "output_tokens": 1380,
+    "generation_seconds": 108.59644514368847,
+    "aggregate_tokens_per_second": 12.707598284401158
+  },
+  "planning": {
+    "output_tokens_each_batch": 5760,
+    "generation_tokens_per_second_assumption": 10,
+    "setup_hash_load_seconds_assumption": 100,
+    "grammar_compile_seconds_assumption": 3,
+    "cpu_mask_max_ms_both_tests": 47.95613093301654,
+    "estimated_seconds_per_batch": 955.2273141741753,
+    "hard_seconds_per_batch": 1200,
+    "total_hard_seconds": 2400
+  },
+  "cpu_mask_not_gpu_latency": true,
+  "gpu_mask_transfer_not_benchmarked": true,
+  "completion_guaranteed": false,
+  "no_retry": true,
+  "one_load_no_warmup": true,
+  "supervisor_run_ast_identical_except_worker_selection": true,
+  "old_worker_sha256": "2a9843de21e052c83effb0aecea48255fdb7609f66bcf1d66c02081b7b8f874b",
+  "new_worker_sha256": "1da70a8f74d9da2730dea5ae826d42976f4797b60bb3c4fafbfa3d309f3c46d0",
+  "strict_scorer_sha256": "a83cc1b5960cb419bc893768f190da0664630cdc18c3ee4e9e63ae0a9374d87d",
+  "active_package": "packages-v3",
+  "grammar_compile_cpu_seconds_measured": 1.1969312210567296
+}
