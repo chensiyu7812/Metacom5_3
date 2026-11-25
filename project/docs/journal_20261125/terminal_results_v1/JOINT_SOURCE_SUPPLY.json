@@ -1,0 +1,182 @@
+{
+  "CPU_paths": 96,
+  "GET_order_MS_RS_arm": [
+    "MS",
+    "RS"
+  ],
+  "J_generation_outputs_opened": 0,
+  "MS_ranking_independently_recomputed": true,
+  "RS_candidate_count": 1,
+  "actual_gets_are_steps_not_private_measurement_rankings": true,
+  "actual_input_resource_order_MS_RS_arm": [
+    "RS",
+    "MS"
+  ],
+  "by_arm": {
+    "MS": {
+      "MS_GET": 24,
+      "MS_exact_reference_quote_deliveries": 24,
+      "RS_GET": 0,
+      "current_exact_reference_quote_present": 12,
+      "incremental_MS_tokens": 21976,
+      "incremental_RS_tokens": 0,
+      "native_input_tokens": 25486,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 24,
+      "source_text_available_atom_slots": 32
+    },
+    "MS_RS": {
+      "MS_GET": 24,
+      "MS_exact_reference_quote_deliveries": 24,
+      "RS_GET": 24,
+      "current_exact_reference_quote_present": 12,
+      "incremental_MS_tokens": 21976,
+      "incremental_RS_tokens": 9720,
+      "native_input_tokens": 35206,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 24,
+      "source_text_available_atom_slots": 32
+    },
+    "RS": {
+      "MS_GET": 0,
+      "MS_exact_reference_quote_deliveries": 0,
+      "RS_GET": 24,
+      "current_exact_reference_quote_present": 12,
+      "incremental_MS_tokens": 0,
+      "incremental_RS_tokens": 12168,
+      "native_input_tokens": 15678,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 12,
+      "source_text_available_atom_slots": 16
+    },
+    "STOP": {
+      "MS_GET": 0,
+      "MS_exact_reference_quote_deliveries": 0,
+      "RS_GET": 0,
+      "current_exact_reference_quote_present": 12,
+      "incremental_MS_tokens": 0,
+      "incremental_RS_tokens": 0,
+      "native_input_tokens": 3510,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 12,
+      "source_text_available_atom_slots": 16
+    }
+  },
+  "by_demand_stratum": {
+    "RS_only": {
+      "MS_GET": 12,
+      "MS_exact_reference_quote_deliveries": 12,
+      "RS_GET": 12,
+      "current_exact_reference_quote_present": 24,
+      "incremental_MS_tokens": 10988,
+      "incremental_RS_tokens": 5472,
+      "native_input_tokens": 20416,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 24,
+      "source_text_available_atom_slots": 32
+    },
+    "both": {
+      "MS_GET": 12,
+      "MS_exact_reference_quote_deliveries": 12,
+      "RS_GET": 12,
+      "current_exact_reference_quote_present": 0,
+      "incremental_MS_tokens": 10988,
+      "incremental_RS_tokens": 5472,
+      "native_input_tokens": 20092,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 12,
+      "source_text_available_atom_slots": 16
+    },
+    "memory_only": {
+      "MS_GET": 12,
+      "MS_exact_reference_quote_deliveries": 12,
+      "RS_GET": 12,
+      "current_exact_reference_quote_present": 0,
+      "incremental_MS_tokens": 10988,
+      "incremental_RS_tokens": 5472,
+      "native_input_tokens": 19596,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 12,
+      "source_text_available_atom_slots": 16
+    },
+    "neither": {
+      "MS_GET": 12,
+      "MS_exact_reference_quote_deliveries": 12,
+      "RS_GET": 12,
+      "current_exact_reference_quote_present": 24,
+      "incremental_MS_tokens": 10988,
+      "incremental_RS_tokens": 5472,
+      "native_input_tokens": 19776,
+      "paths": 24,
+      "reference_atom_slots": 32,
+      "reference_quote_available_paths": 24,
+      "source_text_available_atom_slots": 32
+    }
+  },
+  "frozen_source_bundle_files_checked": 8,
+  "generated_responses_scored": 0,
+  "incremental_cost_scope": "Step tokens are incremental Generator input accounting; first read includes resource wrapper overhead, shared by the second read. They are not alternate procedure sizes.",
+  "legal_pool_counts": {
+    "1": 12,
+    "2": 12
+  },
+  "limitations": [
+    "Exact reference quote availability proves source-text delivery only, not answer correctness, evidence use or helpfulness.",
+    "Six owner source situations produce 24 constructed demand variants; dependence must be preserved.",
+    "MS pools contain one or two sessions; RS has one legal procedure. No large-pool or multi-candidate RS-ranking claim.",
+    "Declared demand strata are pre-generation source conditions, not compulsory action labels."
+  ],
+  "new_executor_additions": [
+    "project/scripts/rl1v3/journal_joint_run.py",
+    "project/src/metacom_pm/rl1v3/journal/joint_run.py"
+  ],
+  "old_executor_files_byte_identical": 544,
+  "plan_identities": [
+    {
+      "batch": 1,
+      "max_calls": 16,
+      "plan_object_sha256": "70e8a7e1b6664d248d93a22560b5fafe3c28109e0b6bb155c400993f2f1b8a11"
+    },
+    {
+      "batch": 2,
+      "max_calls": 16,
+      "plan_object_sha256": "6e9c45722c0e485194192941618900e5b478f42e85c2d6e09d9558e343d6fabf"
+    },
+    {
+      "batch": 3,
+      "max_calls": 16,
+      "plan_object_sha256": "fb984ae541cffe5040cdf21eaf19db95392afca42497927a5a5b0f5375d14b0e"
+    },
+    {
+      "batch": 4,
+      "max_calls": 16,
+      "plan_object_sha256": "2e1ca762d5966da860eea39ee759ae399878f66f6190a72465084f863d3021e1"
+    },
+    {
+      "batch": 5,
+      "max_calls": 16,
+      "plan_object_sha256": "71bc82a274750e43e899f7be491810d3e6e9b82b21bf2061ca6c20749e994903"
+    },
+    {
+      "batch": 6,
+      "max_calls": 16,
+      "plan_object_sha256": "2e988658c8ea5510ae0be566f21f7bbf7810bc8d1abceae45b521e59b0b734e1"
+    }
+  ],
+  "pool_contains_all_frozen_reference_quotes": true,
+  "protocol": "pmrl1-j-joint96-source-supply-only-v1",
+  "qualified_reward": null,
+  "query_and_pool_same_for_all_four_arms": true,
+  "source_author_role": "Source/rule/immutable-input and supply accounting only; no J reply inspection or evaluation qualification.",
+  "source_builder_code_unchanged": true,
+  "source_groups": 6,
+  "tasks": 24,
+  "whole_selected_MS_and_RS_units_untruncated": true
+}

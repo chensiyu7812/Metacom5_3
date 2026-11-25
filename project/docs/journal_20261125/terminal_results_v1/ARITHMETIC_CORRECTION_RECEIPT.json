@@ -1,0 +1,99 @@
+{
+  "aggregate_sha256": "8b8d2c85e5d0f39157ecd5fa631a40792134e2bcc2a3e58ef10d8d5721f1d040",
+  "all_reference_response_support_input_hashes_identical": true,
+  "cpu_tests": {
+    "failed": 0,
+    "module": "test_rl1v3_journal_joint_outcomes",
+    "passed": 6
+  },
+  "diffs": [
+    {
+      "after": "98bd744c3cadba1b5e69a214a209e1e811136baa661b303db1a143ad14fbbbb4",
+      "before": "ba6b77e4fd7e7938b3118cc6283a733256fc21b8ec249b1beb9fd6b51f265fc2",
+      "path": "/code_sha256"
+    },
+    {
+      "after": 24,
+      "before": null,
+      "path": "/fixed_policies/always_MS/versus_always_STOP/evaluable_tasks"
+    },
+    {
+      "after": true,
+      "before": null,
+      "path": "/fixed_policies/always_MS/versus_always_STOP/shared_endpoint_difference_is_zero"
+    },
+    {
+      "after": 24,
+      "before": null,
+      "path": "/fixed_policies/always_MS_RS/versus_always_STOP/evaluable_tasks"
+    },
+    {
+      "after": true,
+      "before": null,
+      "path": "/fixed_policies/always_MS_RS/versus_always_STOP/shared_endpoint_difference_is_zero"
+    },
+    {
+      "after": 24,
+      "before": null,
+      "path": "/fixed_policies/always_RS/versus_always_STOP/evaluable_tasks"
+    },
+    {
+      "after": true,
+      "before": null,
+      "path": "/fixed_policies/always_RS/versus_always_STOP/shared_endpoint_difference_is_zero"
+    },
+    {
+      "after": 24,
+      "before": null,
+      "path": "/fixed_policies/always_STOP/versus_always_STOP/evaluable_tasks"
+    },
+    {
+      "after": [
+        0,
+        0
+      ],
+      "before": [
+        -2,
+        2
+      ],
+      "path": "/fixed_policies/always_STOP/versus_always_STOP/joint_gain_interval"
+    },
+    {
+      "after": true,
+      "before": null,
+      "path": "/fixed_policies/always_STOP/versus_always_STOP/shared_endpoint_difference_is_zero"
+    },
+    {
+      "after": 24,
+      "before": null,
+      "path": "/fixed_policies/visible_query_rule/versus_always_STOP/evaluable_tasks"
+    },
+    {
+      "after": true,
+      "before": null,
+      "path": "/fixed_policies/visible_query_rule/versus_always_STOP/shared_endpoint_difference_is_zero"
+    },
+    {
+      "after": "joint24-development-interval-analysis-v2",
+      "before": "joint24-development-interval-analysis-v1",
+      "path": "/protocol"
+    }
+  ],
+  "formal_reward_qualified": false,
+  "protocol": "joint-arithmetic-correction-v2",
+  "reason": "The same STOP endpoint has a shared unknown outcome, so comparison with itself is exactly zero when evaluable. No review or task change.",
+  "unchanged_files_sha256": {
+    "FAILURE_ATTRIBUTION_PUBLIC.json": "3573887c20e09198319a97d0e24bd56ea7016263986992098520475b5b60dfd4",
+    "FIXED_SOURCE_GROUPS_PUBLIC.json": "9368d66fc41e2f8588b47eb7eef3951f19dbf198b1eb2aa38ac12ae1acb4ce06",
+    "FIXED_STRATA_PUBLIC.json": "dafce208fb350acf6c70abecd2f6b551a57b8a56332c4e27353d252ba377517d",
+    "INTERACTIONS_PRIVATE.jsonl": "f61c860e59d6fbef4fb80346c66feda904e2affc3aede35b6db7b79d810505af",
+    "INTERACTIONS_SOURCE_GROUPS_PUBLIC.json": "bf5f141484d3e75bb606a583947e5c5dc7d5acabe9dd004f554e8e7c00ee1f04",
+    "INTERACTIONS_STRATA_PUBLIC.json": "fbc419bdce398619d6dc11c913cc48c98ec054ab74d320c609d8c6179269ce2b",
+    "JOINED_ENDPOINTS_PRIVATE.jsonl": "a81500b70fb06eb73f2f259a161aec8395cf96b50beee0805c64f98b51ec161a",
+    "PAIR_TRANSITIONS_PUBLIC.json": "d61a5404aa54cada2037eb9566106d9265daf476e4d65acb08c5712bc774be8d",
+    "PAIR_TRANSITION_COUNTS_PUBLIC.json": "2ce400cf186f55ad16e23051f06a5b2a0982621f753db8da266da8de5d3ebcbb",
+    "TASKWISE_PARETO_PRIVATE.jsonl": "ce9f1057881ee3ab26ad497e1e8e7bb8c0f3b7debaf59e73876237ef30b78a54",
+    "readback/FOUR_ARM_CELLS_PUBLIC.json": "08077a4043a97c14d373a43ab163fbf09e573e4f619e07851013c0b58372092e",
+    "readback/J06_FULL_REVIEW_PRIVATE.md": "5503ae446a90ed3b14108babbe95944d0d6c1729103ca5752a02e07af7374b47"
+  }
+}
