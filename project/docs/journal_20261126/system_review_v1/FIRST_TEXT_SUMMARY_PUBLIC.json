@@ -1,0 +1,459 @@
+{
+  "protocol": "pmrl1-j-system-review-first-text-v1",
+  "base_commit": "c40b90c99cb991cf1c2793ffbe9927a0011885ab",
+  "inputs_sha256": {
+    "ENDPOINTS_PUBLIC.jsonl": "8ae6662389811da1ddb766795bcf0db58a6b28725bbe52ad5097335c9d00d5ae",
+    "CALLS_PUBLIC.jsonl": "777155737fd3b0213ea37027236d86e34c9b3bd59fcc37006296c3e230a9cdc3",
+    "JOB_TIMING_PUBLIC.jsonl": "2925d8fa20bfe581d362aa962b411ba2b7e7a706a7142a721bf79d4850ec4049",
+    "QUALITY_LATENCY_TASKWISE_PUBLIC.jsonl": "7c600b12877f0e59df15957c90c1d5d262d6c2fcc95a41f59a34714ed632ee28"
+  },
+  "actual_calls": 53,
+  "loads": 4,
+  "endpoint_slots": 48,
+  "endpoint_status_counts": {
+    "returned_eos": 38,
+    "path_technical_failure": 1,
+    "unexecuted": 9
+  },
+  "common_tasks": [
+    "T01",
+    "T02",
+    "T03",
+    "T04",
+    "T07",
+    "T08"
+  ],
+  "all_observed": {
+    "STOP": {
+      "slots": 8,
+      "evaluated": 7,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 7,
+        "sum": 5423196212,
+        "p50": 905605551,
+        "p95": 993356084
+      },
+      "agent_reply_ns": {
+        "n": 7,
+        "sum": 73741105525,
+        "p50": 8518565064,
+        "p95": 21345353869
+      },
+      "worker_first_text_ns": {
+        "n": 7,
+        "sum": 1956175933,
+        "p50": 388834245,
+        "p95": 467925413
+      }
+    },
+    "FixedTop4Macro": {
+      "slots": 8,
+      "evaluated": 7,
+      "completion_interval": [
+        4,
+        6
+      ],
+      "agent_first_text_ns": {
+        "n": 7,
+        "sum": 14885501929,
+        "p50": 2065183056,
+        "p95": 2508684812
+      },
+      "agent_reply_ns": {
+        "n": 7,
+        "sum": 69177739496,
+        "p50": 9122079604,
+        "p95": 18647948687
+      },
+      "worker_first_text_ns": {
+        "n": 7,
+        "sum": 9956944922,
+        "p50": 1441340925,
+        "p95": 1618955615
+      }
+    },
+    "LLMOneShot": {
+      "slots": 8,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 13049231265,
+        "p50": 2105122215,
+        "p95": 2528950062
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 58451634427,
+        "p50": 7221271832,
+        "p95": 21811961198
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 672207909,
+        "p50": 91332186,
+        "p95": 155554531
+      }
+    },
+    "LLMToolAgent": {
+      "slots": 8,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 12720028229,
+        "p50": 1619687376,
+        "p95": 3314026287
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 57725180332,
+        "p50": 7979628706,
+        "p95": 21387353497
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 683465548,
+        "p50": 92380826,
+        "p95": 155544686
+      }
+    },
+    "SequentialRule": {
+      "slots": 8,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 10055897422,
+        "p50": 1654734472,
+        "p95": 1897745814
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 51433781891,
+        "p50": 5637431335,
+        "p95": 20045377299
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 4481233056,
+        "p50": 717434079,
+        "p95": 885184811
+      }
+    },
+    "SequentialNoText": {
+      "slots": 8,
+      "evaluated": 6,
+      "completion_interval": [
+        4,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 9500489659,
+        "p50": 1539697510,
+        "p95": 1746301822
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 44081765182,
+        "p50": 5536601074,
+        "p95": 12853284338
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 4629168036,
+        "p50": 732783687,
+        "p95": 884686036
+      }
+    }
+  },
+  "common_six": {
+    "STOP": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 4429840128,
+        "p50": 618291018,
+        "p95": 962185605
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 52395751656,
+        "p50": 6710360674,
+        "p95": 20318822808
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 1488250520,
+        "p50": 91881585,
+        "p95": 435440938
+      }
+    },
+    "FixedTop4Macro": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        5
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 12744848057,
+        "p50": 2010387650,
+        "p95": 2508684812
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 50529790809,
+        "p50": 6052679488,
+        "p95": 16336994312
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 8515603997,
+        "p50": 1328311850,
+        "p95": 1618955615
+      }
+    },
+    "LLMOneShot": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 13049231265,
+        "p50": 2105122215,
+        "p95": 2528950062
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 58451634427,
+        "p50": 7221271832,
+        "p95": 21811961198
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 672207909,
+        "p50": 91332186,
+        "p95": 155554531
+      }
+    },
+    "LLMToolAgent": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 12720028229,
+        "p50": 1619687376,
+        "p95": 3314026287
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 57725180332,
+        "p50": 7979628706,
+        "p95": 21387353497
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 683465548,
+        "p50": 92380826,
+        "p95": 155544686
+      }
+    },
+    "SequentialRule": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 10055897422,
+        "p50": 1654734472,
+        "p95": 1897745814
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 51433781891,
+        "p50": 5637431335,
+        "p95": 20045377299
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 4481233056,
+        "p50": 717434079,
+        "p95": 885184811
+      }
+    },
+    "SequentialNoText": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        4,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 9500489659,
+        "p50": 1539697510,
+        "p95": 1746301822
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 44081765182,
+        "p50": 5536601074,
+        "p95": 12853284338
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 4629168036,
+        "p50": 732783687,
+        "p95": 884686036
+      }
+    }
+  },
+  "posthoc_choices": {
+    "fastest_agent_first_text_ns": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        3,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 4429840128,
+        "p50": 618291018,
+        "p95": 962185605
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 52395751656,
+        "p50": 6710360674,
+        "p95": 20318822808
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 1488250520,
+        "p50": 91881585,
+        "p95": 435440938
+      }
+    },
+    "quality_then_agent_first_text_ns": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        5,
+        5
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 6413187203,
+        "p50": 905605551,
+        "p95": 1953283998
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 43183047928,
+        "p50": 6052679488,
+        "p95": 13218922079
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 3132037465,
+        "p50": 388834245,
+        "p95": 1247250405
+      }
+    },
+    "fastest_agent_reply_ns": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        4,
+        4
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 8508889811,
+        "p50": 1568565835,
+        "p95": 2296551029
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 40156509536,
+        "p50": 5536601074,
+        "p95": 11763800266
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 2942105476,
+        "p50": 388834245,
+        "p95": 884686036
+      }
+    },
+    "quality_then_agent_reply_ns": {
+      "slots": 6,
+      "evaluated": 6,
+      "completion_interval": [
+        5,
+        5
+      ],
+      "agent_first_text_ns": {
+        "n": 6,
+        "sum": 8893607974,
+        "p50": 1605770105,
+        "p95": 2296551029
+      },
+      "agent_reply_ns": {
+        "n": 6,
+        "sum": 40672587950,
+        "p50": 6052679488,
+        "p95": 11763800266
+      },
+      "worker_first_text_ns": {
+        "n": 6,
+        "sum": 3506899686,
+        "p50": 388834245,
+        "p95": 1247250405
+      }
+    }
+  },
+  "quantile": "nearest-rank: sorted[ceil(q*n)-1]; n=6 p95 is maximum",
+  "limitations": [
+    "first nonempty decoded text is not qualified useful text",
+    "no client text or Tokkio audio measurement",
+    "fixed execution order, one run per endpoint; no causal latency claim",
+    "complete six-task subset excludes T05/T06; full 48-slot coverage preserved",
+    "all joint quality-latency selections use historical outcomes or timings",
+    "quality is assistant development review, not independent human qualification"
+  ],
+  "new_model_calls": 0,
+  "formal_reward": null
+}
