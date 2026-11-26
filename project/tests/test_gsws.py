@@ -61,11 +61,33 @@ def test_stale_state_rejected():
     with pytest.raises(ValueError):S.shared_view(observation(),st)
 
 
-def test_generator_keeps_original_raw_and_latest_user():
-    raw=[dict(role='system',content='same G'),dict(role='user',content='past RAW'),dict(role='user',content='current')]
-    st=accept(value());v=S.final_messages(raw,dict(turns=[{}]),st)
-    assert v[0]==raw[0] and v[1]==raw[1] and v[-1]==raw[-1]
-    assert raw==[dict(role='system',content='same G'),dict(role='user',content='past RAW'),dict(role='user',content='current')]
+def test_generator_and_interpreter_share_ids_without_hashes():
+    import re
+    obs=observation()
+    raw=[dict(role='system',content='same G'),dict(role='user',content='obsolete hash header'),
+         dict(role='user',content=obs['current_goal_context'][0]['text'])]
+    st=accept(value());task=dict(turns=obs['current_goal_context'])
+    for aid in (None,st):
+        rendered=S.final_messages(raw,task,aid,obs)
+        assert rendered[0]==raw[0] and rendered[-1]==raw[-1]
+        assert 'obsolete hash header' not in str(rendered)
+        assert 'C0' in rendered[1]['content']
+    messages=S.interpreter_messages(obs,'A2_GSWS')
+    assert 'snapshot_sha256' not in str(messages) and not re.search(r'[0-9a-f]{64}',str(messages))
+
+
+def test_history_group_ids_map_to_same_verbatim_turns():
+    obs=observation();obs['evidence'] += [dict(evidence_id='H3.T2',kind='historical_report',speaker='seeker',
+        turn_index=2,report_time='2025-12-25',text='I plan to visit.'),dict(evidence_id='H3.T3',kind='historical_report',
+        speaker='supporter',turn_index=3,report_time='2025-12-25',text='Is that decided?')]
+    obs['snapshot_sha256']=object_sha256({k:v for k,v in obs.items() if k!='snapshot_sha256'})
+    e=S.model_evidence(obs)
+    assert len(e['history'])==1 and e['history'][0]['reported_at']=='2025-12-25'
+    assert [t['id'] for t in e['history'][0]['turns']]==['H3.T2','H3.T3']
+    task=dict(turns=obs['current_goal_context'])
+    raw=[dict(role='system',content='G'),dict(role='user',content=task['turns'][0]['text'])]
+    g=S.final_messages(raw,task,observation=obs)
+    assert all(t['text'] in g[1]['content'] and t['id'] in g[1]['content'] for t in e['history'][0]['turns'])
 
 
 def test_worker_budget_every_slot_and_no_retry():

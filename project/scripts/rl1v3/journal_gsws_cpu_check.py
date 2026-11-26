@@ -13,6 +13,7 @@ from metacom_pm.rl1v3.journal.ge2_factory import GE2Factory
 from metacom_pm.rl1v3.journal.ge2_sources import rows,write_once
 from metacom_pm.rl1v3.journal.ge2_retrieval import RetrievalConfig
 from metacom_pm.rl1v3.journal.pomdp_latency import MonotonicClock
+from metacom_pm.rl1v3.journal.pomdp_dynamic_run import MonotonicJournal
 from metacom_pm.rl1v3.generator.g0e_port import PromptTokenizer
 from metacom_pm.rl1v3.retrieve.native_tokens import NativeTokenizer
 
@@ -46,8 +47,12 @@ def run(bundle,old_plan,output):
     summaries=[]
     for n in range(4):
         ts=tasks[2*n:2*n+2]
+        journal=MonotonicJournal(out/f'journal-{n+1:02}',clock)
+        def emit(kind,**kw):
+            journal.add(kind,**kw)  # exercise the real durable monotonic sink, not just list.append
+            events.append(dict(kind=kind,**kw))
         result=execute(tasks=ts,factory=factory,backend=FixtureBackend(),slots=slots(ts),
-            emit=lambda kind,**kw:events.append(dict(kind=kind,**kw)),clock=clock,deadline_ns=clock.now_ns()+1200*10**9)
+            emit=emit,clock=clock,deadline_ns=clock.now_ns()+1200*10**9)
         summaries.append({k:v for k,v in result.items() if k!='endpoints'})
     # Complete fixed 48 terminal / 32 interpreter paths with real source tools.
     assert sum(s['backend_calls'] for s in summaries)==80 and sum(s['fixture_terminal_slots'] for s in summaries)==48
@@ -55,7 +60,8 @@ def run(bundle,old_plan,output):
     write_once(out/'CPU_RUNTIME_EVENTS_NOT_MODEL.private.jsonl',events,jsonl=True)
     report=dict(status='CPU_NATIVE_SOURCE_RUNTIME_PASSED',jobs=summaries,model_loads=0,gpu_access=False,
         actual_model_calls=0,synthetic_backend_calls=80,fixture_endpoints=48,semantic_success=None,
-        same_original_evidence_asserted_across_three_arms=True,fixtures_rejected_by_real_terminal_worker=True)
+        same_original_evidence_asserted_across_three_arms=True,fixtures_rejected_by_real_terminal_worker=True,
+        real_monotonic_journal=True)
     write_once(out/'CPU_RUNTIME_PUBLIC.json',report);print(json.dumps(report,indent=2))
 
 

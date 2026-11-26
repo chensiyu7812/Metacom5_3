@@ -1,0 +1,243 @@
+{
+  "protocol": "event-skill-candidate32-cpu-v1",
+  "model_revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+  "model_loads": 1,
+  "device": "cpu",
+  "cpu_forward_items": 32,
+  "calls": 32,
+  "load_ns": 2849375031,
+  "skill_total_ns": 5565048868,
+  "nli_inference_and_tokenization_ns": 5557876093,
+  "capacity_not_scored": 0,
+  "references": {
+    "supported": 8,
+    "contradicted": 9,
+    "unknown": 15
+  },
+  "confusion": [
+    {
+      "reference": "contradicted",
+      "prediction": "contradicted",
+      "count": 9
+    },
+    {
+      "reference": "supported",
+      "prediction": "supported",
+      "count": 7
+    },
+    {
+      "reference": "supported",
+      "prediction": "unknown",
+      "count": 1
+    },
+    {
+      "reference": "unknown",
+      "prediction": "contradicted",
+      "count": 3
+    },
+    {
+      "reference": "unknown",
+      "prediction": "supported",
+      "count": 3
+    },
+    {
+      "reference": "unknown",
+      "prediction": "unknown",
+      "count": 9
+    }
+  ],
+  "false_pass": 3,
+  "false_pass_denominator": 24,
+  "false_fail": 0,
+  "false_fail_denominator": 8,
+  "supported_abstentions": 1,
+  "unknown_outputs": 10,
+  "rejected_unknown_reference": 6,
+  "group_results": [
+    {
+      "source_alias": "source-1",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "supported",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source_alias": "source-2",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source_alias": "source-3",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source_alias": "source-4",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source_alias": "source-5",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 2
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "contradicted",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source_alias": "source-6",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "unknown",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "source_alias": "source-7",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source_alias": "source-8",
+      "matrix": [
+        {
+          "reference": "contradicted",
+          "prediction": "contradicted",
+          "count": 1
+        },
+        {
+          "reference": "supported",
+          "prediction": "supported",
+          "count": 1
+        },
+        {
+          "reference": "unknown",
+          "prediction": "unknown",
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "uncertainty": "8 source prefixes, 6 owner/source groups; constructed correlated contrasts, assistant references, no independent qualification",
+  "natural_quality_reward": null,
+  "factuality_detector": false,
+  "training_steps": 0,
+  "thresholds_retuned": false
+}

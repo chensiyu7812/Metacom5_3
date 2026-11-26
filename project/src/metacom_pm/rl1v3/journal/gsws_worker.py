@@ -68,7 +68,7 @@ def validate_generate_request(request,spec,tokenizer,*,boot_id,now_ns,deadline_n
             L.require(state['state_sha256']==object_sha256({k:v for k,v in state.items() if k!='state_sha256'}),'actual interpretation hash')
             L.require(state['task_sha256']==b['task_sha256'] and state['stage']==b['stage'] and state['arm']==b['arm'],'interpretation scope')
             L.require(state['origin']=='actual_model_output','no CPU fixture in actual G')
-        L.require(p['messages']==S.final_messages(b['raw_messages'],b['task'],state),'final projection')
+        L.require(p['messages']==S.final_messages(b['raw_messages'],b['task'],state,b['observation']),'final projection')
     else:
         obs=b['observation'];S.validate_projection(obs)
         L.require(obs['task_sha256']==b['task_sha256'] and obs['stage']==b['stage'],'observation scope')

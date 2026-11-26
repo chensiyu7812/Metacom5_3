@@ -66,7 +66,7 @@ def build(old, selection, output):
             receipt=acquire(ep,task,stage);raw=ep.packet().payload()['messages']
             actual=S.project(task,ep,stage)
             state_row=dict(task_id=tid,goal_alias=choice['goal_alias'],stage=stage,observation=actual,source_receipt=receipt,
-                raw_messages=raw,raw_payload=payload(ep,S.final_messages(raw,task),DECODE),source_records=records)
+                raw_messages=raw,raw_payload=payload(ep,S.final_messages(raw,task,observation=actual),DECODE),source_records=records)
             states.append(state_row)
             row=dict(goal=choice['goal_alias'],stage=stage,channel=choice['channel'],exposure=choice['source'],
                 legal_sources=len(records),visible_turns=len(task['turns']),read_turns=sum(e['kind']=='historical_report' for e in actual['evidence']),
@@ -83,7 +83,7 @@ def build(old, selection, output):
                 st=S.accept_interpretation(json.dumps(value),arm,obs,model_output_sha256=object_sha256(value),fixture=True)
                 prior[arm]=st
                 ip=payload(ep,S.interpreter_messages(obs,arm),interpreter_decode(DECODE,arm))
-                gp=payload(ep,S.final_messages(raw,task,st),DECODE)
+                gp=payload(ep,S.final_messages(raw,task,st,obs),DECODE)
                 assert S.shared_view(obs,st)==S.shared_view(obs,st)
                 row[arm+'_fixture_interpreter_input_tokens']=len(ip['input_ids'])
                 row[arm+'_fixture_final_input_tokens']=len(gp['input_ids'])

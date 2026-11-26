@@ -54,7 +54,7 @@ def execute(*,tasks,factory,backend,slots,emit,clock,deadline_ns,guard=lambda:No
     completed=[];states={}; prior_cost={}; evidence_by_state={}
     def call(role,task,stage,arm,p,observation,extra):
         guard_start=_deadline(clock,deadline_ns);guard();start=_deadline(clock,deadline_ns)
-        emit('EXPERIMENT_GUARD',elapsed_ns=duration_ns(guard_start,start),task_id=task['task_id'],stage=stage,arm=arm)
+        emit('EXPERIMENT_GUARD',stamp=start,elapsed_ns=duration_ns(guard_start,start),task_id=task['task_id'],stage=stage,arm=arm)
         binding=dict(task_id=task['task_id'],task_sha256=object_sha256(task),stage=stage,arm=arm,
             method=f'{arm}:S{stage}',scope_sha256=backend.scope_sha256,boot_id=start['boot_id'],
             deadline_ns=deadline_ns,payload_sha256=object_sha256(p),
@@ -103,7 +103,7 @@ def execute(*,tasks,factory,backend,slots,emit,clock,deadline_ns,guard=lambda:No
                 emit('SEMANTIC_STATE',task_id=tid,stage=stage,arm=arm,observation=obs,state=state,
                      pm_view=pm_view,g_view=g_view,source_receipt=receipt,interpreter_failure=failure,
                      prior_interpreter_parent_ns=prior_cost.get((tid,arm),0))
-                p=payload(episode,S.final_messages(raw,task,state),DECODE)
+                p=payload(episode,S.final_messages(raw,task,state,obs),DECODE)
                 pm_end=_deadline(clock,deadline_ns)
                 reply,request,terminal_ns=call('terminal',task,stage,arm,p,obs,
                     dict(raw_messages=raw,task=task,state=state))

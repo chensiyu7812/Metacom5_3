@@ -22,7 +22,7 @@ from .pomdp_latency import MonotonicClock, latency_contract, duration_ns
 
 PROTOCOL = 'pmrl1-j-gsws-bounded-run-v1'
 JOB_KIND = 'JOURNAL_GSWS'
-BASE_COMMIT = 'c7a83bfb21ad4163eae8097945bc365b7ad51811'
+BASE_COMMIT = '73b6c5e09ec842a4bb9c41f9ba23f6d7eb568ffc'
 CONFIG = dict(backend='bm25', top_k=4, window_radius=1, bm25_k1=1.2, bm25_b=.75)
 REQUIRED_MODULES = tuple('project/src/metacom_pm/rl1v3/journal/' + n + '.py' for n in (
     'gsws', 'gsws_run', 'gsws_runtime', 'gsws_worker', 'ge2_memory', 'ge2_retrieval',

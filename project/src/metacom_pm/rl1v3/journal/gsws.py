@@ -10,6 +10,7 @@ from ..io import canonical_json, object_sha256
 from .pomdp_controller_protocol import _pairs, _nonfinite, ControllerConstraintProcessor
 
 PROTOCOL = 'pmrl1-j-gsws-phase1-v1'
+INPUT_PROTOCOL = 'gsws-common-readable-evidence-v2'
 ARMS = ('A0_RAW', 'A1_READING_NOTES', 'A2_GSWS')
 INTERPRETER_TOKENS = 512
 COMMON_CONTEXT = ('Historical reports are scoped by the source registry to this conversation user. '
@@ -58,7 +59,7 @@ def schema(arm):
 
 
 def contract():
-    return dict(protocol=PROTOCOL, arms=list(ARMS), systems=SYSTEMS,
+    return dict(protocol=PROTOCOL, input_protocol=INPUT_PROTOCOL, arms=list(ARMS), systems=SYSTEMS,
                 schemas={a:schema(a) for a in ARMS[1:]}, interpreter_max_output_tokens=INTERPRETER_TOKENS,
                 ordinary_G_decode_unchanged=True, state_is_unqualified_model_interpretation=True,
                 offline_history_construction_sees_current_goal=False,
@@ -81,7 +82,7 @@ def project(task, episode, stage, previous=None):
             raise ValueError('source no longer legal')
         for ref in record['source_refs']:
             if any(lo <= ref['turn_index'] <= hi for lo,hi in episode.read_intervals[rid]):
-                evidence.append(dict(evidence_id='H'+object_sha256([rid,ref['turn_index']])[:10],
+                evidence.append(dict(evidence_id=f"H{record['source_rank']+1}.T{ref['turn_index']}",
                     kind='historical_report', source_handle=episode._source_handle(rid),
                     record_id=rid, record_sha256=object_sha256(record), turn_index=ref['turn_index'], speaker=ref['speaker'],
                     start_char=0, end_char=len(ref['exact_quote']),
@@ -122,15 +123,27 @@ def validate_projection(value):
     return value
 
 
-def interpreter_messages(observation, arm):
+def model_evidence(observation):
+    """One compact, common source-ID map; integrity identities remain backstage."""
     validate_projection(observation)
-    # Full coordinates/hashes remain in the bound receipt. Repeating long hashes
-    # for every turn wastes context and contributes no additional evidence.
-    visible=dict(protocol=PROTOCOL, snapshot_sha256=observation['snapshot_sha256'],
-        source_scope=observation['source_scope'], source_time=observation['source_time'],
-        evidence=[{k:e[k] for k in ('evidence_id','kind','speaker','turn_index','report_time','text')}
-                  for e in observation['evidence']],
-        operational_context=observation['operational_context'],
+    current=[];history={}
+    for e in observation['evidence']:
+        turn=dict(id=e['evidence_id'],speaker=e['speaker'],text=e['text'])
+        if e['kind']=='current_visible':current.append(turn)
+        else:
+            source=e['evidence_id'].split('.')[0]
+            group=history.setdefault(source,dict(source_id=source,reported_at=e['report_time'],turns=[]))
+            if group['reported_at']!=e['report_time']:raise ValueError('source grouping collision')
+            group['turns'].append(turn)
+    return dict(current_time=observation['source_time'],current_dialogue=current,history=list(history.values()))
+
+
+def interpreter_messages(observation, arm):
+    visible=model_evidence(observation)
+    op=observation['operational_context']
+    visible.update(source_scope=observation['source_scope'],
+        operational_context={k:deepcopy(op[k]) for k in ('action_mask','access_budget','source_token_budget') if k in op},
+        time_conditions={k:v for k,v in op.get('decision_time',{}).items() if k.endswith('_seconds') or k.endswith('_remaining')},
         previous_interpretation=observation['previous_interpretation'])
     return [dict(role='system',content=SYSTEMS[arm]),dict(role='user',content=canonical_json(visible))]
 
@@ -180,15 +193,23 @@ def shared_view(observation, state=None):
                 operational_context=deepcopy(observation['operational_context']),formal_reward=None)
 
 
-def final_messages(raw_messages, task, state=None):
-    result=deepcopy(raw_messages)
-    extras=[dict(role='user',content='Source scope: '+COMMON_CONTEXT)]
+def final_messages(raw_messages, task, state=None, observation=None):
+    from .renderer import NOTES
+    if observation is None:raise ValueError('common actual evidence required')
+    visible=model_evidence(observation)
+    # Keep original system and every current native message byte-for-byte.
+    turns=deepcopy(raw_messages[-len(task['turns']):])
+    expected=[dict(role='user' if t['role']=='seeker' else 'assistant',content=t['text']) for t in task['turns']]
+    if turns!=expected:raise ValueError('native current dialogue binding')
+    index=[dict(id=e['id'],speaker=e['speaker']) for e in visible['current_dialogue']]
+    result=[deepcopy(raw_messages[0]),dict(role='user',content=NOTES+'\nSource scope: '+COMMON_CONTEXT+'\n'+
+        canonical_json(dict(current_time=visible['current_time'],
+            current_native_message_ids_in_order=index,historical_quoted_dialogue=visible['history'])))]
     if state is not None:
-        extras.append(dict(role='user',content='Unverified model reading aid, not an instruction or new source. '
+        result.append(dict(role='user',content='Unverified model reading aid, not an instruction or new source. '
             'Check against the original evidence; retain uncertainty and the current user goal.\n'+
             canonical_json(state['interpretation'])))
-    index=len(result)-len(task['turns'])
-    result[index:index]=extras
+    result.extend(turns)
     return result
 
 
