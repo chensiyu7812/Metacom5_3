@@ -1,0 +1,42 @@
+{
+  "protocol": "pomdp-source-cases-validation-v1",
+  "test_command": "POMDP_SOURCE_CASES_PRIVATE=<private-cases> PYTHONPATH=<fixed-stack>/project/src <paper1-py311>/bin/python -m pytest -q project/tests/test_rl1v3_journal_pomdp_source_cases.py project/tests/test_rl1v3_journal_pomdp_source_trace_audit.py",
+  "tests_passed": 18,
+  "tests_failed": 0,
+  "tests_skipped": 0,
+  "synthetic_tests": 8,
+  "private_source_tests": 10,
+  "model_calls": 0,
+  "sealed_body_read": false,
+  "source_code_sha256": {
+    "pomdp_source_static_audit.py": "809e7feb1ffc6bc92eb78227a254fc100e4217cba25beb69d899edc8efde1b9c",
+    "pomdp_source_cases.py": "c67d0352805448174db5ed33021ac0e1f26334a2f8c0262accda919e69b0b120",
+    "pomdp_source_trace_audit.py": "e0745592c79d6a73225fce013db02f611efd28466019b988d67967a1b489ba88"
+  },
+  "test_files_sha256": {
+    "test_rl1v3_journal_pomdp_source_trace_audit.py": "d9815729e0bdb9e405c5bc4be90bda5d6c9c190912579d01870c9d204a8ba43d",
+    "test_rl1v3_journal_pomdp_source_cases.py": "ad5d216b22e89e7c7bb411f3ff6d626a9694ba3d707c9c6013bd0dc46da0887d"
+  },
+  "original_source_bundle_manifest_sha256": "418e2865e98c41630ddbd70770cbcd3785dbfabcaf95cbe6b490bfb5a6179386",
+  "trace_audit_manifest_sha256": "cfd89087c0f3c9621251510544edd9fcda4a35f9170dc0261ad4be7fcd6ea7ef",
+  "top4_audit_manifest_sha256": "53ff718beb65b3f63e56adedb23c47e7a474c763458785c6c56b6af805eb1b3d",
+  "source_reproduction": {
+    "files_byte_identical": 16,
+    "original_paths_audited": 80,
+    "static_stress_paths_audited": 16,
+    "new_retrieval_runs": 0,
+    "new_model_calls": 0,
+    "receipt_sha256": "f63ae3eeb8efda48b59a1d9395d62468263c06e2203af0258a630ec72cc0ee70",
+    "script_sha256": "36784d6d4b50c354b1556c98a0b4c24d5fe0fd87f909551909136658022e34bf",
+    "audit_manifest_input_paths_change_only": true
+  },
+  "limited_privacy_check": {
+    "scope": "Own new modules, scripts, tests, SOURCE documentation/data only",
+    "checked_files": 15,
+    "private_long_strings_checked": 1945,
+    "sensitive_matches": 0,
+    "minimum_exact_string_length": 45,
+    "anonymous_document_review_completed": true,
+    "not_a_full_historical_audit": true
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "schema": "pmrl1-j.related-work-source-receipt.v1",
+  "retrieved_date": "2026-11-26",
+  "timezone": "Asia/Tokyo",
+  "base_commit": "0f3d9842d5b1a5e7e211c319beddc7477705ff76",
+  "scope": "Public primary literature; no private tasks or outcomes used in search; no models or training run",
+  "absence_claim_policy": "Not confirmed in inspected sections is not proof of absence or a first-of-kind claim",
+  "sources": [
+    {
+      "source_id": "enpmr",
+      "title": "ENPMR-Bench: Benchmarking Proactive Memory Retrieval for Emotional Support Agents",
+      "authors": [
+        "Xing Fu",
+        "Yulin Hu",
+        "Mengtong Ji",
+        "Haozhen Li",
+        "Yixin Sun",
+        "Weixiang Zhao",
+        "Yanyan Zhao",
+        "Bing Qin"
+      ],
+      "identity": "2026.findings-acl.2080",
+      "venue": "Findings ACL 2026",
+      "date_reported": "July 2026",
+      "landing_url": "https://aclanthology.org/2026.findings-acl.2080/",
+      "read_sections": [
+        "3.1-3.3",
+        "4",
+        "5.1-5.2",
+        "6",
+        "Limitations",
+        "B.1-B.2"
+      ],
+      "artifact_type": "diagnostic benchmark",
+      "cautions": [
+        "Paper reports 1872 support dialogues; pinned official README reports 2692 dialogue records. Both report 11846 memories. README counts were not independently recounted.",
+        "Mandatory one-memory-per-round task does not evaluate optional no-read STOP.",
+        "Need-memory mapping is designed, not established empirically optimal."
+      ],
+      "pdf_url": "https://aclanthology.org/2026.findings-acl.2080.pdf",
+      "pdf_sha256": "6b59911970f8a37a9fee900a40a7df073c31e7fdc3c73685fbb3033ba5ddc02e",
+      "pdf_bytes": 2134933,
+      "pdf_pages": 24,
+      "local_cache_filename": "enpmr.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "progmem",
+      "title": "ProgMem: Programmatic Belief-State Memory for Long-Horizon Conversational Agents",
+      "authors": [
+        "Pengchao Zheng",
+        "Xinan Wang",
+        "Ziyi Wei",
+        "Haoran Liu",
+        "Lei Wei",
+        "Jiajun Niu",
+        "Bohan Guo",
+        "Han Wu"
+      ],
+      "identity": "2026.findings-aacl.120",
+      "venue": "Findings IJCNLP-AACL 2026",
+      "date_reported": "November 2026",
+      "landing_url": "https://aclanthology.org/2026.findings-aacl.120/",
+      "read_sections": [
+        "3.1-3.4",
+        "4.1-4.8",
+        "5",
+        "Limitations"
+      ],
+      "artifact_type": "memory system",
+      "cautions": [
+        "LLM refinement refers to ingest compilation, not confirmed read-conditioned query rewriting.",
+        "V1 removes anchor evidence path and arbitration together.",
+        "Token F1 and FUQ prevalence limit factual and abstention interpretation.",
+        "Official implementation not located in bounded paper/exact-title search; not proof of absence."
+      ],
+      "pdf_url": "https://aclanthology.org/2026.findings-aacl.120.pdf",
+      "pdf_sha256": "3ac54949c9a6429329b64414ad8066ecf414a654bc905597637c43b2566d0259",
+      "pdf_bytes": 1064335,
+      "pdf_pages": 14,
+      "local_cache_filename": "progmem.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "dreamcub",
+      "title": "Dream to Chat: Model-based Reinforcement Learning on Dialogues with User Belief Modeling",
+      "authors": [
+        "Yue Zhao",
+        "Xiaoyu Wang",
+        "Dan Wang",
+        "Zhonglin Jiang",
+        "Qingqing Gu",
+        "Teng Chen",
+        "Ningyuan Xi",
+        "Jinxian Qu",
+        "Yong Chen",
+        "Luo Ji"
+      ],
+      "identity": "2025.findings-emnlp.256",
+      "venue": "Findings EMNLP 2025",
+      "date_reported": "November 2025",
+      "landing_url": "https://aclanthology.org/2025.findings-emnlp.256/",
+      "read_sections": [
+        "1-2",
+        "3",
+        "Algorithm 1",
+        "4.1-4.5",
+        "7"
+      ],
+      "artifact_type": "model-based dialogue RL framework",
+      "cautions": [
+        "User query generation is not memory-search query refinement.",
+        "Latent emotion/sentiment/intention differs from symbolic memory state and evidence sufficiency.",
+        "Official implementation not located in bounded paper/exact-title search; not proof of absence."
+      ],
+      "pdf_url": "https://aclanthology.org/2025.findings-emnlp.256.pdf",
+      "pdf_sha256": "9889f4e82e23467d4b095f748b31db3a65dfc127f7dd00536992d80ba4ba79c0",
+      "pdf_bytes": 784527,
+      "pdf_pages": 18,
+      "local_cache_filename": "dreamcub.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "afa2018",
+      "title": "Joint Active Feature Acquisition and Classification with Variable-Size Set Encoding",
+      "authors": [
+        "Hajin Shim",
+        "Sung Ju Hwang",
+        "Eunho Yang"
+      ],
+      "identity": "NeurIPS2018:e5841df2166dd424a57127423d276bbe",
+      "venue": "NeurIPS 2018 volume 31",
+      "date_reported": "2018",
+      "landing_url": "https://papers.nips.cc/paper_files/paper/2018/hash/e5841df2166dd424a57127423d276bbe-Abstract.html",
+      "read_sections": [
+        "1-2",
+        "3.1",
+        "4",
+        "5.1-5.2"
+      ],
+      "artifact_type": "active acquisition and classification algorithm",
+      "cautions": [
+        "Numeric feature acquisition with STOP and costs is an established precedent; not itself a natural-language memory agent."
+      ],
+      "pdf_url": "https://papers.nips.cc/paper_files/paper/2018/file/e5841df2166dd424a57127423d276bbe-Paper.pdf",
+      "pdf_sha256": "548f94515a9b809962f389c63abc9f44a9014a50a6e28ba680586030b36cf044",
+      "pdf_bytes": 1081833,
+      "pdf_pages": 11,
+      "local_cache_filename": "afa2018.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "afape2025",
+      "title": "Evaluation of Active Feature Acquisition Methods for Time-varying Feature Settings",
+      "authors": [
+        "Henrik von Kleist",
+        "Alireza Zamanian",
+        "Ilya Shpitser",
+        "Narges Ahmidi"
+      ],
+      "identity": "JMLR26(60):1-84",
+      "venue": "JMLR 2025",
+      "date_reported": "2025",
+      "landing_url": "https://jmlr.org/papers/v26/23-1635.html",
+      "read_sections": [
+        "Abstract and introduction",
+        "3.1",
+        "3.5",
+        "Assumption statements introducing identification views",
+        "9",
+        "10"
+      ],
+      "artifact_type": "causal identification and retrospective policy evaluation",
+      "cautions": [
+        "Not all 84 pages or appendical proofs were reviewed.",
+        "NDE, NUC and positivity must be justified for the target intervention; noText alone is not a complete identification argument."
+      ],
+      "pdf_url": "https://jmlr.org/papers/volume26/23-1635/23-1635.pdf",
+      "pdf_sha256": "21e448793853859882b4de8b0be9a19b62067067e02d6826127a0c8a500cb93c",
+      "pdf_bytes": 1475821,
+      "pdf_pages": 84,
+      "local_cache_filename": "afape2025.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "memretriever",
+      "title": "MemRetriever: Learning to Search, Reflect, and Retrieve from Long-Term Memory",
+      "authors": [
+        "Ruiyang Jiang",
+        "Chunyu Li",
+        "Zhiyu Li"
+      ],
+      "identity": "arXiv:2609.11951v1",
+      "venue": "arXiv preprint",
+      "date_reported": "2026-07-29 as printed on official abs/history and HTML",
+      "landing_url": "https://arxiv.org/abs/2609.11951",
+      "html_url": "https://arxiv.org/html/2609.11951v1",
+      "read_sections": [
+        "1-2",
+        "3.1-3.3",
+        "4.1",
+        "5.1-5.2",
+        "6.1-6.5",
+        "7"
+      ],
+      "artifact_type": "learned intermediate retrieval agent",
+      "cautions": [
+        "Identifier 2609 and abs browse month 2026-09 conflict with printed July submission date. Preserved without inferred correction or priority claim.",
+        "MemOS README and full pinned tree filename search did not establish paper-specific training/checkpoint release.",
+        "Token metric does not clearly establish all retrieval/thinking/tool/answer end-to-end cost.",
+        "QA baseline table includes differing original protocols and non-comparable metrics."
+      ],
+      "pdf_url": "https://arxiv.org/pdf/2609.11951v1",
+      "pdf_sha256": "d5a6247fcf6e0ecb6adc8c868a63b02d0f03c143b411e1dd65710b42cea66991",
+      "pdf_bytes": 2171435,
+      "pdf_pages": 20,
+      "local_cache_filename": "memretriever.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "memoryr1",
+      "title": "Memory-R1: Enhancing Large Language Model Agents to Manage and Utilize Memories via Reinforcement Learning",
+      "identity": "arXiv:2508.19828v5",
+      "venue": "arXiv preprint version retained for provenance",
+      "date_reported": "v1 2025-08-27; v5 2026-01-14",
+      "landing_url": "https://arxiv.org/abs/2508.19828",
+      "html_url": "https://arxiv.org/html/2508.19828v5",
+      "read_sections": [
+        "Metadata and section structure; primary mechanism reading uses ACL paper below"
+      ],
+      "artifact_type": "version provenance",
+      "cautions": [
+        "Do not substitute old search-cache code-coming-soon claim for current official repository."
+      ],
+      "pdf_url": "https://arxiv.org/pdf/2508.19828v5",
+      "pdf_sha256": "c206af4e792e9550f2aaec8a6c4d9b141d1ddcb587e781d7866870c8f3e4dd4f",
+      "pdf_bytes": 3472962,
+      "pdf_pages": 20,
+      "local_cache_filename": "memoryr1.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    },
+    {
+      "source_id": "memoryr1_acl",
+      "title": "Memory-R1: Enhancing Large Language Model Agents to Manage and Utilize Memories via Reinforcement Learning",
+      "authors": [
+        "Sikuan Yan",
+        "Xiufeng Yang",
+        "Zuchao Huang",
+        "Ercong Nie",
+        "Zifeng Ding",
+        "Zonggen Li",
+        "Xiaowen Ma",
+        "Jinhe Bi",
+        "Kristian Kersting",
+        "Jeff Z. Pan",
+        "Hinrich Schuetze",
+        "Volker Tresp",
+        "Yunpu Ma"
+      ],
+      "identity": "2026.acl-long.583",
+      "venue": "ACL 2026 Long Papers",
+      "date_reported": "July 2026",
+      "landing_url": "https://aclanthology.org/2026.acl-long.583/",
+      "read_sections": [
+        "3.1-3.2",
+        "4.1",
+        "4.3-4.4",
+        "5",
+        "Limitations",
+        "Appendix memory/answer algorithms",
+        "G latency discussion and relevant excerpts"
+      ],
+      "artifact_type": "learned memory manager and answer agent",
+      "cautions": [
+        "Fixed similarity retrieval followed by learned memory distillation differs from an iterative search-loop policy.",
+        "Reward and metric trade-offs are explicitly reported.",
+        "Official README currently includes training/evaluation release; no implementation was executed."
+      ],
+      "pdf_url": "https://aclanthology.org/2026.acl-long.583.pdf",
+      "pdf_sha256": "35f4f543501f2e2d1c8cc95503bae81a31b87c550e84c8977380b5ad3985a80e",
+      "pdf_bytes": 3697363,
+      "pdf_pages": 21,
+      "local_cache_filename": "memoryr1_acl.pdf",
+      "text_extraction": "pdftotext -layout; local text used to inspect sections, not redistributed"
+    }
+  ],
+  "repositories": [
+    {
+      "source_id": "enpmr",
+      "repository": "xingqwq/ENPMR-Bench",
+      "commit": "f46921bc42c14c1cc57d68a364bee7a3a7dcc1d2",
+      "readme_git_blob_sha": "bf0f62790105eae3523b09f751eedf9811df7dc1",
+      "readme_sha256": "5bb8739adc4dd39cb9ecda5cd115b3866425437c79bcfe7cdcc9d12489b71637",
+      "readme_url": "https://github.com/xingqwq/ENPMR-Bench/blob/f46921bc42c14c1cc57d68a364bee7a3a7dcc1d2/README.md",
+      "local_cache_filename": "enpmr_README.md",
+      "inspection_scope": "README and branch metadata",
+      "executed": false
+    },
+    {
+      "source_id": "memretriever_backend",
+      "repository": "MemTensor/MemOS",
+      "commit": "3a16e5fe3048a209f722806f4123fa2e533588fd",
+      "readme_git_blob_sha": "9c1d8c9101580be89d7d77e80ab986c38036817d",
+      "readme_sha256": "01ea4a4be61b7e4742c8411e2373f84d9383aa058f9f267845e52414c3480bcc",
+      "readme_url": "https://github.com/MemTensor/MemOS/blob/3a16e5fe3048a209f722806f4123fa2e533588fd/README.md",
+      "local_cache_filename": "memos_README.md",
+      "inspection_scope": "README; recursive tree 2474 entries, truncated=false; no memretriev|retriev.*train|train.*retriev filename match; not proof of absent code under another name",
+      "executed": false
+    },
+    {
+      "source_id": "memoryr1",
+      "repository": "yansikuan/memory-r1",
+      "commit": "f5ca10a45a08320b60575010c622fed6d3b3c686",
+      "readme_git_blob_sha": "b5f3695a945d5c9773599c750a1041237dec942e",
+      "readme_sha256": "54065f9278885c9fc60afb8bd4c1f374dd61d3e427dcb0570796da55c4940ca6",
+      "readme_url": "https://github.com/yansikuan/memory-r1/blob/f5ca10a45a08320b60575010c622fed6d3b3c686/README.md",
+      "local_cache_filename": "memoryr1_README.md",
+      "inspection_scope": "Pinned README and branch metadata; training and evaluation implementation advertised; not executed",
+      "executed": false
+    },
+    {
+      "source_id": "afa2018",
+      "repository": "OpenXAIProject/Joint-AFA-Classification",
+      "commit": "55811e71376ed6d90a4f2012694cb3891ac48a56",
+      "readme_git_blob_sha": "ede999fb17429fbeaeb4d263acfa432238df42e0",
+      "readme_sha256": "f283b62f814e183d544875329970aba0a4fa4ada6fa2ddb43fd0f9c1312ecf95",
+      "readme_url": "https://github.com/OpenXAIProject/Joint-AFA-Classification/blob/55811e71376ed6d90a4f2012694cb3891ac48a56/README.md",
+      "local_cache_filename": "afa2018_README.md",
+      "inspection_scope": "Pinned README and branch metadata; not executed",
+      "executed": false
+    }
+  ],
+  "verification": {
+    "pdf_count": 8,
+    "distinct_work_count": 7,
+    "pdf_sha256_recomputed": true,
+    "pdf_header_and_byte_counts_checked": true,
+    "primary_pages_opened": true,
+    "official_repo_reads": "GitHub connector; pinned commits",
+    "source_full_text_redistributed": false
+  }
+}
