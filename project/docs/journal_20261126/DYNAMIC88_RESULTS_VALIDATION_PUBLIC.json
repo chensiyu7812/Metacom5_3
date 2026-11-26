@@ -1,0 +1,168 @@
+{
+  "protocol": "pmrl1-j-dynamic88-results-validation-v1",
+  "base_commit": "cc900c40e8b3394ee4f74fe11d92e8faf483c8e2",
+  "date_japan": "2026-11-26",
+  "scope": "authorized DR1-DR4 actual results, bound development review and scoped historical dependency checks; not J00",
+  "catalog_sha256": "b2d8e16eb33fcbf304b3b5b314cb8240bfcc085ea0847d5cb8fe88893e50ccac",
+  "executor_inventory_sha256": "6116fbc4056c1da2d90cf54d04213515bada29c35447d101d2afe53f5837540c",
+  "authorized_attempts": {
+    "jobs": 4,
+    "actual_calls": 53,
+    "loads": 4,
+    "warmup": 0,
+    "retry": 0,
+    "job_wall_ns": 653895071014,
+    "calls_max": 88,
+    "all_attempts_closed": true,
+    "unused_call_upper_bound": 35,
+    "unused_budget_reusable_without_new_authorization": false,
+    "old_remaining220_used": 0,
+    "paid_API_calls": 0,
+    "training_calls": 0
+  },
+  "actual_execution": {
+    "physical_starts": 53,
+    "actual_model_returns": 53,
+    "model_finish_counts": {
+      "eos": 53
+    },
+    "terminal_slots": 48,
+    "terminal_status_counts": {
+      "path_technical_failure": 1,
+      "returned_eos": 38,
+      "unexecuted": 9
+    },
+    "controller_protocol_not_accepted": 1,
+    "generation_ns": 322379097663,
+    "input_tokens": 60048,
+    "output_tokens": 4114
+  },
+  "CPU_tests": {
+    "passed": 475,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 13.063,
+    "junit_xml_sha256": "355330d0024cec8c78d87f91f90b48debe4ed271fc06a46f00d126d29e7a0369",
+    "new_tests": {
+      "collector": 12,
+      "decisions": 26,
+      "quality_latency_join": 8
+    },
+    "original_tests": 429,
+    "CPU_success_is_not_scientific_hypothesis_confirmation": true
+  },
+  "independent_raw_recompute": {
+    "matches_final_collector": true,
+    "receipt_sha256": "895934ef33cc9de1467c40f9128f2b5db71e0ce841bd786aafaeea2d5d4f0acf",
+    "scope": "original events starts/returns, native token counts, nested durations and terminal slots"
+  },
+  "collector": {
+    "receipt_sha256": "f426160c021137e125c982e7e0f89b9191c65ded467b3ae3535c3cc21790df99",
+    "module_sha256": "e183a30e7cd19cb012802ccce3330f5b0678d74db0572a741f33f8d3d6f7e9ad",
+    "collection_manifest_sha256": "7ef9aa13bce86d93efbd04479aae33ceb7a94ae9619cdf3774b5432b9f7f4dfc",
+    "rejects_CPU_fixture_as_actual_generation": true
+  },
+  "DR3_frozen_parser_CPU_readback": {
+    "receipt_sha256": "21238ee5e3646f12d385c5988645aac7ef24ec8f850bd280e2f949a9698d5f1d",
+    "reproduced_state_protocol_rejection": true,
+    "JSON_syntax_valid": true,
+    "new_model_calls": 0,
+    "source_acquisitions_before_rejection": 0,
+    "semantic_task_failure": false
+  },
+  "quality_review": {
+    "actual_terminal_reviews": 38,
+    "complete": 20,
+    "incomplete": 12,
+    "uncertain": 6,
+    "no_terminal_not_evaluated": 10,
+    "actual_identity_joins": 48,
+    "negative_consistency_mutants_rejected": 6,
+    "private_review_outputs_identical_on_CPU_reproduction": 6,
+    "source_situations": 4,
+    "exposed_development_source_families": 2,
+    "review_qualification": "assistant_development_review_not_independent_human",
+    "formal_reward": null,
+    "old_five_human_items": "pending",
+    "validation_public_sha256": "f2470436fc91469e9ab7201486e359d90befb70b5e488547c9a2915729d08a85"
+  },
+  "counterfactual_limits": {
+    "complete_six_arm_tasks": 6,
+    "identical_OneShot_ToolAgent_terminal_payload_text_token_ids_pairs": 6,
+    "privileged_task_completion": [
+      5,
+      5
+    ],
+    "best_fixed_task_completion": [
+      4,
+      5
+    ],
+    "privileged_minus_best_fixed": [
+      0,
+      1
+    ],
+    "actual_selected_post_read_states": 2,
+    "existing_same_state_STOP_endpoints": 2,
+    "same_state_continue_terminal_endpoints": 0,
+    "correct_next_action_labels_qualified": false
+  },
+  "latency_scope": {
+    "clock": "same_boot_monotonic_ns",
+    "local_loaded_Agent_request_to_validated_reply_measured": true,
+    "internal_first_token_and_first_nonempty_text_measured": true,
+    "semantic_first_useful_text_qualified": false,
+    "client_first_text_measured": false,
+    "Tokkio_ASR_TTS_client_audio_measured": false,
+    "logging_wall_ns": null,
+    "load_coldstart_resident_distinguished": true,
+    "causal_latency_advantage_established": false,
+    "cache_hits_used_as_latency_benefit": false
+  },
+  "history_protection": {
+    "groups": [
+      {
+        "manifest_sha256": "c19bd08e4c7e6e66e8b6ecccea607971346dbdbe5044fde13e5593f28069c7ff",
+        "entries": 38,
+        "all_unchanged": true,
+        "scope": "DYNAMIC88_DELIVERY_MANIFEST.json"
+      },
+      {
+        "manifest_sha256": "65f450d32deff627700f51b7f52772d32314591fef5f18ba192e114a54d2ffb2",
+        "entries": 334,
+        "all_unchanged": true,
+        "scope": "INPUT_MANIFEST_PRIVATE.json"
+      },
+      {
+        "manifest_sha256": "7a25e500df076aabc364989203eae2fbeb7affd0e1636b9845cc92e37d0f6b34",
+        "entries": 359,
+        "all_unchanged": true,
+        "scope": "PROTECTED_INPUT_HASHES_PRIVATE.json"
+      }
+    ],
+    "overlapping_counts_not_added": true,
+    "old_tracked_files_modified": 0,
+    "all_frozen_runtime_and_prior_evidence_entries_unchanged": true,
+    "receipt_sha256": "bea9e21a4872361a62a6e41087464014f46aedb4bfc86d2c686131448a80e961"
+  },
+  "privacy_screen": {
+    "files_checked_before_this_receipt": 32,
+    "private_long_strings_checked": 3326,
+    "matches": 0,
+    "JSON_or_JSONL_parsed": 17,
+    "relative_links_checked": 8,
+    "broken_links": 0,
+    "limits": "finite exact-string/line scan and public field allowlists; not proof against all paraphrase disclosure",
+    "receipt_sha256": "39772a5bb91a17fd6cc67388cfb40508b224eada2141fb58ee8a78df57114c55",
+    "RAW_gold_full_replies_private_review_included": false
+  },
+  "new_component_manifests_verified": true,
+  "formal_reward": null,
+  "next_design_only": {
+    "real_post_SEARCH_states": 2,
+    "potential_new_terminal_call_upper_bound": 4,
+    "executable_package_created": false,
+    "authorized": false,
+    "executed": false
+  }
+}

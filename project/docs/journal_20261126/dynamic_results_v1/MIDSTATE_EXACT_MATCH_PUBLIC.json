@@ -1,0 +1,52 @@
+{
+  "api_calls": 0,
+  "decision_plan_sha256": "9ef87b8123a99e286e402200dcf88bdcbfd3358d8571e2f80a6761a8b4d02f43",
+  "gpu_calls": 0,
+  "input_sha256": {
+    "ALL_48_ENDPOINTS_PRIVATE.jsonl": "5a59a8fdc80d85fb5838e8652a25a89fdb98966fc06c069683db788491142233",
+    "ALL_EVENTS_PRIVATE.jsonl": "6c1091e7c439860f139c797cbcbfb076ca5aee5af94bd6cb7de355e341b927d1"
+  },
+  "interpretation": "exact G input endpoint reuse only; not randomized continuation contrast or new independent repetition",
+  "max_states": 4,
+  "model_calls": 0,
+  "model_loads": 0,
+  "protocol": "pmrl1-j-selected-midstate-payload-check-v1",
+  "renderer_sha256": "e98c8c0b9a06c0751bd7657809f2cb8642c2b565e0db54e334d5bb61b24ef9d6",
+  "results": [
+    {
+      "batch": "DR1",
+      "cross_arm_matches": [
+        "LLMOneShot"
+      ],
+      "formal_reward": null,
+      "same_path_match": true,
+      "status": "existing_cross_arm_same_payload_endpoint"
+    },
+    {
+      "batch": "DR2",
+      "cross_arm_matches": [
+        "LLMOneShot"
+      ],
+      "formal_reward": null,
+      "same_path_match": true,
+      "status": "existing_cross_arm_same_payload_endpoint"
+    },
+    {
+      "batch": "DR3",
+      "cross_arm_matches": [],
+      "formal_reward": null,
+      "same_path_match": false,
+      "status": "no_eligible_observed_midstate"
+    },
+    {
+      "batch": "DR4",
+      "cross_arm_matches": [],
+      "formal_reward": null,
+      "same_path_match": false,
+      "status": "no_eligible_observed_midstate"
+    }
+  ],
+  "selected": 2,
+  "tokenizer_identity": "native-tokenizer:79ff7ef649a97ffd84dc42f243db15a3ca7bc1eea618a9f9454e4f37942a8c92",
+  "training_calls": 0
+}

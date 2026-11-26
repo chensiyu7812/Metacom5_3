@@ -1,0 +1,73 @@
+{
+  "appropriateness": {
+    "possible_overacquisition_same_reviewed_success_without_reads": 8,
+    "reasonable_nonacquisition_within_reviewed_task": 9,
+    "unresolved": 31
+  },
+  "causal_identification": "policy-package endpoints only unless separately verified exact intermediate payload matches",
+  "formal_reward": null,
+  "logging_wall_ns": null,
+  "model_selected_stops": 6,
+  "no_correct_action_labels": true,
+  "paths": 48,
+  "protocol": "pmrl1-j-dynamic-decision-diagnostics-v1",
+  "reviewed_by_arm": {
+    "FixedTop4Macro": {
+      "fail": 1,
+      "pass": 4,
+      "pending": 1,
+      "uncertain": 2
+    },
+    "LLMOneShot": {
+      "fail": 2,
+      "pass": 3,
+      "pending": 2,
+      "uncertain": 1
+    },
+    "LLMToolAgent": {
+      "fail": 2,
+      "pass": 3,
+      "pending": 2,
+      "uncertain": 1
+    },
+    "STOP": {
+      "fail": 3,
+      "pass": 3,
+      "pending": 1,
+      "uncertain": 1
+    },
+    "SequentialNoText": {
+      "fail": 2,
+      "pass": 4,
+      "pending": 2
+    },
+    "SequentialRule": {
+      "fail": 2,
+      "pass": 3,
+      "pending": 2,
+      "uncertain": 1
+    }
+  },
+  "stop_reasons": {
+    "committed_stop": 4,
+    "explicit_model_stop": 6,
+    "initial_fixed_stop": 7,
+    "macro_top4_complete": 7,
+    "not_executed": 9,
+    "program_exhausted": 2,
+    "rule_program_end": 12,
+    "technical_failure": 1
+  },
+  "task_success_observations": {
+    "fail": 12,
+    "pass": 20,
+    "pending": 10,
+    "uncertain": 6
+  },
+  "technical_status": {
+    "complete_eos": 38,
+    "not_executed": 9,
+    "technical_failure": 1
+  },
+  "training_status": "not_established_by_call_count_or_coverage; requires real reviewed task contrasts and observable choice signal"
+}
