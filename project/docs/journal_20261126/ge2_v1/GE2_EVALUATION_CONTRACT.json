@@ -1,0 +1,83 @@
+{
+  "blind_review": {
+    "DirectEvidence_excluded": true,
+    "arms": [
+      "STOP",
+      "FixedTop4",
+      "LLMOneShot",
+      "LLMToolAgent"
+    ],
+    "historical_human_pending": 5,
+    "max_outputs": 8,
+    "minimum_complete_groups": 0,
+    "no_replacement_for_missing": true,
+    "old_human_answers": "development only, no new independent labels",
+    "qualification": "limited audit; assistant blind reading is not independent human qualification",
+    "reviewer_identity": "unassigned; actual provenance recorded before review",
+    "selected_task_rule": "first fact and first natural_support in frozen task order"
+  },
+  "direct_failure_review": "additional development explanation only; not substituted into fixed blind eight",
+  "fact_states": [
+    "contradicted",
+    "omitted",
+    "partial",
+    "supported",
+    "uncertain",
+    "unreviewed",
+    "unsupported"
+  ],
+  "formal_reward": null,
+  "interpretation": "program checks identities and entered observations, not their semantic truth",
+  "mechanical": [
+    "request/output/source/asof/hash binding",
+    "technical EOS vs length/failure/unexecuted",
+    "exact quote offset"
+  ],
+  "mechanical_does_not_imply": [
+    "substantive_answer",
+    "entailment",
+    "goal_completion",
+    "natural_support_quality"
+  ],
+  "missing_output_semantics": null,
+  "natural_empty_atom_list_is_not_success": true,
+  "natural_no_mandatory_recall": true,
+  "nli": {
+    "automatic_fail": false,
+    "automatic_pass": false,
+    "judge_vote": false,
+    "new_calls": 0,
+    "role": "optional existing auxiliary source/claim diagnostic only"
+  },
+  "output_mode": "unchanged_natural_language_G",
+  "protocol": "pmrl1-j-ge2-evaluation-v1",
+  "requirement_roles": [
+    "correct_if_used",
+    "explicit_answer",
+    "optional_background"
+  ],
+  "rule_states": [
+    "fail",
+    "not_applicable",
+    "pass",
+    "uncertain",
+    "unreviewed"
+  ],
+  "structured_branch": {
+    "GE2_natural_output_scoring": false,
+    "can_supply_bounded_development_supervision": true,
+    "natural_reward_qualification": false,
+    "reusable_evaluator": "structured_learning.evaluate",
+    "scope": "only original finite JSON fields, explicit source reference, exact original contract",
+    "scorer_sha256": "a83cc1b5960cb419bc893768f190da0664630cdc18c3ee4e9e63ae0a9374d87d",
+    "training_authorized": false
+  },
+  "substantive_answer_rule": "A cited or supplied passage is not an answer by itself: review the proposition answering the actual question, actor, report/event time, stage, polarity, uncertainty and relevant alternatives.",
+  "tiers": [
+    "mechanical_identity_and_delivery",
+    "substantive_requested_fact",
+    "bounded_semantic_operation",
+    "natural_support_quality"
+  ],
+  "unresolved_semantics": "unknown, never zero or equivalent"
+}

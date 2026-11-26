@@ -1,0 +1,88 @@
+{
+  "protocol": "pmrl1-j-ge2-final-cpu-validation-v1",
+  "base_commit": "48fdb54a683b51c9d5f77c98784a7b4f68b66d35",
+  "scope": "Normal scoped validation of GE2 implementation, source calculations, preserved historical outputs and frozen new run request; not J00 or semantic reward qualification",
+  "new_real_model_calls": 0,
+  "new_model_loads": 0,
+  "GPU_access": false,
+  "weights_read": false,
+  "training_calls": 0,
+  "formal_reward": null,
+  "unit_tests": {
+    "passed": 51,
+    "failed": 0,
+    "python": "3.11",
+    "imports_from": "packages-v2/executor",
+    "log_sha256": "fbdc38bb22ab9d4d108abbac2db93d82b0ba41432f10b852f0bcab0f5bdcf50b"
+  },
+  "native_execution_checks": {
+    "python": "3.12.14",
+    "real_source_tasks": 8,
+    "terminal_transport_fixture_slots": 37,
+    "fixture_not_model_output": true,
+    "protocol_failure_paths": 2,
+    "native_grammar_fixture_paths": 5,
+    "mask_steps": 235,
+    "finite_path_minimum_logits": 2,
+    "frozen_packages": 4,
+    "old_approval_rejected": true
+  },
+  "environment_note": "Python3.12 pytest invocation found pytest unavailable before tests; no package installed; documented existing Python3.11 test environment used successfully. Native CPU admission and source transport use Python3.12.",
+  "history_integrity": {
+    "checks": [
+      {
+        "manifest_name": "DYNAMIC88_RESULTS_DELIVERY_MANIFEST.json",
+        "manifest_sha256": "3eb8ab1f136ee284fba30f2570d5909e906464b83c0f1f9557e6a8b5bce1ce29",
+        "bound_files_checked": 33,
+        "mismatches": []
+      },
+      {
+        "manifest_name": "COLLECTION_MANIFEST_PRIVATE.json",
+        "manifest_sha256": "7ef9aa13bce86d93efbd04479aae33ceb7a94ae9619cdf3774b5432b9f7f4dfc",
+        "bound_files_checked": 691,
+        "mismatches": []
+      },
+      {
+        "manifest_name": "EVALUATION_VALIDATION_PUBLIC.json",
+        "manifest_sha256": "7ede83607e4efaa4642fbb529179bae7a9642e80c83751e60ee6edb290159f70",
+        "bound_files_checked": 9,
+        "mismatches": []
+      }
+    ],
+    "new_runtime_files_match_frozen": 14,
+    "historical_files_modified": 0,
+    "model_weights_read": false,
+    "GPU_access": false
+  },
+  "privacy": {
+    "new_files_checked": 45,
+    "private_source_strings_checked": 1952,
+    "public_exact_private_matches": [],
+    "broken_relative_links": [],
+    "json_jsonl_files_parsed": 17,
+    "scope": "Exact >=48 character dataset/query/reference/output strings; not a general privacy proof. Public outputs separately allowlisted."
+  },
+  "receipt_files_sha256": {
+    "project/docs/journal_20261126/ge2_v1/RUNTIME_CPU_CHECK_PUBLIC.json": "17c77a7f62ceecaff63b8aa3f55f133aa02859d5bf5b6453166feb9bf9427b46",
+    "project/docs/journal_20261126/ge2_v1/FROZEN_ADMISSION_PUBLIC.json": "f59527f88722d25b85f29bb7f73b006bf8d42a56ab4e14bd0e082e03c5dc8d27",
+    "project/docs/journal_20261126/ge2_v1/CONTROLLER_NATIVE_CPU_PUBLIC.json": "680817f398961a2c4e8badf7efc81d9f7f411fb53e7cbff842e66be7efc73fac",
+    "project/docs/journal_20261126/ge2_v1/CPU_EXPORT_RECEIPT_PUBLIC.json": "b7a0f2a45ec3b980fd3bc154d21bbae2f3ad4f132a059d387884d1101e36cefc",
+    "project/docs/journal_20261126/ge2_v1/EVALUATION_VALIDATION_PUBLIC.json": "7ede83607e4efaa4642fbb529179bae7a9642e80c83751e60ee6edb290159f70",
+    "project/docs/journal_20261126/ge2_v1/SC36_RECHECK_PUBLIC.json": "3f8f7ce5da3fa2aec2feb1e12045b11bf3e0bc21c086a2e84cbd9cb92e7470e2",
+    "project/docs/journal_20261126/ge2_v1/T03_UNION_PUBLIC.json": "af0bac9d4ac310ca3f0ba32c76cd55bea68465d8bd140e0d83fce0273abca68c"
+  },
+  "pending": {
+    "GE2_explicit_researcher_approval": true,
+    "MIDSTATE4_explicit_researcher_approval": true,
+    "GE2_real_generation": true,
+    "limited_blind_review_outputs_and_reviewer": true,
+    "historical_five_human_reviews": true
+  },
+  "unsupported_claims": [
+    "CPU passes do not establish model semantic correctness",
+    "Exact-string scan is not a general privacy proof",
+    "Evidence supply does not establish task success",
+    "No GE2 sequential quality or latency advantage established",
+    "No natural-language reward qualification"
+  ]
+}
