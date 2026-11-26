@@ -1,0 +1,61 @@
+{
+  "command": "SELECTIVE_MEMORY_VALIDATION_PRIVATE=<private-root> PYTHONPATH=<fixed-stack>/project/src <paper1-py311>/bin/python -m pytest -q project/tests/test_rl1v3_journal_selective_memory_validation.py",
+  "test_count": 25,
+  "passed": 25,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "private_source_tests": 5,
+  "synthetic_tests": 20,
+  "python": "/opt/tokkio-data0/tokkio_envs/paper1-py311/bin/python",
+  "device_access": false,
+  "model_loads": 0,
+  "source_code_sha256": {
+    "selective_memory_validation_packages.py": "fb3be7c68e5d91817532aad70b2c26afb81dfdbae2766f1566fce837cdcffded",
+    "selective_memory_validation_sources.py": "ffa72dec04d724791591a2163ee6f06d4013b625882b5604248796bc567a1c58",
+    "selective_memory_validation_review.py": "20ba0e33323c065bcfd276debcd8599e0dd01c6229fd11f5dbfb62f2fcfd10d6",
+    "selective_memory_validation_policies.py": "0d047f4d54079f08a6c6409bb56380d2786cdc0ce45698e92d3e3906d3fd7044",
+    "selective_memory_validation.py": "35552ded54fb5176e8fa7336a417f03a9c153b0460911ce079c2bfcc8624bc69",
+    "selective_memory_validation_top4.py": "41913212f4fa02a3431f5336298d01092e338a2a3133c30ed23ba9e05f3d2b06",
+    "selective_memory_validation_run.py": "8d2294a511202e6efbe693425b54718d3eec3dff28e1cc9f9cfb09a554c7053f"
+  },
+  "test_file_sha256": "6534e8cc59dd55a5bdbd1eddeefd49ab8ed04a599f9988bd7b4ecf90006f3389",
+  "checks": [
+    "sealed-owner rejection before reading cache",
+    "family closure",
+    "original RAW authentication and mutation rejection",
+    "all 60 selected sessions strict-past exact complete text",
+    "15 paired queries unchanged",
+    "runtime allowlist and endpoint reuse",
+    "unrun/technical/semantic review separation",
+    "optional facts do not become natural support success conditions",
+    "additional asserted error prevents task completion",
+    "supplemental status enums and explicit review",
+    "unresolved source/reference dispute prevents definite completion",
+    "optional factual error is not excused by optionality"
+  ],
+  "fresh_directory_rebuild": {
+    "exit_code": 0,
+    "task_eval_policy_files_byte_identical": true,
+    "all_30_request_rows_byte_identical": true,
+    "new_model_calls": 0,
+    "reproduce_log_sha256": "4381c453e42203dc6c3782225f654631413e41d9e84df362933a47e01a983dc4",
+    "scope": "Task/evaluation-source/policy files and all 30 request rows; their identities remain unchanged after the subsequent review-validator fix. The new review schema was regenerated and tested separately."
+  },
+  "limited_privacy_check": {
+    "files_checked": 23,
+    "private_strings_checked": 2299,
+    "exact_private_string_hits": 0,
+    "not_a_full_asset_audit": true
+  },
+  "review_integrity_repair": {
+    "old_false_passes_reproduced": 2,
+    "new_false_passes_rejected": 2,
+    "negative_tests_added": 10,
+    "review_protocol": "selective-memory-validation-review-v2",
+    "active_private_evaluation_directory": "evaluation-preparation-v2",
+    "source_supply_bytes_unchanged": true,
+    "request_bytes_unchanged": true,
+    "new_model_calls": 0
+  }
+}
