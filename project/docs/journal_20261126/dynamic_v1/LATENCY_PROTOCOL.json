@@ -1,0 +1,48 @@
+{
+  "agent_scope": "runtime must bind agent_start/pm_start/end; callback does not invent them",
+  "aggregation": "actual intervals only; shared load and overlapping intervals not double-counted",
+  "cache": "terminal result reuse disabled in this comparison; record every physical call",
+  "client_delivery": "not observed by this worker-side callback",
+  "client_scope": "no actual client event => client TTFT remains null",
+  "client_ttft_ns": null,
+  "clock": "CLOCK_MONOTONIC",
+  "cold": "one actual cold load per job measured separately; never impute it to every task",
+  "cross_process": "comparable only for same Linux host boot_id and clock",
+  "deadline": "supervisor supplies absolute monotonic_ns in the same verified boot domain",
+  "durations": "monotonic_ns differences; never UTC or token/throughput estimates",
+  "fields": [
+    "generate_start",
+    "prompt_callback",
+    "first_generated_token",
+    "first_non_special_token",
+    "first_nonempty_decoded_text",
+    "stream_end"
+  ],
+  "first_text_definition": "decoded prefix contains a non-whitespace, non-control, non-U+FFFD character",
+  "first_text_is_semantic_success": false,
+  "instrumentation_overhead": "HF may transfer tokens to CPU before put; callback_work_ns excludes that transfer, full generation wall includes it; overhead is not zero",
+  "no_text_policy_changed": false,
+  "observer_effect": "passive token copy/decode consumes measured wall time; no logits or tokens changed",
+  "protocol": "pmrl1-j-dynamic-monotonic-observer-v1",
+  "runtime_timestamps": [
+    "agent_start",
+    "pm_start",
+    "controller_start",
+    "controller_end",
+    "resource_start",
+    "resource_end",
+    "terminal_start",
+    "terminal_end",
+    "agent_end"
+  ],
+  "semantic_text_validity": "not_machine_qualified",
+  "supervisor_timestamps": [
+    "job_start",
+    "worker_spawn",
+    "load_start",
+    "load_end",
+    "job_end"
+  ],
+  "unit": "nanoseconds",
+  "warm": "later calls share the admitted loaded model; zero extra warmup calls"
+}

@@ -1,0 +1,149 @@
+{
+  "constraint_scope": "static syntax only; STOP always in schema",
+  "controller_decode_overrides": {
+    "no_repeat_ngram_size": 0
+  },
+  "decode_composition": "HF original processors then grammar; empty finite intersection raises",
+  "eos_token_ids": [
+    1,
+    106,
+    50
+  ],
+  "max_acquisitions": 4,
+  "max_plan_items": 5,
+  "max_query_words": 256,
+  "no_nonfinite_fallback": true,
+  "no_repair": true,
+  "no_retry": true,
+  "output_caps": {
+    "LLMOneShot": 768,
+    "LLMToolAgent": 192
+  },
+  "parser_policy": "bare JSON; reject duplicate keys, nonfinite numbers, bool integers, extras",
+  "protocol": "pmrl1-j-dynamic-controller-protocol-v1",
+  "schemas": {
+    "LLMOneShot": {
+      "items": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "STOP"
+              }
+            },
+            "required": [
+              "action"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "SEARCH"
+              },
+              "query": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "action",
+              "query"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "EXPAND"
+              },
+              "from_search": {
+                "maximum": 3,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "hit_rank": {
+                "enum": [
+                  0,
+                  1
+                ],
+                "type": "integer"
+              }
+            },
+            "required": [
+              "action",
+              "from_search",
+              "hit_rank"
+            ],
+            "type": "object"
+          }
+        ]
+      },
+      "maxItems": 5,
+      "minItems": 1,
+      "type": "array"
+    },
+    "LLMToolAgent": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "STOP"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "SEARCH"
+            },
+            "query": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "query"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "const": "EXPAND"
+            },
+            "handle": {
+              "pattern": "^hit:[0-9a-f]{24}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "action",
+            "handle"
+          ],
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "source_semantics": "existing pomdp_memory.query_tokens and observation-only provenance",
+  "state_legality": "separate parser + state validators; never grammar gold/answer masking",
+  "terminal_decode_modified": false,
+  "validators": {
+    "oneshot": "validate_oneshot",
+    "parser": "parse_controller",
+    "tool": "validate_tool"
+  },
+  "xgrammar_version": "0.1.21"
+}

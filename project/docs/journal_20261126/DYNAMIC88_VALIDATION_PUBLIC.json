@@ -1,0 +1,114 @@
+{
+  "protocol": "pmrl1-j-dynamic88-delivery-validation-v1",
+  "base_commit": "f2d59f1c42de672c0785e034dbbd76e424f5529e",
+  "date_japan": "2026-11-26",
+  "scope": "new dynamic executor, current SMV latency readback, existing task/evidence dependencies; not J00",
+  "new_actual_model_calls": 0,
+  "new_model_loads": 0,
+  "new_GPU_calls": 0,
+  "new_API_calls": 0,
+  "new_training_calls": 0,
+  "CPU_tests": {
+    "passed": 429,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "wall_seconds": 12.958,
+    "receipt_sha256": "9d49cae9121b54beda91f266274617a22ac67a1ee4a64abd20a4424e7c68b76a"
+  },
+  "actual_source_frozen_executor_CPU": {
+    "tasks": 8,
+    "source_pairs": 4,
+    "terminal_fixture_dispatches": 48,
+    "controller_fixture_dispatches": 40,
+    "fixture_dispatches": 88,
+    "actual_model_calls": 0,
+    "deterministic_payloads_identical": 32,
+    "event_counts": {
+      "AGENT_PATH_COMPLETED": 48,
+      "AGENT_PATH_START": 48,
+      "CONTROLLER_ACTION_VALIDATED": 32,
+      "CONTROLLER_PROGRAM_VALIDATED": 8,
+      "EXPERIMENT_GUARD_RETURNED": 88,
+      "EXPERIMENT_GUARD_START": 88,
+      "FORCED_STOP": 8,
+      "MACRO_PARENT_RETURNED": 32,
+      "MACRO_SEARCH_RETURNED": 8,
+      "MACRO_SEARCH_START": 8,
+      "MODEL_REQUEST_RETURNED": 88,
+      "MODEL_REQUEST_START": 88,
+      "MODEL_REQUEST_VALIDATED": 88,
+      "ONESHOT_COMMITTED": 8,
+      "PM_FINISHED": 48,
+      "TERMINAL_INPUT_BOUND": 48,
+      "TOOL_RETURNED": 144,
+      "TOOL_START": 144
+    },
+    "timing_categories": {
+      "macro_retrieval": 8,
+      "native_chat_tokenization": 720,
+      "raw_span_selection": 96,
+      "renderer_including_tokenization": 680,
+      "retrieval_including_legality": 48,
+      "source_binding_legality": 48,
+      "source_legality_check": 2064,
+      "token_count": 1224
+    }
+  },
+  "CPU_replay_private_receipt_sha256": "436f2cf6b549dcbe36b143923bccb0678c394c26f5480d31cd02030745b0d60a",
+  "final_runtime_hashes_equal_to_frozen": true,
+  "frozen_admission_checks": {
+    "plans_checked": 4,
+    "all_passed": true,
+    "unapproved_CLI_rejected_before_device": true,
+    "receipt_sha256": "66db5e11786f58738c7ef08248cc9070ede449650d4107a6f358b44d23ef95a1"
+  },
+  "history_protection": {
+    "protocol": "dynamic88-scoped-protection-check-v1",
+    "scope": "existing dependency manifests only; not J00",
+    "groups": [
+      {
+        "manifest_file": "/home/tokkio/Metacom5_3-journal/project/docs/journal_20261126/POMDP_DELIVERY_MANIFEST.json",
+        "manifest_sha256": "3d96581fa3a79acdc8570e79220344bf25b46578f2ee3960b5102b3149e1f04f",
+        "count": 47,
+        "all_unchanged": true
+      },
+      {
+        "manifest_file": "/opt/tokkio-data0/tokkio_runs/pmrl1-j-selection-20261126/selective-v1/INPUT_MANIFEST_PRIVATE.json",
+        "manifest_sha256": "65f450d32deff627700f51b7f52772d32314591fef5f18ba192e114a54d2ffb2",
+        "count": 334,
+        "all_unchanged": true
+      },
+      {
+        "manifest_file": "/opt/tokkio-data0/tokkio_runs/pmrl1-j-selection-20261126/attribution/PROTECTED_INPUT_HASHES_PRIVATE.json",
+        "manifest_sha256": "7a25e500df076aabc364989203eae2fbeb7affd0e1636b9845cc92e37d0f6b34",
+        "count": 359,
+        "all_unchanged": true
+      }
+    ],
+    "overlapping_counts_not_independent": true,
+    "old_tracked_files_changed": 0
+  },
+  "privacy_screen": {
+    "files_checked_before_this_receipt": 37,
+    "distinct_private_long_strings_checked": 3313,
+    "matches": 0,
+    "scope": "actual source bodies/lines/references, eight-pair source-bundle task/evidence strings, SMV full output strings; exact-string screen is limited, not a proof of all semantic privacy",
+    "raw_gold_replies_uploaded": false
+  },
+  "public_JSON_files_parsed_before_this_receipt": 14,
+  "relative_links_checked_before_this_receipt": 26,
+  "broken_links": 0,
+  "active_catalog_file_sha256": "b2d8e16eb33fcbf304b3b5b314cb8240bfcc085ea0847d5cb8fe88893e50ccac",
+  "active_executor_inventory_sha256": "6116fbc4056c1da2d90cf54d04213515bada29c35447d101d2afe53f5837540c",
+  "PR28_readonly_check": {
+    "state": "open",
+    "merged": false,
+    "head_sha": "b07db1046c948a77643a646bb845a21e74c10044"
+  },
+  "private_material_retained_local": true,
+  "formal_reward": null,
+  "GPU_authorized": false,
+  "new_component_manifest_entries_checked": 22,
+  "new_component_manifests_all_match": true
+}

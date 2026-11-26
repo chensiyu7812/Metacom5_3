@@ -1,0 +1,797 @@
+{
+  "api_calls": 0,
+  "boundary_checks": {
+    "all_negative_infinity": true,
+    "changed_prefix": true,
+    "eos_forbidden_before_json": true,
+    "json_complete_without_eos_is_not_terminated": true,
+    "multiple_sequences": true,
+    "nan": true,
+    "positive_infinity": true,
+    "token_after_eos": true,
+    "truncation_not_completed": true
+  },
+  "cases": [
+    {
+      "accepted_fixture_tokens": 3,
+      "case": "tool_stop",
+      "checked_prefixes": 4,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 3,
+      "case": "tool_stop",
+      "checked_prefixes": 4,
+      "eos": 106,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 3,
+      "case": "tool_stop",
+      "checked_prefixes": 4,
+      "eos": 50,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 6,
+      "case": "tool_stop",
+      "checked_prefixes": 6,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 6,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 6,
+      "case": "tool_stop",
+      "checked_prefixes": 6,
+      "eos": 106,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 6,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 6,
+      "case": "tool_stop",
+      "checked_prefixes": 6,
+      "eos": 50,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 6,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 6
+    },
+    {
+      "accepted_fixture_tokens": 7,
+      "case": "tool_stop",
+      "checked_prefixes": 7,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 7,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 7
+    },
+    {
+      "accepted_fixture_tokens": 7,
+      "case": "tool_stop",
+      "checked_prefixes": 7,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 7,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 7
+    },
+    {
+      "accepted_fixture_tokens": 3,
+      "case": "tool_search",
+      "checked_prefixes": 4,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 11
+    },
+    {
+      "accepted_fixture_tokens": 11,
+      "case": "tool_search",
+      "checked_prefixes": 11,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 11,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 11
+    },
+    {
+      "accepted_fixture_tokens": 8,
+      "case": "tool_search",
+      "checked_prefixes": 9,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 14
+    },
+    {
+      "accepted_fixture_tokens": 14,
+      "case": "tool_search",
+      "checked_prefixes": 14,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 14,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 14
+    },
+    {
+      "accepted_fixture_tokens": 3,
+      "case": "tool_expand",
+      "checked_prefixes": 4,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 15
+    },
+    {
+      "accepted_fixture_tokens": 15,
+      "case": "tool_expand",
+      "checked_prefixes": 15,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 15,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "compact",
+      "total_fixture_tokens": 15
+    },
+    {
+      "accepted_fixture_tokens": 18,
+      "case": "tool_expand",
+      "checked_prefixes": 18,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 18,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 3,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 18
+    },
+    {
+      "accepted_fixture_tokens": 18,
+      "case": "tool_expand",
+      "checked_prefixes": 18,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 18,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMToolAgent",
+      "style": "spaces",
+      "total_fixture_tokens": 18
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_stop",
+      "checked_prefixes": 5,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_stop",
+      "checked_prefixes": 5,
+      "eos": 106,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_stop",
+      "checked_prefixes": 5,
+      "eos": 50,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 8,
+      "case": "one_stop",
+      "checked_prefixes": 8,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 8,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 8,
+      "case": "one_stop",
+      "checked_prefixes": 8,
+      "eos": 106,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 8,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 8,
+      "case": "one_stop",
+      "checked_prefixes": 8,
+      "eos": 50,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 8,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 8
+    },
+    {
+      "accepted_fixture_tokens": 9,
+      "case": "one_stop",
+      "checked_prefixes": 9,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 9,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 9
+    },
+    {
+      "accepted_fixture_tokens": 9,
+      "case": "one_stop",
+      "checked_prefixes": 9,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 9,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 9
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_search",
+      "checked_prefixes": 5,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 13
+    },
+    {
+      "accepted_fixture_tokens": 13,
+      "case": "one_search",
+      "checked_prefixes": 13,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 13,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 13
+    },
+    {
+      "accepted_fixture_tokens": 9,
+      "case": "one_search",
+      "checked_prefixes": 10,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 16
+    },
+    {
+      "accepted_fixture_tokens": 16,
+      "case": "one_search",
+      "checked_prefixes": 16,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 16,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 16
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_expand",
+      "checked_prefixes": 5,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 34
+    },
+    {
+      "accepted_fixture_tokens": 34,
+      "case": "one_expand",
+      "checked_prefixes": 34,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 34,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 34
+    },
+    {
+      "accepted_fixture_tokens": 9,
+      "case": "one_expand",
+      "checked_prefixes": 10,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 45
+    },
+    {
+      "accepted_fixture_tokens": 45,
+      "case": "one_expand",
+      "checked_prefixes": 45,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 45,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 45
+    },
+    {
+      "accepted_fixture_tokens": 4,
+      "case": "one_four",
+      "checked_prefixes": 5,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 60
+    },
+    {
+      "accepted_fixture_tokens": 60,
+      "case": "one_four",
+      "checked_prefixes": 60,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 60,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "compact",
+      "total_fixture_tokens": 60
+    },
+    {
+      "accepted_fixture_tokens": 9,
+      "case": "one_four",
+      "checked_prefixes": 10,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": true,
+      "final": null,
+      "no_repeat_ngram_size": 3,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 81
+    },
+    {
+      "accepted_fixture_tokens": 81,
+      "case": "one_four",
+      "checked_prefixes": 81,
+      "eos": 1,
+      "error": null,
+      "expected_next_token_blocked": false,
+      "final": {
+        "accepted_generated_tokens": 81,
+        "grammar_completed": true,
+        "grammar_terminated": true
+      },
+      "no_repeat_ngram_size": 0,
+      "role": "LLMOneShot",
+      "style": "spaces",
+      "total_fixture_tokens": 81
+    }
+  ],
+  "checked_prefixes": 488,
+  "coverage": "bounded native-tokenized JSON fixture paths and three EOS IDs; not all reachable token prefixes or semantic correctness",
+  "cpu_only": true,
+  "cuda_initialized": false,
+  "fixture_text_private": false,
+  "gpu_calls": 0,
+  "grammar_has_no_observation_or_reference_input": true,
+  "implementation_files_sha256": {
+    "journal_check_pomdp_protocol.py": "46b917a05d89b403835238ac79d0d10af08da835982ccef6bcadf4a74e2f0465",
+    "pomdp_controller_protocol.py": "dbd1db4f8b8833a9eaf16003552252193ec74accfee824ac470f2142df3676d7",
+    "pomdp_latency.py": "d5332a9eb2ca5572886c58fae91ecfdccbb85fd9fc9288b5b39b1828ca54faa0"
+  },
+  "latency_contract": {
+    "agent_scope": "runtime must bind agent_start/pm_start/end; callback does not invent them",
+    "aggregation": "actual intervals only; shared load and overlapping intervals not double-counted",
+    "cache": "terminal result reuse disabled in this comparison; record every physical call",
+    "client_delivery": "not observed by this worker-side callback",
+    "client_scope": "no actual client event => client TTFT remains null",
+    "client_ttft_ns": null,
+    "clock": "CLOCK_MONOTONIC",
+    "cold": "one actual cold load per job measured separately; never impute it to every task",
+    "cross_process": "comparable only for same Linux host boot_id and clock",
+    "deadline": "supervisor supplies absolute monotonic_ns in the same verified boot domain",
+    "durations": "monotonic_ns differences; never UTC or token/throughput estimates",
+    "fields": [
+      "generate_start",
+      "prompt_callback",
+      "first_generated_token",
+      "first_non_special_token",
+      "first_nonempty_decoded_text",
+      "stream_end"
+    ],
+    "first_text_definition": "decoded prefix contains a non-whitespace, non-control, non-U+FFFD character",
+    "first_text_is_semantic_success": false,
+    "instrumentation_overhead": "HF may transfer tokens to CPU before put; callback_work_ns excludes that transfer, full generation wall includes it; overhead is not zero",
+    "no_text_policy_changed": false,
+    "observer_effect": "passive token copy/decode consumes measured wall time; no logits or tokens changed",
+    "protocol": "pmrl1-j-dynamic-monotonic-observer-v1",
+    "runtime_timestamps": [
+      "agent_start",
+      "pm_start",
+      "controller_start",
+      "controller_end",
+      "resource_start",
+      "resource_end",
+      "terminal_start",
+      "terminal_end",
+      "agent_end"
+    ],
+    "semantic_text_validity": "not_machine_qualified",
+    "supervisor_timestamps": [
+      "job_start",
+      "worker_spawn",
+      "load_start",
+      "load_end",
+      "job_end"
+    ],
+    "unit": "nanoseconds",
+    "warm": "later calls share the admitted loaded model; zero extra warmup calls"
+  },
+  "model_calls": 0,
+  "model_loads": 0,
+  "no_repeat_0_pass": 18,
+  "no_repeat_0_total": 18,
+  "no_repeat_3_incompatibilities": 15,
+  "packages": {
+    "torch": "2.7.1+cu128",
+    "transformers": "5.17.0",
+    "xgrammar": "0.1.21"
+  },
+  "protocol": "pmrl1-j-controller-native-cpu-prefix-check-v1",
+  "protocol_contract": {
+    "constraint_scope": "static syntax only; STOP always in schema",
+    "controller_decode_overrides": {
+      "no_repeat_ngram_size": 0
+    },
+    "decode_composition": "HF original processors then grammar; empty finite intersection raises",
+    "eos_token_ids": [
+      1,
+      106,
+      50
+    ],
+    "max_acquisitions": 4,
+    "max_plan_items": 5,
+    "max_query_words": 256,
+    "no_nonfinite_fallback": true,
+    "no_repair": true,
+    "no_retry": true,
+    "output_caps": {
+      "LLMOneShot": 768,
+      "LLMToolAgent": 192
+    },
+    "parser_policy": "bare JSON; reject duplicate keys, nonfinite numbers, bool integers, extras",
+    "protocol": "pmrl1-j-dynamic-controller-protocol-v1",
+    "schemas": {
+      "LLMOneShot": {
+        "items": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "const": "STOP"
+                }
+              },
+              "required": [
+                "action"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "const": "SEARCH"
+                },
+                "query": {
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "action",
+                "query"
+              ],
+              "type": "object"
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "action": {
+                  "const": "EXPAND"
+                },
+                "from_search": {
+                  "maximum": 3,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "hit_rank": {
+                  "enum": [
+                    0,
+                    1
+                  ],
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "action",
+                "from_search",
+                "hit_rank"
+              ],
+              "type": "object"
+            }
+          ]
+        },
+        "maxItems": 5,
+        "minItems": 1,
+        "type": "array"
+      },
+      "LLMToolAgent": {
+        "anyOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "STOP"
+              }
+            },
+            "required": [
+              "action"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "SEARCH"
+              },
+              "query": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "action",
+              "query"
+            ],
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "action": {
+                "const": "EXPAND"
+              },
+              "handle": {
+                "pattern": "^hit:[0-9a-f]{24}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "action",
+              "handle"
+            ],
+            "type": "object"
+          }
+        ]
+      }
+    },
+    "source_semantics": "existing pomdp_memory.query_tokens and observation-only provenance",
+    "state_legality": "separate parser + state validators; never grammar gold/answer masking",
+    "terminal_decode_modified": false,
+    "validators": {
+      "oneshot": "validate_oneshot",
+      "parser": "parse_controller",
+      "tool": "validate_tool"
+    },
+    "xgrammar_version": "0.1.21"
+  },
+  "python": "3.12.14",
+  "tokenizer_files_sha256": {
+    "config.json": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+    "generation_config.json": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e",
+    "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f",
+    "tokenizer_config.json": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+  },
+  "training_calls": 0,
+  "wall_ns": 5286824158
+}
