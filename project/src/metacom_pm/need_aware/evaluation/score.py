@@ -1,4 +1,8 @@
-"""Complete-denominator offline evaluation. Missing predictions stay visible."""
+"""Single-cell compatibility scorer. Use evaluate_wp2.py for the frozen WP2 report.
+
+Missing predictions stay visible. A generic single-cell call cannot infer an
+absent row's arm/structural eligibility; WP2 verifies all slots against its manifest.
+"""
 from collections import Counter, defaultdict
 import json
 from .contracts import EvalTask
@@ -25,14 +29,21 @@ def score_predictions(tasks, evaluations, predictions, kind):
             raise ValueError('unknown/duplicate prediction; score one model/arm at a time')
         if p.get('result_kind')!=kind:
             raise ValueError('plumbing/model provenance mismatch')
-        if kind=='model' and (not p.get('request_sha256') or not p.get('model_id') or not p.get('run_id')):
+        structural=p.get('status')=='not_evaluable'
+        if structural and (p.get('arm') not in {'C','D'} or evaluations[p['task_id']].direct_status=='located_unique'):
+            raise ValueError('invalid structural not_evaluable')
+        if kind=='model' and ((not structural and not p.get('request_sha256')) or not p.get('model_id') or not p.get('run_id')):
             raise ValueError('model prediction lacks run identity')
         mapping[p['task_id']]=p
     records=[]
     for t in tasks:
         p=mapping.get(t.task_id)
         status='missing' if p is None else p.get('status','completed')
+        if status not in {'completed','failed','missing','not_evaluable','capacity_exceeded'}:
+            raise ValueError('unknown prediction status')
         r=score_one(p.get('output','') if p and status=='completed' else '',t,evaluations[t.task_id])
+        if status!='completed':
+            r.update(predicted_choice=None,parse_valid=None,correct=None)
         r.update(status=status,persona_group=t.persona_group,category=evaluations[t.task_id].category,result_kind=kind)
         records.append(r)
     groups=defaultdict(list)
@@ -40,7 +51,14 @@ def score_predictions(tasks, evaluations, predictions, kind):
         for key,value in r['category'].items():groups[f'{key}:{value}'].append(r)
     def counts(rows):
         completed=[r for r in rows if r['status']=='completed']
+        structural=sum(r['status']=='not_evaluable' for r in rows)
+        evaluable=len(rows)-structural
+        correct=sum(r['correct'] for r in completed)
         return {'planned':len(rows),'completed':len(completed),'correct':sum(r['correct'] for r in completed),
+                'structural_not_evaluable':structural,'evaluable':evaluable,
+                'completion_rate':len(completed)/evaluable if evaluable else None,
+                'technical_uncompleted':evaluable-len(completed),
+                'fixed_denominator_success_sensitivity':correct/evaluable if evaluable else None,
                 'invalid':sum(not r['parse_valid'] for r in completed),
                 'accuracy_on_completed':sum(r['correct'] for r in completed)/len(completed) if completed else None,
                 'status':dict(Counter(r['status'] for r in rows))}
