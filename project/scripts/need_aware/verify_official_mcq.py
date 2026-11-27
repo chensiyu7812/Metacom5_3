@@ -7,13 +7,16 @@ Upstream source remains outside the public repository.
 import argparse
 import ast
 import json
+import subprocess
 from pathlib import Path
 from typing import Dict,List,Tuple
-from metacom_pm.need_aware.data.personamem import load_rows,SEED,write_json
+from metacom_pm.need_aware.data.personamem import load_rows,SEED,write_json,UPSTREAM_COMMIT
 from metacom_pm.need_aware.evaluation.mcq import make_options,instruction,extract_final_answer
 
 
 def verify(upstream,source):
+    commit=subprocess.check_output(['git','-C',str(upstream),'rev-parse','HEAD'],text=True).strip()
+    if commit!=UPSTREAM_COMMIT:raise ValueError('upstream checkout differs from pinned comparator')
     tree=ast.parse((Path(upstream)/'inference.py').read_text())
     cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='PersonaBenchmarkEvaluator')
     names={'create_mcq_options','extract_final_answer','check_mcq_correctness'}
