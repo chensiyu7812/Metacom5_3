@@ -111,12 +111,47 @@ class InspectClaim:
         p = logits.softmax(-1).tolist()
         return {self.head[i]: p[i] for i in range(len(self.head))}, int(enc['input_ids'].shape[1])
 
+    def _chunks(self, evidence, claim):
+        """Greedy order-preserving packing of evidence into windows that fit the capacity."""
+        out, cur = [], []
+        for e in evidence:
+            trial = cur + [e]
+            n = len(self.tok(render(trial), claim, truncation=False)['input_ids'])
+            if n <= self.max_length or not cur:
+                cur = trial
+            else:
+                out.append(cur); cur = [e]
+        if cur: out.append(cur)
+        return out
+
     def __call__(self, evidence, claim, *, subject=None, time_scope=None, per_item=False):
         t0 = time.perf_counter()
         ids = [e.get('evidence_id') for e in evidence]
         probs, ntok = self._score(render(evidence), claim) if evidence else (None, 0)
+        chunk_calls = 0; chunked = None
+        if evidence and probs is None and len(evidence) > 1:
+            # Capacity handling (v2): score order-preserving windows (MiniCheck-style chunking)
+            # and aggregate; flagged, never silent truncation.
+            js = []
+            for ch in self._chunks(evidence, claim):
+                p, _ = self._score(render(ch), claim); chunk_calls += 1
+                js.append(dict(evidence_ids=[e.get('evidence_id') for e in ch], session=ch[-1].get('session'),
+                               judgement=UNPROCESSED if p is None else max(p, key=p.get)))
+            labs = {j['judgement'] for j in js}
+            agg = ('supported' if 'supported' in labs and 'contradicted' not in labs else
+                   'contradicted' if 'contradicted' in labs and 'supported' not in labs else
+                   None if {'supported', 'contradicted'} <= labs else
+                   IMPLIED if IMPLIED in labs else
+                   'not_established' if 'not_established' in labs else UNPROCESSED)
+            chunked = js
+            probs = {} if agg is not None else None
+            if agg is None:   # both directions across windows: report via disagreement on windows
+                agg = 'not_established'
         if not evidence:
             res = dict(judgement='not_established', probabilities=None, unresolved='no evidence read')
+        elif chunked is not None:
+            res = dict(judgement=agg, probabilities=None, chunked_windows=chunked,
+                       unresolved=f'input {ntok} tokens > capacity {self.max_length}; judged over {len(chunked)} windows')
         elif probs is None:
             res = dict(judgement=UNPROCESSED, probabilities=None, unresolved=f'input {ntok} tokens > capacity {self.max_length}')
         else:
@@ -129,15 +164,34 @@ class InspectClaim:
             items = []
             for e in evidence:
                 p, _ = self._score(render([e]), claim)
-                items.append(dict(evidence_id=e.get('evidence_id'), judgement=None if p is None else max(p, key=p.get)))
-            js = {i['judgement'] for i in items}
-            if {'supported', 'contradicted'} <= js:
-                conflict = dict(supporting=[i['evidence_id'] for i in items if i['judgement'] == 'supported'],
-                                contradicting=[i['evidence_id'] for i in items if i['judgement'] == 'contradicted'])
+                items.append(dict(evidence_id=e.get('evidence_id'), session=e.get('session'),
+                                  judgement=UNPROCESSED if p is None else max(p, key=p.get)))
+            conflict = disagreement(items)
+        if conflict is None and chunked is not None:
+            conflict = disagreement([dict(evidence_id=','.join(j['evidence_ids']), session=j['session'],
+                                          judgement=j['judgement']) for j in chunked])
+        # subject / time_scope are recorded only: the classifier judges the claim text and the
+        # rendered evidence; they do not enter the model input (see tests).
         return dict(skill='INSPECT_CLAIM', claim=claim, subject=subject, time_scope=time_scope, evidence_ids=ids,
                     **res, per_item=items, conflict=conflict, model=self.model_id,
                     cost=dict(seconds=round(time.perf_counter() - t0, 4), input_tokens=ntok,
-                              model_calls=1 + (len(evidence) if items is not None else 0), llm_calls=0))
+                              model_calls=1 + chunk_calls + (len(evidence) if items is not None else 0), llm_calls=0))
+
+
+def disagreement(items):
+    """Per-item supported vs contradicted. Within one report session -> 'conflict' (both kept,
+    not resolved). Only across different sessions -> 'change_over_time' (an earlier report and
+    a later report differ; that is a possible real change of state, not a logical conflict).
+    Version: semcap-evidence-state-v2 (G4)."""
+    sup = [i for i in items if i['judgement'] == 'supported']
+    con = [i for i in items if i['judgement'] == 'contradicted']
+    if not sup or not con:
+        return None
+    same = any(s['session'] == c['session'] for s in sup for c in con)
+    return dict(kind='conflict' if same else 'change_over_time',
+                supporting=[i['evidence_id'] for i in sup], contradicting=[i['evidence_id'] for i in con],
+                later_side=None if same else ('supporting' if max(i['session'] or 0 for i in sup) >
+                                              max(i['session'] or 0 for i in con) else 'contradicting'))
 
 
 def revise(entry, result):

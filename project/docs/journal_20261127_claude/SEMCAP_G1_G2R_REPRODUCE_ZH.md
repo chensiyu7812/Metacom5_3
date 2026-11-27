@@ -65,3 +65,24 @@ CUDA_VISIBLE_DEVICES= $PY project/scripts/rl1v3/semcap/g2r_agent_trace_cpu.py --
 | 错误清单（含文本） | `$R/g2r/analysis-ERRORS.private.md` |
 | 机制演示轨迹 | `$R/g2r/agent-trace-T1i-cpu/` |
 | 失败记录（编码错误，保留） | `$R/g2r/eval-T0.FAILED_encoding_attempt1/` |
+
+## G4（2026-11-27，本轮第三阶段）
+
+```bash
+PYJ=/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python; E="PYTHONUTF8=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1"
+python3 project/scripts/rl1v3/semcap/g4_candidates.py --registry $REG/sources.jsonl --metadata $REG/registry.json \
+  --gsws-resources /opt/tokkio-data0/tokkio_runs/pmrl1-j-20261125/memory/resources_private.jsonl \
+  --exposed $A/event-dialogue-v2/PREFIXES.private.jsonl $C/speaker-dev-v1/PREFIXES.private.jsonl \
+            $R/g1-prefixes-v1/PREFIXES.private.jsonl $R/dcs-seeds-v1/SEEDS.private.jsonl --output $R/g4-candidates-v1
+# 助手在预测前写的冻结设计：$R/g4-candidates-v1/G4_STATES_FROZEN.private.json
+env $E CUDA_VISIBLE_DEVICES= $PYJ project/scripts/rl1v3/semcap/g4_run.py prepare --frozen $R/g4-candidates-v1/G4_STATES_FROZEN.private.json \
+  --candidates $R/g4-candidates-v1/CANDIDATES.private.jsonl --baseline /opt/tokkio-data0/tokkio_runs/pmrl1-j-20261125/smoke-v2/G0E_BASELINE.json \
+  --model /opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3 --t1i $R/g2r/T1i/checkpoint-epoch2 --output 新目录
+env $E CUDA_VISIBLE_DEVICES= $PYJ project/scripts/rl1v3/semcap/g4_run.py run --dry-run 3 --states ... --baseline ... --model ... --t1i ... --run-root 新目录   # CPU演练
+# 正式运行（已执行一次；需新批准）：run --states --prepare-report --approval $R/authorization/G4_APPROVAL.json ... CUDA_VISIBLE_DEVICES=A6000 UUID CUBLAS_WORKSPACE_CONFIG=:4096:8
+python3 project/scripts/rl1v3/semcap/g4_analyze.py stats --run $R/g4-run-01 --checks $R/g4-prepare-v1/CHECKS.private.json --review $R/g4-run-01/DEV_REVIEW.private.json --output <公开json>
+env $E CUDA_VISIBLE_DEVICES= $PYJ project/scripts/rl1v3/semcap/g4_analyze.py t0 --run $R/g4-run-01 --states $R/g4-prepare-v1/STATES.private.jsonl --t0 $NLI --t1i $R/g2r/T1i/checkpoint-epoch2 --output <私有jsonl>
+python3 project/scripts/rl1v3/semcap/g4_analyze.py blind --run $R/g4-run-01 --states ... --checks ... --output 新目录
+```
+
+固定值：states SHA `30fa04d3…`；代码SHA见`g4_v1/G4_RUN_PUBLIC.json`。私有：`$R/g4-candidates-v1/`（候选与冻结设计）、`$R/g4-prepare-v1/`（STATES、CHECKS）、`$R/g4-run-01/`（CALLS含全部提示与原始输出、RESULTS含命题/核验/WM/回复、EVENTS、DEV_REVIEW、CLAIM_REFERENCE_POSTHOC、T0_T1I_CLAIMS）、`$R/g4-blind-v1/`（盲评包与钥匙）、`$R/g4-dryrun-cpu-v{1,2}/`（CPU演练）、`$R/g4-cpu-checks/`。

@@ -1,0 +1,210 @@
+{
+ "protocol": "semcap-g4-states-v1",
+ "written": "2026-11-27 JST by Claude Code, before any G4 prediction; candidates read in salted-hash order per dataset; first fit by the criteria below, capacity 2 per group per dataset; EvoEmo one state per owner",
+ "group_criteria": {
+  "S": "explicit support: a natural reply relies on a past event or state that the visible records explicitly report",
+  "U": "insufficient or counter-evidence: a natural reply is tempted to presuppose an outcome/state that the records leave unresolved or explicitly deny",
+  "H": "subject/time/stage difficulty: plausible misattribution among user / previous supporter / third parties, or an earlier relative time or a consideration/suggestion that could be read as current or done",
+  "O": "ordinary chat / no check needed: answerable from the latest user turn; no record fact is needed"
+ },
+ "skipped": [
+  {
+   "dataset": "EvoEmo",
+   "index": 4,
+   "reason": "owner p2: group O already full"
+  },
+  {
+   "dataset": "EvoEmo",
+   "index": 5,
+   "reason": "owner p2: group O already full"
+  },
+  {
+   "dataset": "EvoEmo",
+   "index": 7,
+   "reason": "owner p12 already selected (overlapping history)"
+  },
+  {
+   "dataset": "EvoEmo",
+   "index": 8,
+   "reason": "generic opening; group between U and O ambiguous"
+  },
+  {
+   "dataset": "EvoEmo",
+   "index": 9,
+   "reason": "owner p11 already selected"
+  },
+  {
+   "dataset": "EvoEmo",
+   "index": 12,
+   "reason": "owner p8 already selected"
+  },
+  {
+   "dataset": "ESConv",
+   "index": 7,
+   "reason": "group O already full"
+  },
+  {
+   "dataset": "ESConv",
+   "index": 8,
+   "reason": "H criterion: third party present but low misattribution risk"
+  }
+ ],
+ "states": [
+  {
+   "state_id": "G01",
+   "dataset": "ESConv",
+   "group": "U",
+   "n_must_not": 3,
+   "n_should": 2
+  },
+  {
+   "state_id": "G02",
+   "dataset": "ESConv",
+   "group": "U",
+   "n_must_not": 3,
+   "n_should": 2
+  },
+  {
+   "state_id": "G03",
+   "dataset": "ESConv",
+   "group": "O",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "G04",
+   "dataset": "ESConv",
+   "group": "O",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "G05",
+   "dataset": "ESConv",
+   "group": "S",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "G06",
+   "dataset": "ESConv",
+   "group": "H",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "G07",
+   "dataset": "ESConv",
+   "group": "S",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "G08",
+   "dataset": "ESConv",
+   "group": "H",
+   "n_must_not": 3,
+   "n_should": 2
+  },
+  {
+   "state_id": "G09",
+   "dataset": "EvoEmo",
+   "group": "O",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "G10",
+   "dataset": "EvoEmo",
+   "group": "O",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "G11",
+   "dataset": "EvoEmo",
+   "group": "U",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "G12",
+   "dataset": "EvoEmo",
+   "group": "U",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "G13",
+   "dataset": "EvoEmo",
+   "group": "H",
+   "n_must_not": 3,
+   "n_should": 1
+  },
+  {
+   "state_id": "G14",
+   "dataset": "EvoEmo",
+   "group": "H",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "G15",
+   "dataset": "EvoEmo",
+   "group": "S",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "G16",
+   "dataset": "EvoEmo",
+   "group": "S",
+   "n_must_not": 2,
+   "n_should": 2
+  }
+ ],
+ "owners": {
+  "G01": null,
+  "G02": null,
+  "G03": null,
+  "G04": null,
+  "G05": null,
+  "G06": null,
+  "G07": null,
+  "G08": null,
+  "G09": "p12",
+  "G10": "p9",
+  "G11": "p10",
+  "G12": "p17",
+  "G13": "p11",
+  "G14": "p8",
+  "G15": "p3",
+  "G16": "p16"
+ },
+ "blind_pairs": {
+  "comparison": "B vs A (same state)",
+  "states": [
+   "G05",
+   "G15",
+   "G01",
+   "G11",
+   "G08",
+   "G13",
+   "G03",
+   "G09"
+  ],
+  "status": "packet built after the run; pending an independent human reviewer"
+ },
+ "evaluation_rules": {
+  "semantic_reliability": "number of must_not violations in the final reply (0 = reliable)",
+  "should_coverage": "number of should items met",
+  "support": "adequate / weak / inappropriate",
+  "naturalness": "natural / awkward (meta talk about records/tools, list dumps, robotic)",
+  "identity": "first-person claim of the previous supporter's experience; unneeded AI-identity statement",
+  "technical": "raw thinking-marker leak, truncation, controller parse failure, unprocessed INSPECT, runtime error",
+  "claim_formation_post_hoc": "after the run: whether the formed claims cover the state's must_not risks; subject/time correctness; evidence-ID sufficiency; INSPECT correctness vs a post-hoc reference written after predictions; whether the reply follows the checked state",
+  "call_decision_C": "checking in S/U/H judged useful; skipping in O judged appropriate; other cases explained",
+  "latency": "per-call generation seconds and tokens; INSPECT seconds; end-to-end local agent time per state/arm (sequential)",
+  "reviewer": "assistant development review; not independent human"
+ }
+}

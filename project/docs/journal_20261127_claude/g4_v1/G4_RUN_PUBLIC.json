@@ -1,0 +1,75 @@
+{
+ "run": {
+  "status": "FINISHED",
+  "llm_calls": 96,
+  "model_loads": 1,
+  "t1i_cpu_loads": 1,
+  "warmup_calls": 0,
+  "retry_calls": 0,
+  "wall_seconds": 868.734,
+  "gpu_uuid": "GPU-ba5f65be-ecfa-7fda-b239-af9efd468db4",
+  "peak_allocated_bytes": 25879061504,
+  "dry_run": false
+ },
+ "approval": {
+  "approval_item": "G4 (revised)",
+  "max_llm_calls": 112,
+  "max_model_loads": 1,
+  "global_seconds": 1800,
+  "warmup_calls": 0,
+  "retry_calls": 0,
+  "gpu": "RTX A6000",
+  "model": "Gemma-4-12B-it 707f0a3b (frozen G0e decode: greedy, 320)",
+  "semantic_model": "T1i checkpoint-epoch2 on CPU (not an LLM call; loaded once on CPU)",
+  "paid_api": false,
+  "states_file_sha256": "30fa04d35fb5f951e2a3b9a9c6294f1af0a861c257c4e5f14514ba73a36aa480",
+  "code_sha256": {
+   "scripts/rl1v3/semcap/g4_run.py": "3b2186b17e61dbef9af218e5c382fc0689f5e77526d6ac7f8f5e1891eca4f6b2",
+   "src/metacom_pm/rl1v3/semcap/g4_context.py": "f73c7e645c0880990ee0d991493464247ae554c58889ed05ea354b057913bcb0",
+   "src/metacom_pm/rl1v3/semcap/evidence_state.py": "c83c3d326aca48dc2e138725adf1e618e192f75123f2f47a1483a1d8d46c674d",
+   "src/metacom_pm/rl1v3/semcap/agent_skill.py": "af3f3684fbd76677e15ff12e13f9199e15b9c28986729b99b90975c6440b7143",
+   "src/metacom_pm/rl1v3/semcap/identity.py": "db42cf6e5eaa5864c8fde456e32a4adc5fa2877681f60dda882941cdffa17329"
+  },
+  "t1i_model_sha256": "651b5189936a5f43c93af02b9eb63a3b41bcc23cfcb5712c1a4825922a345d98",
+  "researcher_approval_sha256": "8e75c68547ace4bcc6405a7b835a05e13a6513b1dd3de5edbe44ee5b5d5c0b9e"
+ },
+ "prepare": {
+  "states": 16,
+  "states_file_sha256": "30fa04d35fb5f951e2a3b9a9c6294f1af0a861c257c4e5f14514ba73a36aa480",
+  "checks_file_sha256": "8df2e6f3d073836b30bc0991cb2ae0930856f95a05a0bdb4b00fb935f42feb13",
+  "frozen_file_sha256": "af00e915238ff4c33080f87247a275aa65be437f97aa9b15c7f09b8f62b402b9",
+  "candidates_file_sha256": "978dcfbbbbe4375b065ed8e3d1be58d70029f6c02a00c4471e5739987ce9bc84",
+  "baseline_file_sha256": "1639a4a6f4c6f94cb256e24017f1a904c478642ea4549d4ca2f9e5c6ad8fa7ae",
+  "groups": {
+   "S": [
+    "G05",
+    "G07",
+    "G15",
+    "G16"
+   ],
+   "U": [
+    "G01",
+    "G02",
+    "G11",
+    "G12"
+   ],
+   "H": [
+    "G06",
+    "G08",
+    "G13",
+    "G14"
+   ],
+   "O": [
+    "G03",
+    "G04",
+    "G09",
+    "G10"
+   ]
+  },
+  "datasets": {
+   "ESConv": 8,
+   "EvoEmo": 8
+  }
+ },
+ "max_input_tokens": 3868
+}

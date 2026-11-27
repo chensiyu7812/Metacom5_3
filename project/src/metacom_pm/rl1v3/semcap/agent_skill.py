@@ -65,14 +65,20 @@ class InspectClaimSkill:
         readable = {e['evidence_id'] for e in visible}
         act = parse_action(action, readable)
         before = working_memory.get(act['claim'])
-        if self.situation == I.EXTERNAL_CASE:
+        by_id = {e['evidence_id']: e for e in visible}
+        # Per-item source isolation (v2): an item tagged as an external case never counts as
+        # evidence about the current user, even when it is mixed into the user's history.
+        external = [i for i in act['evidence_ids'] if by_id[i].get('situation') == I.EXTERNAL_CASE]
+        user_ids = [i for i in act['evidence_ids'] if i not in external]
+        if self.situation == I.EXTERNAL_CASE or not user_ids:
             result = dict(skill='INSPECT_CLAIM', claim=act['claim'], judgement=UNPROCESSED, evidence_ids=act['evidence_ids'],
                           unresolved='external case is not evidence about the current user', conflict=None,
                           probabilities=None, per_item=None, cost=dict(model_calls=0, llm_calls=0, seconds=0.0))
         else:
-            items = evidence_items(visible, act['evidence_ids'])
+            items = evidence_items(visible, user_ids)
             result = self.inspector(items, act['claim'], subject=act['subject'], time_scope=act['time_scope'],
                                     per_item=len(items) > 1)
+        result = dict(result, excluded_external_ids=external)
         wm = dict(working_memory)
         if result['judgement'] != UNPROCESSED:
             wm[act['claim']] = revise(before, result)
@@ -89,9 +95,14 @@ def generator_note(working_memory, max_items=6):
     lines = []
     for claim, e in list(working_memory.items())[:max_items]:
         j = e['judgement']; ids = ', '.join(map(str, e.get('evidence_ids') or []))
-        if e.get('conflict'):
-            lines.append(f'- "{claim}": the records conflict ({", ".join(e["conflict"]["supporting"])} vs '
-                         f'{", ".join(e["conflict"]["contradicting"])}); do not resolve it yourself.')
+        c = e.get('conflict')
+        if c and c.get('kind') == 'change_over_time':
+            later = 'later records go against it' if c['later_side'] == 'contradicting' else 'later records support it'
+            lines.append(f'- "{claim}": earlier and later reports differ ({later}: {", ".join(c[c["later_side"]])}); '
+                         'treat it as a possible change over time, not as a contradiction.')
+        elif c:
+            lines.append(f'- "{claim}": the records conflict ({", ".join(c["supporting"])} vs '
+                         f'{", ".join(c["contradicting"])}); do not resolve it yourself.')
         elif j == 'supported':
             lines.append(f'- "{claim}": supported by what the user/records said ({ids}).')
         elif j == 'implied':
