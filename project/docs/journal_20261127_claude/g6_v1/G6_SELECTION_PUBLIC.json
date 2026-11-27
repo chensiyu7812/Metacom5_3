@@ -1,0 +1,62 @@
+{
+ "protocol": "semcap-g6-selection-v1",
+ "screen": 32,
+ "holdout": 16,
+ "datasets": {
+  "screen": {
+   "ESConv": 20,
+   "EvoEmo": 12
+  },
+  "holdout": {
+   "ESConv": 10,
+   "EvoEmo": 6
+  }
+ },
+ "isolation": {
+  "state": "all new",
+  "session": {
+   "overlap_with_g4_sessions": 0,
+   "shared_sessions_within_g6": 0
+  },
+  "family": {
+   "current_family_overlap_with_g4": 0,
+   "all_exposed_sets_blocked": true
+  },
+  "owner": {
+   "esconv": "owner unknown (no user ids); each conversation a distinct family",
+   "evoemo_owners_screen": [
+    "p10",
+    "p11",
+    "p12",
+    "p16",
+    "p2",
+    "p8"
+   ],
+   "evoemo_owners_holdout": [
+    "p17",
+    "p3",
+    "p9"
+   ],
+   "evoemo_owners_reused_from_g4": [
+    "p10",
+    "p11",
+    "p12",
+    "p16",
+    "p17",
+    "p3",
+    "p8",
+    "p9"
+   ],
+   "screen_holdout_owner_overlap": [],
+   "statement": "EvoEmo has 9 eligible owners and G4 used 8: G6 is NOT an independent-new-user test"
+  },
+  "fold6_included": false
+ },
+ "owner_shortfall": {
+  "p17": 1,
+  "p12": 1,
+  "p10": 1,
+  "p3": 2,
+  "p16": 2
+ }
+}

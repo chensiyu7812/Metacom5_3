@@ -86,3 +86,19 @@ python3 project/scripts/rl1v3/semcap/g4_analyze.py blind --run $R/g4-run-01 --st
 ```
 
 固定值：states SHA `30fa04d3…`；代码SHA见`g4_v1/G4_RUN_PUBLIC.json`。私有：`$R/g4-candidates-v1/`（候选与冻结设计）、`$R/g4-prepare-v1/`（STATES、CHECKS）、`$R/g4-run-01/`（CALLS含全部提示与原始输出、RESULTS含命题/核验/WM/回复、EVENTS、DEV_REVIEW、CLAIM_REFERENCE_POSTHOC、T0_T1I_CLAIMS）、`$R/g4-blind-v1/`（盲评包与钥匙）、`$R/g4-dryrun-cpu-v{1,2}/`（CPU演练）、`$R/g4-cpu-checks/`。
+
+## G6（在线INSPECT_CLAIM收口）
+
+```bash
+python3 project/scripts/rl1v3/semcap/g6_select.py --candidates $R/g4-candidates-v1/CANDIDATES.private.jsonl \
+  --g4-states $R/g4-prepare-v1/STATES.private.jsonl --output $R/g6-select-v1
+# 助手预测前写的冻结设计：$R/g6-select-v1/G6_STATES_FROZEN.private.json
+env $E CUDA_VISIBLE_DEVICES= $PYJ project/scripts/rl1v3/semcap/g6_run.py prepare --frozen $R/g6-select-v1/G6_STATES_FROZEN.private.json \
+  --candidates $R/g4-candidates-v1/CANDIDATES.private.jsonl --baseline /opt/tokkio-data0/tokkio_runs/pmrl1-j-20261125/smoke-v2/G0E_BASELINE.json \
+  --model /opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3 --t1i $R/g2r/T1i/checkpoint-epoch2 --output 新目录
+env $E CUDA_VISIBLE_DEVICES= $PYJ project/scripts/rl1v3/semcap/g6_run.py run --dry-run 3 --dry-gate continue|stop ...   # CPU演练
+# 正式运行（已执行一次；需新批准）：run --approval $R/authorization/G6_APPROVAL.json ...；筛查后进程等待 g6-run-01/GATE_DECISION.json
+python3 project/scripts/rl1v3/semcap/g6_gate_view.py $R/g6-run-01 $R/g6-prepare-v1/CHECKS.private.json   # 阶段审阅视图
+```
+
+固定值：states SHA `50ccb189…`；审阅文件SHA `20b4d3f5…`（决定文件绑定）。私有：`$R/g6-select-v1/`、`$R/g6-prepare-v1/`、`$R/g6-run-01/`（CALLS、RESULTS、EVENTS、GATE_REVIEW、GATE_DECISION）、`$R/g6-dryrun-cpu-v{1,2,3}/`、`$R/g1-blind-v1/`。

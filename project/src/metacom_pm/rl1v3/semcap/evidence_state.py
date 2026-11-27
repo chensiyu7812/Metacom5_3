@@ -180,15 +180,16 @@ class InspectClaim:
 
 def disagreement(items):
     """Per-item supported vs contradicted. Within one report session -> 'conflict' (both kept,
-    not resolved). Only across different sessions -> 'change_over_time' (an earlier report and
-    a later report differ; that is a possible real change of state, not a logical conflict).
-    Version: semcap-evidence-state-v2 (G4)."""
+    not resolved). Only across different sessions -> 'cross_session_difference': an earlier and a
+    later report differ; this may be a real change of state OR a conflict between reports; it is
+    never treated as proof that the user's state changed.
+    Version: semcap-evidence-state-v3 (G6; v2 used the name 'change_over_time', 0 occurrences in G4)."""
     sup = [i for i in items if i['judgement'] == 'supported']
     con = [i for i in items if i['judgement'] == 'contradicted']
     if not sup or not con:
         return None
     same = any(s['session'] == c['session'] for s in sup for c in con)
-    return dict(kind='conflict' if same else 'change_over_time',
+    return dict(kind='conflict' if same else 'cross_session_difference',
                 supporting=[i['evidence_id'] for i in sup], contradicting=[i['evidence_id'] for i in con],
                 later_side=None if same else ('supporting' if max(i['session'] or 0 for i in sup) >
                                               max(i['session'] or 0 for i in con) else 'contradicting'))

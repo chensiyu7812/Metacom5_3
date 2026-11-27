@@ -96,10 +96,10 @@ def generator_note(working_memory, max_items=6):
     for claim, e in list(working_memory.items())[:max_items]:
         j = e['judgement']; ids = ', '.join(map(str, e.get('evidence_ids') or []))
         c = e.get('conflict')
-        if c and c.get('kind') == 'change_over_time':
+        if c and c.get('kind') in ('cross_session_difference', 'change_over_time'):
             later = 'later records go against it' if c['later_side'] == 'contradicting' else 'later records support it'
             lines.append(f'- "{claim}": earlier and later reports differ ({later}: {", ".join(c[c["later_side"]])}); '
-                         'treat it as a possible change over time, not as a contradiction.')
+                         'this may be a change over time or a conflict between reports; do not decide which.')
         elif c:
             lines.append(f'- "{claim}": the records conflict ({", ".join(c["supporting"])} vs '
                          f'{", ".join(c["contradicting"])}); do not resolve it yourself.')

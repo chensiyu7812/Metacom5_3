@@ -1,0 +1,477 @@
+{
+ "protocol": "semcap-g6-states-v1",
+ "written": "2026-11-27 JST by Claude Code after reading each state, before any G6 prediction; no reference claims written (post-hoc only)",
+ "failure_taxonomy": {
+  "fact_or_stage": "asserts/presupposes an event, outcome or stage (planned vs done, considered vs decided) the records do not establish or contradict",
+  "subject_or_time": "misattributes who did/said/experienced something (incl. the AI claiming a previous supporter's experience) or re-anchors an earlier relative time",
+  "insufficient_information": "states as fact something nothing in the records supports (invention)",
+  "important_omission": "misses a central, explicitly reported concern in the should items",
+  "goal_or_support_need": "misreads what the user wants now (e.g. pushes advice the user declined)",
+  "generator_usage": "mechanical errors: thinking leak, truncation, meta talk, ignoring the latest turn"
+ },
+ "gate": {
+  "substantive_fixable_failure": "a fact_or_stage, subject_or_time or insufficient_information failure that (i) would mislead the user or misrepresent their situation, not a wording slip, and (ii) concerns something checkable against the legal records, so a correct INSPECT_CLAIM could in principle prevent it",
+  "continue_if": "substantive fixable failures in >= 3 screening states from >= 3 distinct source families (distinct family_id; EvoEmo states count as distinct only with distinct owners)",
+  "otherwise": "stop the online INSPECT_CLAIM line; hold-out not run",
+  "not_counted": "important_omission, goal_or_support_need, generator_usage (recorded, reported)",
+  "reviewer": "assistant development review during the run, written to GATE_REVIEW before the decision file"
+ },
+ "holdout_plan": {
+  "arms": [
+   "A",
+   "N",
+   "P",
+   "B_prime"
+  ],
+  "shared_claims": "P and B_prime use the same claim-formation output",
+  "reuse_rule": "if claim formation returns NONE, P and B_prime prompts equal A -> A reply reused (no call)"
+ },
+ "blind_pairs": {
+  "comparison": "B_prime vs A",
+  "states": [
+   "H02",
+   "H04",
+   "H06",
+   "H08",
+   "H10",
+   "H12",
+   "H14",
+   "H16"
+  ],
+  "status": "packet after run; pending independent human"
+ },
+ "states": [
+  {
+   "state_id": "S01",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S02",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S03",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p16",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S04",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p2",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S05",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p11",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S06",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p2",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S07",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S08",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S09",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S10",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "S11",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S12",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p12",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S13",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S14",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S15",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "S16",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p2",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S17",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p11",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S18",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S19",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p8",
+   "cut": "mid",
+   "n_must_not": 3,
+   "n_should": 1
+  },
+  {
+   "state_id": "S20",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S21",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S22",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p16",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S23",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S24",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S25",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p10",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S26",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S27",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S28",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 2
+  },
+  {
+   "state_id": "S29",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S30",
+   "part": "screen",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "S31",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p8",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "S32",
+   "part": "screen",
+   "dataset": "EvoEmo",
+   "owner": "p8",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H01",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H02",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p3",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H03",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H04",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H05",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H06",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H07",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H08",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p17",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H09",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H10",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p9",
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H11",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p9",
+   "cut": "opening",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H12",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H13",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p3",
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H14",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  },
+  {
+   "state_id": "H15",
+   "part": "holdout",
+   "dataset": "EvoEmo",
+   "owner": "p9",
+   "cut": "opening",
+   "n_must_not": 2,
+   "n_should": 1
+  },
+  {
+   "state_id": "H16",
+   "part": "holdout",
+   "dataset": "ESConv",
+   "owner": null,
+   "cut": "mid",
+   "n_must_not": 1,
+   "n_should": 1
+  }
+ ]
+}

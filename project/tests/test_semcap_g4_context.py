@@ -43,10 +43,10 @@ def test_disagreement_conflict_vs_change_over_time():
     same = E.disagreement([dict(evidence_id='a', session=1, judgement='supported'), dict(evidence_id='b', session=1, judgement='contradicted')])
     assert same['kind'] == 'conflict'
     later = E.disagreement([dict(evidence_id='a', session=1, judgement='supported'), dict(evidence_id='b', session=2, judgement='contradicted')])
-    assert later['kind'] == 'change_over_time' and later['later_side'] == 'contradicting'
+    assert later['kind'] == 'cross_session_difference' and later['later_side'] == 'contradicting'
     assert E.disagreement([dict(evidence_id='a', session=1, judgement='supported')]) is None
     note = A.generator_note({'The user enjoys running.': dict(judgement='contradicted', evidence_ids=['a', 'b'], conflict=later)})
-    assert 'possible change over time, not as a contradiction' in note
+    assert 'change over time or a conflict between reports' in note
 
 
 class Stub:
