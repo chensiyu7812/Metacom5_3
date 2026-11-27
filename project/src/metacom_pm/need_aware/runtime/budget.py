@@ -63,11 +63,14 @@ class NAABatchBudget:
         return n + 1
 
 
-def default_caps(physical_unique, *, gpu_seconds=43200):
-    """WP2 proposal caps (not an approval): one attempt + at most one retry per request."""
-    return dict(max_physical_calls=physical_unique + min(64, max(1, physical_unique // 30)),
-                max_gpu_seconds=gpu_seconds, max_attempts_per_request=2,
-                max_retries_total=min(64, max(1, physical_unique // 30)), max_model_loads_per_model=3,
+def default_caps(physical_unique, *, gpu_seconds=43200, max_physical_calls=None):
+    """WP2 proposal caps (not an approval): one attempt + at most one retry per request;
+    retries can only use the headroom between unique requests and the physical cap."""
+    cap = max_physical_calls or physical_unique + min(64, max(1, physical_unique // 30))
+    if cap < physical_unique:
+        raise ValueError('physical cap below unique requests')
+    return dict(max_physical_calls=cap, max_gpu_seconds=gpu_seconds, max_attempts_per_request=2,
+                max_retries_total=max(0, cap - physical_unique), max_model_loads_per_model=3,
                 load_seconds=900, request_seconds=300, consecutive_failure_stop=3)
 
 

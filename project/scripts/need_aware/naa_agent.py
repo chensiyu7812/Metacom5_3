@@ -372,7 +372,7 @@ def cmd_materialize(a):
             r.pop('reason')
         if r['logical_request_sha256'] is None:
             r.pop('logical_request_sha256')
-    caps = default_caps(dedupe['physical_unique'])
+    caps = default_caps(dedupe['physical_unique'], gpu_seconds=a.gpu_seconds, max_physical_calls=a.max_physical_calls)
     caps.update(input_cap=M.COMMON_INPUT_CAP, backend_cap=M.BACKEND_CONTEXT_CAP)
     manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
                     scope='NAA WP2 development: frozen val MCQ tasks x 4 arms x generators',
@@ -548,6 +548,7 @@ def main():
     m.add_argument('--mode', default='mcq'); m.add_argument('--limit', type=int, default=0)
     m.add_argument('--encoder', default=BGE_PATH); m.add_argument('--order-seed', type=int, default=20261127)
     m.add_argument('--arms', default='A,B,C,D'); m.add_argument('--logical-slots')
+    m.add_argument('--gpu-seconds', type=int, default=43200); m.add_argument('--max-physical-calls', type=int)
     i = s.add_parser('infer'); i.add_argument('--manifest-dir', required=True); i.add_argument('--run-root', required=True)
     i.add_argument('--approval'); i.add_argument('--plumbing', action='store_true'); i.add_argument('--models')
     i.add_argument('--inject-failure', action='append')
