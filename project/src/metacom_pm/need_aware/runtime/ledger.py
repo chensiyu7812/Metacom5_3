@@ -87,12 +87,13 @@ class Ledger:
     def physical_calls(self):
         return sum(e['event'] == 'ATTEMPT_START' for e in self.events)
 
-    def gpu_seconds(self):
+    def gpu_seconds(self, model_label=None, exclude_session=None):
         """Occupied-GPU wall seconds: per model session, the latest elapsed stamp seen
         (so a crashed session still counts up to its last durable event)."""
         per = {}
         for e in self.events:
-            if 'session_id' in e and 'session_elapsed_s' in e:
+            if ('session_id' in e and 'session_elapsed_s' in e and model_label in (None, e.get('model_label'))
+                    and e['session_id'] != exclude_session):
                 per[e['session_id']] = max(per.get(e['session_id'], 0.), e['session_elapsed_s'])
         return sum(per.values())
 

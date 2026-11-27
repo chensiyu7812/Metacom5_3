@@ -50,13 +50,13 @@ G0E = ModelSpec(
     label='G0e', model_id='google/gemma-4-12B-it', revision='707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7',
     path='/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3',
     architecture='Gemma4UnifiedForConditionalGeneration', model_class='AutoModelForMultimodalLM',
-    license='apache-2.0', eos_token_id=(1, 106, 50), pad_token_id=0, suppress_tokens=(258883, 258882))
+    license='apache-2.0', eos_token_id=(1, 50, 106), pad_token_id=0, suppress_tokens=(258883, 258882))
 
 QWEN35 = ModelSpec(
     label='Qwen35', model_id='Qwen/Qwen3.5-9B', revision='c202236235762e1c871ad0ccb60c8ee5ba337b9a',
     path='/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b',
     architecture='Qwen3_5ForConditionalGeneration', model_class='AutoModelForMultimodalLM',
-    license='apache-2.0', eos_token_id=(248046, 248044), pad_token_id=248044, generation_config_file=False)
+    license='apache-2.0', eos_token_id=(248044, 248046), pad_token_id=248044, generation_config_file=False)
 
 MODELS = {m.label: m for m in (G0E, QWEN35)}
 
@@ -69,6 +69,9 @@ def bind_inventory(spec, inventory_path):
         raise ValueError('model identity differs from A inventory: ' + spec.label)
     if row['architecture'] != [spec.architecture]:
         raise ValueError('architecture differs from inventory')
+    if (list(spec.eos_token_id) != row.get('naa_stop_token_ids') or spec.pad_token_id != row.get('pad_token_id')
+            or list(spec.suppress_tokens) != row.get('suppress_tokens')):
+        raise ValueError('stop/pad/suppress ids differ from A native inventory: ' + spec.label)
     files = {f['name']: f['sha256'] for f in row['files']}
     return ModelSpec(**{**asdict(spec), 'eos_token_id': tuple(spec.eos_token_id),
                         'suppress_tokens': tuple(spec.suppress_tokens), 'files_sha256': files})

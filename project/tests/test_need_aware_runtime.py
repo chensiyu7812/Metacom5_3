@@ -128,6 +128,20 @@ def test_budget_rejects_out_of_scope_and_caps(tmp_path):
         b.claim(rows[2]['request_sha256'], 'G0e')
 
 
+def test_gpu_seconds_not_double_counted_and_per_model_share(tmp_path):
+    rows = fixture_rows()
+    m = manifest(rows, models=('G0e', 'Qwen35'))
+    lg = Ledger(tmp_path, manifest_sha256=AU.manifest_sha256(m))
+    b = NAABatchBudget(m, dict(approval(m), max_gpu_seconds=100), lg)
+    assert b.per_model_seconds == 50
+    lg.add('ATTEMPT_START', request_sha256='x', model_label='G0e', session_id='s1', session_elapsed_s=30.)
+    assert b.seconds_left('G0e', 's1', 30.) == 20                          # live session counted once
+    lg.add('MODEL_SESSION_END', model_label='G0e', session_id='s1', session_elapsed_s=45.)
+    assert b.seconds_left('G0e') == 5 and b.seconds_left('Qwen35') == 50
+    with pytest.raises(AdmissionError, match='GPU seconds'):
+        b.claim(rows[0]['request_sha256'], 'G0e', session_id='s2', session_elapsed_s=6.)
+
+
 def test_ledger_tamper_and_torn_tail(tmp_path):
     lg = Ledger(tmp_path, manifest_sha256='m')
     lg.add('A', x=1); lg.add('B', x=2)

@@ -95,8 +95,7 @@ def _model_session(model_label, pending, manifest, ledger, budget, backend_facto
             return f'{model_label}: {exc}'
         session = 'sess-' + uuid.uuid4().hex[:12]
         t0 = clock()
-        prior = ledger.gpu_seconds()
-        left = budget.max_gpu_seconds - prior
+        left = budget.seconds_left(model_label)
         if left <= 0:
             return 'GPU seconds cap'
         backend = backend_factory(model_label, deadline=time.monotonic() + left, guard_bound_s=math.ceil(left))
@@ -120,7 +119,8 @@ def _model_session(model_label, pending, manifest, ledger, budget, backend_facto
                 queue.pop(0); continue
             try:
                 guard()
-                attempt = budget.claim(row['request_sha256'], model_label, session_elapsed_s=clock() - t0)
+                attempt = budget.claim(row['request_sha256'], model_label, session_id=session,
+                                       session_elapsed_s=clock() - t0)
             except AdmissionError as exc:
                 ledger.add('STOP', model_label=model_label, session_id=session, session_elapsed_s=clock() - t0,
                            reason=str(exc), pending=[r['logical_id'] for r in queue])
@@ -131,8 +131,8 @@ def _model_session(model_label, pending, manifest, ledger, budget, backend_facto
                        session_id=session, session_elapsed_s=clock() - t0, input_tokens=len(row['input_ids']))
             c0 = clock()
             try:
-                result = backend.generate(_wire(row), min(caps['request_seconds'], budget.max_gpu_seconds
-                                                          - ledger.gpu_seconds()))
+                result = backend.generate(_wire(row), max(1., min(caps['request_seconds'],
+                                          budget.seconds_left(model_label, session, clock() - t0))))
             except Exception as exc:   # KeyboardInterrupt/SystemExit propagate; ATTEMPT_START stays durable
                 ledger.add('ATTEMPT_FAILED', logical_id=row['logical_id'], model_label=model_label,
                            request_sha256=row['request_sha256'], attempt=attempt, session_id=session,

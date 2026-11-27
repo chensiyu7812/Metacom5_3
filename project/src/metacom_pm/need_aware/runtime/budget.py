@@ -28,6 +28,8 @@ class NAABatchBudget:
         self.max_retries_total = caps['max_retries_total']
         self.max_loads = caps['max_model_loads_per_model']
         self.models = tuple(approval['models'])
+        # Equal per-model share of the approved GPU seconds: a slow model cannot starve the other.
+        self.per_model_seconds = self.max_gpu_seconds / max(1, len(self.models))
         self.ledger = ledger
 
     def state(self):
@@ -41,12 +43,19 @@ class NAABatchBudget:
         s = self.state()
         require(s['loads'][model_label] < self.max_loads, 'model load cap')
         require(s['gpu_seconds'] < self.max_gpu_seconds, 'GPU seconds cap')
+        require(self.ledger.gpu_seconds(model_label) < self.per_model_seconds, 'per-model GPU seconds share')
 
-    def claim(self, request_sha256, model_label, *, session_elapsed_s=0.):
+    def seconds_left(self, model_label, session_id=None, session_elapsed_s=0.):
+        """Remaining GPU seconds: earlier sessions from the ledger + the live session's elapsed time."""
+        total = self.ledger.gpu_seconds(exclude_session=session_id) + session_elapsed_s
+        own = self.ledger.gpu_seconds(model_label, exclude_session=session_id) + session_elapsed_s
+        return min(self.max_gpu_seconds - total, self.per_model_seconds - own)
+
+    def claim(self, request_sha256, model_label, *, session_id=None, session_elapsed_s=0.):
         s = self.state()
         require(self.allowed.get(request_sha256) == model_label, 'request not in approved manifest scope')
         require(s['physical'] < self.max_physical, 'physical call cap')
-        require(s['gpu_seconds'] + session_elapsed_s < self.max_gpu_seconds, 'GPU seconds cap')
+        require(self.seconds_left(model_label, session_id, session_elapsed_s) > 0, 'GPU seconds cap/per-model share')
         n = s['attempts'][request_sha256]
         require(n < self.max_attempts, 'per-request attempt cap')
         if n >= 1:

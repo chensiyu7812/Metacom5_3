@@ -17,7 +17,7 @@ DENY = [NAA / 'artifacts/evaluation', NAA / 'artifacts/training', NAA / 'source'
 READ = [Path('/opt/tokkio-data0/tokkio_envs/paper1-judges-py312'), Path('/opt/tokkio-data0/tokkio_envs/paper1-mistral-vllm-py312'),
         Path('/opt/tokkio-data0/tokkio_models/gemma-4-12B-it-707f0a3'), Path('/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b'),
         Path('/opt/tokkio-data0/tokkio_models/huggingface/hub/models--BAAI--bge-small-en-v1.5'),
-        NAA / 'artifacts/runtime', NAA / 'artifacts/direct', NAA / 'logs/native']
+        NAA / 'artifacts/runtime', NAA / 'artifacts/direct', NAA / 'logs/native', NAA / 'wp2_v2']
 PY = '/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python'
 
 

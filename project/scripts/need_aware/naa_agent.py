@@ -232,6 +232,39 @@ def cmd_retrieve(a):
 
 
 # ---------------------------------------------------------------- materialize
+def bind_logical_slots(rows, tasks, direct, bindings, path):
+    """One-to-one binding of actual requests to A's frozen WP2 logical slots, in A's order."""
+    slots = [json.loads(x) for x in Path(path).read_text().splitlines() if x.strip()]
+    by_model = {b.model_id: label for label, b in bindings.items()}
+    task_sha = {t.task_id: digest(t.to_dict()) for t in tasks}
+    mine = {(r['task_id'], r['arm'], r['model_label']): r for r in rows}
+    ordered = []
+    for s in slots:
+        label = by_model.get(s['model_id'])
+        if label is None or s['task_id'] not in task_sha:
+            continue
+        r = mine.pop((s['task_id'], s['arm'], label))
+        b = bindings[label]
+        if s['model_revision'] != b.revision or s['runtime_task_sha256'] != task_sha[s['task_id']]:
+            raise SystemExit('logical slot task/model identity differs: ' + s['logical_request_sha256'])
+        if s['arm'] in 'CD' and s['direct_coordinate_manifest_sha256'] != digest(direct[s['task_id']]):
+            raise SystemExit('logical slot Direct manifest differs')
+        if (s['status'] == 'not_evaluable') != (r['status'] == 'not_evaluable'):
+            raise SystemExit('logical slot evaluability differs: ' + r['logical_id'])
+        if r['status'] != 'not_evaluable':
+            d = r['decode']
+            common = {k: s['decode'][k] for k in ('do_sample', 'enable_thinking', 'seed', 'eos_token_id', 'pad_token_id', 'suppress_tokens')}
+            if any(d[k] != v for k, v in common.items()) or d['max_new_tokens'] != s['output_cap_tokens'] \
+                    or s['input_cap_tokens'] != M.COMMON_INPUT_CAP or s['backend_context_tokens'] != M.BACKEND_CONTEXT_CAP:
+                raise SystemExit('logical slot decode/caps differ: ' + r['logical_id'])
+        r['logical_request_sha256'] = s['logical_request_sha256']
+        ordered.append(r)
+    if mine:
+        raise SystemExit(f'{len(mine)} materialized requests have no A logical slot')
+    return ordered, file_sha(path)
+
+
+
 # HF loading-info allowances: G0e ties lm_head to embed_tokens (historical CHECKPOINT_CPU.json);
 # Qwen3.5 ships 15 multi-token-prediction tensors the HF text path does not use.
 LOAD_ALLOWANCES = {'G0e': dict(allowed_missing=['lm_head.weight'], allowed_unused=[]),
@@ -282,6 +315,7 @@ def cmd_materialize(a):
     task_store = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in (Path(a.out) / 'task_stores.jsonl').read_text().splitlines()}
     spec = RetrievalSpec(**json.loads(a.retrieval))
     labels = a.models.split(',')
+    arm_list = [x for x in ARMS.ARMS if x in a.arms.split(',')]
     count = SymmetricCounter(labels)
     natives = {x: count.toks[i] for i, x in enumerate(labels)}
     bindings = {x: M.bind_inventory(M.MODELS[x], a.inventory) for x in labels}
@@ -297,17 +331,17 @@ def cmd_materialize(a):
         index = OwnerIndex(store, spec, unit_vectors=load_vectors(a.out, store)) if spec else None
         qv = qenc(query_text(t)) if qenc else None
         packed = {}
-        for arm in ARMS.ARMS:
+        for arm in arm_list:
             try:
                 packed[arm] = ARMS.select_units(arm, t, store, index=index, query_vector=qv, direct_ids=direct_ids,
                                                 count_tokens=count, budget=a.budget)
             except ARMS.NotEvaluable as exc:
                 packed[arm] = exc
-        if not isinstance(packed['C'], Exception):
+        if 'C' in packed and 'D' in packed and not isinstance(packed['C'], Exception):
             assert [u.unit_id for u in packed['C'].units] == [u.unit_id for u in packed['D'].units]
         for label in labels:
             b = bindings[label]; decode = b.decode()
-            for arm in ARMS.ARMS:
+            for arm in arm_list:
                 p = packed[arm]
                 if isinstance(p, Exception):
                     rows.append(Q.not_evaluable(t, arm, b, str(p), versions)); continue
@@ -316,19 +350,28 @@ def cmd_materialize(a):
                              retrieval=spec.identity if arm == 'B' else None)
                 ids = natives[label].chat_ids(msgs)
                 rows.append(Q.make(t, arm, b, msgs, ids, decode, trace, M.capacity(ids, decode), versions))
+    slots_sha = None
+    if a.logical_slots:
+        rows, slots_sha = bind_logical_slots(rows, tasks, direct, bindings, a.logical_slots)
     dedupe = Q.deduplicate(rows)
     out = Path(a.manifest_dir); out.mkdir(parents=True, exist_ok=True)
     order = {x: i for i, x in enumerate(labels)}
-    # Model-major (one load each), then task, then arm: partial runs stay paired by task.
-    rows.sort(key=lambda r: (order[r['model_label']], [t.task_id for t in tasks].index(r['task_id']), r['arm']))
+    # Model-major (one load each); tasks in a pre-declared seeded permutation so any budget-truncated
+    # prefix is a random subsample of the frozen 240 (not the hard stratum last); arms within a task.
+    if not slots_sha:
+        rank = {t.task_id: hashlib.sha256(f'{a.order_seed}|{t.task_id}'.encode()).hexdigest() for t in tasks}
+        rows.sort(key=lambda r: (order[r['model_label']], rank[r['task_id']], r['arm']))
     jsonl(out / 'requests.private.jsonl', rows)
     index_rows = [{k: r.get(k) for k in ('logical_id', 'task_id', 'task_mode', 'persona_group', 'arm', 'model_label',
-                                          'request_sha256', 'status', 'duplicate_of', 'reason')} for r in rows]
+                                          'request_sha256', 'status', 'duplicate_of', 'reason',
+                                          'logical_request_sha256')} for r in rows]
     for r in index_rows:
         if r['duplicate_of'] is None:
             r.pop('duplicate_of')
         if r['reason'] is None:
             r.pop('reason')
+        if r['logical_request_sha256'] is None:
+            r.pop('logical_request_sha256')
     caps = default_caps(dedupe['physical_unique'])
     caps.update(input_cap=M.COMMON_INPUT_CAP, backend_cap=M.BACKEND_CONTEXT_CAP)
     manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
@@ -339,6 +382,9 @@ def cmd_materialize(a):
                     bindings={x: asdict(bindings[x]) | {'g_id': bindings[x].g_id, 'decode': bindings[x].decode()} for x in labels},
                     checkpoints={x: checkpoint_headers(bindings[x]) for x in labels},
                     runtime=runtime_pins(), versions=versions, caps=caps, counts=dedupe,
+                    logical_slots_sha256=slots_sha,
+                    order_rule=('A frozen WP2 logical slot order (seeded task shuffle, shuffled arms per task, model-major)'
+                                if slots_sha else f'model-major; sha256({a.order_seed}|task_id) permutation; arms A-D'),
                     requests_file='requests.private.jsonl', requests_sha256=file_sha(out / 'requests.private.jsonl'),
                     requests=index_rows)
     manifest['scope_sha256'] = digest({k: manifest[k] for k in ('requests_sha256', 'model_order', 'caps', 'versions')})
@@ -500,7 +546,8 @@ def main():
     m.add_argument('--retrieval', required=True, help='RetrievalSpec JSON')
     m.add_argument('--budget', type=int, required=True); m.add_argument('--models', default='G0e,Qwen35')
     m.add_argument('--mode', default='mcq'); m.add_argument('--limit', type=int, default=0)
-    m.add_argument('--encoder', default=BGE_PATH)
+    m.add_argument('--encoder', default=BGE_PATH); m.add_argument('--order-seed', type=int, default=20261127)
+    m.add_argument('--arms', default='A,B,C,D'); m.add_argument('--logical-slots')
     i = s.add_parser('infer'); i.add_argument('--manifest-dir', required=True); i.add_argument('--run-root', required=True)
     i.add_argument('--approval'); i.add_argument('--plumbing', action='store_true'); i.add_argument('--models')
     i.add_argument('--inject-failure', action='append')
