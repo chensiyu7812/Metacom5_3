@@ -4,7 +4,7 @@
 
 分支 `work/naa-agent-20261127`，worktree `/opt/tokkio-data0/tokkio_projects/Metacom5_3-naa-agent`，起点 `3dded9b2`；fast-forward 整合 `5c719598`（30 个恢复源码），并合并 A 的 `ddc4864c`（共享契约、scorer、WP2 逻辑槽位）。旧 worktree、main、历史实验、旧授权、旧 `WorkerCallBudget` 均未改。
 
-## 1. 源码恢复与 CI：依赖已兼容，剩余是一个需要研究者决定的门禁冲突
+## 1. 源码恢复与 CI：依赖已兼容；公开 CI 与严格私有回放均通过
 
 | 检查 | 实际结果 |
 |---|---|
@@ -13,7 +13,7 @@
 | 本地复现 CI（Py3.11、torch 2.3.1+cpu、`pip install -e .[dev]`） | V3：976 passed / 41 skipped → `verify_v3_junit.py` 因 skip 拒绝；与 GitHub run 45993476547（974/43）同因 |
 | 同一套件 + 服务器私有根（12 个环境变量） | V3 **1017 passed / 0 skipped，junit 门通过**；Paper-1+RL1+V3 全套 2842 passed / 3 skipped；integration base 校验 `failed_checks=[]` |
 
-结论：collection 已修复，恢复源码与真实历史产物兼容。剩余失败来自设计冲突：journal 线新增的 43 个“私有回执”测试以 `test_rl1v3_` 命名，在 GitHub 上必然因私有产物不存在而 skip，而 V3 门禁止任何 skip。这些测试从未进过 CI（b07db104 之后的 24 个提交都没有跑过 CI）。我曾尝试按仓库已有的 `gpu` marker 惯例新增 `private_artifact` marker，让 CI 只收集、服务器严格执行，但这属于改变 CI 测试选择，与“不跳过测试”的指示冲突，已被权限拦截并完全撤回。当前 PR 的 `pm-v2-tests` 仍会在这一门禁上失败，需要研究者二选一（见第 8 节）。
+结论：collection 已修复，恢复源码与真实历史产物兼容。PR #29 的剩余失败来自 journal 线 43 个私有回执测试：它们在公开 CI 中必然 skip，而严格门禁禁止 skip。这些测试在 b07db104 之后的 24 个提交里从未进过 CI。研究分支 `b05f5f21` 已把公开 CI 改为 `verify_v3_public_ci.py`（43 个具名延期项必须原因一致，不计为通过），原严格门禁保留为本地验收。我曾尝试 marker 方案，因与“不跳过测试”冲突已撤回，没有留下任何改动；现已整合 `b05f5f21`。合并后复验：公开门禁 `public_code_acceptance=passed`（986 passed）；带服务器私有根的严格回放 **1027/1027、0 skip，`verify_v3_junit.py` 通过**，即 CI_PUBLIC_PRIVATE 文档要求的本地严格验收。PR #31 的 `pytest` 与 `naa-cpu` 均为绿。
 
 ## 2. 复用 / 薄适配 / 不复用（任务 1）
 
@@ -109,7 +109,7 @@ python3 scripts/need_aware/naa_agent.py aggregate --manifest-dir ... --run-root 
 
 ## 8. 失败、风险与待研究者决定的事项
 
-1. **CI 门禁冲突**（第 1 节）。二选一：(a) 批准仅为这 43 个私有回执测试新增 `private_artifact` marker，公开 CI 只收集它们（import 失败仍会使 CI 失败），服务器带私有根严格执行（已验证 1017/0 skip），V3 门本身不放宽；(b) 维持现状，接受 journal 线 PR 的 `pm-v2-tests` 红灯。
+1. CI：已由 `b05f5f21` 解决（第 1 节）。今后新增的私有测试需要修订具名清单，这里只是提醒，B 没有新增任何私有测试。
 2. **根分区仅剩 1.4 GiB**：真实运行的 storage_guard 要求 ≥1 GiB，余量很小，需要机器所有者处理。本次没有清理任何文件。
 3. **Qwen3.5-9B 的 HF 路径在本项目中从未实跑过**（依赖已安装的 `fla` Triton kernel；没有 generation_config.json）。G0e 路径与 GE2 相同。首个技术烟测可能暴露加载或确定性问题，修复后在同一授权内续跑。
 4. 偏差已版本化并公开：排除 system persona 档案；MCQ 指令放在最后一个 user 轮；B 的选择规则一次性更正（第 4 节）。
