@@ -20,14 +20,31 @@ import time
 from ...rl1v3.generator import limited_run as L
 from ...rl1v3.journal.ge2_worker import SubprocessGE2HF
 from ...rl1v3.journal.pomdp_latency import MonotonicClock, duration_ns
+from .budget import SafetyStop
 
 PLUMBING_TEXT = 'PLUMBING-DRY-RUN: no model was called.'
+_DEVICE_GUARD = L.device_guard          # the historical A6000 guard, captured before any patching
+
+
+def safe_device_guard(*args, **kwargs):
+    """Historical device guard; a refusal (other process, memory floor, identity) is a global safety stop."""
+    try:
+        return _DEVICE_GUARD(*args, **kwargs)
+    except L.AdmissionError as exc:
+        raise SafetyStop('device guard: ' + str(exc)) from exc
+
+
+def safe_storage_guard(run_root):
+    try:
+        return L.storage_guard(run_root)
+    except L.AdmissionError as exc:
+        raise SafetyStop('storage guard: ' + str(exc)) from exc
 
 
 class NAAHFBackend(SubprocessGE2HF):
     kind = 'hf_real_naa'
 
-    def __init__(self, root, spec, manifest, out, deadline, *, guard_bound_s, device_guard=L.device_guard):
+    def __init__(self, root, spec, manifest, out, deadline, *, guard_bound_s, device_guard=safe_device_guard):
         plan = dict(scope_sha256=manifest['scope_sha256'], python=manifest['runtime']['python_executable'])
         super().__init__(root, plan, {'spec': spec}, out, deadline)
         self.spec, self.manifest, self.guard_bound_s = spec, manifest, guard_bound_s

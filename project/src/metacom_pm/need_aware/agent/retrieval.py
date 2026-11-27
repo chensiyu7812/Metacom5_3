@@ -84,18 +84,34 @@ class EmbeddingCache:
         self.root.mkdir(parents=True, exist_ok=True)
         self.model_id = model_id
 
-    def _path(self, store_id):
-        name = hashlib.sha256((self.model_id + '|' + store_id).encode()).hexdigest()[:24]
+    def _path(self, key):
+        name = hashlib.sha256((self.model_id + '|' + key).encode()).hexdigest()[:24]
         return self.root / f'{name}.json'
 
+    def path_for(self, store):
+        """v2: keyed by writer-independent text identity (vectors depend only on unit texts)."""
+        from ..memory.writer import text_identity
+        return self._path(text_identity(store))
+
+    def load(self, store):
+        from ..memory.writer import text_identity
+        p = self.path_for(store)
+        if not p.exists():
+            return None
+        data = json.loads(p.read_text())
+        if data['model'] != self.model_id or data.get('text_identity') != text_identity(store) \
+                or set(data['vectors']) != {u.unit_id for u in store.units}:
+            raise ValueError('embedding cache does not match store texts')
+        return data['vectors']
+
     def get_or_build(self, store, units, encoder):
-        p = self._path(store.store_id)
-        if p.exists():
-            data = json.loads(p.read_text())
-            if data['model'] == self.model_id and data['store_id'] == store.store_id:
-                return {k: v for k, v in data['vectors'].items()}, True
+        from ..memory.writer import text_identity
+        found = self.load(store)
+        if found is not None:
+            return found, True
+        p = self.path_for(store)
         vecs = encoder.encode([u.original_text for u in units])
-        data = dict(model=self.model_id, store_id=store.store_id,
+        data = dict(model=self.model_id, store_id=store.store_id, text_identity=text_identity(store),
                     vectors={u.unit_id: v for u, v in zip(units, vecs)})
         tmp = p.with_suffix('.tmp')
         tmp.write_text(json.dumps(data))
@@ -154,5 +170,5 @@ class OwnerIndex:
 
 
 def recency(store):
-    """Context Only priority: newest first (packed contiguously by the reader)."""
+    """Recency Baseline priority: newest first (packed contiguously by the reader)."""
     return sorted(store.units, key=lambda u: -u.order)

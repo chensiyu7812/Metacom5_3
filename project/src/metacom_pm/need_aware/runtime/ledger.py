@@ -88,14 +88,26 @@ class Ledger:
         return sum(e['event'] == 'ATTEMPT_START' for e in self.events)
 
     def gpu_seconds(self, model_label=None, exclude_session=None):
-        """Occupied-GPU wall seconds: per model session, the latest elapsed stamp seen
-        (so a crashed session still counts up to its last durable event)."""
-        per = {}
+        """Occupied-GPU wall seconds per model session: the latest durable elapsed stamp. A session
+        that ended without MODEL_SESSION_END while a load/request was in flight (crash, kill) is
+        charged conservatively with that operation's full timeout, so a resume can never gain time."""
+        per, last, ended = {}, {}, set()
         for e in self.events:
-            if ('session_id' in e and 'session_elapsed_s' in e and model_label in (None, e.get('model_label'))
-                    and e['session_id'] != exclude_session):
-                per[e['session_id']] = max(per.get(e['session_id'], 0.), e['session_elapsed_s'])
-        return sum(per.values())
+            sid = e.get('session_id')
+            if sid is None or 'session_elapsed_s' not in e or model_label not in (None, e.get('model_label')):
+                continue
+            if sid == exclude_session:
+                continue
+            per[sid] = max(per.get(sid, 0.), e['session_elapsed_s'])
+            last[sid] = e
+            if e['event'] == 'MODEL_SESSION_END':
+                ended.add(sid)
+        total = 0.
+        for sid, value in per.items():
+            if sid not in ended and last[sid]['event'] in ('ATTEMPT_START', 'LOAD_START'):
+                value += float(last[sid].get('max_seconds', 0.))
+            total += value
+        return total
 
     def model_loads(self):
         return Counter(e['model_label'] for e in self.events if e['event'] == 'LOAD_START')

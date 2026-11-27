@@ -39,6 +39,9 @@ def authorize(manifest, approval, *, root):
             and 0 < approval['max_physical_calls'] <= caps['max_physical_calls'], 'approved physical call cap')
     require(isinstance(approval.get('max_gpu_seconds'), (int, float))
             and 0 < approval['max_gpu_seconds'] <= caps['max_gpu_seconds'], 'approved GPU seconds')
+    if 'per_model_gpu_seconds' in approval:
+        share = caps.get('per_model_gpu_seconds') or caps['max_gpu_seconds'] / len(manifest['model_order'])
+        require(0 < approval['per_model_gpu_seconds'] <= share, 'approved per-model GPU seconds')
     require(set(approval.get('models', ())) <= set(manifest['model_order'])
             and approval.get('models'), 'approved model labels')
     require(bool(approval.get('researcher')) and bool(approval.get('decision_evidence')),

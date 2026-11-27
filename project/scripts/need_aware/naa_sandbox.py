@@ -27,7 +27,7 @@ def main():
     p.add_argument('args', nargs=argparse.REMAINDER)
     a = p.parse_args()
     args = a.args[1:] if a.args[:1] == ['--'] else a.args
-    if not args or args[0] not in {'write', 'embed', 'retrieve', 'materialize', 'infer', 'export', 'aggregate'}:
+    if not args or args[0] not in {'write', 'embed', 'rekey-embeddings', 'retrieve', 'materialize', 'infer', 'export', 'aggregate'}:
         raise SystemExit('unknown stage')
     if args[0] == 'infer' and '--plumbing' not in args:
         raise SystemExit('model execution is not available inside the CPU sandbox')

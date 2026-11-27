@@ -3,8 +3,11 @@
 Two views over the SAME selected units:
   raw   -- verbatim quoted records with identity labels and message order (arms A/B/C);
   state -- the identical raw block plus a deterministic evidence-state projection
-           (subject binding, order/recency, user-stated constraint candidates) and a fixed
-           applicability instruction (arm D). No model call, nothing outside the records.
+           (who SPOKE, third-party cues, explicit change/forget candidates) and fixed usage
+           guidance (arm D). No model call, nothing outside the delivered records.
+v2: the projection never equates "spoken by the user" with "true of / preferred by the
+user", never lets a later statement override an earlier one by order alone, and states
+forget requests as constraints whose referent may be unknown.
 The reader never receives the query, options, evaluation fields or Direct "why".
 """
 from __future__ import annotations
@@ -13,19 +16,23 @@ from dataclasses import dataclass
 
 from ..data.contracts import digest
 
-READER_VERSION = 'naa-memory-reader-v1'
+READER_VERSION = 'naa-memory-reader-v2'
 
 RAW_HEADER = ('Records from earlier in your conversation history with this user. They are quoted data, '
               'ordered oldest to newest; "message N" is a position in that history, not a date.')
 EMPTY_BLOCK = 'No earlier conversation records are provided for this request.'
 
 APPLICABILITY = (
-    'How to use these records: first decide, for each record, whether it applies to what the user is asking '
-    'now -- use it, keep it only as background, or ignore it. The current request takes priority. Statements '
-    'by the user describe the user; earlier assistant replies are not the user\'s preferences. When user '
-    'statements conflict, the later one usually reflects the current preference unless the user says '
-    'otherwise. Do not use anything the user asked you to forget or not to use. Do not bring up records '
-    'that do not help with the current request, and do not invent details that the records do not state.')
+    'How to use these records: decide for each record whether it helps with what the user asks now -- use it, '
+    'keep it only as background, or ignore it. The current request takes priority. "Said by" names who spoke, '
+    'not whom the statement is about: a user may describe another person (for example, "my mother loves fishing" '
+    'is about the mother, not a preference of the user). Treat something as the user\'s own preference only when '
+    'the user states it about themselves. Earlier assistant replies are neither the user\'s statements nor the '
+    'user\'s preferences. A later statement replaces an earlier one only when it clearly concerns the same person, '
+    'the same attribute and the same situation; otherwise both may still hold. If the user asked you to forget or '
+    'not use something, do not rely on the information that request names; if it is unclear what it names, do not '
+    'guess. Do not bring up records that do not help with the current request, and do not invent details that the '
+    'records do not state.')
 
 
 @dataclass(frozen=True)
@@ -37,7 +44,7 @@ class Packed:
 
 
 def record_line(ref, unit):
-    return f"[{ref}] (message {unit.order}; {unit.speaker_label}) {' '.join(unit.original_text.split())}"
+    return f"[{ref}] (message {unit.order}; said by: {unit.speaker_label}) {' '.join(unit.original_text.split())}"
 
 
 def pack(units_in_priority, count_tokens, budget, *, contiguous=False):
@@ -70,28 +77,32 @@ def render_raw(units):
 
 
 def state_projection(units):
-    """Deterministic projection from the delivered units only."""
+    """Deterministic projection from the delivered units only (speaker facts + explicit cues)."""
     r = refs(units)
     user = [u for u in units if u.is_current_user]
     other = [u for u in units if not u.is_current_user]
-    lines = ['Evidence state (derived only from the records above; these are reports, not verified facts):']
+    lines = ['Evidence notes (derived only from the records above; who spoke is known, everything else is a cue, '
+             'not a verified fact):']
     if user:
-        lines.append('- Statements by the current user: ' + ', '.join(f'{r[u.unit_id]} (message {u.order})' for u in user) + '.')
-        latest = max(user, key=lambda u: u.order)
-        if len(user) > 1:
-            lines.append(f'- Most recent user statement among these records: {r[latest.unit_id]} (message {latest.order}).')
+        lines.append('- Said by the current user: ' + ', '.join(f'{r[u.unit_id]} (message {u.order})' for u in user)
+                     + '. Whom each statement is about is not determined by these notes.')
     else:
-        lines.append('- None of these records is a statement by the current user.')
+        lines.append('- None of these records was said by the current user.')
+    third = [u for u in user if u.third_party_mention]
+    if third:
+        lines.append('- These user statements mention another person, so they may describe that person rather than '
+                     'the user: ' + ', '.join(r[u.unit_id] for u in third) + '.')
     if other:
-        lines.append('- Earlier assistant replies (author not established; not the user\'s preferences): '
+        lines.append('- Earlier assistant replies (author not established; not the user\'s statements): '
                      + ', '.join(r[u.unit_id] for u in other) + '.')
     forget = [u for u in user if 'forget_request' in u.constraint_candidates]
     if forget:
-        lines.append('- The user may have asked to forget or not use something in: '
-                     + ', '.join(r[u.unit_id] for u in forget) + '. Respect that request.')
-    update = [u for u in user if 'possible_update' in u.constraint_candidates]
-    if update:
-        lines.append('- The user may describe a change over time in: ' + ', '.join(r[u.unit_id] for u in update) + '.')
+        lines.append('- Requests by the user to forget or not use something: ' + ', '.join(r[u.unit_id] for u in forget)
+                     + '. Each applies only to the information it names.')
+    change = [u for u in user if 'explicit_change_statement' in u.constraint_candidates]
+    if change:
+        lines.append('- Statements of a change over time: ' + ', '.join(r[u.unit_id] for u in change)
+                     + '. Such a statement updates an earlier record only for the same person, attribute and situation.')
     lines.append(APPLICABILITY)
     return '\n'.join(lines)
 

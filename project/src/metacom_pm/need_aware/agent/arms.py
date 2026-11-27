@@ -1,8 +1,12 @@
 """Four controlled NAA input conditions over one shared rendering contract.
 
-  A context_only     -- most recent pre-cutoff records packed contiguously into the common
-                        evidence budget (no memory system; never the whole history).
-  B strong_fixed_rag -- fixed retrieval over the same legal history, same budget.
+  A recency_baseline -- most recent pre-cutoff records packed contiguously into the common
+                        evidence budget: a recent-history window, NOT a no-memory condition
+                        and never the whole history.
+  B strong_fixed_rag -- fixed retrieval over the same legal history, same budget. The chosen
+                        dense user_only@8192 delivers nearly all USER statements but no
+                        assistant reference turns: user-statement coverage is not complete
+                        evidence coverage.
   C direct_evidence  -- A's located Direct source coordinates (diagnostic only; the reader
                         sees source text, never the answer or why it was chosen).
   D evidence_state   -- exactly C's units and text + deterministic state projection.
@@ -18,9 +22,9 @@ from ...rl1v3.semcap import identity as I
 from .retrieval import query_text, recency
 
 ARMS = ('A', 'B', 'C', 'D')
-ARM_NAMES = {'A': 'context_only', 'B': 'strong_fixed_rag', 'C': 'direct_evidence', 'D': 'evidence_state'}
+ARM_NAMES = {'A': 'recency_baseline', 'B': 'strong_fixed_rag', 'C': 'direct_evidence', 'D': 'evidence_state'}
 VIEW = {'A': 'raw', 'B': 'raw', 'C': 'raw', 'D': 'state'}
-PROMPT_VERSION = 'naa-arms-prompt-v1'
+PROMPT_VERSION = 'naa-arms-prompt-v2'
 BASE_SYSTEM = ('You are a helpful AI assistant continuing a long-running conversation with this user. '
                'Answer the user\'s current request directly and helpfully.')
 RENDER_NOTE = ('Official PersonaMem-v2 MCQ instruction text is used verbatim, but placed at the end of the final '

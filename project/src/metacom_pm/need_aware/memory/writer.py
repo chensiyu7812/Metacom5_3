@@ -4,8 +4,17 @@ Input is ONLY the EvidenceRecords that A's HistoryResolver returns for one owner
 already cut at the task boundary. The writer never receives the user query, MCQ
 options, evaluation fields or Direct manifests, so a stored unit cannot encode a
 target. Every unit keeps the original text, its hash and coordinates; projections
-(identity, subject, order, constraint candidates) are deterministic host facts or
+(speaker identity, order, constraint/third-party cues) are deterministic host facts or
 explicit pattern candidates, never model inferences and never "confirmed".
+
+v2 semantics: the SPEAKER of a message is a host fact; the FACT SUBJECT (whom the
+statement is about) and the PREFERENCE HOLDER are NOT inferred here and stay
+'not_determined' ("my mother loves fishing" is said by the user, about the mother).
+A user message that names another person carries a lexical third_party_mention cue
+only. A change statement is only a candidate; whether it updates an earlier statement
+requires the same subject, attribute and scope, which the writer does not decide.
+Forget-request links are lexical candidates; unlinked requests stay unknown, nothing
+is deleted, and this is not a production deletion feature.
 
 Reuses the semcap identity contract (classify_source / attribute_history /
 is_current_user) instead of inventing a second role vocabulary. The historical
@@ -21,7 +30,7 @@ import re
 from ..data.contracts import EvidenceRecord, digest, text_hash
 from ...rl1v3.semcap import identity as I
 
-WRITER_VERSION = 'naa-memory-writer-v1'
+WRITER_VERSION = 'naa-memory-writer-v2'
 DATASET = 'PersonaMem-v2'
 
 # PersonaMem roles -> semcap identity roles. Earlier assistant replies were produced by
@@ -41,10 +50,21 @@ _FORGET = re.compile(
     r"|\bstop\s+remembering\b"
     r"|\b(?:erase|delete|remove|wipe)\s+(?:that|this|it|my\s+\w+)\s+from\s+(?:your|the)\s+memory\b",
     re.IGNORECASE)
-# Explicit change-over-time statements only ("lately I've been ..." is not an update).
+# Explicit change-over-time statements only ("lately I've been ..." is not an update);
+# a hit is 'explicit_change_statement', never an automatic override of earlier records.
 _UPDATE = re.compile(
     r"\bi\s+(?:no\s+longer|used\s+to|(?:have\s+|" + _A + r"ve\s+)?changed\s+my\s+mind|"
     r"(?:don" + _A + r"t|do\s+not)\s+\w+\s+(?:anymore|any\s+more))\b|\bnot\s+anymore\b",
+    re.IGNORECASE)
+# Another person named by the user ("my mom", "our neighbour", "my best friend"): a cue that the
+# statement may be about a third party. Lexical only; absence does not prove a self-statement.
+_OTHER = re.compile(
+    r"\b(?:my|our)\s+(?:(?:best|close|old|older|younger|little|big|late|ex[- ]?)\s+)?"
+    r"(?:mom|mum|mother|dad|father|parents?|brother|sister|siblings?|son|daughter|kids?|children|child|"
+    r"husband|wife|partner|spouse|boyfriend|girlfriend|fianc[eé]e?|friends?|roommates?|colleagues?|"
+    r"co-?workers?|boss|manager|grand(?:ma|mother|pa|father|parents?|son|daughter|kids?)|aunt|uncle|"
+    r"cousins?|nephew|niece|neighbou?rs?|in-laws?|mother-in-law|father-in-law|stepmom|stepdad|"
+    r"family|relatives?|mentor|teacher|students?|clients?|patients?|team(?:mates?)?)\b",
     re.IGNORECASE)
 _WORD = re.compile(r"[a-z0-9]+")
 _STOP = frozenset("""a an and are as at be but by for from has have i i'm im in is it its me my of on or our
@@ -80,6 +100,7 @@ def link_forget_requests(units):
         linked = best is not None and score >= FORGET_LINK_MIN
         links.append(dict(type='forget_request', unit_id=f.unit_id, order=f.order,
                           target_unit_id=best.unit_id if linked else None,
+                          link_status='lexical_candidate' if linked else 'unknown_not_linked',
                           overlap=round(score, 3), basis='lexical_candidate_not_verified'))
     return links
 
@@ -91,14 +112,18 @@ class MemoryUnit:
     source_family: str
     order: int              # original message index; the only time axis available
     speaker: str            # user | assistant
-    speaker_label: str      # identity-contract label rendered to the Generator
+    speaker_label: str      # identity-contract label of the SPEAKER rendered to the Generator
     situation: str
-    is_current_user: bool   # subject binding: a statement BY the current user
-    subject: str            # current_user_self_report | earlier_assistant_reply
+    is_current_user: bool   # the SPEAKER is the current user (not: the statement is about the user)
+    speaker_role: str       # current_user | earlier_assistant_unestablished
+    fact_subject: str       # whom the statement is about: 'not_determined' (never inferred here)
+    preference_holder: str  # whose preference, if any: 'not_determined' (never inferred here)
+    third_party_mention: bool  # lexical cue: a user message names another person (candidate only)
+    statement_kind: str     # 'verbatim_statement' -- no system inference is stored as a unit
     reported_at: object     # None: PersonaMem gives no wall-clock time; never fabricated
     time_basis: str
     status: str             # reported (verbatim) -- never "confirmed"
-    constraint_candidates: tuple  # ('forget_request',) / ('possible_update',) from explicit text
+    constraint_candidates: tuple  # ('forget_request',) / ('explicit_change_statement',) from explicit text
     original_text: str
     original_text_sha256: str
     coordinates: dict
@@ -155,7 +180,8 @@ class MemoryStore:
 def store_identity(store):
     return 'naamem:' + digest(dict(writer=store.writer_version, owner=store.owner_id,
         family=store.source_family, cutoff=store.cutoff, situation=store.situation,
-        units=[(u.unit_id, u.original_text_sha256, u.subject, list(u.constraint_candidates)) for u in store.units],
+        units=[(u.unit_id, u.original_text_sha256, u.speaker_role, u.fact_subject, u.preference_holder,
+                u.third_party_mention, list(u.constraint_candidates)) for u in store.units],
         excluded=[(x['source_id'], x['original_text_sha256'], x['reason']) for x in store.excluded],
         constraints=store.constraints))
 
@@ -196,14 +222,17 @@ class MemoryWriter:
                 if _FORGET.search(record.original_text):
                     hits.append('forget_request')
                 if _UPDATE.search(record.original_text):
-                    hits.append('possible_update')
+                    hits.append('explicit_change_statement')
                 candidates = tuple(hits)
             units.append(MemoryUnit(
                 unit_id=record.source_id, owner_id=owner_id, source_family=source_family,
                 order=record.order, speaker=record.speaker,
                 speaker_label=I.attribute_history(role, self.situation), situation=self.situation,
                 is_current_user=current_user,
-                subject='current_user_self_report' if current_user else 'earlier_assistant_reply',
+                speaker_role='current_user' if current_user else 'earlier_assistant_unestablished',
+                fact_subject='not_determined', preference_holder='not_determined',
+                third_party_mention=bool(current_user and _OTHER.search(record.original_text)),
+                statement_kind='verbatim_statement',
                 reported_at=record.reported_at, time_basis='message_order_only_no_wall_clock',
                 status='reported', constraint_candidates=candidates,
                 original_text=record.original_text, original_text_sha256=record.original_text_sha256,
@@ -241,6 +270,11 @@ class StoreCache:
 
     def get(self, store_id):
         return MemoryStore.from_dict(json.loads(self.path(store_id).read_text()))
+
+
+def text_identity(store):
+    """Writer-independent content key (unit ids + text hashes): embeddings depend only on this."""
+    return 'naatext:' + digest([(u.unit_id, u.original_text_sha256) for u in store.units])
 
 
 def write_for_task(resolver, writer, task):

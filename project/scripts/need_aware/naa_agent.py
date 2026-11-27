@@ -92,12 +92,15 @@ def cmd_write(a):
                    situation=dict(Counter(s.situation for s in uniq.values())),
                    constraint_candidates=dict(Counter(c for s in uniq.values() for u in s.units for c in u.constraint_candidates)),
                    stores_with_forget_candidate=sum(any('forget_request' in u.constraint_candidates for u in s.units) for s in uniq.values()),
+                   third_party_mention_user_units=sum(u.third_party_mention for s in uniq.values() for u in s.units),
+                   fact_subject_values=dict(Counter(u.fact_subject for s in uniq.values() for u in s.units)),
+                   forget_link_status=dict(Counter(c['link_status'] for s in uniq.values() for c in s.constraints)),
                    forget_requests=sum(len(s.constraints) for s in uniq.values()),
                    forget_requests_linked=sum(c['target_unit_id'] is not None for s in uniq.values() for c in s.constraints),
                    reported_at_non_null=sum(u.reported_at is not None for u in units),
                    query_or_options_seen_by_writer=False, cpu_seconds=round(time.monotonic() - t0, 2))
-    jdump(Path(a.out) / 'write_summary.json', summary)
-    jsonl(Path(a.out) / 'task_stores.jsonl', [dict(task_id=k, store_id=v.store_id) for k, v in sorted(stores.items())])
+    jdump(Path(a.out) / f'write_summary.{WRITER_VERSION}.json', summary)
+    jsonl(store_map(a.out), [dict(task_id=k, store_id=v.store_id) for k, v in sorted(stores.items())])
     print(json.dumps(summary, indent=2))
 
 
@@ -105,7 +108,7 @@ def cmd_write(a):
 def cmd_embed(a):
     t0 = time.monotonic()
     cache = StoreCache(Path(a.out) / 'stores')
-    ids = sorted({json.loads(x)['store_id'] for x in (Path(a.out) / 'task_stores.jsonl').read_text().splitlines()})
+    ids = sorted({json.loads(x)['store_id'] for x in store_map(a.out).read_text().splitlines()})
     enc = BGEEncoder(a.encoder, threads=a.threads)
     model_id = RetrievalSpec().dense_model
     emb = EmbeddingCache(Path(a.out) / 'embeddings', model_id)
@@ -136,9 +139,38 @@ class SymmetricCounter:
 
 
 def load_vectors(out, store):
-    emb = EmbeddingCache(Path(out) / 'embeddings', RetrievalSpec().dense_model)
-    p = emb._path(store.store_id)
-    return json.loads(p.read_text())['vectors'] if p.exists() else None
+    return EmbeddingCache(Path(out) / 'embeddings', RetrievalSpec().dense_model).load(store)
+
+
+def store_map(out):
+    """Per writer version, so earlier versions' task->store maps stay untouched."""
+    return Path(out) / f'task_stores.{WRITER_VERSION}.jsonl'
+
+
+def cmd_rekey_embeddings(a):
+    """Reuse v1 vectors for v2 stores without recomputation: same unit ids and text hashes required."""
+    import hashlib as _h
+    model = RetrievalSpec().dense_model
+    old_map = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in Path(a.old_map).read_text().splitlines()}
+    new_map = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in store_map(a.out).read_text().splitlines()}
+    cache, emb = StoreCache(Path(a.out) / 'stores'), EmbeddingCache(Path(a.out) / 'embeddings', model)
+    done = reused = 0
+    for task_id, new_id in sorted(new_map.items()):
+        store = cache.get(new_id)
+        if emb.load(store) is not None:
+            reused += 1; continue
+        old_store = json.loads(cache.path(old_map[task_id]).read_text())
+        old_vec = json.loads((Path(a.out) / 'embeddings' / (_h.sha256((model + '|' + old_map[task_id]).encode()).hexdigest()[:24] + '.json')).read_text())
+        old_units = {u['unit_id']: u['original_text_sha256'] for u in old_store['units']}
+        if old_units != {u.unit_id: u.original_text_sha256 for u in store.units} or set(old_vec['vectors']) != set(old_units):
+            raise SystemExit('v1 vectors do not cover identical v2 unit texts: ' + task_id)
+        from metacom_pm.need_aware.memory.writer import text_identity
+        data = dict(model=model, store_id=new_id, text_identity=text_identity(store), vectors=old_vec['vectors'],
+                    rekeyed_from=dict(store_id=old_map[task_id], writer='naa-memory-writer-v1'))
+        p = emb.path_for(store); tmp = p.with_suffix('.tmp'); tmp.write_text(json.dumps(data)); tmp.replace(p)
+        done += 1
+    summary = dict(rekeyed=done, already=reused, recomputed=0, rule='identical unit ids and text sha256; vectors copied')
+    jdump(Path(a.out) / f'embed_rekey_{WRITER_VERSION}.json', summary); print(json.dumps(summary))
 
 
 class QueryEncoder:
@@ -162,7 +194,7 @@ def cmd_retrieve(a):
     tasks = tasks_of(a.runtime_root, ('mcq',))
     direct = direct_map(a.direct)
     cache = StoreCache(Path(a.out) / 'stores')
-    task_store = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in (Path(a.out) / 'task_stores.jsonl').read_text().splitlines()}
+    task_store = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in store_map(a.out).read_text().splitlines()}
     count = SymmetricCounter(a.models.split(','))
     backends = a.backends.split(',')
     grid = [spec for spec in SPEC_GRID if spec.backend in backends]
@@ -312,7 +344,7 @@ def cmd_materialize(a):
         tasks = tasks[:a.limit]
     direct = direct_map(a.direct)
     cache = StoreCache(Path(a.out) / 'stores')
-    task_store = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in (Path(a.out) / 'task_stores.jsonl').read_text().splitlines()}
+    task_store = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in store_map(a.out).read_text().splitlines()}
     spec = RetrievalSpec(**json.loads(a.retrieval))
     labels = a.models.split(',')
     arm_list = [x for x in ARMS.ARMS if x in a.arms.split(',')]
@@ -361,6 +393,8 @@ def cmd_materialize(a):
     if not slots_sha:
         rank = {t.task_id: hashlib.sha256(f'{a.order_seed}|{t.task_id}'.encode()).hexdigest() for t in tasks}
         rows.sort(key=lambda r: (order[r['model_label']], rank[r['task_id']], r['arm']))
+    else:   # model execution order from --models; within a model, A's frozen task/arm order (stable sort)
+        rows.sort(key=lambda r: order[r['model_label']])
     jsonl(out / 'requests.private.jsonl', rows)
     index_rows = [{k: r.get(k) for k in ('logical_id', 'task_id', 'task_mode', 'persona_group', 'arm', 'model_label',
                                           'request_sha256', 'status', 'duplicate_of', 'reason',
@@ -372,7 +406,8 @@ def cmd_materialize(a):
             r.pop('reason')
         if r['logical_request_sha256'] is None:
             r.pop('logical_request_sha256')
-    caps = default_caps(dedupe['physical_unique'], gpu_seconds=a.gpu_seconds, max_physical_calls=a.max_physical_calls)
+    caps = default_caps(dedupe['physical_unique'], gpu_seconds=a.gpu_seconds, max_physical_calls=a.max_physical_calls,
+                        per_model_gpu_seconds=a.per_model_gpu_seconds)
     caps.update(input_cap=M.COMMON_INPUT_CAP, backend_cap=M.BACKEND_CONTEXT_CAP)
     manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
                     scope='NAA WP2 development: frozen val MCQ tasks x 4 arms x generators',
@@ -383,7 +418,8 @@ def cmd_materialize(a):
                     checkpoints={x: checkpoint_headers(bindings[x]) for x in labels},
                     runtime=runtime_pins(), versions=versions, caps=caps, counts=dedupe,
                     logical_slots_sha256=slots_sha,
-                    order_rule=('A frozen WP2 logical slot order (seeded task shuffle, shuffled arms per task, model-major)'
+                    order_rule=(f'models executed in order {labels}; within each model A frozen WP2 slot order '
+                                '(seeded task shuffle, shuffled arms per task)'
                                 if slots_sha else f'model-major; sha256({a.order_seed}|task_id) permutation; arms A-D'),
                     requests_file='requests.private.jsonl', requests_sha256=file_sha(out / 'requests.private.jsonl'),
                     requests=index_rows)
@@ -455,11 +491,12 @@ def cmd_infer(a):
     from metacom_pm.rl1v3.generator import limited_run as L
     import fcntl
     run_root = Path(a.run_root).resolve()
-    L.storage_guard(run_root)
+    from metacom_pm.need_aware.runtime.backend import safe_device_guard, safe_storage_guard
+    safe_storage_guard(run_root)
     lock_path = L.DATA / 'tokkio_projects/pmrl1-validation/limited-g0e-exclusive.lock'
     with lock_path.open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        L.device_guard(initial=True)
+        safe_device_guard(initial=True)
         ledger = Ledger(run_root / 'model', manifest_sha256=msha)
         for label in approval['models']:
             t0 = time.monotonic()
@@ -470,7 +507,7 @@ def cmd_infer(a):
             return NAAHFBackend(ROOT, spec, manifest, run_root / 'worker' / f'{label}-{int(time.time())}',
                                 deadline, guard_bound_s=guard_bound_s)
         summary = runner.run(dict(manifest, requests=rows), approval, ledger, factory, result_kind='model',
-                             guard=lambda: L.storage_guard(run_root))
+                             guard=lambda: safe_storage_guard(run_root), only_models=a.models.split(',') if a.models else None)
     print(json.dumps(summary, indent=2))
 
 
@@ -549,18 +586,20 @@ def main():
     m.add_argument('--encoder', default=BGE_PATH); m.add_argument('--order-seed', type=int, default=20261127)
     m.add_argument('--arms', default='A,B,C,D'); m.add_argument('--logical-slots')
     m.add_argument('--gpu-seconds', type=int, default=43200); m.add_argument('--max-physical-calls', type=int)
+    m.add_argument('--per-model-gpu-seconds', type=int)
     i = s.add_parser('infer'); i.add_argument('--manifest-dir', required=True); i.add_argument('--run-root', required=True)
     i.add_argument('--approval'); i.add_argument('--plumbing', action='store_true'); i.add_argument('--models')
     i.add_argument('--inject-failure', action='append')
     x = s.add_parser('export'); x.add_argument('--manifest-dir', required=True); x.add_argument('--run-root', required=True)
     x.add_argument('--out', required=True); x.add_argument('--plumbing', action='store_true')
+    k = s.add_parser('rekey-embeddings'); k.add_argument('--out', required=True); k.add_argument('--old-map', required=True)
     g = s.add_parser('aggregate'); g.add_argument('--manifest-dir', required=True); g.add_argument('--run-root', required=True)
     g.add_argument('--plumbing', action='store_true')
     a = p.parse_args()
     denied = [x for x in os.environ.get('NAA_DENY_PATHS', '').split(':') if x]
     if any(Path(x).exists() for x in denied):
         raise SystemExit('sandbox isolation failed: evaluation/source path visible')
-    dict(write=cmd_write, embed=cmd_embed, retrieve=cmd_retrieve, materialize=cmd_materialize, infer=cmd_infer,
+    dict(write=cmd_write, embed=cmd_embed, **{'rekey-embeddings': cmd_rekey_embeddings}, retrieve=cmd_retrieve, materialize=cmd_materialize, infer=cmd_infer,
          export=cmd_export, aggregate=cmd_aggregate)[a.cmd](a)
 
 

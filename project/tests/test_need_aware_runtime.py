@@ -16,7 +16,7 @@ from metacom_pm.need_aware.runtime import authorization as AU
 from metacom_pm.need_aware.runtime import requests as Q
 from metacom_pm.need_aware.runtime import runner
 from metacom_pm.need_aware.runtime.backend import NAAHFBackend, PlumbingBackend
-from metacom_pm.need_aware.runtime.budget import NAABatchBudget, default_caps
+from metacom_pm.need_aware.runtime.budget import ModelStop, NAABatchBudget, default_caps
 from metacom_pm.need_aware.runtime.ledger import Ledger, LedgerError
 from metacom_pm.need_aware.runtime.models import G0E, capacity
 from metacom_pm.rl1v3.generator.limited_run import AdmissionError
@@ -85,7 +85,8 @@ def test_plumbing_run_resume_retry_reuse_and_complete_denominator(tmp_path):
     assert s2['status'] == 'STOPPED'                                         # per-request attempt cap (2) reached
     assert lg2.physical_calls() == 13
     new = [e['event'] for e in lg2.events[len(lg.events):]]
-    assert 'LOAD_START' not in new and new.count('EXHAUSTED') == 1            # no model load when nothing may run
+    assert 'LOAD_START' not in new                                           # no model load when nothing may run
+    assert sum(e['event'] == 'EXHAUSTED' for e in lg2.events) == 1          # recorded once, not per resume
     assert sum(e['event'] == 'NOT_EVALUABLE' for e in lg2.events) == 1       # settled slots are not re-recorded
 
 
@@ -135,11 +136,87 @@ def test_gpu_seconds_not_double_counted_and_per_model_share(tmp_path):
     b = NAABatchBudget(m, dict(approval(m), max_gpu_seconds=100), lg)
     assert b.per_model_seconds == 50
     lg.add('ATTEMPT_START', request_sha256='x', model_label='G0e', session_id='s1', session_elapsed_s=30.)
-    assert b.seconds_left('G0e', 's1', 30.) == 20                          # live session counted once
+    assert b.seconds_left('G0e', 's1', 30.) == (70, 20)                    # live session counted once
     lg.add('MODEL_SESSION_END', model_label='G0e', session_id='s1', session_elapsed_s=45.)
-    assert b.seconds_left('G0e') == 5 and b.seconds_left('Qwen35') == 50
-    with pytest.raises(AdmissionError, match='GPU seconds'):
+    assert b.seconds_left('G0e') == (55, 5) and b.seconds_left('Qwen35') == (55, 50)
+    with pytest.raises(ModelStop, match='per-model'):
         b.claim(rows[0]['request_sha256'], 'G0e', session_id='s2', session_elapsed_s=6.)
+    # A crashed session (no MODEL_SESSION_END, last event in flight) is charged its full timeout.
+    lg.add('ATTEMPT_START', request_sha256='y', model_label='Qwen35', session_id='s3', session_elapsed_s=4.,
+           max_seconds=300.)
+    assert lg.gpu_seconds('Qwen35') == 304.
+
+
+def two_model_rows(n=20):
+    rows = []
+    for label in ('G0e', 'Qwen35'):
+        rows += [row(f't{i}', 'A', [{'role': 'user', 'content': f'{label}-{i}'}], label=label) for i in range(n)]
+    return rows
+
+
+class Tick:
+    def __init__(self, step):
+        self.t, self.step = 0., step
+
+    def __call__(self):
+        self.t += self.step
+        return self.t
+
+
+def test_model_budget_exhaustion_does_not_block_next_model(tmp_path):
+    rows = two_model_rows()
+    m = manifest(rows, models=('G0e', 'Qwen35'))
+    m['caps'].update(smoke_calls=0, per_model_gpu_seconds=1000)              # independent per-model share
+    lg = Ledger(tmp_path, manifest_sha256=AU.manifest_sha256(m))
+    ap = dict(approval(m), max_gpu_seconds=3000)
+    s = runner.run(m, ap, lg, lambda label, **k: PlumbingBackend({}), clock=Tick(30.), result_kind='plumbing')
+    assert 'per-model GPU seconds share' in s['model_stops']['G0e'] and s['global_stop'] is None
+    done = {e['model_label'] for e in lg.events if e['event'] == 'ATTEMPT_RESULT'}
+    assert done == {'G0e', 'Qwen35'}                                         # second model ran in its own share
+    assert any(e['event'] == 'MODEL_STOP' and e['pending'] for e in lg.events)
+    assert 'per-model GPU seconds share' in s['model_stops']['Qwen35']      # Qwen used its own full share
+    for label in ('G0e', 'Qwen35'):                                          # (fake clock: no worker deadline,
+        assert 1000 <= lg.gpu_seconds(label) <= 1000 + 30 * 8                #  so one request of overshoot)
+
+
+def test_global_cap_and_safety_stop_end_whole_experiment(tmp_path):
+    from metacom_pm.need_aware.runtime.budget import SafetyStop
+    rows = two_model_rows(4)
+    m = manifest(rows, models=('G0e', 'Qwen35'))
+    m['caps']['smoke_calls'] = 0
+    lg = Ledger(tmp_path / 'g', manifest_sha256=AU.manifest_sha256(m))
+    s = runner.run(m, dict(approval(m), max_physical_calls=3), lg, lambda label, **k: PlumbingBackend({}),
+                   result_kind='plumbing')
+    assert s['global_stop']['reason'] == 'physical call cap' and lg.physical_calls() == 3
+    assert not any(e.get('model_label') == 'Qwen35' and e['event'] == 'LOAD_START' for e in lg.events)
+
+    class Unsafe(PlumbingBackend):
+        def generate(self, request, seconds):
+            raise SafetyStop('device guard: GPU occupied by another process; stop own job only')
+    lg2 = Ledger(tmp_path / 's', manifest_sha256=AU.manifest_sha256(m))
+    s2 = runner.run(m, approval(m), lg2, lambda label, **k: Unsafe({}), result_kind='plumbing')
+    assert s2['global_stop']['scope'] == 'global_safety' and lg2.physical_calls() == 1
+    assert [e['event'] for e in lg2.events].count('MODEL_SESSION_END') == 1   # device released via finally
+
+
+def test_technical_smoke_failure_stops_only_that_model(tmp_path):
+    rows = two_model_rows(20)
+    m = manifest(rows, models=('G0e', 'Qwen35'))
+
+    class Looping(PlumbingBackend):              # never emits EOS: decoding/stop problem
+        def generate(self, request, seconds):
+            r = super().generate(request, seconds)
+            if request['g_id'] == 'g:G0e':
+                r.update(token_ids=[7] * request['decode']['max_new_tokens'], finish_reason='length',
+                         output_tokens=request['decode']['max_new_tokens'])
+            return r
+    lg = Ledger(tmp_path, manifest_sha256=AU.manifest_sha256(m))
+    s = runner.run(m, approval(m), lg, lambda label, **k: Looping({}), result_kind='plumbing')
+    assert s['model_stops'] == {'G0e': 'technical smoke failed'}
+    g_calls = sum(e['event'] == 'ATTEMPT_START' and e['model_label'] == 'G0e' for e in lg.events)
+    assert g_calls == 16                                                      # stopped right at the smoke window
+    assert any(e['event'] == 'SMOKE_PASSED' and e['model_label'] == 'Qwen35' for e in lg.events)
+    assert sum(e['event'] == 'ATTEMPT_RESULT' and e['model_label'] == 'Qwen35' for e in lg.events) == 20
 
 
 def test_ledger_tamper_and_torn_tail(tmp_path):
