@@ -281,3 +281,28 @@ def test_real_guard_and_transport_fail_closed_on_binding_mismatch(tmp_path):
     failure = json.loads(next((tmp_path / 'w').glob('WIRE_FAILURE_*.private.json')).read_text())
     assert failure['operation'] == 'load' and failure['partial_generated_output'] is None
     assert calls                                                             # device guard consulted before/while loading
+
+
+def test_teardown_is_inside_occupied_gpu_time(tmp_path):
+    """Worker reap/close still holds the GPU: MODEL_SESSION_END is stamped after it, and a supervisor
+    that dies during teardown is charged the teardown bound (A review, runner.py _session finally)."""
+    rows = two_model_rows(2)[:2]
+    m = manifest(rows)
+    m['caps']['smoke_calls'] = 0
+    clock = Tick(0.)
+
+    class SlowClose(PlumbingBackend):
+        def close(self):
+            clock.t += 3.
+            super().close()
+    lg = Ledger(tmp_path / 'ok', manifest_sha256=AU.manifest_sha256(m))
+    runner.run(m, approval(m), lg, lambda label, **k: SlowClose({}), clock=clock, result_kind='plumbing')
+    ev = [e['event'] for e in lg.events]
+    assert ev.index('TEARDOWN_START') == ev.index('MODEL_SESSION_END') - 1
+    end = next(e for e in lg.events if e['event'] == 'MODEL_SESSION_END')
+    assert end['teardown_s'] == 3. and lg.gpu_seconds('G0e') == end['session_elapsed_s'] >= 3.
+
+    crashed = Ledger(tmp_path / 'crash', manifest_sha256='x')
+    crashed.add('LOAD_START', model_label='G0e', session_id='s', session_elapsed_s=0., max_seconds=900.)
+    crashed.add('TEARDOWN_START', model_label='G0e', session_id='s', session_elapsed_s=50., max_seconds=10.)
+    assert crashed.gpu_seconds('G0e') == 60.

@@ -274,9 +274,17 @@ def _session(model_label, queue, ledger, budget, backend_factory, *, clock, guar
         end = dict(reason='interrupted: ' + type(exc).__name__)
         raise
     finally:
-        ledger.add('MODEL_SESSION_END', model_label=model_label, session_id=session, session_elapsed_s=elapsed(),
-                   worker_dead=backend_dead(backend), **end)
-        _close(backend)
+        # Teardown still holds the GPU: stamp it as an in-flight operation (charged with its bound
+        # if the supervisor dies here), reap the worker, then record the occupied time incl. teardown.
+        dead = backend_dead(backend)
+        ledger.add('TEARDOWN_START', model_label=model_label, session_id=session, session_elapsed_s=elapsed(),
+                   max_seconds=caps.get('teardown_seconds', TEARDOWN_SECONDS))
+        c0 = clock()
+        try:
+            _close(backend)
+        finally:
+            ledger.add('MODEL_SESSION_END', model_label=model_label, session_id=session, session_elapsed_s=elapsed(),
+                       teardown_s=clock() - c0, worker_dead=dead, **end)
 
 
 def _smoke_gate(ledger, model_label, caps):
@@ -287,6 +295,9 @@ def _smoke_gate(ledger, model_label, caps):
 def backend_dead(backend):
     p = getattr(backend, 'p', None)
     return p is not None and p.poll() is not None
+
+
+TEARDOWN_SECONDS = 10   # SubprocessHF.close: SIGTERM, wait 2 s, SIGKILL, wait 5 s
 
 
 def _close(backend):

@@ -104,7 +104,7 @@ class Ledger:
                 ended.add(sid)
         total = 0.
         for sid, value in per.items():
-            if sid not in ended and last[sid]['event'] in ('ATTEMPT_START', 'LOAD_START'):
+            if sid not in ended and last[sid]['event'] in ('ATTEMPT_START', 'LOAD_START', 'TEARDOWN_START'):
                 value += float(last[sid].get('max_seconds', 0.))
             total += value
         return total
