@@ -16,4 +16,3 @@ def official_messages(task, history):
     if task.task_mode == "mcq":
         messages.append({"role":"system", "content":instruction(task.options)})
     return messages
-
