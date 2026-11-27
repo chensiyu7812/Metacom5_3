@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'none'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>MS 历史材料 · 人工选择</title>
+<style>
+body{margin:0;background:#f4f6f8;color:#172b3a;font:16px/1.65 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:28px}h1{font-size:26px;margin-bottom:4px}h2{font-size:19px}header p{color:#536879}section{background:white;border:1px solid #d7e0e5;border-radius:12px;padding:22px;margin:18px 0}label{display:block;margin:12px 0}select,input,textarea,button{font:inherit;border:1px solid #9bacb7;border-radius:6px;padding:9px;box-sizing:border-box}select,input[type=text],textarea{width:100%}textarea{min-height:85px}button{background:#164f69;color:white;cursor:pointer;margin-top:14px}button:disabled{opacity:.5}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.7 system-ui,sans-serif;padding:14px;background:#f7f9fa}details{border-top:1px solid #e0e6ea;padding:12px 0}summary{cursor:pointer}small,.note{color:#536879}.notice{border-left:4px solid #d99824;padding-left:14px}.pill{background:#e7f0f3;border-radius:20px;padding:4px 12px;display:inline-block}#status{white-space:pre-wrap}
+</style>
+<main><header><span class="pill">选择前审阅 · 尚未冻结</span><h1>为当前需求选择一份历史材料</h1>
+<p>只展示该时点可用的完整历史。可以选择“没有适合的材料”；无需为了使用记忆而选择。</p></header>
+<section class="notice">请在查看任何 Generator 比较结果之前完成选择。先理解当前需求，再判断哪一份完整历史会话有帮助。人物自述、第三人经历、建议、尝试和结果须分别理解；历史不一定仍然有效。</section>
+<section><label>当前前缀<select id="prefix"></select></label><h2>当前可见对话</h2><pre id="current"></pre></section>
+<section><h2>合法历史（按时间顺序）</h2><p class="note">所有可选材料均为原始完整会话，无检索排名、模型分数或回复结果。</p><div id="history"></div></section>
+<section><h2>选择记录</h2>
+<label>选择者标识<input id="selector" type="text" autocomplete="off"></label>
+<label>当前需求是什么？<textarea id="need"></textarea></label>
+<label>选择结果<select id="decision"><option value="">请选择</option><option value="selected">选择一份完整会话</option><option value="none_suitable">没有适合的历史材料</option><option value="uncertain">无法确定，提交待讨论</option></select></label>
+<label id="sourceLabel">完整会话<select id="source"></select></label>
+<label>材料如何满足当前需求？若没有适合材料，请说明原因。<textarea id="rationale"></textarea></label>
+<label><input id="blind" type="checkbox"> 我尚未查看这个前缀的 Generator 比较结果。</label>
+<p class="note">下载后交由资料负责人登记冻结。冻结时记录来源、理由、时间与内容身份；不得根据后续回复结果重选。下载文件本身不是研究资格或运行批准。</p>
+<button id="download">下载待冻结选择</button><p id="status" role="status"></p>
+</section></main>
+<script>
+"use strict";
+const bundle=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob("__BUNDLE_BASE64__"),x=>x.charCodeAt(0))));
+const $=id=>document.getElementById(id);
+let entry;
+for (const [i,row] of bundle.rows.entries()){const op=document.createElement("option");op.value=String(i);op.textContent=(i+1)+" · "+row.pool.owner_id+" · "+row.pool.prefix.timestamp;$("prefix").append(op);}
+function display(){
+ entry=bundle.rows[Number($("prefix").value)];
+ const p=entry.pool;
+ $("current").textContent=p.prefix.turns.map(t=>t.role+": "+t.text).join("\n\n");
+ $("history").replaceChildren();$("source").replaceChildren();
+ for(const [i,c] of p.candidates.entries()){
+  const d=document.createElement("details"),s=document.createElement("summary"),pre=document.createElement("pre");
+  s.textContent=(i+1)+" · "+c.reported_at.date+" · "+c.session_id;
+  pre.textContent=c.text;d.append(s,pre);$("history").append(d);
+  const op=document.createElement("option");op.value=c.record_id;op.textContent=s.textContent;$("source").append(op);
+ }
+ if(!p.candidates.length){const p=document.createElement("p");p.textContent="此时点没有完整的合法过去会话。";$("history").append(p);}
+ for(const id of ["need","rationale","decision"])$(id).value="";
+ $("blind").checked=false;$("status").textContent="";toggle();
+}
+function toggle(){$("sourceLabel").hidden=$("decision").value!=="selected";}
+$("prefix").onchange=display;$("decision").onchange=toggle;
+$("download").onclick=()=>{
+ try{
+  for(const id of ["selector","need","rationale","decision"])if(!$(id).value.trim())throw Error("请填写选择者、当前需求、选择结果和理由。");
+  if(!$("blind").checked)throw Error("需要先确认没有查看 Generator 比较结果；若已查看，请停止并报告。");
+  const selected=$("decision").value==="selected"?$("source").value:null;
+  if($("decision").value==="selected"&&!selected)throw Error("此时点没有可选择的完整历史。");
+  const receipt={protocol:bundle.protocol,bundle_sha256:bundle.bundle_sha256,prefix_id:entry.pool.prefix_id,
+   pool_sha256:entry.pool_sha256,selector:$("selector").value.trim(),current_need:$("need").value.trim(),
+   rationale:$("rationale").value.trim(),decision:$("decision").value,selected_record_id:selected,
+   outcomes_not_seen:true,declared_at:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(receipt,null,2)+"\n"],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="DP-choice-"+entry.pool.prefix_id.slice(0,12)+".json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  $("status").textContent="待冻结选择已下载。此页面没有保存或上传任何结果。";
+ }catch(e){$("status").textContent=e.message;}
+};
+display();
+</script></html>
+
