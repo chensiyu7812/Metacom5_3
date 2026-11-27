@@ -88,9 +88,11 @@ def test_prefeval_implicit_never_reads_label():
 
 
 def test_cluster_pairs_keep_failed_and_require_same_tasks():
-    rows=[{'task_id':str(i),'persona_group':str(i//2),'status':'completed','correct':False} for i in range(6)]
+    rows=[{'task_id':str(i),'persona_group':str(i//2),'status':'completed','correct':False,'result_kind':'plumbing'} for i in range(6)]
     other=[{**r,'correct':True} for r in rows];other[-1]['status']='missing'
     r=paired_cluster(rows,other,replicates=100)
     assert r['planned_pairs']==6 and r['complete_pairs']==5 and r['missing_or_failed_pairs']==1
     assert r['repairs']==5 and r['ci95']==[1.0,1.0]
+    assert not r['model_capability_result']
     with pytest.raises(ValueError):paired_cluster(rows,other[:-1])
+    with pytest.raises(ValueError):paired_cluster(rows,[{**r,'result_kind':'model'} for r in other])

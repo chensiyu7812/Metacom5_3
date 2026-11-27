@@ -33,7 +33,7 @@ def score_predictions(tasks, evaluations, predictions, kind):
         p=mapping.get(t.task_id)
         status='missing' if p is None else p.get('status','completed')
         r=score_one(p.get('output','') if p and status=='completed' else '',t,evaluations[t.task_id])
-        r.update(status=status,persona_group=t.persona_group,category=evaluations[t.task_id].category)
+        r.update(status=status,persona_group=t.persona_group,category=evaluations[t.task_id].category,result_kind=kind)
         records.append(r)
     groups=defaultdict(list)
     for r in records:
