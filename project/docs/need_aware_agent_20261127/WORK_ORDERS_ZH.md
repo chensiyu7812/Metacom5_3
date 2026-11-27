@@ -27,6 +27,8 @@
 
 目标：让数据能进入真正系统，解决记忆组织、身份接线、Generator 利用、序贯控制和重复在线推理的根因；不重启在线核验。
 
+**先解决实际 import/runner 缺口**：主方案第4节记录了已核实的缺文件与历史可取回的固定 blob。公开 checkout 缺 limited_run.py / runprep_checkpoint.py / g0e.py，旧 WorkerCallBudget 只允许两任务，不能直接用于1,920调用。先实际核查本机 G6 完整工作树，从固定历史源找齐兼容依赖并实现新版本薄适配/批处理 scope，做真实 import/CLI、native tokenizer 和拒绝未授权运行测试；不擅自修改旧限制、复制旧许可或只写恢复建议。若本地资产不全，使用已有历史源码恢复；不兼容时写安全独立 adapter，并用实际 CPU 路径验证。
+
 1. 核查 f45c281a 的实际源码与本地工作树资产：ge2_memory.py (_canonical_rows/render_intervals/observe/step), ge2_retrieval.py (SharedRetrieval), ge2_sources.py, ge2_runtime.py / ge2_worker.py, pomdp_memory.py, semcap/identity.py, g4_context.py, g6_context.py, evidence_state.py。列每个复用/薄适配/不复用的原因，特别核查 G6 中 memory_record 只接测试运行器的问题。**实现新 route 的实际读写接口**，不是再做 G7；保留原 source coordinates、owner、报告时间/消息顺序、主体与用户当前性、冲突/遗忘约束；写入阶段只允许从历史到 cutoff，无 query gold。旧实验模块不可回改。
 2. 先接 A 的 RuntimeTask/EvidenceRecord 契约，编写 source resolver、索引、BM25 baseline；复用本机可用 BGE/dense encoder（无 GPU/付费授权时 CPU 能做就做，不能做则准备同预算运行）。用至少240真实 val tasks 做 CPU 检索/输入 materialization，记录实际读入原文、owner/time/重复/容量。强固定检索可选 BM25/dense/hybrid 在 train/val 的共同信息预算下比较；先用 A 提供的任务内合法证据定位诊断评估 coverage，不能将 Direct target 传给 B baseline。B不负责看 gold。
 3. 实现四个统一 arms A Context Only/B Strong Fixed RAG/C Direct Evidence/D same evidence + grounded state projection，确保 C/D 所见原文一致。D 先 deterministic identity/time projection + 简洁适用性指令；任何生成式状态 writer 单独离线缓存及版本、额外模型调用预算，不运行同步 GSWS/INSPECT_CLAIM。实现 MCQ 与 generation 的同一合法上下文接口，MCQ 选项不用于检索。完成相同请求 hash 精确复用、防重、source_id traces。对缺 direct 定位的任务只标 diagnostic not_evaluable，保留 A/B。
