@@ -11,6 +11,7 @@ from metacom_pm.need_aware.evaluation.wp2 import (
 from metacom_pm.need_aware.evaluation.score import score_predictions
 from metacom_pm.need_aware.evaluation.export import read_ledger, predictions_from_ledger, execution_metrics
 from metacom_pm.need_aware.data.contracts import digest
+from metacom_pm.need_aware.evaluation.review import error_census
 
 
 @pytest.fixture
@@ -124,6 +125,26 @@ def test_compatibility_scorer_accepts_structural_null_request_without_miscount(s
     assert summary['structural_not_evaluable'] == 1 and summary['evaluable'] == 0
     assert summary['fixed_denominator_success_sensitivity'] is None
     assert records[0]['correct'] is None
+
+
+def test_error_review_census_includes_all_errors_and_discordances_not_noncompletion(sample):
+    rows = score(sample)
+    for r in rows:
+        r['category']['pref_type'] = 'third_party'
+    cells = {m+'|'+a: deepcopy(rows) for m in ('G0e', 'Qwen35') for a in 'ABCD'}
+    # B error repaired by C must enter even though both C and D are correct.
+    cells['G0e|B'][0].update(correct=False, outcome='wrong_answer')
+    queue, report = error_census(cells)
+    assert set(queue) == {'t0', 't1', 't2'}
+    assert queue['t0'] == ['G0e|B->C_discordance']
+    assert set(queue['t2']) == {'G0e|C_error', 'G0e|D_error', 'Qwen35|C_error', 'Qwen35|D_error'}
+    assert report['review_tasks'] == 3
+    assert report['complete_pair_transitions']['G0e|B->C/all'] == {
+        'wrong_answer -> correct': 1, 'wrong_answer -> wrong_answer': 1,
+        'parse_failure -> parse_failure': 1}
+    assert report['errors_by_observed_outcome']['G0e|C/all'] == {'wrong_answer/eos': 1, 'parse_failure/eos': 1}
+    cells['G0e|B'].pop()
+    with pytest.raises(ValueError): error_census(cells)
 
 
 def ledger_events(sample):

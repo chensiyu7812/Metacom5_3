@@ -12,6 +12,8 @@ A/B 全 240、四臂共同 207、Direct 缺失 33 分开；180 代表性和 60 �
 
 `evidence_audit.py` 从实际合法历史核对每个送达 source id/hash，并把 B 的参考缺失按 user/nonuser 分开；不从覆盖率推断回答能力。`report_wp2.py` 仅接受真实 model 聚合结果，拒绝 plumbing 作为模型报告。原始预测、逐题评分及请求变更映射仅写本地私有目录。
 
+`review_wp2_errors.py` 仅接受终局 model 封存，重新验证已评分记录，按冻结规则生成全部 C/D 错误与 B→C、C→D 正误变化的任务并集。私有审查材料含合法 Direct 原文、坐标、实际 D 请求和原始输出；公开输出只含可观察的解析/有效错误及转移计数。语义原因必须另经原文审阅，程序不会按关键词推断归因，也不会修改主评分。
+
 ## 与 B 的实际版本核对
 
 [A_WP2_JOINT_RECEIPT.json](A_WP2_JOINT_RECEIPT.json) 对照原 CPU manifest `9839c088…` 与执行 v2 `c370103c…`：487 个冻结文件逐字节 hash 全部保持，240 题、答案、选项排列、历史、Direct 207/33 均未变；两模型内的任务/条件次序不变，模型运行先后改为 Qwen35、G0e。新预算为 57,600 秒总计、每模型 28,800 秒、1,920 次物理尝试，两模型各自前 16 次技术烟测计入预算。
@@ -24,7 +26,7 @@ A 已通过 PR #31 评论及共享 `handoff/A_WP2_EVALUATION_STATUS.json` 交接
 
 ## 已执行验证与可复跑命令
 
-本地原数据/新评价回归 32 passed；`e38fe53d` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46012144098) 通过。一次真实冻结材料与原 B plumbing 导出的接口联调处理 1,920 槽位、1,788 plumbing 完成、132 结构性位置，8 个主比较的配对数为 240、240、207、207、207、207、207、207；11.659 秒。随后已用实际 v2 plumbing 哈希链跑通封存→评价完整接口，1,788 次 plumbing 调用对应 1,920 完整槽位。两次都是接口验证，没有模型能力成绩，也没有重复 GPU 资格验证。
+本地原数据/新评价回归 33 passed；`8de35594` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46026871974) 与 [PM CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46026871951) 通过。一次真实冻结材料与原 B plumbing 导出的接口联调处理 1,920 槽位、1,788 plumbing 完成、132 结构性位置，8 个主比较的配对数为 240、240、207、207、207、207、207、207；11.659 秒。随后已用实际 v2 plumbing 哈希链跑通封存→评价完整接口，1,788 次 plumbing 调用对应 1,920 完整槽位。两次都是接口验证，没有模型能力成绩，也没有重复 GPU 资格验证。
 
 `seal_wp2_export.py` 不依赖 B 改动当前运行器：只读账本、校验 hash chain、取首个有效结果，保留 timeout/invalid/interrupted/unattempted 和所有失败尝试。附实际 token/生成时间/内部首 token 计时及账本 GPU 秒；未知延迟不填零，v2 teardown 未计入部分明确单列限制。`watch_wp2_evaluation.py` 已作为独立 CPU 后处理启动，禁用 CUDA；等待 B `RUN_SUMMARY` 后才封存/评分/生成本地表格，中途只输出技术完成计数。它不启动 GPU、不修改推理、不给训练授权，也不自动对外发布。完整模型研究解释和 WP3 决策仍须在封存结果审阅后完成。
 
@@ -47,5 +49,7 @@ PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/evaluate_wp2.py \
 ```
 
 实际未通过的检查也保留：第一次版本审查把两模型整体执行顺序误作必须不变，因 Qwen35 优先而报错；改为核对各模型内部冻结顺序并明示模型调度差异。预执行 RAW 一致建议不作为新增审批门；最终审核以用户要求的原任务/答案/选项/历史不变、合法证据及四条件构念为边界。评价指标、官方解析、预定样本和预算没有根据模型答案调整。
+
+错误审查新增回归首次执行漏设 `PYTHONPATH=src`，collection 报 `ModuleNotFoundError: metacom_pm`；使用上面的完整命令重跑后 33 项通过，没有删除或跳过测试。
 
 当前未完成：B 封存真实模型输出后的严格评分、失败归因、跨模型配对结果及基于真实错误的单一 WP3 修复建议。尚无训练决定或训练执行。
