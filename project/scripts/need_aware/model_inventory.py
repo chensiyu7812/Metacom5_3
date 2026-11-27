@@ -37,6 +37,10 @@ def main(root,out):
     for label,repo,rev,path in MODELS:
         start=time.monotonic();p=Path(path);cfg=json.loads((p/'config.json').read_text())
         tokenizer=AutoTokenizer.from_pretrained(p,local_files_only=True,trust_remote_code=False)
+        generation=json.loads((p/'generation_config.json').read_text()) if (p/'generation_config.json').exists() else {}
+        eos=generation.get('eos_token_id',[cfg['text_config']['eos_token_id'],tokenizer.eos_token_id])
+        if isinstance(eos,int):eos=[eos]
+        eos=sorted(set(eos))
         def token_count(messages):
             rendered=tokenizer.apply_chat_template(messages,tokenize=False,add_generation_prompt=True,enable_thinking=False)
             ids=tokenizer.encode(rendered,add_special_tokens=False)
@@ -62,7 +66,11 @@ def main(root,out):
                                  'p95':xs[int(.95*(len(xs)-1))],'max':max(xs),'over_12000':sum(x>12000 for x in xs)}
         report['models'].append({'label':label,'model_id':repo,'revision':rev,'path':str(p),'license':'apache-2.0',
             'architecture':cfg['architectures'],'native_context_limit':cfg['text_config']['max_position_embeddings'],
-            'tokenizer_class':type(tokenizer).__name__,'eos_token_id':tokenizer.eos_token_id,'files':files,
+            'tokenizer_class':type(tokenizer).__name__,'eos_token_id':tokenizer.eos_token_id,
+            'naa_stop_token_ids':eos,'stop_token_spellings':tokenizer.convert_ids_to_tokens(eos),
+            'pad_token_id':tokenizer.pad_token_id,'suppress_tokens':generation.get('suppress_tokens',[]),
+            'decode_note':'Use official generation_config stops if present, otherwise union of text-config and native tokenizer EOS; do not rely on config EOS alone.',
+            'files':files,
             'full_history':stats(full),'query_options':stats(query_counts),'direct':stats(direct_counts),
             'literal_official_template_failures':literal_failures,'cpu_wall_seconds':time.monotonic()-start})
         write_json(out/'model_inventory.json',report);print(label,'native tokenizer and file hashes completed',flush=True)

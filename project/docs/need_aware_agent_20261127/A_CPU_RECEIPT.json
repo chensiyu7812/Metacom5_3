@@ -1,0 +1,812 @@
+{
+  "kind": "real_data_cpu_plumbing_not_model_capability",
+  "starting_commit": "3dded9b28606d670dc0ed57bcaf8197a7926f4fd",
+  "integrated_recovery_commit": "5c7195984af60ebc84cc12cdd0b16ae550cbdc30",
+  "implementation_commit": "e146812fc1f672344903836632976076b818679f",
+  "census": {
+    "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba",
+    "upstream_commit": "d29d91d016add354e459dfeb0d24af08bc402e2a",
+    "seed": 20261127,
+    "train": {
+      "rows": 18549,
+      "personas": 800,
+      "history_families": 800,
+      "exact_duplicate_rows": 0,
+      "duplicate_persona_query": 0,
+      "normalized_duplicate_persona_query": 0,
+      "missing": {
+        "persona_id": 0,
+        "chat_history_32k_link": 0,
+        "chat_history_128k_link": 0,
+        "raw_persona_file": 0,
+        "short_persona": 13,
+        "expanded_persona": 0,
+        "user_query": 0,
+        "correct_answer": 0,
+        "incorrect_answers": 1,
+        "topic_query": 0,
+        "preference": 0,
+        "topic_preference": 0,
+        "conversation_scenario": 0,
+        "pref_type": 0,
+        "related_conversation_snippet": 0,
+        "who": 0,
+        "updated": 0,
+        "prev_pref": 14932,
+        "sensitive_info": 0,
+        "total_tokens_in_chat_history_32k": 0,
+        "total_tokens_in_chat_history_128k": 0,
+        "distance_from_related_snippet_to_query_32k": 0,
+        "distance_from_related_snippet_to_query_128k": 0,
+        "num_persona_relevant_tokens_32k": 0,
+        "num_persona_irrelevant_tokens_32k": 0,
+        "num_persona_relevant_tokens_128k": 0,
+        "num_persona_irrelevant_tokens_128k": 0
+      },
+      "counts": {
+        "pref_type": {
+          "therapy_background": 2490,
+          "ask_to_forget": 3617,
+          "health_and_medical_conditions": 2178,
+          "sensitive_info": 1854,
+          "neutral_preferences": 3168,
+          "stereotypical_pref": 1933,
+          "anti_stereotypical_pref": 3309
+        },
+        "who": {
+          "self": 16476,
+          "others": 2073
+        },
+        "updated": {
+          "False": 14932,
+          "True": 3617
+        },
+        "sensitive_info": {
+          "False": 16695,
+          "True": 1854
+        },
+        "conversation_scenario": {
+          "creative_writing": 1967,
+          "professional_email": 1979,
+          "professional_writing": 1939,
+          "personal_email": 1969,
+          "chat_message": 1975,
+          "knowledge_query": 2942,
+          "translation": 1896,
+          "social_media_post": 1961,
+          "trouble_consult": 1921
+        }
+      },
+      "rows_per_persona_histogram": {
+        "25": 61,
+        "23": 60,
+        "26": 47,
+        "39": 1,
+        "14": 16,
+        "20": 41,
+        "19": 39,
+        "29": 29,
+        "27": 52,
+        "22": 62,
+        "28": 46,
+        "34": 9,
+        "21": 53,
+        "6": 1,
+        "24": 55,
+        "16": 23,
+        "30": 28,
+        "32": 13,
+        "13": 9,
+        "31": 29,
+        "18": 38,
+        "33": 12,
+        "12": 7,
+        "8": 4,
+        "11": 7,
+        "37": 2,
+        "35": 4,
+        "10": 6,
+        "38": 1,
+        "17": 31,
+        "15": 13,
+        "9": 1
+      },
+      "strata": {
+        "therapy_background|self|False|False": 1481,
+        "ask_to_forget|self|True|False": 3617,
+        "health_and_medical_conditions|self|False|False": 1979,
+        "sensitive_info|self|False|True": 1854,
+        "neutral_preferences|self|False|False": 2869,
+        "stereotypical_pref|self|False|False": 1736,
+        "anti_stereotypical_pref|self|False|False": 2940,
+        "therapy_background|others|False|False": 1009,
+        "stereotypical_pref|others|False|False": 197,
+        "health_and_medical_conditions|others|False|False": 199,
+        "anti_stereotypical_pref|others|False|False": 369,
+        "neutral_preferences|others|False|False": 299
+      }
+    },
+    "val": {
+      "rows": 2061,
+      "personas": 735,
+      "history_families": 735,
+      "exact_duplicate_rows": 0,
+      "duplicate_persona_query": 0,
+      "normalized_duplicate_persona_query": 0,
+      "missing": {
+        "persona_id": 0,
+        "chat_history_32k_link": 0,
+        "chat_history_128k_link": 0,
+        "raw_persona_file": 0,
+        "short_persona": 2,
+        "expanded_persona": 0,
+        "user_query": 0,
+        "correct_answer": 0,
+        "incorrect_answers": 0,
+        "topic_query": 0,
+        "preference": 0,
+        "topic_preference": 0,
+        "conversation_scenario": 0,
+        "pref_type": 0,
+        "related_conversation_snippet": 0,
+        "who": 0,
+        "updated": 0,
+        "prev_pref": 1641,
+        "sensitive_info": 0,
+        "total_tokens_in_chat_history_32k": 0,
+        "total_tokens_in_chat_history_128k": 0,
+        "distance_from_related_snippet_to_query_32k": 0,
+        "distance_from_related_snippet_to_query_128k": 0,
+        "num_persona_relevant_tokens_32k": 0,
+        "num_persona_irrelevant_tokens_32k": 0,
+        "num_persona_relevant_tokens_128k": 0,
+        "num_persona_irrelevant_tokens_128k": 0
+      },
+      "counts": {
+        "pref_type": {
+          "anti_stereotypical_pref": 375,
+          "stereotypical_pref": 224,
+          "ask_to_forget": 420,
+          "health_and_medical_conditions": 249,
+          "neutral_preferences": 355,
+          "therapy_background": 254,
+          "sensitive_info": 184
+        },
+        "who": {
+          "others": 227,
+          "self": 1834
+        },
+        "updated": {
+          "False": 1641,
+          "True": 420
+        },
+        "sensitive_info": {
+          "False": 1877,
+          "True": 184
+        },
+        "conversation_scenario": {
+          "chat_message": 229,
+          "creative_writing": 232,
+          "personal_email": 211,
+          "knowledge_query": 322,
+          "professional_writing": 249,
+          "social_media_post": 206,
+          "translation": 208,
+          "trouble_consult": 185,
+          "professional_email": 219
+        }
+      },
+      "rows_per_persona_histogram": {
+        "4": 112,
+        "2": 211,
+        "3": 165,
+        "5": 54,
+        "6": 29,
+        "1": 150,
+        "7": 11,
+        "9": 1,
+        "8": 2
+      },
+      "strata": {
+        "anti_stereotypical_pref|others|False|False": 37,
+        "stereotypical_pref|self|False|False": 203,
+        "ask_to_forget|self|True|False": 420,
+        "health_and_medical_conditions|self|False|False": 220,
+        "anti_stereotypical_pref|self|False|False": 338,
+        "neutral_preferences|self|False|False": 316,
+        "therapy_background|self|False|False": 153,
+        "sensitive_info|self|False|True": 184,
+        "therapy_background|others|False|False": 101,
+        "health_and_medical_conditions|others|False|False": 29,
+        "neutral_preferences|others|False|False": 39,
+        "stereotypical_pref|others|False|False": 21
+      }
+    },
+    "train_val_persona_overlap": 735,
+    "train_val_history_overlap": 735,
+    "train_val_exact_row_overlap": 0,
+    "selected": {
+      "mcq": {
+        "tasks": 240,
+        "personas": 240
+      },
+      "generation": {
+        "tasks": 60,
+        "personas": 60
+      },
+      "train": {
+        "tasks": 4000,
+        "personas": 177
+      }
+    },
+    "selected_train_dev_persona_overlap": 0,
+    "direct": {
+      "mcq": {
+        "located_unique": 207,
+        "missing": 33
+      },
+      "generation": {
+        "located_unique": 54,
+        "missing": 6
+      },
+      "train": {
+        "located_unique": 3579,
+        "missing": 421
+      }
+    },
+    "history_files_requested": 477,
+    "history_files_parsed": 477,
+    "history_messages": 110232,
+    "duplicate_history_content": 0,
+    "history_extra_key_messages": 8,
+    "test_labels_read": false,
+    "benchmark_count_claim": 5000,
+    "benchmark_count_verified": false,
+    "source_license": "CC-BY-4.0",
+    "official_root_code_license": "not found; independent implementation only",
+    "model_calls": 0,
+    "paid_calls": 0
+  },
+  "direct_by_pref_type": {
+    "anti_stereotypical_pref": {
+      "located_unique": 36
+    },
+    "ask_to_forget": {
+      "located_unique": 54,
+      "missing": 2
+    },
+    "health_and_medical_conditions": {
+      "located_unique": 28
+    },
+    "neutral_preferences": {
+      "located_unique": 38
+    },
+    "sensitive_info": {
+      "missing": 31
+    },
+    "stereotypical_pref": {
+      "located_unique": 23
+    },
+    "therapy_background": {
+      "located_unique": 28
+    }
+  },
+  "source_files": [
+    {
+      "path": "README.md",
+      "bytes": 16613,
+      "sha256": "18b068b91e3bfc5615806ebf5c74b143b79cbce22d41e7e26df50bbf5cc7b98a",
+      "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba"
+    },
+    {
+      "path": "column_descriptions.md",
+      "bytes": 3709,
+      "sha256": "7a5a652a187230067088abc600d9b1527b8d72a0abb8cdc5ec9533eb792c3163",
+      "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba"
+    },
+    {
+      "path": "benchmark/text/train.csv",
+      "bytes": 157116318,
+      "sha256": "62abb042f529818a22be4ced84b683364f000af68608008c20186527740276d6",
+      "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba"
+    },
+    {
+      "path": "benchmark/text/val.csv",
+      "bytes": 17474290,
+      "sha256": "a47a7dd3879de5e282c6d15266437ed44cf69c0c93c79634645dbd73d655b29a",
+      "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba"
+    }
+  ],
+  "source_manifest_sha256": "8d612f073f886ac2f8fabf0d360f040222346e8b7a73176e689c03e6c610b525",
+  "freeze_sha256": "f29ad02de12c73d341d44d7e0fc8295889ec8f284db6d73b46b8ed0a5fb5eae5",
+  "frozen_files_verified": 487,
+  "freeze_hash_mismatches": 0,
+  "material_hashes": {
+    "direct/direct.jsonl": "4af7f630073c3d531e60dd2905375394742ca5f8529bae8239012c516a0134ee",
+    "evaluation/tasks.generation.jsonl": "0a7fa46a57c2ce25448a059914e3dd6561f6fd4f50f1f5af6e2a773885d21973",
+    "evaluation/tasks.mcq.jsonl": "448702e3f5236a6c1341069e6170e75ab5a8fd0fb86de4375f2277bbe856a5d6",
+    "runtime/tasks.generation.jsonl": "8869fb908f0342de70bd42078a1fcff5685a0a6ca35c09415fa075158e26be67",
+    "runtime/tasks.mcq.jsonl": "ca785ee77174df7016b05a2ea8e280a3cf050f79cd7d0a8186136f6b70a1518a",
+    "training/candidate_provenance.jsonl": "47a7c3912c34cbb15986e6515b564832cf73e1bcc36afe5728d971c00be86a8f",
+    "training/runtime/tasks.jsonl": "88b1a142d2a99018ce3618f8881c367d2c480bdd89968b58d700c847650992da"
+  },
+  "official_conformance": {
+    "result_kind": "plumbing",
+    "model_calls": 0,
+    "val_rows": 2061,
+    "parser_correctness_comparisons": 30915,
+    "option_prompt_mismatches": 0,
+    "parser_mismatches": 0,
+    "score_mismatches": 0,
+    "seed_note": "explicit SEED+row_index; upstream default process-salted hash intentionally not reused"
+  },
+  "runtime_cpu": {
+    "result_kind": "plumbing",
+    "tasks_resolved": 300,
+    "mcq": 240,
+    "generation": 60,
+    "model_calls": 0,
+    "network_namespace_isolated": true,
+    "cpu_wall_seconds": 0.8868903508409858
+  },
+  "scorer_plumbing": {
+    "model_calls": 0,
+    "result_kind": "plumbing",
+    "checks": {
+      "known_answer": {
+        "result_kind": "plumbing",
+        "model_capability_result": false,
+        "planned": 240,
+        "completed": 240,
+        "correct": 240,
+        "invalid": 0,
+        "accuracy_on_completed": 1.0,
+        "status": {
+          "completed": 240
+        }
+      },
+      "invalid_output": {
+        "result_kind": "plumbing",
+        "model_capability_result": false,
+        "planned": 240,
+        "completed": 240,
+        "correct": 0,
+        "invalid": 240,
+        "accuracy_on_completed": 0.0,
+        "status": {
+          "completed": 240
+        }
+      }
+    }
+  },
+  "native_model_inventory": {
+    "models": [
+      {
+        "label": "G0e",
+        "model_id": "google/gemma-4-12B-it",
+        "revision": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+        "license": "apache-2.0",
+        "architecture": [
+          "Gemma4UnifiedForConditionalGeneration"
+        ],
+        "native_context_limit": 262144,
+        "tokenizer_class": "GemmaTokenizer",
+        "eos_token_id": 1,
+        "files": [
+          {
+            "name": "chat_template.jinja",
+            "bytes": 18683,
+            "sha256": "ae53464bf3be25802b3a5b37def7fd89667067d7577049b3b2d74c4d8de4c6d4"
+          },
+          {
+            "name": "config.json",
+            "bytes": 4423,
+            "sha256": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9"
+          },
+          {
+            "name": "generation_config.json",
+            "bytes": 260,
+            "sha256": "a8349d9bd64cc5841297fcb5002f0fdc4749c473c8f1b10ea337f9ce4ee7014e"
+          },
+          {
+            "name": "model.safetensors",
+            "bytes": 23919549408,
+            "sha256": "5a84cb313260ac447237b890387116dfa8682e49a6b44bc585ae8353abbff18d"
+          },
+          {
+            "name": "processor_config.json",
+            "bytes": 1382,
+            "sha256": "6b938e76555b3e9946890770e1abcd442a4718f34041a58e8139dc8ad34545c9"
+          },
+          {
+            "name": "tokenizer.json",
+            "bytes": 32169626,
+            "sha256": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f"
+          },
+          {
+            "name": "tokenizer_config.json",
+            "bytes": 3089,
+            "sha256": "a62f4e85a47c0c136edaaa3a4f591fd6783717299a9def47e5ad03a49f6a5eb9"
+          }
+        ],
+        "full_history": {
+          "count": 300,
+          "min": 37772,
+          "median": 43919,
+          "p95": 46006,
+          "max": 48507,
+          "over_12000": 300
+        },
+        "query_options": {
+          "count": 300,
+          "min": 75,
+          "median": 376,
+          "p95": 515,
+          "max": 1034,
+          "over_12000": 0
+        },
+        "direct": {
+          "count": 261,
+          "min": 303,
+          "median": 830,
+          "p95": 1234,
+          "max": 1682,
+          "over_12000": 0
+        },
+        "literal_official_template_failures": 0,
+        "cpu_wall_seconds": 95.24456015322357,
+        "naa_stop_token_ids": [
+          1,
+          50,
+          106
+        ],
+        "stop_token_spellings": [
+          "<eos>",
+          "<|tool_response>",
+          "<turn|>"
+        ],
+        "pad_token_id": 0,
+        "suppress_tokens": [
+          258883,
+          258882
+        ],
+        "decode_note": "Use official generation_config stops if present, otherwise union of text-config and native tokenizer EOS; do not rely on config EOS alone."
+      },
+      {
+        "label": "Qwen35",
+        "model_id": "Qwen/Qwen3.5-9B",
+        "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+        "license": "apache-2.0",
+        "architecture": [
+          "Qwen3_5ForConditionalGeneration"
+        ],
+        "native_context_limit": 262144,
+        "tokenizer_class": "Qwen2Tokenizer",
+        "eos_token_id": 248046,
+        "files": [
+          {
+            "name": "chat_template.jinja",
+            "bytes": 7756,
+            "sha256": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715"
+          },
+          {
+            "name": "config.json",
+            "bytes": 3126,
+            "sha256": "d0883072e01861ed0b2d47be3c16c36a8e81c224c7ffaa310c6558fb3f932b05"
+          },
+          {
+            "name": "merges.txt",
+            "bytes": 3353259,
+            "sha256": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d"
+          },
+          {
+            "name": "model.safetensors-00001-of-00004.safetensors",
+            "bytes": 5276436216,
+            "sha256": "db6f444b43d318c92f360a13a25561a6a65b10c0631b8ed305a426dbaa6c380e"
+          },
+          {
+            "name": "model.safetensors-00002-of-00004.safetensors",
+            "bytes": 5335161512,
+            "sha256": "31c7d7e2dd5d207840b31cc59083c8f4c4718959149e0358c0364052bb9a0330"
+          },
+          {
+            "name": "model.safetensors-00003-of-00004.safetensors",
+            "bytes": 5368717440,
+            "sha256": "7ec36ba3a4176a44c3c0876ad80c56a2f70c84bf008d82e9501df642f17dadec"
+          },
+          {
+            "name": "model.safetensors-00004-of-00004.safetensors",
+            "bytes": 3325995712,
+            "sha256": "b62b0c4cd7e44edee103ee8f4fe225f246d5e768e07bfd5f25b63a8aa1fdd0c6"
+          },
+          {
+            "name": "model.safetensors.index.json",
+            "bytes": 79657,
+            "sha256": "26d3539b516be613f39563617cb9d33b3f83d401298125be392c80cefb8f7fe5"
+          },
+          {
+            "name": "preprocessor_config.json",
+            "bytes": 390,
+            "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516"
+          },
+          {
+            "name": "tokenizer.json",
+            "bytes": 12807982,
+            "sha256": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+          },
+          {
+            "name": "tokenizer_config.json",
+            "bytes": 16710,
+            "sha256": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8"
+          },
+          {
+            "name": "video_preprocessor_config.json",
+            "bytes": 385,
+            "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13"
+          },
+          {
+            "name": "vocab.json",
+            "bytes": 6722759,
+            "sha256": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003"
+          }
+        ],
+        "full_history": {
+          "count": 300,
+          "min": 36848,
+          "median": 43253,
+          "p95": 45112,
+          "max": 47349,
+          "over_12000": 300
+        },
+        "query_options": {
+          "count": 300,
+          "min": 76,
+          "median": 377,
+          "p95": 511,
+          "max": 1016,
+          "over_12000": 0
+        },
+        "direct": {
+          "count": 261,
+          "min": 294,
+          "median": 815,
+          "p95": 1222,
+          "max": 1634,
+          "over_12000": 0
+        },
+        "literal_official_template_failures": 240,
+        "cpu_wall_seconds": 153.95346200093627,
+        "naa_stop_token_ids": [
+          248044,
+          248046
+        ],
+        "stop_token_spellings": [
+          "<|endoftext|>",
+          "<|im_end|>"
+        ],
+        "pad_token_id": 248044,
+        "suppress_tokens": [],
+        "decode_note": "Use official generation_config stops if present, otherwise union of text-config and native tokenizer EOS; do not rely on config EOS alone."
+      }
+    ],
+    "gpu_model_loads": 0,
+    "model_calls": 0,
+    "common_input_cap_proposal": 12000,
+    "output_cap_proposal": 1024,
+    "backend_context_cap_proposal": 16384,
+    "transformers": "5.17.0",
+    "renderer": "A-tokenizer-feasibility-v1; B final request inventory required"
+  },
+  "prefeval": {
+    "revision": "50795054b5ff5f418d2b768a331d71e480f93331",
+    "license": "CC-BY-NC-4.0",
+    "noncommercial_research_only": true,
+    "variants": {
+      "explicit": {
+        "files": 20,
+        "rows": 1000,
+        "cpu_samples": 10
+      },
+      "choice": {
+        "files": 20,
+        "rows": 1000,
+        "cpu_samples": 10
+      },
+      "persona": {
+        "files": 20,
+        "rows": 1000,
+        "cpu_samples": 10
+      }
+    },
+    "variant_family_count": 1000,
+    "all_three_variants_shared_families": 1000,
+    "real_independent_user_count": "not established; case families are not users",
+    "official_split": "no train/val/test split in these benchmark topic files; local val denotes loader exposure only",
+    "mcq_files": {
+      "education_learning_styles.json": 31,
+      "education_resources.json": 54,
+      "entertain_games.json": 51,
+      "entertain_music_book.json": 56,
+      "entertain_shows.json": 62,
+      "entertain_sports.json": 52,
+      "lifestyle_beauty.json": 53,
+      "lifestyle_dietary.json": 57,
+      "lifestyle_fit.json": 52,
+      "lifestyle_health.json": 49,
+      "pet_ownership.json": 43,
+      "professional_work_location_style.json": 36,
+      "shop_fashion.json": 54,
+      "shop_home.json": 56,
+      "shop_motors.json": 45,
+      "shop_technology.json": 35,
+      "travel_activities.json": 58,
+      "travel_hotel copy.json": 52,
+      "travel_hotel.json": 54,
+      "travel_restaurant.json": 56,
+      "travel_transportation.json": 46
+    },
+    "mcq_raw_rows": 1052,
+    "mcq_core_20_topics_rows": 1000,
+    "runtime_samples": 30,
+    "model_calls": 0,
+    "official_generation_evaluator": "generation_task/llm_based_evaluation_errortypes.py (API; not called)",
+    "official_mcq_entry": "classification_task/benchmark_classification.py; utils/utils_mcq.py (<choice>A</choice>, first source option is gold)"
+  },
+  "external": {
+    "OP-Bench": {
+      "revision": "44e7d0e526152997b04208218a8ad7362174dae4",
+      "data_sha256": "250f4005a57226eb80a13c345ed0b0a88db26dfbd0c9f3339f19f32cad690992",
+      "conversation_families": 10,
+      "users": 20,
+      "actual_queries": {
+        "irrelevance_easy": 318,
+        "irrelevance_hard": 100,
+        "diversity": 897,
+        "sycophancy": 400
+      },
+      "total_queries": 1715,
+      "repetition_groups": 20,
+      "runtime_admitted": false,
+      "license": "no declared software license; NOTICE requests licensing/provenance resolution",
+      "default_coverage": "official config defaults use_both_personas=false; 20-user denominator requires true",
+      "evaluator": "src/opbench/scoring.py Scorer: API judges; diversity pairwise normalized embedding cosine; not run"
+    },
+    "ENPMR-Bench": {
+      "revision": "f46921bc42c14c1cc57d68a364bee7a3a7dcc1d2",
+      "data_sha256": "1dff344d0c6c69e63cbf9be2b1468cd118fa6ca37e1786150b4325f5f6b87b9d",
+      "personas": 50,
+      "dialogues": 2692,
+      "memories": 11846,
+      "dialogue_types": {
+        "preference": 400,
+        "power": 573,
+        "relationship": 573,
+        "highlight": 573,
+        "goal": 573
+      },
+      "dialogues_without_structured_date": 2692,
+      "memories_with_date_field": 11846,
+      "license": "no LICENSE or data license declaration found",
+      "runtime_admitted": false,
+      "status": "blocked: license and target-before-memory chronology unresolved",
+      "evaluator": "no executable evaluation code in pinned repository (README/data/assets only)"
+    },
+    "model_calls": 0,
+    "paid_calls": 0
+  },
+  "wp2_candidate": {
+    "authorization": {
+      "gpu": false,
+      "training": false,
+      "paid_api": false,
+      "formal_test": false
+    },
+    "frozen_source_sha256": "f29ad02de12c73d341d44d7e0fc8295889ec8f284db6d73b46b8ed0a5fb5eae5",
+    "logical_slots": 1920,
+    "runnable_before_exact_deduplication": 1788,
+    "not_evaluable_slots": 132,
+    "physical_generation_attempt_cap_proposed": 1920,
+    "retry_headroom_before_deduplication": 132,
+    "gpu_wall_seconds_cap_proposed": 43200,
+    "gpu_count_proposed": 1,
+    "device_class": "RTX A6000 48GB; sequential model loading; availability rechecked at run time",
+    "smoke": "first 16 runnable physical calls are inside this same budget, then continue on technical success",
+    "retry": "only failed exact requests, append-only receipts; all attempts count against physical/time caps; never rerun successful requests to improve answers",
+    "exact_cache": "B hashes final native messages + model/tokenizer/decode/retrieval versions; logical hashes are not an exact-output cache key",
+    "open_generation_tasks_prepared": 60,
+    "open_generation_calls_in_this_request": 0,
+    "open_generation_followup_upper_bound": 180,
+    "open_generation_budget_note": "separate explicit allocation required; never hidden within 1920 MCQ slots",
+    "model_calls_executed": 0,
+    "b_joint_confirmation": "pending B final renderer/runner commit and receipts",
+    "manifest_sha256": "6dbd6b13c3262cb2bbb2e76670e0644888c1b7a117903a1308512bdbf928b5de"
+  },
+  "test_receipt": {
+    "local_passed": 13,
+    "local_failed": 0,
+    "suite": "test_need_aware_data.py",
+    "python": "3.13.2",
+    "pytest": "8.4.2",
+    "legacy_CI_owner": "B; not represented as passed by A"
+  },
+  "benchmark_metadata": {
+    "source": "https://datasets-server.huggingface.co/size?dataset=bowen-upenn%2FPersonaMem-v2",
+    "text_rows": 5000,
+    "method": "metadata-only; no benchmark file/labels opened; not a pinned-file census"
+  },
+  "uncompleted": [
+    "B shared interface acceptance and final renderer/runner request hashes",
+    "joint WP2 approval-ready application pending B receipt",
+    "GPU inference/model outcomes",
+    "training",
+    "open generation/independent human evaluation",
+    "formal test unlock",
+    "MemAgent and strong full-history model baseline reproduction"
+  ],
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "gpu_seconds": 0,
+  "code_sha256": {
+    "project/src/metacom_pm/need_aware/__init__.py": "23eab20dd2f2af96fb473dbabd6358336ff78277b6f06db11042a79a7b5173e5",
+    "project/src/metacom_pm/need_aware/data/__init__.py": "bb58a5cd3e43b20c26679336959f057afce526cfe6d77d40e8a19c3cdc6bab24",
+    "project/src/metacom_pm/need_aware/data/contracts.py": "ac9423b3c714cfb3ab5e0f2d8597049949d06075a0c65dbcd7a17e5cb1815b2a",
+    "project/src/metacom_pm/need_aware/data/history.py": "f2d106cc7862bf141f2436aee323210a97e69b6e770b1e26bb05016bc96f7845",
+    "project/src/metacom_pm/need_aware/data/personamem.py": "ac8ea1cc481e31a763be178459c274d83a35c3b5e4453714ff0d4708476b9b1d",
+    "project/src/metacom_pm/need_aware/data/prefeval.py": "0b847093260d12f18d048b1d477152c2f4944c9295c7ade028708e5c10fd3e33",
+    "project/src/metacom_pm/need_aware/data/prompts.py": "434abaa7378349dc7e2e3a5f243995f0b83b277a4a99c1953a04f585729f42ad",
+    "project/src/metacom_pm/need_aware/evaluation/__init__.py": "c84d38f28fbb6dcf8aa6af4b65435494b458bb546d6947715e8b04f8d1768778",
+    "project/src/metacom_pm/need_aware/evaluation/aggregate.py": "2744e1cacb86e17edfa2808f98fff6d4172c29982d888e8ef662f6d8bafb4bbc",
+    "project/src/metacom_pm/need_aware/evaluation/contracts.py": "aa7490f97413eb10dd892190c6250dcfb1e30feb816b70b008bcace1041ace0b",
+    "project/src/metacom_pm/need_aware/evaluation/mcq.py": "23b7709f0f80535df9cadcd588f9aa9c6bf3678a35968a2324190bf1e40841c7",
+    "project/src/metacom_pm/need_aware/evaluation/score.py": "d7a5756c272890efa0dd9b25da2a009ce8113f2a533b8a782a3be899dd70664c",
+    "project/scripts/need_aware/aggregate_mcq.py": "672bd78301ec0b2ff66381ca9982dadb8f5ab7f425bb0029645b87508528e483",
+    "project/scripts/need_aware/audit_external.py": "ebf47b06a5f2524277cc043f7d187477cd5a22b50f708a8070d39467d5899302",
+    "project/scripts/need_aware/cpu_runtime_receipt.py": "3d365e6a490973765767228d8e1da288c9ef6e5f38a7ebd0e5c1237b9b2f16f0",
+    "project/scripts/need_aware/model_inventory.py": "f068ec70778a803217709b079906155d73baf50b8871b524ab56678308e536c6",
+    "project/scripts/need_aware/prepare_personamem.py": "c9aa70e58b7b2cd965668447ba9f549a2b99dc6c83f260788eac599bd84a80e5",
+    "project/scripts/need_aware/prepare_prefeval.py": "cdcaabc9470ed456a14e836ab5f44999ee3c3e3d9dd76fa73d773146a0a9bffe",
+    "project/scripts/need_aware/prepare_wp2_manifest.py": "61c210aa89c9a5ab3a294b08cc4979236cf355866c50a9b5a399ad1dd35b726c",
+    "project/scripts/need_aware/run_cpu_isolated.py": "64d9d07c5f646b8c9709cbf827d55505ad8cdaa008ff24281e8adfaaf93860ef",
+    "project/scripts/need_aware/run_plumbing_score.py": "cd134b342bf898a8512a93c8c9a2bfc1290ea9d11aa6cc599c7f6b0918c8e9f6",
+    "project/scripts/need_aware/score_mcq.py": "00ab7971f2b23526ed4cc17b1c390aaa475a20e2a003eb5120579d33d23b463f",
+    "project/scripts/need_aware/verify_official_mcq.py": "b7faf9b4c428853076b0a022a81e9e74da839721b51a87da5679a942c60457a5",
+    "project/scripts/need_aware/audit_source_options.py": "ca5615984bc513542574fa14b3251e6e28b10ee923fddb7fa905d0c19a0a385a"
+  },
+  "supplemental_source_audit": {
+    "train": {
+      "incorrect_option_count_histogram": {
+        "3": 18538,
+        "4": 10
+      },
+      "invalid_options_json": 1,
+      "rows_with_duplicate_option_text": 0,
+      "missing_32k_ref_in_pinned_metadata": 0
+    },
+    "val": {
+      "incorrect_option_count_histogram": {
+        "3": 2061
+      },
+      "invalid_options_json": 0,
+      "rows_with_duplicate_option_text": 0,
+      "missing_32k_ref_in_pinned_metadata": 0
+    }
+  },
+  "github_naa_ci": {
+    "commit": "62effc0a6b2a0ee90f3d9ac344f39641020e3228",
+    "run_id": 45997578053,
+    "conclusion": "success",
+    "url": "https://github.com/chensiyu7812/Metacom5_3/actions/runs/45997578053"
+  },
+  "model_metadata_verification": [
+    {
+      "model_id": "google/gemma-4-12B-it",
+      "hf_revision_metadata_matches": 7,
+      "mismatches": 0
+    },
+    {
+      "model_id": "Qwen/Qwen3.5-9B",
+      "hf_revision_metadata_matches": 13,
+      "mismatches": 0
+    }
+  ]
+}
