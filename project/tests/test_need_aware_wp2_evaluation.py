@@ -1,5 +1,6 @@
 """Synthetic contract regressions, never model capability evidence."""
 from copy import deepcopy
+import json
 import pytest
 
 from metacom_pm.need_aware.data.contracts import RuntimeTask
@@ -8,6 +9,8 @@ from metacom_pm.need_aware.evaluation.wp2 import (
     score_cell, counts, compare, holm, exact_mcnemar,
 )
 from metacom_pm.need_aware.evaluation.score import score_predictions
+from metacom_pm.need_aware.evaluation.export import read_ledger, predictions_from_ledger
+from metacom_pm.need_aware.data.contracts import digest
 
 
 @pytest.fixture
@@ -121,3 +124,49 @@ def test_compatibility_scorer_accepts_structural_null_request_without_miscount(s
     assert summary['structural_not_evaluable'] == 1 and summary['evaluable'] == 0
     assert summary['fixed_denominator_success_sensitivity'] is None
     assert records[0]['correct'] is None
+
+
+def ledger_events(sample):
+    events = []
+    def add(event, **kw):
+        e = dict(event=event, seq=len(events), manifest_sha256='manifest',
+                 previous_event_sha256=events[-1]['event_sha256'] if events else None, **kw)
+        e['event_sha256'] = digest(e); events.append(e)
+    add('RUN_START', result_kind='plumbing')
+    for i, terminal in [(0, 'ATTEMPT_RESULT'), (1, 'ATTEMPT_FAILED'), (2, 'ATTEMPT_INVALID'), (3, None)]:
+        fields = dict(logical_id=f't{i}|C|G0e', model_label='G0e', request_sha256=f'req{i}', attempt=1)
+        add('ATTEMPT_START', **fields)
+        if terminal:
+            add(terminal, **fields, text='Final Answer: B', finish_reason='length', plumbing=True, error='TimeoutError')
+    return events, add
+
+
+def test_ledger_adapter_classifies_timeout_invalid_interrupted_and_not_attempted(sample):
+    events, _ = ledger_events(sample)
+    rows, run_id = predictions_from_ledger(list(sample[2].values()), events, kind='plumbing')
+    assert [r['failure_kind'] for r in rows] == [None, 'timeout', 'invalid_output', 'interrupted', 'unattempted', None]
+    assert rows[0]['status'] == 'completed' and rows[-1]['status'] == 'not_evaluable'
+    assert all(r['run_id'] == run_id for r in rows)
+    with pytest.raises(ValueError): predictions_from_ledger(list(sample[2].values()), events, kind='model')
+
+
+def test_ledger_adapter_retries_failed_only_and_first_success_is_preserved(sample):
+    events, add = ledger_events(sample)
+    fields = dict(logical_id='t1|C|G0e', model_label='G0e', request_sha256='req1', attempt=2)
+    add('ATTEMPT_START', **fields)
+    add('ATTEMPT_RESULT', **fields, text='Answer: A', finish_reason='eos', plumbing=True)
+    rows, _ = predictions_from_ledger(list(sample[2].values()), events, kind='plumbing')
+    assert rows[1]['status'] == 'completed' and rows[1]['attempt_count'] == 2
+    add('ATTEMPT_START', logical_id='t0|C|G0e', model_label='G0e', request_sha256='req0', attempt=2)
+    with pytest.raises(ValueError): predictions_from_ledger(list(sample[2].values()), events, kind='plumbing')
+
+
+def test_ledger_hash_chain_and_torn_tail(sample, tmp_path):
+    events, _ = ledger_events(sample)
+    f = tmp_path/'LEDGER.001.jsonl'
+    f.write_text(''.join(json.dumps(e)+'\n' for e in events)+'{"torn":')
+    actual, tails = read_ledger(tmp_path, 'manifest')
+    assert actual == events and len(tails) == 1
+    events[1]['attempt'] = 100
+    f.write_text(''.join(json.dumps(e)+'\n' for e in events))
+    with pytest.raises(ValueError): read_ledger(tmp_path, 'manifest')

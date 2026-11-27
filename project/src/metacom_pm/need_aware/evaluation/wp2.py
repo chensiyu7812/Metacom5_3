@@ -49,6 +49,8 @@ def populations(evaluations):
         groups['representative' if layer == 'representative' else 'hard'].add(tid)
         for k, v in ev.category.items():
             groups.setdefault(f'{k}:{v}', set()).add(tid)
+    for layer in ('representative', 'hard'):
+        groups['direct/'+layer] = groups['direct'] & groups[layer]
     return groups
 
 
