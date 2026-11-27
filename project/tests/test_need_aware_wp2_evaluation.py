@@ -9,7 +9,7 @@ from metacom_pm.need_aware.evaluation.wp2 import (
     score_cell, counts, compare, holm, exact_mcnemar,
 )
 from metacom_pm.need_aware.evaluation.score import score_predictions
-from metacom_pm.need_aware.evaluation.export import read_ledger, predictions_from_ledger
+from metacom_pm.need_aware.evaluation.export import read_ledger, predictions_from_ledger, execution_metrics
 from metacom_pm.need_aware.data.contracts import digest
 
 
@@ -170,3 +170,15 @@ def test_ledger_hash_chain_and_torn_tail(sample, tmp_path):
     events[1]['attempt'] = 100
     f.write_text(''.join(json.dumps(e)+'\n' for e in events))
     with pytest.raises(ValueError): read_ledger(tmp_path, 'manifest')
+
+
+def test_cost_accounting_preserves_interrupted_timeout_and_unknown_latency():
+    events = [dict(event='LOAD_START', model_label='G0e', session_id='one', session_elapsed_s=0, max_seconds=900),
+              dict(event='MODEL_SESSION_END', model_label='G0e', session_id='one', session_elapsed_s=25),
+              dict(event='ATTEMPT_START', model_label='G0e', session_id='two', session_elapsed_s=7, max_seconds=300),
+              dict(event='LOAD_FAILED', model_label='Qwen35', session_id='three', session_elapsed_s=19)]
+    m = execution_metrics(events)
+    assert m['per_model']['G0e']['ledger_accounted_gpu_seconds'] == 332
+    assert m['ledger_accounted_gpu_seconds'] == 351
+    assert m['per_model']['Qwen35']['load_failures'] == 1
+    assert m['per_cell']['G0e|A']['internal_first_token_seconds']['p50'] is None

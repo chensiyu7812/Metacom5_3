@@ -12,11 +12,6 @@ import os
 from pathlib import Path
 import time
 
-from metacom_pm.need_aware.evaluation.export import seal_export
-from evaluate_wp2 import evaluate
-from report_wp2 import render
-
-
 def latest_events(root):
     events = []
     for path in sorted(Path(root).glob('LEDGER.*.jsonl')):
@@ -44,6 +39,11 @@ def run(a):
         (root/'PROGRESS.json').write_text(json.dumps(progress, indent=2)+'\n')
         print(json.dumps(progress), flush=True)
         if events and events[-1]['event'] == 'RUN_SUMMARY':
+            # Load the evaluator at the actual scoring boundary, so the receipt's
+            # checkout identity cannot describe an older module cached hours ago.
+            from metacom_pm.need_aware.evaluation.export import seal_export
+            from evaluate_wp2 import evaluate
+            from report_wp2 import render
             seal_export(a.manifest_dir, a.ledger_root, root/'sealed', kind='model', final=True)
             score_args = argparse.Namespace(artifacts=a.artifacts, policy=a.policy, manifest_dir=a.manifest_dir,
                                             export_dir=str(root/'sealed'), out=str(root/'scored'), kind='model', allow_partial=False)

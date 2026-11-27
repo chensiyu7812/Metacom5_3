@@ -9,9 +9,49 @@ import json
 import os
 from pathlib import Path
 import re
+import math
 
 from ..data.contracts import digest
 from .wp2 import require, unique
+
+
+def execution_metrics(events):
+    """Aggregate timings/attempt failures, without exporting text, task IDs or errors."""
+    def quantile(values, q):
+        values = sorted(values)
+        return values[max(0, math.ceil(q*len(values))-1)] if values else None
+    def dist(values):
+        return dict(n=len(values), p50=quantile(values, .5), p95=quantile(values, .95), total=sum(values))
+    by_model, by_cell = {}, {}
+    for model in ('G0e', 'Qwen35'):
+        rows = [e for e in events if e.get('model_label') == model]
+        sessions, last, ended = {}, {}, set()
+        for e in rows:
+            sid = e.get('session_id')
+            if sid is None or 'session_elapsed_s' not in e:
+                continue
+            sessions[sid] = max(sessions.get(sid, 0.), e['session_elapsed_s']); last[sid] = e
+            if e['event'] == 'MODEL_SESSION_END': ended.add(sid)
+        accounted = sum(v+(last[s].get('max_seconds', 0.) if s not in ended and last[s]['event'] in {'ATTEMPT_START', 'LOAD_START'} else 0.)
+                        for s, v in sessions.items())
+        by_model[model] = dict(ledger_accounted_gpu_seconds=accounted,
+                              physical_attempts=sum(e['event'] == 'ATTEMPT_START' for e in rows),
+                              loads=sum(e['event'] == 'LOAD_START' for e in rows),
+                              load_failures=sum(e['event'] == 'LOAD_FAILED' for e in rows),
+                              failed_attempts=sum(e['event'] in {'ATTEMPT_FAILED', 'ATTEMPT_INVALID'} for e in rows),
+                              smoke=[{k: e.get(k) for k in ('event', 'calls', 'results', 'length_stops', 'empty_outputs')}
+                                     for e in rows if e['event'] in {'SMOKE_PASSED', 'SMOKE_FAILED'}])
+        for arm in ('A', 'B', 'C', 'D'):
+            result = [e for e in rows if e['event'] == 'ATTEMPT_RESULT' and e['arm'] == arm]
+            by_cell[model+'|'+arm] = dict(completed=len(result),
+                input_tokens=dist([e['input_tokens'] for e in result]),
+                output_tokens=dist([e['output_tokens'] for e in result]),
+                generation_seconds=dist([e['generation_ns']/1e9 for e in result if e.get('generation_ns') is not None]),
+                internal_first_token_seconds=dist([e['first_token_latency_ns']/1e9 for e in result if e.get('first_token_latency_ns') is not None]),
+                length_stops=sum(e['finish_reason'] == 'length' for e in result))
+    return dict(per_model=by_model, per_cell=by_cell,
+                ledger_accounted_gpu_seconds=sum(x['ledger_accounted_gpu_seconds'] for x in by_model.values()),
+                timing_scope='Worker generation/internal first-token observations, not client end-to-end. v2 session-end stamps precede worker close; teardown cost is not measured here and must be reconciled by B.')
 
 
 def read_ledger(root, manifest_sha256):
@@ -121,6 +161,7 @@ def seal_export(manifest_dir, ledger_root, out, *, kind, final=False):
                 ledger_events=len(events), ledger_snapshot_sha256=ledger_sha, ignored_torn_tails=tails,
                 physical_calls=sum(e['event'] == 'ATTEMPT_START' for e in events),
                 failed_attempt_events=dict(Counter(e['event'] for e in events if e['event'] in {'ATTEMPT_FAILED', 'ATTEMPT_INVALID', 'LOAD_FAILED'})),
+                execution_metrics=execution_metrics(events),
                 files=files, source='B validated first-result ledger; read-only A export adapter; no answer-dependent selection')
     write('EXPORT_SUMMARY.json', (json.dumps(seal, indent=2)+'\n').encode())
     return seal

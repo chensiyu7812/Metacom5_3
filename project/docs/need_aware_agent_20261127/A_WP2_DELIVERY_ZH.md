@@ -24,7 +24,9 @@ A 已通过 PR #31 评论及共享 `handoff/A_WP2_EVALUATION_STATUS.json` 交接
 
 ## 已执行验证与可复跑命令
 
-本地原数据/新评价回归 28 passed；`fc9f92b8` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46010175563) 通过。一次真实冻结材料与原 B plumbing 导出的接口联调处理 1,920 槽位、1,788 plumbing 完成、132 结构性位置，8 个主比较的配对数为 240、240、207、207、207、207、207、207；11.659 秒。该检查只验证接口，没有模型能力成绩，且没有重复 GPU 资格验证。
+本地原数据/新评价回归 32 passed；`e38fe53d` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46012144098) 通过。一次真实冻结材料与原 B plumbing 导出的接口联调处理 1,920 槽位、1,788 plumbing 完成、132 结构性位置，8 个主比较的配对数为 240、240、207、207、207、207、207、207；11.659 秒。随后已用实际 v2 plumbing 哈希链跑通封存→评价完整接口，1,788 次 plumbing 调用对应 1,920 完整槽位。两次都是接口验证，没有模型能力成绩，也没有重复 GPU 资格验证。
+
+`seal_wp2_export.py` 不依赖 B 改动当前运行器：只读账本、校验 hash chain、取首个有效结果，保留 timeout/invalid/interrupted/unattempted 和所有失败尝试。附实际 token/生成时间/内部首 token 计时及账本 GPU 秒；未知延迟不填零，v2 teardown 未计入部分明确单列限制。`watch_wp2_evaluation.py` 已作为独立 CPU 后处理启动，禁用 CUDA；等待 B `RUN_SUMMARY` 后才封存/评分/生成本地表格，中途只输出技术完成计数。它不启动 GPU、不修改推理、不给训练授权，也不自动对外发布。完整模型研究解释和 WP3 决策仍须在封存结果审阅后完成。
 
 以下命令在 A worktree 的 `project/` 中运行。私有材料根目录记为 `NAA=/opt/tokkio-data0/naa/20261127`；普通 Python 环境为 `$NAA/venv/bin/python`。
 

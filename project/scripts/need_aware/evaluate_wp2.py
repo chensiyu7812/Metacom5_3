@@ -63,6 +63,8 @@ def evaluate(a):
     require(seal.get('result_kind') == a.kind, 'export provenance')
     require(seal.get('manifest_sha256') == digest(manifest), 'export manifest binding')
     require(bool(seal.get('ledger_head_sha256')), 'unsealed ledger head')
+    if 'ledger_snapshot_sha256' in seal:
+        bound(export/'LEDGER_SNAPSHOT.private.jsonl', seal['ledger_snapshot_sha256'])
     require(type(seal.get('final')) is bool, 'snapshot must state final/partial')
     require(seal['final'] or a.allow_partial, 'partial snapshot requires --allow-partial')
     require(set(seal['files']) == {f'{m}|{arm}' for m in MODELS for arm in ARMS}, 'eight export files required')
@@ -92,6 +94,8 @@ def evaluate(a):
                   evaluation_policy_sha256=sha(a.policy), dataset_freeze_sha256=sha(root/'FREEZE.json'),
                   manifest_sha256=digest(manifest), requests_sha256=manifest['requests_sha256'],
                   export_seal_sha256=sha(seal_path), ledger_head_sha256=seal['ledger_head_sha256'],
+                  failed_attempt_events=seal.get('failed_attempt_events'),
+                  execution_metrics=seal.get('execution_metrics'),
                   evaluator_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip())
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=False)
