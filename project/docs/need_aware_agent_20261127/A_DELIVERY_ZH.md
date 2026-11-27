@@ -25,7 +25,7 @@
 
 这不是主方案引用的 18,500 / 2,600，也不支持 train/val persona-disjoint 的假设。保持官方原始分区身份；本次另行排除冻结开发 persona 才构造训练候选。不能把官方 val 的未来训练后结果自动称为独立用户泛化。benchmark 的 persona 独立性仍未验证，不能由卡片推断。
 
-字段 census（pref_type / who / updated / sensitive_info / conversation_scenario）、各 persona 行数分布、缺失/重复、类别交叉统计全部保存在聚合回执。train 缺 `short_persona` 13、`incorrect_answers` 1；val 缺 `short_persona` 2；`prev_pref` 的空值恰为非 updated 行。缺少 persona 描述不影响 runtime，因为这些标签不进入输入。所选任务的四个选项均有效。此 revision 的 updated 全部对应 ask_to_forget，**不能把它当成一般偏好更新的独立覆盖**；也没有可靠的显式/隐式二元真值，困难层中的 implicit_scenario_proxy 仅按实际对话场景预定义。
+字段 census（pref_type / who / updated / sensitive_info / conversation_scenario）、各 persona 行数分布、缺失/重复、类别交叉统计全部保存在聚合回执。train 缺 `short_persona` 13、`incorrect_answers` 1；val 缺 `short_persona` 2；`prev_pref` 的空值恰为非 updated 行。缺少 persona 描述不影响 runtime，因为这些标签不进入输入。所选 MCQ 的四个选项均有效。补充全量选项审计发现 train 有 10 行提供 4 个 distractor（共 5 选项），另 1 行无可解析选项；val 全部 2,061 行均为 3 distractor，重复选项文本为 0。训练候选仅准备开放输入，未把这些异常强行截断为已验证 MCQ。所有 train/val 的 32k ref 都存在于固定 HF 文件清单。此 revision 的 updated 全部对应 ask_to_forget，**不能把它当成一般偏好更新的独立覆盖**；也没有可靠的显式/隐式二元真值，困难层中的 implicit_scenario_proxy 仅按实际对话场景预定义。
 
 8 条杂键消息仅导出原始 `role/content`，内容和顺序不改；原始 JSON、其文件哈希和归一化副本哈希分别保存。这是解析兼容修复，不是丢弃题目。没有下载 128k、multimodal histories 或 raw persona 文件。
 
@@ -79,7 +79,7 @@ MCQ 缺失具体为 31 个 sensitive_info 和 2 个 ask_to_forget。进一步核
 
 已运行 Linux bubblewrap 真实隔离进程：只挂载源码、runtime 与单独输出目录，网络隔离，不挂载 source/evaluation/training/direct。实际 resolve 240 MCQ + 60 generation 成功，用时约 0.89s；不含检索、tokenizer 或推理耗时。目录隐藏断言在进程内部验证。此隔离不能替代 B 对其后续 GPU runner 的同等边界落实。
 
-13 个 NAA 数据/评价测试通过：extra gold、option 正确标记、错 owner、越界 cutoff、路径逃逸、hash、source role、不完整/歧义 Direct、A/B 禁用 Direct、无选项开放输入、解析异常、完整分母、plumbing 来源保护、PrefEval 隐式标签排除、聚类配对。另加独立 NAA CPU CI job，不删除/跳过/放宽旧测试。旧依赖恢复及剩余 CI 由 B 核验，A 不将旧套件写成已通过。
+13 个 NAA 数据/评价测试通过，commit `62effc0a` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/45997578053) 也成功：extra gold、option 正确标记、错 owner、越界 cutoff、路径逃逸、hash、source role、不完整/歧义 Direct、A/B 禁用 Direct、无选项开放输入、解析异常、完整分母、plumbing 来源保护、PrefEval 隐式标签排除、聚类配对。另加独立 NAA CPU CI job，不删除/跳过/放宽旧测试。旧依赖恢复及剩余 CI 由 B 核验，A 不将旧套件写成已通过。
 
 同 PR 的交接评论及本机 `/opt/tokkio-data0/naa/20261127/handoff/A_TO_B.json` 已交付真实路径。**截至本回执，尚未收到 B 的接口回签、最终 renderer/runner commit、强固定检索选择及其 240 题 CPU 输入统计；联合验收仍未完成。** A 没有代写 B 的 Agent/记忆模块，也不将自己的 resolver 检查冒称 B 的检索实验。
 
@@ -104,7 +104,7 @@ MCQ 缺失具体为 31 个 sensitive_info 和 2 个 ask_to_forget。进一步核
 
 native tokenizer 实际处理了两模型 × 300 任务：A 的容量探测消息保留完整来源原文并标注角色，完整历史在 Gemma 为 37,772–48,507 tokens、Qwen 为 36,848–47,349；全部超过 12,000。261 个成功定位任务的 Direct 最大分别为 1,682 / 1,634。该统计是 A 的消息容量探测，**不是 B 最终请求 token 统计，也不是完整历史模型成绩**。
 
-Qwen 对 240 个 MCQ 的官方末尾 system 消息报模板错误；B 需要统一前置任务指令并把历史作为引用数据，保留选项文本、recall suffix 与官方评分契约。原始官方构造接口仍保留供复现。两种模型都固定 greedy / thinking=false；建议 input cap 12,000、max output 1,024、backend context 16,384，任何长度截断单列失败。G0e 原生 stop ids `[1,50,106]` / suppress `[258883,258882]`；Qwen text-config EOS=248044 与 tokenizer EOS=248046 不同，显式接受二者，避免依赖配置默认值导致不停止。NAA decode 是新身份，不复用旧 run authorization。
+Qwen 对 240 个 MCQ 的官方末尾 system 消息报模板错误；B 需要统一前置任务指令并把历史作为引用数据，保留选项文本、recall suffix 与官方评分契约。原始官方构造接口仍保留供复现。B 的跨模型比较应尽量使用相同源记录集合，并按两种 native token count 的较大值预检共同 cap。两种模型都固定 greedy / thinking=false；建议 input cap 12,000、max output 1,024、backend context 16,384，任何长度截断单列失败。G0e 原生 stop ids `[1,50,106]` / suppress `[258883,258882]`；Qwen text-config EOS=248044 与 tokenizer EOS=248046 不同，显式接受二者，避免依赖配置默认值导致不停止。NAA decode 是新身份，不复用旧 run authorization。
 
 **实际 WP2 逻辑清单**位于 `wp2_v2/logical_requests.jsonl`（相对 `/opt/tokkio-data0/naa/20261127`），1,920 个唯一逻辑位置，任务顺序与 arms 交错固定，模型顺序固定。1,788 个可运行位置（最终请求精确去重前），132 个 not_evaluable。`actual_request_sha256` 明确等待 B 物化；logical hash 不冒充 exact-cache key。旧初稿 `wp2/` 保留，v2 加入实际 native stop tokens。
 
@@ -143,6 +143,8 @@ CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 /opt/tokkio-data
 python project/scripts/need_aware/prepare_wp2_manifest.py --artifacts /opt/tokkio-data0/naa/20261127/artifacts --models /opt/tokkio-data0/naa/20261127/logs/native/model_inventory.json --output /opt/tokkio-data0/naa/20261127/wp2_v2
 /opt/tokkio-data0/naa/20261127/venv/bin/python -m pytest project/tests/test_need_aware_data.py -ra -o addopts=
 ```
+
+补充选项/源引用审计已实际运行 `audit_source_options.py --source-root /opt/tokkio-data0/naa/20261127/source --output /opt/tokkio-data0/naa/20261127/logs/option_and_reference_audit.json`。
 
 单独评分入口：`score_mcq.py --runtime ... --evaluation ... --predictions ... --kind model|plumbing --output ...`；每次输入一个 model/arm，Prediction 需 task_id/output/status/result_kind，真实模型另需 run_id/model_id/request_sha256。`aggregate_mcq.py --left ...scored.jsonl --right ...scored.jsonl --output ...` 生成配对统计；不混 benchmark 分母。
 
