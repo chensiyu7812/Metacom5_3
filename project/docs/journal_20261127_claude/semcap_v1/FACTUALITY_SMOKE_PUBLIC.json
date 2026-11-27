@@ -1,0 +1,72 @@
+{
+ "protocol": "semcap-maven-fact-conditional-efd-v1",
+ "smoke": true,
+ "train_examples": 500,
+ "dev_examples": 362,
+ "train_label_counts": {
+  "PS+": 100,
+  "CT-": 100,
+  "CT+": 100,
+  "PS-": 100,
+  "Uu": 100
+ },
+ "dev_label_counts": {
+  "CT-": 100,
+  "PS-": 45,
+  "PS+": 100,
+  "CT+": 100,
+  "Uu": 17
+ },
+ "base_model": "/home/tokkio/.cache/huggingface/hub/models--microsoft--deberta-v3-base/snapshots/8ccc9b6f36199bec6961081d44eb72fb3f7353f3",
+ "epochs": 1.0,
+ "lr": 2e-05,
+ "batch": 16,
+ "max_length": 192,
+ "device": "cpu",
+ "train_seconds": 84.2666387972422,
+ "dev_seconds": 16.907529999036342,
+ "class_weights": [
+  0.09168270230293274,
+  0.511488676071167,
+  1.4816994667053223,
+  0.6310820579528809,
+  2.2840471267700195
+ ],
+ "dev_metrics": {
+  "CT+": {
+   "n": 100,
+   "recall": 0.0,
+   "precision": null,
+   "f1": 0.0
+  },
+  "PS+": {
+   "n": 100,
+   "recall": 0.0,
+   "precision": null,
+   "f1": 0.0
+  },
+  "PS-": {
+   "n": 45,
+   "recall": 0.0,
+   "precision": null,
+   "f1": 0.0
+  },
+  "CT-": {
+   "n": 100,
+   "recall": 0.0,
+   "precision": null,
+   "f1": 0.0
+  },
+  "Uu": {
+   "n": 17,
+   "recall": 1.0,
+   "precision": 0.04696132596685083,
+   "f1": 0.08970976253298152
+  },
+  "macro_f1": 0.017941952506596304,
+  "balanced_accuracy": 0.2,
+  "accuracy": 0.04696132596685083
+ },
+ "scope": "conditional EFD with official triggers; internal document-disjoint dev; official test unused",
+ "caveat": "smoke run verifies the entry only; not a capability result"
+}

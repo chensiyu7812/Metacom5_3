@@ -1,0 +1,82 @@
+{
+ "protocol": "semcap-v1-dependencies",
+ "tools_env": "/opt/tokkio-data0/tokkio_envs/semcap-tools-py311",
+ "python": "3.11.15",
+ "packages": [
+  "maverick-coref==1.0.7",
+  "numpy==2.4.6",
+  "protobuf==3.20.0",
+  "pytest==9.2.0",
+  "pytorch-lightning==2.6.6",
+  "sentencepiece==0.2.0",
+  "spacy==3.8.18",
+  "tokenizers==0.20.3",
+  "torch==2.5.1+cpu",
+  "transformers==4.46.3"
+ ],
+ "models": {
+  "nli": {
+   "id": "cross-encoder/nli-deberta-v3-base",
+   "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7"
+  },
+  "minicheck": {
+   "id": "lytang/MiniCheck-Flan-T5-Large",
+   "revision": "96eafd01cee2d16cf81aaa2fb226b14f422a37b3",
+   "license": "MIT"
+  },
+  "maverick": {
+   "id": "sapienzanlp/maverick-mes-ontonotes",
+   "revision": "087a90f0380ec1f20ed19732b657f53fd3542c81",
+   "license": "CC BY-NC-SA 4.0",
+   "load": "torch.load pickle checkpoint from official repo"
+  },
+  "factuality_base": {
+   "id": "microsoft/deberta-v3-base",
+   "revision": "8ccc9b6f36199bec6961081d44eb72fb3f7353f3"
+  }
+ },
+ "external_repos": {
+  "maverick-coref": "5c1fa62",
+  "MiniCheck": "b58b9fa",
+  "MAVEN-FACT": "6754471",
+  "graphiti": "2a4f079",
+  "generative-belief": "b778a99"
+ },
+ "private_file_sha256": {
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/speaker-dev-v1/CLAIM_INPUTS.private.jsonl": "6e3c83bc1058dd5343fd256ff6ff88b021c3b78ad9550700db81fc92e4524d6b",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/speaker-dev-v1/CLAIM_REFERENCES.private.jsonl": "2fd561cad101ac39e8eb644cd3e02be27be7070f3e356bedc4f0e9f30fe92855",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/speaker-dev-v1/PREFIXES.private.jsonl": "945a4d4860d3bc27c8247ada57ebad822f4fe336c054c7293e0b8465a1e37a00",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/speaker-dev-v1/SELECTION_PUBLIC.json": "8d757f9d6094990fb245b4596a11b068a7822886c136b91c52d59fe54af74214",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/PREDICTIONS_BEFORE_REFERENCE_JOIN.private.jsonl": "4f52ecc3d0e1002ba3fefe5c519d09848c0e63b0384a9beede1bc984a06681a7",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/PREDICTIONS_COREF_BEFORE_REFERENCE_JOIN.private.jsonl": "817484058b576caf767c725b70be972b8ed98182f930a61369e2e3e789f502e9",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/PREDICTIONS_SCOPED_BEFORE_REFERENCE_JOIN.private.jsonl": "65e6b596aa5c79020d8d7c35e9fc22f7880f481cd5dfe14212527f9d3427f95d",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/RESULTS_ALL_PRIVATE.jsonl": "adf15dd57f09f4d040a26da89e1752f3eb3b3590f532d847fa399bef8db24a4e",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/RESULTS_PRIVATE.jsonl": "a3a6f4ccdb5fc0ebd5b66ca42c95d95814d04702587ee5e840b1e0f32e12dc58",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/RESULTS_WITH_SCOPED_PRIVATE.jsonl": "dd6879bcf9eb426ba20848b49bb8c7549775e6ae5652b825d72b11f7289fd2d2",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/claim-support-cpu-v1/SUMMARY_PUBLIC.json": "0417d03805776256f846ad246b2b22b74b50d6fc3fe612eab64f48fae7851cb9",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/factuality-smoke-cpu-v2/RESULT_PUBLIC.json": "3faa18d4ce33e7f8676149c787f2c8396c522dd737e17494aef1bdb7b336037d",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-claude-20261127/factuality-smoke-cpu-v2/train_log.json": "985acdd4da4f37d144ad88da8478eadf893116989d9ad04ee91f90f7d463bfe8",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/ACTUAL_PUBLIC.json": "c906357fa45055ec4d3b69a12a494520d211e70d7054aaa2220baf81733d33e4",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/INTERPRETERS_RAW.private.jsonl": "69afc111bf388dd9674814f8784d3b7c102cd4fedd424a3a80efcd77622a8268",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/REVIEW_SHEET.private.md": "f7e4804fb74b404c1e26e385f9496bee67ee3fd8cbeefc917c57c018ec7f6a2b",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/REVIEW_SHEET_SHORT.private.md": "b601af0f5d8f96ac73a99b34f7fed721921bb10eaae0deea25bd1961866016bb",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/SLOT_STATS_PUBLIC.jsonl": "e58b1f1b59b433e787e76b345f33a344fb1010ed5e85d6fb6c3fc0ab64868f33",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/SLOT_STATS_SUMMARY_PUBLIC.json": "0b8509819670cc0c6a9968eea58e0aaf81449421b3c3312823c1c0e937c2c541",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/SLOT_STATUS_PUBLIC.jsonl": "aee2e74f07578c883bc802f6d2b3c48510cd7c1d715b4298e16c1e1a1b123489",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/TERMINALS_RAW.private.jsonl": "6414a570f0fd94ce1b63bd797abe40caad76c5f50e3c34aa4dd1966fc93a48a1",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/results-v3-clockfix/make_blind_packet.py": "49f31dfd214538e6658ff6412394f6f4887a29524a02244336daca2110caa29e",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/GSWS-1_APPROVAL.json": "12cefdcf5abfa2d3c57cb4630977f70693b3130ecaa15263ef97a3aaf2b1196e",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/GSWS-2_APPROVAL.json": "bebfd179605e2ce94b2b4c50d34aa0d099fc39cbc9c1793c4d6e4e63a9764c55",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/GSWS-3_APPROVAL.json": "b73e4a80a6efa82a9cfbcdec6c0503ef9acaf177db7262758e2cfa1b21c5f0a4",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/GSWS-4_APPROVAL.json": "7b927abeb200ca2d1bebb8e3f8f7e8b1d1403bd66d99bd0db851402c08792e73",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/RESEARCHER_APPROVAL_PRIVATE.txt": "2441b2d32512e760b271f7704edd25794401e365d77b8c082806188e6c8054c4",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/authorization-v3-clockfix/make_approvals.py": "8dc0ee56de9a5baaeba81616c70132004feb08d16baee4f7ac1b202b7c5eb1c1",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/independent-review-packet-v1/ARM_KEY_DO_NOT_SHOW_REVIEWER.private.json": "6151c04c03d3a4315e64e2d4a5494ed98027ad8a8464004ff6b7004d20dab1fe",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/independent-review-packet-v1/INTERPRETATIONS_BLIND.private.md": "7c4ca0d58875b98cb2f7c29953f7c5893528acb96e12b9464b29f141014a4f6a",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/independent-review-packet-v1/STATUS.json": "1d21a50dd3f56dff7519944acff2e46f75f149d5a33dc5f142eabc18e92a0403",
+  "/opt/tokkio-data0/tokkio_runs/pmrl1-j-gsws-actual-20261127/independent-review-packet-v1/TERMINALS_BLIND.private.md": "ddec8c51a514fd07b523eccb044924ce89921f6f9d770505249dc9d7acdd7ee8"
+ },
+ "gpu_calls": 0,
+ "paid_calls": 0,
+ "egress_of_dialogue": false
+}

@@ -1,0 +1,82 @@
+{
+ "protocol": "gsws-v3-slot-stats-v1",
+ "terminals": 48,
+ "by_arm": {
+  "A0_RAW": {
+   "slots": 16,
+   "terminal_eos": 16,
+   "terminal_in_tokens_mean": 2274.125,
+   "terminal_model_seconds_p50_p95": [
+    5.247966137,
+    14.467446381
+   ],
+   "local_agent_seconds_p50_p95": [
+    5.792035593,
+    15.459615264
+   ]
+  },
+  "A1_READING_NOTES": {
+   "slots": 16,
+   "terminal_eos": 16,
+   "interpreter_failures": {
+    "citation outside actual observation": 4
+   },
+   "state_delivered_to_G": 12,
+   "interpreter_out_tokens_mean": 120.6875,
+   "interpreter_model_seconds_p50_p95": [
+    7.595481118,
+    28.890306094
+   ],
+   "terminal_in_tokens_mean": 2355.125,
+   "terminal_model_seconds_p50_p95": [
+    5.140008508,
+    17.806832366
+   ],
+   "local_agent_seconds_p50_p95": [
+    14.502267129,
+    36.686160307
+   ]
+  },
+  "A2_GSWS": {
+   "slots": 16,
+   "terminal_eos": 16,
+   "interpreter_failures": {
+    "interpreter length termination": 2,
+    "non-unknown claim without provenance": 1
+   },
+   "state_delivered_to_G": 13,
+   "interpreter_out_tokens_mean": 297.9375,
+   "interpreter_model_seconds_p50_p95": [
+    22.905950519,
+    50.007987252
+   ],
+   "terminal_in_tokens_mean": 2451.75,
+   "terminal_model_seconds_p50_p95": [
+    4.660428036,
+    14.353141471
+   ],
+   "local_agent_seconds_p50_p95": [
+    28.471889807,
+    66.102929271
+   ]
+  }
+ },
+ "states_all_three_eos": 16,
+ "paired_delta_vs_A0": {
+  "A1_READING_NOTES": {
+   "paired_local_agent_delta_seconds_p50_p95": [
+    8.498106336000001,
+    28.523557826
+   ],
+   "n": 16
+  },
+  "A2_GSWS": {
+   "paired_local_agent_delta_seconds_p50_p95": [
+    23.888037641,
+    50.643314006999994
+   ],
+   "n": 16
+  }
+ },
+ "scope": "model-internal and local Agent times; not client first text or Tokkio audio; fixed order, no warmup, not randomized"
+}

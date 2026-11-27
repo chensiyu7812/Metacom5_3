@@ -5,14 +5,14 @@ from collections import Counter
 from pathlib import Path
 
 
-def collect(run_root,catalog_path,output):
+def collect(run_root,catalog_path,output,prefix='run-'):
     root=Path(run_root);out=Path(output);out.mkdir(parents=True,exist_ok=False)
     catalog=json.loads(Path(catalog_path).read_text());jobs=[];endpoints=[];interpretations=[];slots=[]
     plan0=json.loads(Path(catalog['batches'][0]['plan_path']).read_text())
     tasks=[json.loads(s) for s in Path(plan0['task_manifest_path']).read_text().splitlines()]
     aliases={t['task_id']:f'Q{i+1:02}' for i,t in enumerate(tasks)}
     for n,b in enumerate(catalog['batches'],1):
-        plan=json.loads(Path(b['plan_path']).read_text());paths=list((root/f'run-{n:02}').glob('job-*/SUMMARY.json'))
+        plan=json.loads(Path(b['plan_path']).read_text());paths=list((root/f'{prefix}{n:02}').glob('job-*/SUMMARY.json'))
         if len(paths)>1:raise ValueError('multiple attempts; must not silently select one')
         if not paths:
             jobs.append(dict(job=b['name'],status='not_started',loads=0,model_calls_started=0,model_calls_returned=0,terminal_outputs=0,interpreter_outputs=0,wall_seconds=None))
@@ -50,4 +50,5 @@ def collect(run_root,catalog_path,output):
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     for name in ('run-root','catalog','output'):p.add_argument('--'+name,required=True)
-    a=p.parse_args();collect(a.run_root,a.catalog,a.output)
+    p.add_argument('--job-dir-prefix',default='run-')
+    a=p.parse_args();collect(a.run_root,a.catalog,a.output,a.job_dir_prefix)
