@@ -1,0 +1,125 @@
+{
+  "protocol": "semcap-g2r-data-v1",
+  "files": {
+    "TRAIN_INLI": {
+      "rows": 24000,
+      "labels": {
+        "supported": 8000,
+        "contradicted": 8000,
+        "not_established": 8000
+      },
+      "sha256": "90d28501e4518456c8a2f9b9de52da26080d8379492a6432b272c2e091abd321"
+    },
+    "TRAIN_DCS": {
+      "rows": 312,
+      "labels": {
+        "not_established": 87,
+        "supported": 162,
+        "contradicted": 63
+      },
+      "sha256": "17c111f46bdfa73c696751f5b50da8ed27213928b450126b8f47d66468fd920b"
+    },
+    "DEV_INLI": {
+      "rows": 3000,
+      "labels": {
+        "supported": 1000,
+        "contradicted": 1000,
+        "not_established": 1000
+      },
+      "sha256": "c7bbfe4a009fbf80fd90dbd6cedb7f5c5108230d9b5ffcb33db1e1645f000424"
+    },
+    "PROBE_INLI_IMPLIED": {
+      "rows": 1000,
+      "labels": {
+        "implied_entailment": 1000
+      },
+      "sha256": "389a485782a4f9051a1e523f244a152aba99a224cdab68487bff5b0c9b6363c3"
+    },
+    "DEV_DCS": {
+      "rows": 152,
+      "labels": {
+        "not_established": 48,
+        "supported": 70,
+        "contradicted": 34
+      },
+      "sha256": "bd93490fe3da45545dd690864526cc7a4686b78377c86d8bcd85339b6f60342f"
+    },
+    "REG_event32_attributed": {
+      "rows": 32,
+      "labels": {
+        "supported": 8,
+        "contradicted": 9,
+        "not_established": 15
+      },
+      "sha256": "0c9a845548b4b359f12e51e5e3245413cb619c1a20b658db1e4ef59367a16ce6"
+    },
+    "REG_event32_scoped": {
+      "rows": 32,
+      "labels": {
+        "supported": 8,
+        "contradicted": 9,
+        "not_established": 15
+      },
+      "sha256": "643448dd48399816e7aeba32d3371a34387d24c9f5923ce2e9e0e9ba727ac38b"
+    },
+    "REG_speaker32_attributed": {
+      "rows": 32,
+      "labels": {
+        "supported": 16,
+        "not_established": 14,
+        "contradicted": 2
+      },
+      "sha256": "49a08c10e01499e9be0cf0a33448ac9dd6b2368f649dda81be3e45af26726fd7"
+    },
+    "REG_speaker32_scoped": {
+      "rows": 32,
+      "labels": {
+        "supported": 16,
+        "not_established": 14,
+        "contradicted": 2
+      },
+      "sha256": "9c4d26c0e27c12761f62a43d332f833be05a3c3e1836753989b8091d4125d736"
+    }
+  },
+  "dcs": {
+    "train_seeds": 48,
+    "dev_seeds": 16,
+    "family_overlap": 0,
+    "kinds": {
+      "train": {
+        "pair": 289,
+        "sequence": 23
+      },
+      "dev": {
+        "pair": 73,
+        "paraphrase": 73,
+        "sequence": 6
+      }
+    },
+    "provenance": {
+      "train": {
+        "natural_utterance": 144,
+        "authored_variant": 145,
+        "authored_sequence": 23
+      },
+      "dev": {
+        "natural_utterance": 88,
+        "authored_variant": 58,
+        "authored_sequence": 6
+      }
+    }
+  },
+  "sources": {
+    "inli": {
+      "path": "/opt/tokkio-data0/tokkio_runs/pmrl1-j-semcap-20261127/external-data/code/inli-repo/INLI Data",
+      "license": "CC BY-SA 4.0 (repo LICENSE)",
+      "implied_mapped_to_supported": false
+    },
+    "dcs": {
+      "seeds_sha256": "7e908725f641a57662e9220cc06cdf375f7f26693aa43f4b9b97471a023d187e",
+      "authored_sha256": "842b6b84f1351943ec4d554e145297d3acdb970990bd63118fe3800dbf451ada",
+      "paraphrases_sha256": "e620c40e9ee3b853e958276a17d9239443eb83c9ea5e511cd59ec9817e75205b",
+      "author": "Claude Code (assistant) weak supervision; no independent human"
+    }
+  }
+}

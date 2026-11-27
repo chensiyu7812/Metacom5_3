@@ -1,0 +1,7 @@
+{
+ "written": "2026-11-27 after T0/T1 analysis, before any T1i training or prediction",
+ "trigger": "T1 judged 377/1000 INLI-val implied_entailment hypotheses contradicted (T0 57); Circa indirect answers dominate. Diagnosis: implied class was dropped from training, so answer-content hypotheses appeared only with the contradicted label (supervision-mismatch shortcut).",
+ "arm": "T1i = T1 identical (data, schedule, seed, epochs) + INLI-train implied_entailment (8000) as a separate 4th class 'implied' (row initialised from entailment). Not merged into supported; not forced to not_established.",
+ "reporting": "3-way metrics under two fixed views: strict (implied->not_established) and lenient (implied->supported); implied probe distribution on INLI val (held-out premises). T1i has +8000 training examples vs T1; reported.",
+ "selection": "single run, last epoch, no dev-based choice; DEV sets are the same exposed dev sets (post-hoc arm, labelled as such)"
+}

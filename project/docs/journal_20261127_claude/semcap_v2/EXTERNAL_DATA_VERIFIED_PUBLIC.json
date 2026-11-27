@@ -1,0 +1,56 @@
+{
+ "checked": "2026-11-27 JST; downloaded to private external-data/, not redistributed",
+ "DNLI": {
+  "paper": "Welleck et al. 2019 ACL P19-1363",
+  "official": "ParlAI build.py: Google Drive id 1WtbXCv3vPB5ql6w0FVDmAEMmWadbrCuG (404 on 2026-11-27); dl.fbaipublicfiles 403",
+  "obtained": "HF mirror xksteven/dialogue_nli dnli.zip",
+  "sha256": "1164b0d9a0a1a6006891a6d4435a6a813464bc9b1e2f1ec5ce28c47267ad5e42",
+  "sha256_matches_parlai_build": true,
+  "train": 310110,
+  "labels": "positive 100000 / negative 110110 / neutral 100000",
+  "verified_test": 12376,
+  "format": "sentence1 = PersonaChat utterance, sentence2 = persona sentence, label, dtype, triples",
+  "assessment": "neutral pairs are mostly unrelated utterances (miscutterance/personapairing): trivial not_established; not used for training this round",
+  "license": "ParlAI task; mirror card says MIT (not authoritative)"
+ },
+ "DECODE": {
+  "paper": "Nie et al. 2021 ACL long.134",
+  "url": "https://dl.fbaipublicfiles.com/parlai/decode/decode_v0.1.zip",
+  "bytes": 16451368,
+  "splits": {
+   "train": 27184,
+   "dev": 4026,
+   "test": 4216,
+   "human_bot": 764
+  },
+  "labels": "is_contradiction True/False balanced + aggregated_contradiction_indices",
+  "assessment": "contradiction detection + location; non_contradiction mixes consistent/supported/unrelated, so it cannot be mapped to not_established; not used for 3-way training",
+  "license": "ParlAI task data (no separate LICENSE checked in zip)"
+ },
+ "INLI": {
+  "paper": "Havaldar et al. 2025 arXiv:2501.07719",
+  "repo": "google-deepmind/inli (shallow clone)",
+  "license": "CC BY-SA 4.0 (repo LICENSE)",
+  "premises": {
+   "train": 8000,
+   "val": 1000,
+   "test": 1000
+  },
+  "hypotheses_per_premise": 4,
+  "sources": "circa (indirect answers, dialogue), ludwig (implicature dialogue), normbank, socialchem",
+  "mapping": "explicit_entailment->supported, contradiction->contradicted, neutral->not_established; implied_entailment NOT supported (probe in T1; separate 4th class in T1i)",
+  "used": "PRIMARY supervision (train); val as external dev; test unused"
+ },
+ "VitaminC": {
+  "paper": "Schuster et al. 2021 NAACL",
+  "url": "talschuster.github.io static vitaminc.zip",
+  "train": 370653,
+  "labels": "SUPPORTS 185714 / REFUTES 131958 / NOT ENOUGH INFO 52981",
+  "license": "CC BY-SA 3.0 (Wikipedia-derived, DATA_LICENSE)",
+  "assessment": "contrastive evidence design adopted for DCS; documents not dialogue; not used for training this round"
+ },
+ "MAVEN_FACT": {
+  "reused": "A/event-data-final (73,939 mentions; train_candidate 66,362; internal_dev 7,577); not re-downloaded or re-audited",
+  "used": "T2 auxiliary head only; CT+ not mapped to performed; PS+ not mapped to not_established"
+ }
+}

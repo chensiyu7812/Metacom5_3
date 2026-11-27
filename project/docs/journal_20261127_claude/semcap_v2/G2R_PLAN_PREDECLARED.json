@@ -1,0 +1,15 @@
+{
+ "written": "2026-11-27 before any T0/T1/T2 prediction on DEV_DCS/DEV_INLI",
+ "budget": "A4500 only, cumulative GPU (train+dev eval+capability tests) <= 10800 s via LEDGER.jsonl; no A6000, no paid API",
+ "base": "cross-encoder/nli-deberta-v3-base snapshot 6c749ce3 (id2label 0 contradiction,1 entailment,2 neutral)",
+ "arms": {
+  "T0": "frozen base NLI, same rendering",
+  "T1": "INLI 3-way (24k) + DCS-train x8, 2 epochs, lr 2e-5, bs 16, max_len 320, warmup 10%, seed 42",
+  "T2": "T1 identical + MAVEN-FACT 5-way head on shared encoder, 1 aux batch per 2 main batches, sqrt-frequency sampling (13k), unweighted CE"
+ },
+ "final_checkpoint": "last epoch for each arm; epoch-1 reported as stage diagnostic only; no dev-based selection",
+ "no_tuning": "single configuration; no hyper-parameter search; DEV sets used only for reporting",
+ "stage_gate": "T2 runs only after T1 finished; if T1 fails to train (dev macro-F1 below T0 on DEV_INLI and DEV_DCS) stop and analyse before T2",
+ "primary_endpoints": ["DEV_DCS not_established->contradicted rate", "DEV_DCS supported/contradicted recall", "DEV_DCS macro-F1/BA", "DEV_INLI macro-F1", "sequence revision correctness", "paraphrase consistency"],
+ "secondary": ["event32/speaker32 attributed+scoped regression (exposed)", "INLI implied probe distribution", "MAVEN internal_dev macro-F1 (T2 head)", "ECE + temperature (fit on DEV_INLI half A)", "hypothesis-only baseline"]
+}

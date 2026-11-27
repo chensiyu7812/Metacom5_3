@@ -1,0 +1,237 @@
+[
+ {
+  "epoch": 1,
+  "train_seconds_cum": 181.5,
+  "main_loss": 0.26239266395970956,
+  "aux_loss": null,
+  "main_steps": 1656,
+  "aux_steps": 0,
+  "dev": {
+   "DEV_DCS": {
+    "n": 152,
+    "unprocessed": 0,
+    "per_class": {
+     "supported": {
+      "precision": 0.9831,
+      "recall": 0.8286,
+      "f1": 0.8992,
+      "support": 70
+     },
+     "contradicted": {
+      "precision": 0.8205,
+      "recall": 0.9412,
+      "f1": 0.8767,
+      "support": 34
+     },
+     "not_established": {
+      "precision": 0.7778,
+      "recall": 0.875,
+      "f1": 0.8235,
+      "support": 48
+     }
+    },
+    "macro_f1": 0.8665,
+    "balanced_accuracy": 0.8816,
+    "accuracy": 0.8684,
+    "not_established_as_contradicted": [
+     5,
+     48
+    ],
+    "not_established_as_supported": [
+     1,
+     48
+    ],
+    "supported_missed": [
+     12,
+     70
+    ],
+    "contradicted_missed": [
+     2,
+     34
+    ],
+    "confusion": {
+     "contradicted->contradicted": 32,
+     "contradicted->not_established": 2,
+     "not_established->contradicted": 5,
+     "not_established->not_established": 42,
+     "not_established->supported": 1,
+     "supported->contradicted": 2,
+     "supported->not_established": 10,
+     "supported->supported": 58
+    }
+   },
+   "DEV_INLI": {
+    "n": 3000,
+    "unprocessed": 0,
+    "per_class": {
+     "supported": {
+      "precision": 0.9838,
+      "recall": 0.969,
+      "f1": 0.9763,
+      "support": 1000
+     },
+     "contradicted": {
+      "precision": 0.945,
+      "recall": 0.911,
+      "f1": 0.9277,
+      "support": 1000
+     },
+     "not_established": {
+      "precision": 0.9039,
+      "recall": 0.95,
+      "f1": 0.9264,
+      "support": 1000
+     }
+    },
+    "macro_f1": 0.9435,
+    "balanced_accuracy": 0.9433,
+    "accuracy": 0.9433,
+    "not_established_as_contradicted": [
+     47,
+     1000
+    ],
+    "not_established_as_supported": [
+     3,
+     1000
+    ],
+    "supported_missed": [
+     31,
+     1000
+    ],
+    "contradicted_missed": [
+     89,
+     1000
+    ],
+    "confusion": {
+     "contradicted->contradicted": 911,
+     "contradicted->not_established": 76,
+     "contradicted->supported": 13,
+     "not_established->contradicted": 47,
+     "not_established->not_established": 950,
+     "not_established->supported": 3,
+     "supported->contradicted": 6,
+     "supported->not_established": 25,
+     "supported->supported": 969
+    }
+   }
+  },
+  "seconds_cum": 188.3
+ },
+ {
+  "epoch": 2,
+  "train_seconds_cum": 359.3,
+  "main_loss": 0.09684137428129963,
+  "aux_loss": null,
+  "main_steps": 1656,
+  "aux_steps": 0,
+  "dev": {
+   "DEV_DCS": {
+    "n": 152,
+    "unprocessed": 0,
+    "per_class": {
+     "supported": {
+      "precision": 1.0,
+      "recall": 0.8857,
+      "f1": 0.9394,
+      "support": 70
+     },
+     "contradicted": {
+      "precision": 0.775,
+      "recall": 0.9118,
+      "f1": 0.8378,
+      "support": 34
+     },
+     "not_established": {
+      "precision": 0.84,
+      "recall": 0.875,
+      "f1": 0.8571,
+      "support": 48
+     }
+    },
+    "macro_f1": 0.8781,
+    "balanced_accuracy": 0.8908,
+    "accuracy": 0.8882,
+    "not_established_as_contradicted": [
+     6,
+     48
+    ],
+    "not_established_as_supported": [
+     0,
+     48
+    ],
+    "supported_missed": [
+     8,
+     70
+    ],
+    "contradicted_missed": [
+     3,
+     34
+    ],
+    "confusion": {
+     "contradicted->contradicted": 31,
+     "contradicted->not_established": 3,
+     "not_established->contradicted": 6,
+     "not_established->not_established": 42,
+     "supported->contradicted": 3,
+     "supported->not_established": 5,
+     "supported->supported": 62
+    }
+   },
+   "DEV_INLI": {
+    "n": 3000,
+    "unprocessed": 0,
+    "per_class": {
+     "supported": {
+      "precision": 0.9791,
+      "recall": 0.984,
+      "f1": 0.9815,
+      "support": 1000
+     },
+     "contradicted": {
+      "precision": 0.9421,
+      "recall": 0.928,
+      "f1": 0.935,
+      "support": 1000
+     },
+     "not_established": {
+      "precision": 0.9307,
+      "recall": 0.94,
+      "f1": 0.9353,
+      "support": 1000
+     }
+    },
+    "macro_f1": 0.9506,
+    "balanced_accuracy": 0.9507,
+    "accuracy": 0.9507,
+    "not_established_as_contradicted": [
+     54,
+     1000
+    ],
+    "not_established_as_supported": [
+     6,
+     1000
+    ],
+    "supported_missed": [
+     16,
+     1000
+    ],
+    "contradicted_missed": [
+     72,
+     1000
+    ],
+    "confusion": {
+     "contradicted->contradicted": 928,
+     "contradicted->not_established": 57,
+     "contradicted->supported": 15,
+     "not_established->contradicted": 54,
+     "not_established->not_established": 940,
+     "not_established->supported": 6,
+     "supported->contradicted": 3,
+     "supported->not_established": 13,
+     "supported->supported": 984
+    }
+   }
+  },
+  "seconds_cum": 366.1
+ }
+]
