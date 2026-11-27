@@ -1,5 +1,9 @@
 # Repository Research Authority for Codex / Agents
 
+## 2026-11-27 active successor scope: Need-Aware Agent (NAA)
+
+**Read first for new work on this branch**: `project/docs/need_aware_agent_20261127/MASTER_PLAN_ZH.md` and `project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md`. Researcher agreed to the revised direction (longitudinal understanding and need-aware memory utilization); new work starts here, not V3.1 or the 11-25 journal execution order. G0e can be adapted in this successor after evidence of an ability gap; freeze the generator within each controlled comparison. Old Paper-1/PM-RL1/J/GSWS/G6 protocols, locks, results and authorizations below are preserved in their original experiment scopes. They do not require repeating historical eligibility gates for NAA. Online INSPECT_CLAIM/G7, repeated small probes, automatic PPO and the 45-call candidate are not active. CPU preparation and permitted public-source intake are in scope; no new GPU, training, paid API, private-data transfer or formal test unlock is authorized by this document. Never interpret an approved research direction as compute authorization. Keep private raw data/logs/models off the public repository. Follow the new plan's two workstreams and actual run receipts. Historical text below remains historical authority only for its original scopes; do not silently reactivate it.
+
 ## Current successor scope (PM-RL1, updated 2026-11-16)
 
 For `project/src/metacom_pm/rl1/`, `project/scripts/rl1/`, the new

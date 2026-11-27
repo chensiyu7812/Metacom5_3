@@ -1,3 +1,9 @@
+# Policy Manager / Need-Aware Agent — 当前研究入口（2026-11-27）
+
+本分支基于最新 G6 收口提交 [f45c281a](https://github.com/chensiyu7812/Metacom5_3/commit/f45c281a06ee12b3ca7d59ebe8017116c6fcdffe)，不是将历史主分支覆盖。研究者已同意从单纯资源调度转向长期用户理解与需求感知记忆利用。**现行新增研究主方案**：[MASTER_PLAN_ZH.md](project/docs/need_aware_agent_20261127/MASTER_PLAN_ZH.md)；**Codex / Claude Code 工作指令**：[WORK_ORDERS_ZH.md](project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md)；[AGENTS.md](AGENTS.md) 首段定义其作用域。新 GPU、训练、正式测试与付费预算未授权。全部以下内容是原始历史入口快照，保留原结论与边界，不作为新分支的执行顺序。
+
+---
+
 # Policy Manager — PM-RL1 仓库审阅入口
 
 更新：2026-11-16（Asia/Tokyo）。本次同步用于让网页版审阅本地项目的代码、研究方案和原始证据。同步范围、文件缺口及核验结果见[仓库同步说明](project/docs/REPOSITORY_SYNC_20261116_ZH.md)，逐文件清单见 [FILES.jsonl](project/docs/repository_sync_20261116/FILES.jsonl)。上传资料不代表采用新研究方案，也不产生新的实验结果。
