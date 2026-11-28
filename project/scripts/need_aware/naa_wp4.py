@@ -19,7 +19,7 @@ inputs with an adapted generator. No model call here; the runner needs a bounded
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 import json
 from pathlib import Path
 import sys

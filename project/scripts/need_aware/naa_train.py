@@ -35,7 +35,7 @@ import naa_agent as NA  # noqa: E402
 
 from metacom_pm.need_aware.agent import arms as WP2  # noqa: E402
 from metacom_pm.need_aware.agent import behavior as B  # noqa: E402
-from metacom_pm.need_aware.data.contracts import RuntimeTask, digest  # noqa: E402
+from metacom_pm.need_aware.data.contracts import RuntimeTask, digest, load_runtime  # noqa: E402
 from metacom_pm.need_aware.memory import reader as R  # noqa: E402
 from metacom_pm.need_aware.memory.writer import StoreCache  # noqa: E402
 from metacom_pm.need_aware.runtime import lora as LORA  # noqa: E402
@@ -385,7 +385,8 @@ def cmd_check_reply(a):
     cand = json.loads(Path(a.candidate).read_text())
     rows, how = reply_rows(cand['train_file'], a.store_root)
     forbidden = set(Path(a.forbidden_owners).read_text().split()) if a.forbidden_owners else set()
-    contract = T.validate_reply(rows, forbidden_owners=forbidden)
+    contract = T.validate_reply(rows, forbidden_owners=forbidden, allow_plumbing=True)
+    contract['plumbing_rows'] = sum(bool(r['provenance'].get('plumbing')) for r in rows)
     b = M.bind_inventory(M.MODELS['Qwen35'], a.inventory); native = M.NativeTokenizer(b)
     fit = [r for r in T.group_order(rows, cand['seed']) if r['split'] == 'fit']
     enc, align = T.encode_reply(fit, T.native_encoder(native, T.TURN_END['Qwen35'], M.COMMON_INPUT_CAP),
@@ -401,6 +402,24 @@ def cmd_check_reply(a):
                base_g_id=b.g_id, executor_checkout_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip())
     NA.jdump(Path(a.out), out)
     print(json.dumps({k: out[k] for k in ('render', 'alignment', 'steps', 'time_bound')}, indent=2))
+
+
+def cmd_plumbing_reply(a):
+    """PLUMBING reply rows from a W4-0 manifest's U0 rows: real task, real delivered evidence, option texts as
+    placeholder replies (no gold is read; option A is NOT the answer). For lengths/encoding only; training refuses them."""
+    _, rows = NA.load_full(a.manifest_dir)
+    tasks = {t.task_id: t for t in load_runtime(Path(a.tasks))}
+    out = []
+    for r in rows:
+        if r['arm'] != 'U0' or r['status'] != 'ready':
+            continue
+        t = tasks[r['task_id']]
+        out.append(dict(example_id='plumb:' + t.task_id, group_id='plumb:' + t.task_id, owner_id=t.persona_group,
+                        split='fit', task=t.to_dict(), evidence_ids=r['trace']['delivered_ids'],
+                        chosen=t.options[0]['text'], rejected=[o['text'] for o in t.options[1:]],
+                        provenance=dict(plumbing=True, note='placeholder replies; not supervision')))
+    NA.jsonl(Path(a.out), out)
+    print(len(out), 'PLUMBING reply rows')
 
 
 def cmd_train_reply(a):
@@ -505,13 +524,15 @@ def main():
     w.add_argument('--approval'); w.add_argument('--inventory', default=inv)
     cr = s.add_parser('check-reply'); cr.add_argument('--candidate', required=True); cr.add_argument('--out', required=True)
     cr.add_argument('--store-root'); cr.add_argument('--forbidden-owners'); cr.add_argument('--inventory', default=inv)
+    pr = s.add_parser('plumbing-reply'); pr.add_argument('--manifest-dir', required=True)
+    pr.add_argument('--tasks', required=True); pr.add_argument('--out', required=True)
     tr = s.add_parser('train-reply')
     for x in ('--candidate', '--method', '--out'):
         tr.add_argument(x, required=True)
     tr.add_argument('--approval'); tr.add_argument('--store-root'); tr.add_argument('--forbidden-owners')
     tr.add_argument('--save-reserve', type=float, default=120.); tr.add_argument('--inventory', default=inv)
     a = p.parse_args()
-    dict(**{'check-reply': cmd_check_reply, 'train-reply': cmd_train_reply},
+    dict(**{'check-reply': cmd_check_reply, 'train-reply': cmd_train_reply, 'plumbing-reply': cmd_plumbing_reply},
          **{'check-v11': cmd_check_v11, 'train-v11': cmd_train_v11}, inspect=cmd_inspect, **{'check-data': cmd_check_data}, estimate=cmd_estimate, train=cmd_train)[a.cmd](a)
 
 

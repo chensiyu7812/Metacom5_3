@@ -309,13 +309,16 @@ REPLY_TRAINER_VERSION = 'naa-wp4-reply-trainer-v1'
 REPLY_REQUIRED = ('example_id', 'group_id', 'owner_id', 'split', 'messages', 'chosen', 'rejected', 'provenance')
 
 
-def validate_reply(rows, *, forbidden_owners=()):
-    """Structural/leakage contract of A's reply rows (labels/quality are A's audit)."""
+def validate_reply(rows, *, forbidden_owners=(), allow_plumbing=False):
+    """Structural/leakage contract of A's reply rows (labels/quality are A's audit). PLUMBING rows (placeholder
+    replies for length/encoding checks) are accepted only by CPU checks, never by training."""
     seen, split_of_owner, forbidden = set(), {}, set(forbidden_owners)
     for r in rows:
         missing = [k for k in REPLY_REQUIRED if k not in r]
         if missing:
             raise ContractError(f"{r.get('example_id')}: missing {missing}")
+        if r['provenance'].get('plumbing') and not allow_plumbing:
+            raise ContractError(r['example_id'] + ': PLUMBING row is never supervision')
         if r['example_id'] in seen:
             raise ContractError('duplicate example_id ' + r['example_id'])
         seen.add(r['example_id'])
