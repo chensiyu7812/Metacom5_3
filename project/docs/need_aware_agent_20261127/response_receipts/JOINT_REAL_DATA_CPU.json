@@ -1,0 +1,115 @@
+{
+  "protocol": "naa-official-reply-joint-v1",
+  "contract": {
+    "schema": "naa-wp4-reply-v1",
+    "examples": 281,
+    "owners": 111,
+    "groups": 281,
+    "split": {
+      "fit": 234,
+      "tune": 47
+    },
+    "with_rejected": 3,
+    "rejected_per_row": {
+      "0": 278,
+      "1": 3
+    },
+    "rows_sha256": "8d83829d54c3f47706d8942c7b34251eb09244588f825424dccf2c638fde04aa"
+  },
+  "training_check": {
+    "alignment": {
+      "branch_tokens": 1978904,
+      "chosen_len_max": 8444,
+      "chosen_len_p50": 8385,
+      "ends_with_turn_end": 248046,
+      "prompt_equals_inference_chat_ids": true,
+      "rows": 234,
+      "turn_end_in_decode_eos": true
+    },
+    "base_g_id": "naag:Qwen35:8ab8d77bb4e7d2b741e1f4582a659d874cdecb49e704f03202d1598bae513ceb",
+    "candidate_sha256": "fb2accb4c7fb3affd1e5e823368729f920b8af819e435fb0d611e72b95a624f6",
+    "compute_parity": "U2 and U3 run every chosen and rejected branch; U2 ranking coefficient 0",
+    "contract": {
+      "examples": 234,
+      "groups": 234,
+      "owners": 92,
+      "plumbing_rows": 0,
+      "rejected_per_row": {
+        "0": 232,
+        "1": 2
+      },
+      "rows_sha256": "33f8fa694088c5b08e06c0788630bf62c8fdb3bae27fa5f1a1c78f63b514a403",
+      "schema": "naa-wp4-reply-v1",
+      "split": {
+        "fit": 234
+      },
+      "with_rejected": 2
+    },
+    "executor_checkout_head": "eb5e4d29f073f3fbb16b6eb06166df177a5030a9",
+    "lora": {
+      "alpha": 16,
+      "dropout": 0.0,
+      "r": 8,
+      "suffixes": [
+        "q_proj",
+        "v_proj",
+        "in_proj_qkv"
+      ]
+    },
+    "render": "A pre-rendered",
+    "schema": "naa-wp4-reply-v1",
+    "steps": 30,
+    "time_bound": {
+      "basis": "4 x max(0.2104 s short forward, tokens/5298 tok/s)",
+      "load_s": 38,
+      "per_method_train_s": 1494,
+      "save_close_reserve_s": 130,
+      "smoke_steps": 20
+    }
+  },
+  "tune_alignment": {
+    "prompt_equals_inference_chat_ids": true,
+    "ends_with_turn_end": 248046,
+    "turn_end_in_decode_eos": true,
+    "rows": 47,
+    "chosen_len_p50": 8384,
+    "chosen_len_max": 8471,
+    "branch_tokens": 402456
+  },
+  "partitions": {
+    "fit": {
+      "rows": 234,
+      "owners": 92,
+      "paired": 2,
+      "positive_status": {
+        "nonassertive_official_advice_weak_supervision": 204,
+        "source_review_current_request_supported_generic_reply": 27,
+        "source_review_supported_candidate": 3
+      }
+    },
+    "tune": {
+      "rows": 47,
+      "owners": 19,
+      "paired": 1,
+      "positive_status": {
+        "nonassertive_official_advice_weak_supervision": 39,
+        "source_review_current_request_supported_generic_reply": 6,
+        "source_review_supported_candidate": 2
+      }
+    }
+  },
+  "native_mcq": {
+    "logical": 1360,
+    "physical_unique": 1360,
+    "logical_ready": 1360,
+    "exact_duplicates": 0,
+    "status": {
+      "ready": 1360
+    }
+  },
+  "gpu_calls": 0,
+  "training_steps": 0,
+  "generator_calls": 0,
+  "old_template_rows": 0,
+  "executor_commit": "eb5e4d29f073f3fbb16b6eb06166df177a5030a9"
+}

@@ -9,14 +9,15 @@ from ..runtime.requests import physical_identity
 
 # Display aliases only: retain B's original logical/request identities in scoring.
 ARM_ALIASES={'NoMem':'No-memory','OptOnly':'Options-only'}
-ALLOWED_ARMS=(*ARMS,*ARM_ALIASES,'U2','U3')
+DIAGNOSTIC_ARMS=tuple(method+':'+view for method in ('U2','U3') for view in ('NoMem','OptOnly'))
+ALLOWED_ARMS=(*ARMS,*ARM_ALIASES,'U2','U3',*DIAGNOSTIC_ARMS)
 ALLOWED_MODELS=('Qwen35','Qwen35+U2','Qwen35+U3')
 
 
 def validate_cell_binding(request, model, arm):
     require(model in ALLOWED_MODELS and arm in ALLOWED_ARMS,'unplanned WP4 cell')
-    if arm in ('U2','U3'):
-        require(model=='Qwen35+'+arm,'adapted method/model mismatch')
+    if arm.split(':')[0] in ('U2','U3'):
+        require(model=='Qwen35+'+arm.split(':')[0],'adapted method/model mismatch')
     else:
         require(model=='Qwen35','control must use base Qwen35')
     require(request.get('model_label')==model,'request model label mismatch')

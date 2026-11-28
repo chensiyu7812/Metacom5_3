@@ -38,9 +38,10 @@ def test_reply_bridge_uses_same_real_records_and_masks_unknown_negatives(tmp_pat
 
 def test_adapted_model_and_condition_aliases_score_strictly(tmp_path):
     task,_=runtime(tmp_path);dec=M.QWEN35.decode(64)
-    for arm,model in [('NoMem','Qwen35'),('OptOnly','Qwen35'),('U2','Qwen35+U2'),('U3','Qwen35+U3')]:
+    for arm,model in [('NoMem','Qwen35'),('OptOnly','Qwen35'),('U2','Qwen35+U2'),('U3','Qwen35+U3'),
+                      ('U2:NoMem','Qwen35+U2'),('U3:OptOnly','Qwen35+U3')]:
         req=Q.make(task,arm,M.QWEN35,[dict(role='user',content='fixture')],[1,2],dec,{},dict(fits=True),{})
-        gid=M.QWEN35.g_id if model=='Qwen35' else M.adapted_binding(M.QWEN35,ident(arm),dec)['g_id']
+        gid=M.QWEN35.g_id if model=='Qwen35' else M.adapted_binding(M.QWEN35,ident(arm.split(':')[0]),dec)['g_id']
         req.update(model_label=model,g_id=gid,logical_id=f'{task.task_id}|{arm}|{model}',
             task_sha256=digest(task.to_dict()),scoring_protocol=PROTOCOL)
         req['request_sha256']=Q.physical_identity(gid,req['messages'],req['input_ids'],dec)
