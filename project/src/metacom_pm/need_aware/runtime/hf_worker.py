@@ -47,6 +47,10 @@ def _load(command, clock):
     if 'lm_head.weight' in tied:   # an allowed "missing" head must really be the tied embedding
         require(model.get_output_embeddings().weight is model.get_input_embeddings().weight,
                 'checkpoint alias not actually tied')
+    adapter = command.get('adapter')   # WP4 U2/U3: base checkpoint (unchanged) + SHA-bound LoRA, merged once
+    if adapter:
+        from .lora import merge
+        loading = dict(loading, adapter=merge(model, adapter['path'], expected_sha256=adapter['sha256']))
     model = model.to('cuda:0').eval(); torch.cuda.synchronize()
     finished = clock.stamp()
     gc_base = (GenerationConfig.from_pretrained(spec['path'], local_files_only=True)

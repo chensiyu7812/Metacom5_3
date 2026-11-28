@@ -1,0 +1,209 @@
+"""WP4 generator adaptation backend: ordinary SFT (U2) vs paired applicability supervision (U3).
+
+Both modes see the same examples, order, optimizer, LoRA config, steps and seed; U3 only adds
+a margin term on pairs whose opposite behaviour is uniquely and verifiably wrong for the
+anchor input (contrast.unique_opposite). Reasonable alternatives are never negatives.
+
+  L_sft    = sum_t NLL(y_t | x) / #target tokens                         (accumulation group)
+  L_paired = L_sft + lambda * mean_pairs max(0, m - (lp(y+ | x) - lp(y- | x)))
+             lp = mean token log-prob of a response under the SAME anchor input x
+
+Supervision content (targets, behaviours, contrasts, splits) is A's responsibility; this
+module validates the contract, renders inputs with the U0 renderer, encodes and trains.
+Encoding anchors on the EXACT inference prompt ids (NativeTokenizer.chat_ids, the ids every
+WP2/WP3 request carries) + response tokens + the model's native end-of-turn token. The
+history-rendering path of rl1.executor_encoding cannot be used for these generators: Gemma-4
+opens the generation turn with an empty thought channel that history rendering drops, and
+transformers 5 returns a dict from apply_chat_template(tokenize=True). No truncation.
+Nothing here starts a GPU job: the CLI refuses without a bounded researcher approval.
+"""
+from __future__ import annotations
+
+from collections import Counter, defaultdict
+from dataclasses import dataclass
+import random
+import time
+
+from ..data.contracts import digest
+from ...rl1.executor_encoding import EncodedResponse, collate_responses, encode_response, response_nll_sum
+
+TRAIN_SCHEMA = 'naa-wp4-train-v1'
+TRAINER_VERSION = 'naa-wp4-trainer-v1'
+BEHAVIORS = ('USE', 'IGNORE', 'CLARIFY', 'BACKGROUND')
+REQUIRED = ('example_id', 'group_id', 'owner_id', 'split', 'origin', 'behavior', 'task', 'evidence_ids',
+            'target', 'contrast', 'provenance')
+
+
+class ContractError(ValueError):
+    pass
+
+
+def validate(rows, *, forbidden_owners=()):
+    """Structural/leakage contract only; it cannot qualify labels (A's audit does)."""
+    ids, groups, split_of_owner = {}, defaultdict(list), {}
+    forbidden = set(forbidden_owners)
+    for r in rows:
+        missing = [k for k in REQUIRED if k not in r]
+        if missing:
+            raise ContractError(f"{r.get('example_id')}: missing {missing}")
+        if r['example_id'] in ids:
+            raise ContractError('duplicate example_id ' + r['example_id'])
+        if r['split'] not in ('fit', 'tune') or r['origin'] not in ('natural', 'constructed') \
+                or r['behavior'] not in BEHAVIORS:
+            raise ContractError(r['example_id'] + ': split/origin/behavior vocabulary')
+        if r['owner_id'] in forbidden:
+            raise ContractError(r['example_id'] + ': owner belongs to a development/confirmation/test family')
+        if r['task'].get('persona_group') != r['owner_id'] or r['task'].get('options'):
+            raise ContractError(r['example_id'] + ': task owner mismatch or MCQ options in training input')
+        if split_of_owner.setdefault(r['owner_id'], r['split']) != r['split']:
+            raise ContractError('owner ' + r['owner_id'] + ' appears in both fit and tune')
+        if not isinstance(r['target'], str) or not r['target'].strip():
+            raise ContractError(r['example_id'] + ': empty target')
+        ids[r['example_id']] = r
+        groups[r['group_id']].append(r)
+    pairs = []
+    for r in rows:
+        c = r['contrast']
+        opp = c.get('opposite_example_id')
+        if opp is None:
+            if c.get('unique_opposite'):
+                raise ContractError(r['example_id'] + ': unique_opposite without an opposite example')
+            continue
+        o = ids.get(opp)
+        if o is None or o['group_id'] != r['group_id']:
+            raise ContractError(r['example_id'] + ': opposite must exist in the same group')
+        if c.get('unique_opposite'):
+            if o['behavior'] == r['behavior'] or o['target'] == r['target']:
+                raise ContractError(r['example_id'] + ': a unique opposite must be a different behaviour')
+            pairs.append((r['example_id'], opp))
+    return dict(examples=len(rows), groups=len(groups), owners=len(split_of_owner),
+                split=dict(Counter(r['split'] for r in rows)), origin=dict(Counter(r['origin'] for r in rows)),
+                behavior=dict(Counter(r['behavior'] for r in rows)), unique_opposite_pairs=len(pairs),
+                rows_sha256=digest(rows)), pairs
+
+
+@dataclass(frozen=True)
+class Encoded:
+    example_id: str
+    positive: object            # EncodedResponse for (x, y+)
+    negative: object = None     # EncodedResponse for (x, y-) when a unique opposite exists
+
+
+TURN_END = {'Qwen35': 248046, 'G0e': 106}    # <|im_end|>, <turn|>: the generated end-of-turn markers
+
+
+def native_encoder(native, turn_end_id, context_limit):
+    """encode_one(messages, response) -> EncodedResponse on the inference prompt ids."""
+    specials = set(native.tok.all_special_ids)
+
+    def encode_one(messages, response):
+        if not isinstance(response, str) or not response.strip():
+            raise ValueError('empty response is not supervision')
+        prompt = native.chat_ids(messages)
+        body = [int(x) for x in native.tok(response, add_special_tokens=False)['input_ids']]
+        if not body or any(t in specials for t in body):
+            raise ValueError('response includes a control token')
+        full = prompt + body + [turn_end_id]
+        if len(full) > context_limit:
+            raise ValueError('training sequence exceeds the common input cap; no truncation')
+        return EncodedResponse(tuple(full), tuple([-100] * len(prompt) + body + [turn_end_id]), len(prompt),
+                               len(body) + 1, 0, digest(messages), digest(response))
+    return encode_one
+
+
+def template_encoder(tokenizer, context_limit, eos_token_ids):
+    """Historical RL1 path (templates whose history rendering extends the generation prompt)."""
+    return lambda m, r: encode_response(tokenizer, m, r, context_limit=context_limit, eos_token_ids=eos_token_ids)
+
+
+def encode(rows, messages_of, encode_one, *, pairs):
+    """messages_of(row) -> exact U0 inference messages for that row (same renderer as evaluation)."""
+    by = {r['example_id']: r for r in rows}
+    neg = dict(pairs)
+    out = []
+    for r in rows:
+        msgs = messages_of(r)
+        pos = encode_one(msgs, r['target'])
+        n = encode_one(msgs, by[neg[r['example_id']]]['target']) if r['example_id'] in neg else None
+        out.append(Encoded(r['example_id'], pos, n))
+    return out
+
+
+def _mean_logprob(model, enc, pad, device):
+    torch = __import__('torch')
+    b = collate_responses([enc], pad_token_id=pad)
+    t = {k: torch.tensor(v, device=device) for k, v in b.items()}
+    logits = model(input_ids=t['input_ids'], attention_mask=t['attention_mask']).logits
+    nll, n = response_nll_sum(logits, t['labels'])
+    return -nll / n
+
+
+def train(model, encoded, cfg, *, pad_token_id, device='cpu', clock=time.monotonic, max_steps=None,
+          max_seconds=None, on_epoch=None):
+    """cfg: mode sft|paired, lr, epochs, accumulation, seed, margin, lambda_pair. Returns a receipt.
+    Microbatch is 1 sequence (no cross-example padding); accumulation groups set the step size."""
+    import torch
+    from . import lora as LORA
+    if cfg['mode'] not in ('sft', 'paired'):
+        raise ValueError('mode')
+    torch.manual_seed(cfg['seed'])
+    params = [p for _, p in LORA.trainable(model)]
+    if not params:
+        raise ValueError('no trainable adapter parameters')
+    opt = torch.optim.AdamW(params, lr=cfg['lr'], betas=(.9, .999), eps=1e-8, weight_decay=0.)
+    t0, step, log = clock(), 0, []
+    tokens = dict(positive=0, negative=0)
+    stop = None
+    for epoch in range(cfg['epochs']):
+        order = list(range(len(encoded)))
+        random.Random(cfg['seed'] * 1000 + epoch).shuffle(order)
+        model.train()
+        for g in range(0, len(order), cfg['accumulation']):
+            group = [encoded[i] for i in order[g:g + cfg['accumulation']]]
+            denom = sum(e.positive.target_tokens for e in group)
+            opt.zero_grad(set_to_none=True)
+            nll_sum, hinge_sum, n_pairs = 0., 0., sum(e.negative is not None for e in group)
+            for e in group:
+                b = collate_responses([e.positive], pad_token_id=pad_token_id)
+                t = {k: torch.tensor(v, device=device) for k, v in b.items()}
+                logits = model(input_ids=t['input_ids'], attention_mask=t['attention_mask']).logits
+                nll, n = response_nll_sum(logits, t['labels'])
+                loss = nll / denom
+                tokens['positive'] += len(e.positive.input_ids)
+                if cfg['mode'] == 'paired' and e.negative is not None:
+                    lp_pos = -nll / n
+                    lp_neg = _mean_logprob(model, e.negative, pad_token_id, device)
+                    hinge = torch.clamp(cfg['margin'] - (lp_pos - lp_neg), min=0.)
+                    loss = loss + cfg['lambda_pair'] * hinge / n_pairs
+                    hinge_sum += float(hinge)
+                    tokens['negative'] += len(e.negative.input_ids)
+                loss.backward()
+                nll_sum += float(nll)
+            torch.nn.utils.clip_grad_norm_(params, 1.0)
+            opt.step()
+            step += 1
+            log.append(dict(step=step, epoch=epoch, nll_per_token=nll_sum / denom,
+                            hinge_mean=(hinge_sum / n_pairs) if n_pairs and cfg['mode'] == 'paired' else None))
+            if max_steps is not None and step >= max_steps:
+                stop = 'max_steps'; break
+            if max_seconds is not None and clock() - t0 >= max_seconds:
+                stop = 'max_seconds'; break
+        if on_epoch:
+            on_epoch(epoch, step)
+        if stop:
+            break
+    return dict(version=TRAINER_VERSION, mode=cfg['mode'], steps=step, stop=stop or 'epochs_done',
+                seconds=round(clock() - t0, 3), tokens=tokens, log=log, cfg=cfg)
+
+
+def estimate(*, base_params, lora_params, weight_bytes, examples, mean_tokens, epochs, accumulation,
+             train_tokens_per_s, paired_fraction=0., mode='sft'):
+    """Planning arithmetic only (verified by the approved technical smoke, never a result).
+    Memory: bf16 weights + fp32 LoRA params/grads/2 Adam moments; activations bounded by
+    sequence length with gradient checkpointing (reported separately as a measured smoke item)."""
+    neg = paired_fraction * examples if mode == 'paired' else 0.
+    per_epoch_tokens = (examples + neg) * mean_tokens
+    return dict(weights_GB=round(weight_bytes / 1e9, 2), lora_state_GB=round(lora_params * 16 / 1e9, 3),
+                steps=epochs * -(-examples // accumulation), tokens_per_epoch=int(per_epoch_tokens),
+                train_seconds=int(epochs * per_epoch_tokens / train_tokens_per_s),
+                assumption=f'{train_tokens_per_s} train tok/s (fwd+bwd+recompute ~= 4x measured prefill)')

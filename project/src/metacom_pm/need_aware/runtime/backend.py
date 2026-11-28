@@ -84,6 +84,8 @@ class NAAHFBackend(SubprocessGE2HF):
                        header_sha256=self.manifest['checkpoints'][self.spec['label']]['header_sha256'],
                        allowed_missing=self.manifest['checkpoints'][self.spec['label']].get('allowed_missing', []),
                        allowed_unused=self.manifest['checkpoints'][self.spec['label']].get('allowed_unused', []),
+                       # WP4 adapted generators: {path, sha256} bound in the manifest; absent for base G
+                       adapter=self.manifest['checkpoints'][self.spec['label']].get('adapter'),
                        boot_id=clock.boot_id, deadline_ns=int(min(self.deadline, time.monotonic() + seconds) * 1e9))
         result = self._exchange(command, seconds)
         done = clock.stamp()
