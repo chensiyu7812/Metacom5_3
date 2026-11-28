@@ -336,6 +336,87 @@ def cmd_export_open(a):
     print(len(packets), dict(fmt))
 
 
+# ---------------------------------------------------------------- B's independent check of a jointly frozen W4-0 manifest
+W40_ROW_KEYS = {'arm', 'capacity', 'decode', 'g_id', 'input_ids', 'input_ids_sha256', 'logical_id', 'messages', 'model_id',
+                'model_label', 'persona_group', 'request_sha256', 'scoring_protocol', 'status', 'task_id', 'task_mode',
+                'task_sha256', 'trace', 'versions', 'duplicate_of', 'reason'}
+
+
+def cmd_verify_w40(a):
+    """Recompute every identity of a W4-0 manifest built elsewhere (A) before any approval is written."""
+    from metacom_pm.need_aware.runtime.authorization import load_manifest, manifest_sha256
+    man = load_manifest(Path(a.manifest_dir) / 'MANIFEST.json')
+    rows = [json.loads(l) for l in open(Path(a.manifest_dir) / man['requests_file'])]
+    b = M.bind_inventory(M.MODELS['Qwen35'], a.inventory)
+    native = M.NativeTokenizer(b)
+    decode = b.decode(SP.MAX_NEW_TOKENS)
+    tasks = {t.task_id: t for t in W3CLI.tasks_from(a.tasks)}
+    chk, bad = {}, []
+    def need(name, ok, detail=None):
+        chk[name] = bool(ok)
+        if not ok:
+            bad.append(dict(check=name, detail=detail))
+    need('requests_sha256', NA.file_sha(Path(a.manifest_dir) / man['requests_file']) == man['requests_sha256'])
+    need('model_order', man['model_order'] == ['Qwen35'])
+    need('binding_g_id', man['bindings']['Qwen35']['g_id'] == b.g_id and all(r['g_id'] == b.g_id for r in rows))
+    need('decode_64', man['bindings']['Qwen35']['decode'] == decode and all(r['decode'] == decode for r in rows))
+    need('no_extra_fields', all(set(r) <= W40_ROW_KEYS for r in rows), sorted({k for r in rows for k in r} - W40_ROW_KEYS))
+    by = defaultdict(dict)
+    for r in rows:
+        by[r['task_id']][r['arm']] = r
+    need('task_set', set(by) == set(tasks) and len(tasks) <= W40_MAX_TASKS, dict(rows=len(by), tasks=len(tasks)))
+    need('five_conditions', all(set(v) == set(B.W40_CONDITIONS) for v in by.values()))
+    need('task_sha256', all(r['task_sha256'] == digest(tasks[r['task_id']].to_dict()) for r in rows))
+    same, layout, ids_ok, req_ok = [], [], [], []
+    for tid, v in by.items():
+        t = tasks[tid]
+        d = [tuple(v[c]['trace'].get('delivered_ids', ())) for c in ('U0', 'U1', 'U1+')]
+        same.append(len(set(d)) == 1 and len(d[0]) > 0 and not v['NoMem']['trace']['delivered_ids']
+                    and not v['OptOnly']['trace']['delivered_ids'])
+        ins = SP.instruction(t.options)
+        fin = {c: v[c]['messages'][-1]['content'] for c in v}
+        sys0 = v['U0']['messages'][0]['content']
+        layout.append(all(fin[c].endswith(ins) for c in fin)
+                      and all(v[c]['messages'][0]['content'] == sys0 for c in ('U1', 'U1+', 'NoMem'))
+                      and B.U1_POLICY in fin['U1'] and B.U1_PLUS_RULES not in fin['U1'] and B.U1_PLUS_RULES in fin['U1+']
+                      and R.EMPTY_BLOCK in fin['NoMem'] and R.RAW_HEADER not in fin['NoMem']
+                      and v['OptOnly']['messages'] == [dict(role='system', content=B.OPTIONS_ONLY_SYSTEM), dict(role='user', content=ins)]
+                      and t.user_query in fin['U0'] and t.user_query not in fin['OptOnly'])
+    for r in rows:
+        ids_ok.append(native.chat_ids(r['messages']) == r['input_ids'] and r['input_ids_sha256'] == digest(r['input_ids']))
+        req_ok.append(r['request_sha256'] == Q.physical_identity(r['g_id'], r['messages'], r['input_ids'], r['decode']))
+    need('same_evidence_u0_u1_u1plus', all(same), sum(not x for x in same))
+    need('condition_layout', all(layout), sum(not x for x in layout))
+    need('native_input_ids', all(ids_ok), sum(not x for x in ids_ok))
+    need('request_identity', all(req_ok), sum(not x for x in req_ok))
+    caps = man['caps']
+    need('caps_within_researcher_scope', caps['max_gpu_seconds'] <= 10000 and caps['max_physical_calls'] <= 1500
+         and caps['max_model_loads_per_model'] <= 2, caps)
+    dedupe = Q.deduplicate([dict(r) for r in rows])
+    need('physical_within_cap', dedupe['physical_unique'] <= caps['max_physical_calls'], dedupe)
+    dev_owners = {t.persona_group for t in tasks.values()}
+    train_owners = {json.loads(l)['owner_id'] for f in a.train for l in open(f) if l.strip()}
+    need('dev_train_owner_disjoint', not dev_owners & train_owners, len(dev_owners & train_owners))
+    if a.forbidden_owners:
+        forb = set(Path(a.forbidden_owners).read_text().split())
+        need('dev_owners_forbidden_for_training', dev_owners <= forb, len(dev_owners - forb))
+    ready = [r for r in rows if r['status'] == 'ready']
+    toks = defaultdict(list)
+    for r in rows:
+        toks[r['arm']].append(len(r['input_ids']))
+    out = dict(protocol='naa-w40-joint-check-v1', manifest_sha256=manifest_sha256(man), requests_sha256=man['requests_sha256'],
+               passed=not bad, checks=chk, failures=bad, tasks=len(by), owners=len(dev_owners), counts=dedupe,
+               status=dict(Counter(f"{r['arm']}|{r['status']}" for r in rows)),
+               input_tokens={k: dict(p50=NA.pct(v, .5), p95=NA.pct(v, .95), max=max(v)) for k, v in toks.items()},
+               worst_case_gpu_s=round(sum(len(r['input_ids']) for r in ready) / 5298 + len(ready) * SP.MAX_NEW_TOKENS / 21.17 + 2 * 38 + 10),
+               w3_measured_rate_estimate_s=round(sum(2.0 if len(r['input_ids']) > 6000 else 0.85 for r in ready) + 60),
+               gold_read=False)
+    NA.jdump(Path(a.out), out)
+    print(json.dumps({k: out[k] for k in ('passed', 'failures', 'tasks', 'counts', 'worst_case_gpu_s', 'w3_measured_rate_estimate_s')}, indent=2))
+    if bad:
+        raise SystemExit(1)
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     s = p.add_subparsers(dest='cmd', required=True)
@@ -359,8 +440,13 @@ def main():
     for x in ('--manifest-dir', '--run-root', '--out'):
         o.add_argument(x, required=True)
     o.add_argument('--plumbing', action='store_true'); o.add_argument('--seed', default='naa-wp4-open-blind-v1')
+    v = s.add_parser('verify-w40')
+    for x in ('--manifest-dir', '--tasks', '--out'):
+        v.add_argument(x, required=True)
+    v.add_argument('--train', action='append', default=[]); v.add_argument('--forbidden-owners')
+    v.add_argument('--inventory', default='/opt/tokkio-data0/naa/20261127/logs/native/model_inventory.json')
     a = p.parse_args()
-    dict(manifest=cmd_manifest, **{'manifest-w40': cmd_manifest_w40, 'manifest-adapted': cmd_manifest_adapted,
+    dict(manifest=cmd_manifest, **{'verify-w40': cmd_verify_w40, 'manifest-w40': cmd_manifest_w40, 'manifest-adapted': cmd_manifest_adapted,
                                    'export-open': cmd_export_open})[a.cmd](a)
 
 
