@@ -335,3 +335,11 @@ B 用 `naa_wp4.py verify-w40` 独立复算，16 项全部通过：
 GPU 时间：最坏 5,639 s；按 W3 实测速率约 2,150 s。
 
 B 没有读取开发集的 gold（`development_frozen/evaluation`）。
+
+### 8.5 W4-0 运行与下一份申请
+
+- **W4-0 已启动**：研究者第六节的条件已全部满足，B 生成批准文件 `authorization/W40_V11_APPROVAL.json`，列明各项条件及其证据，注明“非签名”。
+  - 13:28 UTC 从冻结的执行 worktree `Metacom5_3-naa-exec-w40`（`45ba2c6d`）启动；
+  - manifest 副本与 A 的 FREEZE 字节一致，plumbing 预检 1,360/1,360 通过；
+  - 结束后自动导出、封存、写成本回执，并写 `handoff/B_W40_SEALED_FOR_A.json`，由 A 按 `POLICY.json` 评分。
+- **U2/U3 联合申请**见 `JOINT_U2U3_REQUEST_20261128_ZH.md`。核心问题：只有 2/234 个 fit 行带排序信号，按现有数据 U3−U2 基本测不出东西。B 推荐先补充经核查的非首选回复，再在同一次批准的上限内执行。
