@@ -1,0 +1,53 @@
+{
+  "protocol": "naa-wp2-terminal-reconciliation-v1",
+  "result_kind": "model",
+  "final": true,
+  "manifest_sha256": "c370103cc76f5ccc8b8e56b388764afe1a308e6eda1e287a8b3b535a058588d3",
+  "export_seal_sha256": "dd31f24df2e86b05b639889e383531ceec2d860bd52afddd9bf58646bb0dba52",
+  "evaluation_policy_sha256": "18d863f6f9547040c7d11aab85c4a68e501560dd7e0fa113962f7e1d40474cd3",
+  "ledger_head_sha256": "be05bddd7f38e6bf36940fa71581178ca5210f41fcb1bb071332133cec044b97",
+  "terminal_status": "STOPPED",
+  "counts": {
+    "logical_slots": 1920,
+    "eligible": 1788,
+    "completed": 1618,
+    "completion_rate": 0.9049217002237137,
+    "structural_not_evaluable": 132,
+    "physical_attempts": 1619,
+    "retries": 0,
+    "technical_uncompleted": 170,
+    "failures": {
+      "unattempted": 169,
+      "runtime_error": 1
+    }
+  },
+  "cost_by_model": {
+    "Qwen35": {
+      "ledger_gpu_seconds": 25921.624482686166,
+      "close_and_scheduling_upper_seconds": 1.482827,
+      "conservative_gpu_seconds_upper": 25923.107309686166,
+      "per_model_cap": 28800,
+      "ledger_cap_excess_seconds": 0.0,
+      "conservative_cap_excess_seconds_upper": 0.0
+    },
+    "G0e": {
+      "ledger_gpu_seconds": 28800.53225161275,
+      "close_and_scheduling_upper_seconds": 1.190481,
+      "conservative_gpu_seconds_upper": 28801.72273261275,
+      "per_model_cap": 28800,
+      "ledger_cap_excess_seconds": 0.5322516127489507,
+      "conservative_cap_excess_seconds_upper": 1.7227326127504057
+    }
+  },
+  "ledger_gpu_seconds": 54722.156734298915,
+  "conservative_gpu_seconds_upper": 54724.83004229891,
+  "total_cap": 57600,
+  "physical_cap": 1920,
+  "cost_scope": "v2 sequential single-session run; UTC inter-event gap bounds include close plus scheduling, not measured teardown; monotonic session seconds retained. Small G0e per-model overrun is disclosed, never rounded away.",
+  "failure_interpretation": "169 eligible slots were never attempted; attempted failures retain their frozen adapter classes. The actual v2 budget-edge subtype is documented separately in A report and B handoff, without score reclassification. Structural slots are separate.",
+  "no_new_execution": true,
+  "aggregate_sha256": "7f7a0ab3c2638f7ab21b9c7c2fef198925f8e5064daecb8a4438caf1566d513c",
+  "ledger_segments_sha256": {
+    "LEDGER.001.jsonl": "3a694a48488771a06d8d80d9b30d7f9cef16ba7e9e8b6992ff81adcd09dd28e3"
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "protocol": "naa-wp2-evaluation-v1",
+  "frozen_before_model_outputs_seen": true,
+  "dataset_freeze_sha256": "f29ad02de12c73d341d44d7e0fc8295889ec8f284db6d73b46b8ed0a5fb5eae5",
+  "runtime_tasks_sha256": "ca785ee77174df7016b05a2ea8e280a3cf050f79cd7d0a8186136f6b70a1518a",
+  "evaluation_tasks_sha256": "448702e3f5236a6c1341069e6170e75ab5a8fd0fb86de4375f2277bbe856a5d6",
+  "direct_manifest_sha256": "4af7f630073c3d531e60dd2905375394742ca5f8529bae8239012c516a0134ee",
+  "models": ["G0e", "Qwen35"],
+  "arms": {
+    "A": "Recency Baseline, 8192-token recent history window",
+    "B": "Strong Fixed RAG, dense user_only@8192",
+    "C": "Offline-located legal original Direct Evidence (diagnostic)",
+    "D": "Same C evidence plus deterministic state projection and applicability guidance"
+  },
+  "populations": {"all": 240, "direct": 207, "direct_missing": 33, "representative": 180, "hard": 60},
+  "direct_missing_pref_type": {"sensitive_info": 31, "ask_to_forget": 2},
+  "scorer": "personamem-v2-inference-d29d91d; unchanged ordered regex and first match; bare letter invalid",
+  "completed_definition": "B validated returned output (EOS or length finish). Parse invalid is a completed model response, never a transport failure. Length stops remain scored without trimming or answer repair, with separate counts and EOS-only sensitivity.",
+  "result_selection": "First technically validated successful result for each exact request; never choose the best answer. Retry failures only. Exact reuse is not an independent observation.",
+  "structural_definition": "C/D not_evaluable iff original direct_status != located_unique; no other failure may be reclassified as structural; exclude structural slots from evaluable denominators.",
+  "technical_classes": ["timeout", "runtime_error", "invalid_output", "interrupted", "unattempted", "capacity_exceeded"],
+  "reports": [
+    "For every cell report planned slots, predefined evaluable N, structural N, technically completed N/rate, attempted N, physical attempts/retries, technical failures by class, parse invalid, valid wrong, correct, length stops.",
+    "Official accuracy on completed responses (parse invalid counts incorrect), with N and Wilson 95% CI.",
+    "Sensitivity: correct/predefined evaluable N treating all uncompleted evaluable slots as zero successes; not a claim that unexecuted or technical failures are wrong answers. Also show unknown-outcome bounds.",
+    "A/B all240; A/B/C/D direct207; A/B direct_missing33. No cross-arm comparison between unequal task sets.",
+    "Separate representative180 and hard60; each fixed hard stratum15; category intersections. No natural prevalence inference from the enriched hard sample.",
+    "Explicit nonrandom Direct missingness table. Sensitive C/D ability is unmeasured, not zero.",
+    "Four-arm common-completed table per model and eight-cell common-completed table across models, in addition to pairwise complete-case comparisons. Retain planned207 denominator in each.",
+    "Cross-model comparisons use identical task IDs completed by both, never subtract unpaired marginal accuracies. Report complete pairs, missing pairs, repair, regression, unchanged, paired difference and CI."
+  ],
+  "primary_paired_family": [
+    ["all", "G0e|A", "G0e|B"], ["all", "Qwen35|A", "Qwen35|B"],
+    ["direct", "G0e|B", "G0e|C"], ["direct", "Qwen35|B", "Qwen35|C"],
+    ["direct", "G0e|C", "G0e|D"], ["direct", "Qwen35|C", "Qwen35|D"],
+    ["direct", "G0e|C", "Qwen35|C"], ["direct", "G0e|D", "Qwen35|D"]
+  ],
+  "paired_inference": {
+    "difference": "right minus left, computed on both-completed identical tasks; parse-invalid responses remain in pairs",
+    "cluster": "persona_group; one task per persona in this frozen sample",
+    "bootstrap_seed": 20261127,
+    "bootstrap_replicates": 2000,
+    "ci": "95% percentile persona-cluster paired bootstrap; unadjusted descriptive intervals",
+    "multiplicity": "Exact two-sided McNemar/binomial on discordant complete pairs; Holm adjustment across the fixed 8 primary comparisons. Other groups/contrasts descriptive only.",
+    "sensitivity": "Same fixed evaluable task set with uncompleted outcomes counted as zero successes, plus worst/best unknown-outcome paired bounds; do not call these capability repairs/regressions. EOS-only pairs separately.",
+    "no_claim": "Development sample only. No equivalence, noninferiority, natural prevalence, independent temporal-memory, autonomous need-identification or open-generation quality claim."
+  },
+  "attribution": {
+    "A_to_B": "Value of this long-history retrieval treatment relative to recent window, not memory versus no memory.",
+    "B_to_C": "Join actual delivered IDs/hashes to full Direct references; distinguish absent user evidence, absent assistant/reference context, and all-reference-delivered cases. Full user coverage alone does not prove evidence sufficiency. Noise/use attribution remains diagnostic without a matched-noise intervention.",
+    "C_to_D": "Joint increment of deterministic state projection plus usage guidance with identical original evidence; report both generators separately and agreement of effect directions.",
+    "error_review": "Review all complete C/D errors and paired B-to-C/C-to-D discordances, using fixed categories and source traces. Keep quoted output/evidence private. Separate observable errors from speculative causes; ambiguous cases stay unresolved.",
+    "WP3": "Choose one largest supported repair opportunity after full results, accounting for uncertainty, technical loss and subgroup harms. Training only if a real utilization gap and lawful train supervision support it; no training authorization."
+  },
+  "interim": "Sealed snapshots may be checked for technical integrity during inference; no interim accuracy-driven changes to conditions, prompts, budgets, parser, sample or primary metrics.",
+  "privacy": "Only code, rules, hashes, aggregate statistics and non-identifying analysis on GitHub. Raw tasks, answers, outputs, per-task records and weights remain local."
+}
