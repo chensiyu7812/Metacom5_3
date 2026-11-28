@@ -1,5 +1,7 @@
 # A：官方回复监督实施交付（2026-11-28）
 
+更新（2026-11-29 日本时间）：后台联合数据已完成，实际 234 fit / 47 tune（2 / 1 个核查 pair）；WP3 和 W4-0 终局 CPU 评分均完成。完整结果与训练申请保留意见见 [A_W40_RESULTS_20261129_ZH.md](A_W40_RESULTS_20261129_ZH.md)。下文的启动/等待状态保留为当时执行记录。
+
 本次是研究者对 v1.1 的实施修订，不改 NAA 名称、三个 RQ 或完整陪伴 Agent 目标。独立工作树 `Metacom5_3-naa-response-data` / `work/naa-response-data-20261128` 从 B `5c332bec` 建立，已包含 A PR34；四份研究入口与权威 `65424fd8` 一致。没有重复合并 PR30/31、reset、force 或改动 B 正在使用的工作树。
 
 发现 B 更新 `7a13b96c` 后，另建 `Metacom5_3-naa-response-joint`，以普通 merge `7acfcf50` 安全集成；原 A `63a8c8e0` 工作树继续服务已启动的 CPU 作业。PR35 包含这一合并。B 的冻结 W3 执行树 `9a08ee03` 未改动。以下以 `joint_release/` 为当前接线候选，`release/` 的早期 objective/预算仅作为保留的过渡资产，不能直接用于训练申请。

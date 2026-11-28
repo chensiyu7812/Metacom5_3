@@ -223,12 +223,15 @@ def cmd_manifest_w40(a):
 
 # ---------------------------------------------------------------- W4-E: adapted generators on the W4-0 inputs
 ADAPTED_INPUTS = {'U0': ''}  # fixed researcher scope: same evidence U2/U3, no automatic arm expansion
+ADAPTED_DIAGNOSTICS = {'NoMem': ':NoMem', 'OptOnly': ':OptOnly'}
 
 
 def cmd_manifest_adapted(a):
     from metacom_pm.need_aware.runtime.authorization import MANIFEST_PROTOCOL, manifest_sha256
     from metacom_pm.need_aware.runtime.budget import default_caps
     from metacom_pm.need_aware.runtime.training import validate_reply_comparison
+    inputs=dict(ADAPTED_DIAGNOSTICS if getattr(a,'diagnostics_only',False) else ADAPTED_INPUTS)
+    # Separate candidate block: do not repeat the main 544 requests when running the 1088 diagnostics.
     base, rows = NA.load_full(a.base_manifest_dir)
     if base['model_order'] != ['Qwen35']:
         raise SystemExit('W4-E reuses a base-Qwen35 W4-0 manifest')
@@ -255,11 +258,11 @@ def cmd_manifest_adapted(a):
         bindings[lab] = bnd
         checkpoints[lab] = dict(base['checkpoints']['Qwen35'], adapter=dict(path=i['adapter_path'], sha256=i['adapter_sha256']))
         for r in rows:
-            if r['arm'] not in ADAPTED_INPUTS:
+            if r['arm'] not in inputs:
                 continue
             if r['status'] not in ('ready','capacity_exceeded'):
                 raise SystemExit('unexpected base status: predefined denominator must be preserved')
-            arm = i['method'] + ADAPTED_INPUTS[r['arm']]
+            arm = i['method'] + inputs[r['arm']]
             n = dict(r, arm=arm, model_label=lab, g_id=bnd['g_id'], logical_id=Q.logical_id(r['task_id'], arm, lab),
                      request_sha256=Q.physical_identity(bnd['g_id'], r['messages'], r['input_ids'], decode),
                      input_from=r['request_sha256'], trace=dict(r['trace'], generator_id=bnd['g_id'], condition=arm))
@@ -277,10 +280,11 @@ def cmd_manifest_adapted(a):
                 teardown_seconds=10)
     versions = dict(base['versions'], adapted_binding=M.ADAPTED_BINDING_VERSION)
     manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
-                    scope='NAA W4-E: U2/U3 adapted Qwen35 on the byte-identical W4-0 U0 inputs',
+                    scope='NAA W4-E: U2/U3 adapted Qwen35 on byte-identical W4-0 inputs: '+','.join(inputs),
                     base_manifest_sha256=manifest_sha256(base), model_order=sorted(bindings), bindings=bindings,
                     checkpoints=checkpoints, runtime=base['runtime'], versions=versions, counts=dedupe,
-                    adapter_identities={i['method']: i for i in idents},training_comparison=comparison)
+                    adapter_identities={i['method']: i for i in idents},training_comparison=comparison,
+                    diagnostic_inputs_explicitly_requested=getattr(a,'diagnostics_only',False))
     _write_manifest(out, out_rows, manifest, caps)
     print(json.dumps(dict(manifest_sha256=manifest_sha256(manifest), counts=dedupe, labels=sorted(bindings)), indent=2))
 
@@ -435,6 +439,8 @@ def main():
     d.add_argument('--base-manifest-dir', required=True); d.add_argument('--adapter-identity', action='append', required=True)
     d.add_argument('--manifest-dir', required=True); d.add_argument('--gpu-seconds', type=int, required=True)
     d.add_argument('--max-physical-calls', type=int, required=True)
+    d.add_argument('--diagnostics-only', action='store_true',
+                   help='separate NoMem/OptOnly candidate block without main requests; no GPU approval implied')
     d.add_argument('--inventory', default='/opt/tokkio-data0/naa/20261127/logs/native/model_inventory.json')
     o = s.add_parser('export-open')
     for x in ('--manifest-dir', '--run-root', '--out'):
