@@ -60,17 +60,18 @@ def test_u0_u2_u3_share_input_and_u1_adds_rules_only(setup):
     with pytest.raises(ValueError):
         B.build('U2', task, store, packed)                       # adapted generator identity required
     m1, t1 = B.build('U1', task, store, packed)
-    assert m1[0] == m0[0] and 'Memory-use policy' in m1[-1]['content'] and not t1['silence']
+    assert m1[0] == m0[0] and 'Memory-use policy' in m1[-1]['content'] and t1['withheld'] == 0
     assert m1[-1]['content'].endswith(task.user_query) and 'Please recall' not in m1[-1]['content']
 
 
-def test_u1_silence_rule_when_every_user_record_is_third_party(setup):
+def test_u1_never_withholds_third_party_evidence_silence_is_historical_only(setup):
     task, store = setup
     from dataclasses import replace
     units = [replace(u, third_party_mention=True) if u.is_current_user else u for u in store.units]
-    packed = R.Packed(units=tuple(units), priority_ids=(), skipped_over_budget=(), tokens=10)
-    block, trace = B.u1_view(list(packed.units), store)
-    assert trace['silence'] and B.SILENCE_NOTE in block and trace['shown_ids'] == []
+    block, trace = B.rule_view(units, query=task.user_query)
+    assert trace['withheld'] == 0 and trace['shown_ids'] == [u.unit_id for u in units] and B.SILENCE_NOTE not in block
+    old_block, old = B.reglos_silence_view(units, store)        # 2026-11-28: historical system-level reference
+    assert old['silence'] and old['same_evidence'] is False and B.SILENCE_NOTE in old_block
 
 
 def row(eid, group, owner='pm2:1', split='fit', behavior='USE', target='Sure, ramen it is.', opp=None, unique=False):
@@ -110,7 +111,7 @@ def test_lora_freezes_base_starts_at_identity_and_trains():
     ids = torch.tensor([[2, 11, 12, 13, 4, 3]])
     before = model(input_ids=ids).logits.detach().clone()
     base = {k: v.detach().clone() for k, v in model.state_dict().items()}
-    names = LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8)
+    names = LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8, seed=1)
     assert len(names) == 4 and all('.lora_' in n for n, _ in LORA.trainable(model))
     assert torch.allclose(model(input_ids=ids).logits, before)          # B=0: identical at start
     enc = encoded_pair()
@@ -127,7 +128,7 @@ def test_paired_mode_raises_margin_same_steps_and_merge_matches(tmp_path):
     cfg = dict(lr=5e-2, epochs=8, accumulation=2, seed=7, margin=2., lambda_pair=1.)
     runs = {}
     for mode in ('sft', 'paired'):
-        model = tiny_model(); LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8)
+        model = tiny_model(); LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8, seed=1)
         runs[mode] = (model, T.train(model, enc, dict(cfg, mode=mode), pad_token_id=0))
     assert runs['sft'][1]['steps'] == runs['paired'][1]['steps']          # matched optimizer steps
     assert runs['paired'][1]['tokens']['negative'] > 0 == runs['sft'][1]['tokens']['negative']
@@ -172,17 +173,20 @@ def test_native_encoder_anchors_on_inference_prompt_and_turn_end():
         T.native_encoder(nat, turn_end_id=ChatTok.EOT, context_limit=5)(msgs, 'ramen tonight')
 
 
-def test_u1_messages_applies_rules_to_prerendered_rows_and_policy_has_no_beneficiary_rule():
+def test_u1_messages_marks_without_withholding_and_u1_plus_adds_served_person_rule():
     sys_msg = dict(role='system', content='Return JSON with action and response.')
     req = dict(role='user', content='Please suggest a dinner place for tonight.')
     own = [sys_msg, dict(role='user', content='I love ramen with extra garlic.'), req]
     out, tr = B.u1_messages(own)
-    assert not tr['silence'] and out[1]['content'] == own[1]['content'] and out[-1] == req
+    assert tr['withheld'] == 0 and out[1]['content'] == own[1]['content'] and out[-1] == req
     assert out[0]['content'].startswith(sys_msg['content']) and B.U1_POLICY in out[0]['content']
     other = [sys_msg, dict(role='user', content='My friend said: I only eat vegan food.'), req]
     out, tr = B.u1_messages(other)
-    assert tr['silence'] and out[1]['content'] == B.SILENCE_NOTE and out[-1] == req
-    assert 'for that person' not in B.U1_POLICY                    # beneficiary handling is U3's hypothesis, not U1
+    assert tr['withheld'] == 0 and out[1]['content'].startswith(other[1]['content']) and out[-1] == req
+    assert 'mentions another person' in out[1]['content']
+    plus, tp = B.u1_messages(other, plus=True)
+    assert B.U1_PLUS_RULES in plus[0]['content'] and 'the user (it names no other person)' in plus[0]['content']
+    assert 'mentions my friend' in plus[1]['content'] and B.U1_PLUS_RULES not in B.U1_POLICY
 
 
 def test_microbatch_decomposition_equals_a_group_objective():
@@ -220,7 +224,7 @@ def test_train_v11_u2_u3_match_compute_and_u3_separates_actions():
     assert [r['group_id'] for r in enc] == [r['group_id'] for r in T.group_order(v11_rows(), 7)]
     res, models = {}, {}
     for method in ('U2', 'U3'):
-        model = tiny_model(); LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8)
+        model = tiny_model(); LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8, seed=1)
         for _ in range(4):
             r = T.train_v11(model, enc, dict(cfg, method=method))
         res[method], models[method] = r, model

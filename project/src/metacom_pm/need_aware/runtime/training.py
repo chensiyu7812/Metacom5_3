@@ -297,3 +297,226 @@ def train_v11(model, encoded, cfg, *, device='cpu', clock=time.monotonic, max_st
             stop = 'max_seconds'; break
     return dict(version=TRAINER_VERSION + '+a-v11-objective', method=cfg['method'], steps=step,
                 stop=stop or 'epoch_done', seconds=round(clock() - t0, 3), tokens=tokens, log=log)
+
+
+# ---------------------------------------------------------------- 2026-11-28: reply-level supervision (main WP4 path)
+# U2 = ordinary reply-level SFT on the official reply; U3 = the same SFT + a reply-level ranking term
+# (official reply vs official non-preferred replies under the SAME prompt). Both methods run the same
+# forward/backward branches (U2's ranking coefficient is 0), the same data order, seed, adapter init,
+# optimizer and step count. No USE/IGNORE/CLARIFY template, no state classifier.
+REPLY_SCHEMA = 'naa-wp4-reply-v1'
+REPLY_TRAINER_VERSION = 'naa-wp4-reply-trainer-v1'
+REPLY_REQUIRED = ('example_id', 'group_id', 'owner_id', 'split', 'messages', 'chosen', 'rejected', 'provenance')
+
+
+def validate_reply(rows, *, forbidden_owners=(), allow_plumbing=False):
+    """Structural/leakage contract of A's reply rows (labels/quality are A's audit). PLUMBING rows (placeholder
+    replies for length/encoding checks) are accepted only by CPU checks, never by training."""
+    seen, split_of_owner, forbidden = set(), {}, set(forbidden_owners)
+    for r in rows:
+        missing = [k for k in REPLY_REQUIRED if k not in r]
+        if missing:
+            raise ContractError(f"{r.get('example_id')}: missing {missing}")
+        if r['provenance'].get('plumbing') and not allow_plumbing:
+            raise ContractError(r['example_id'] + ': PLUMBING row is never supervision')
+        if r['example_id'] in seen:
+            raise ContractError('duplicate example_id ' + r['example_id'])
+        seen.add(r['example_id'])
+        if r['split'] not in ('fit', 'tune'):
+            raise ContractError(r['example_id'] + ': split must be fit|tune')
+        if r['owner_id'] in forbidden:
+            raise ContractError(r['example_id'] + ': owner belongs to a development/confirmation/test family')
+        if split_of_owner.setdefault(r['owner_id'], r['split']) != r['split']:
+            raise ContractError('owner ' + r['owner_id'] + ' appears in both fit and tune')
+        m = r['messages']
+        if not m or m[-1]['role'] != 'user' or any(x['role'] not in ('system', 'user', 'assistant') for x in m):
+            raise ContractError(r['example_id'] + ': prompt must end with the user turn')
+        if any('Final Answer:' in x['content'] for x in m):
+            raise ContractError(r['example_id'] + ': MCQ answer instruction inside a reply-training prompt')
+        reps = [r['chosen'], *r['rejected']]
+        if not all(isinstance(x, str) and x.strip() for x in reps) or len(set(reps)) != len(reps):
+            raise ContractError(r['example_id'] + ': empty or repeated reply')
+    ranked = sum(bool(r['rejected']) for r in rows)
+    return dict(schema=REPLY_SCHEMA, examples=len(rows), owners=len(split_of_owner),
+                groups=len({r['group_id'] for r in rows}), split=dict(Counter(r['split'] for r in rows)),
+                with_rejected=ranked, rejected_per_row=dict(Counter(len(r['rejected']) for r in rows)),
+                rows_sha256=digest(rows))
+
+
+def encode_reply(rows, encode_one, *, eos_ids, turn_end_id):
+    """Encode every reply on the exact inference prompt; returns (encoded, alignment receipt)."""
+    out, prompts = [], Counter()
+    for r in rows:
+        ch = encode_one(r['messages'], r['chosen'])
+        rj = [encode_one(r['messages'], x) for x in r['rejected']]
+        for e in (ch, *rj):
+            if e.input_ids[-1] != turn_end_id or e.input_ids[:e.prompt_tokens] != ch.input_ids[:ch.prompt_tokens]:
+                raise ContractError(r['example_id'] + ': prompt/turn-end differs between replies')
+        prompts[ch.prompt_tokens] += 1
+        out.append(dict(example_id=r['example_id'], chosen=ch, rejected=rj))
+    if turn_end_id not in eos_ids:
+        raise ContractError('training turn end is not an inference stop token')
+    lens = sorted(len(e['chosen'].input_ids) for e in out)
+    return out, dict(prompt_equals_inference_chat_ids=True, ends_with_turn_end=turn_end_id, turn_end_in_decode_eos=True,
+                     rows=len(out), chosen_len_p50=lens[len(lens) // 2] if lens else None, chosen_len_max=lens[-1] if lens else None,
+                     branch_tokens=sum(len(e['chosen'].input_ids) + sum(len(x.input_ids) for x in e['rejected']) for e in out))
+
+
+def _reply_logp(model, enc, device):
+    """(nll_sum, mean token log-prob) of one reply under its prompt, logits for the reply positions only."""
+    import torch
+    ids = torch.tensor([list(enc.input_ids)], device=device)
+    n = enc.target_tokens
+    lg = _tail_logits(model, ids, n + 1)[:, :-1].float()
+    tgt = ids[:, -n:]
+    lp = torch.log_softmax(lg, -1).gather(-1, tgt.unsqueeze(-1)).squeeze(-1)
+    return -lp.sum(), lp.mean()
+
+
+def reply_loss(sft, lp_chosen, lp_rejected, *, method, weight, margin):
+    """U2: sft (+ 0 x ranking); U3: sft + weight * mean_j softplus(margin - (lp_c - lp_j)). Mean token log-probs."""
+    import torch
+    import torch.nn.functional as F
+    if not lp_rejected:
+        return sft
+    rank = torch.stack([F.softplus(margin - (lp_chosen - x)) for x in lp_rejected]).mean()
+    return sft + (0. if method == 'U2' else weight) * rank
+
+
+class TrainStop(RuntimeError):
+    def __init__(self, reason):
+        super().__init__(reason); self.reason = reason
+
+
+class TrainGuard:
+    """Hard bound for one training process. check() runs before EVERY branch forward (not only at the end
+    of an optimizer step); the watchdog kills the process at the hard deadline even if a call hangs.
+    Times are on the monotonic clock from the moment the exclusive GPU lock was taken."""
+
+    def __init__(self, *, started, max_seconds, save_reserve, close_reserve, storage=None, device=None,
+                 guard_every=25, clock=time.monotonic, on_kill=None, watchdog=True):
+        self.clock, self.started = clock, started
+        self.hard = started + max_seconds - close_reserve           # process must be gone after this
+        self.train_end = self.hard - save_reserve                   # last moment a new forward may start
+        self.storage, self.device, self.every, self.calls = storage, device, guard_every, 0
+        self.on_kill = on_kill
+        if watchdog:
+            import threading
+            self._t = threading.Thread(target=self._watch, daemon=True); self._t.start()
+
+    def _watch(self):
+        import os
+        import signal
+        while True:
+            left = self.hard - self.clock()
+            if left <= 0:
+                if self.on_kill:
+                    try:
+                        self.on_kill()
+                    finally:
+                        os.kill(os.getpid(), signal.SIGKILL)
+                os.kill(os.getpid(), signal.SIGKILL)
+            time.sleep(min(1., max(left, 0.01)))
+
+    def elapsed(self):
+        return self.clock() - self.started
+
+    def left(self):
+        return self.train_end - self.clock()
+
+    def check(self):
+        self.calls += 1
+        if self.clock() >= self.train_end:
+            raise TrainStop('hard deadline (save/close reserve)')
+        if self.calls % self.every == 0:
+            if self.storage:
+                self.storage()
+            if self.device:
+                self.device()
+
+
+SMOKE_STEPS = 20
+
+
+def evaluate_smoke(log, *, planned_steps, guard, peak_bytes=None, peak_cap_bytes=46 * 2 ** 30, base_grads=0):
+    """Technical only: finite losses and grad norms, adapter-only gradients, memory and projected time.
+    Never looks at development accuracy or task outputs."""
+    import math as _m
+    w = log[:SMOKE_STEPS]
+    sec = [x['seconds'] for x in w]
+    per = sorted(sec)[len(sec) // 2] if sec else None
+    projected = guard.elapsed() + per * (planned_steps - len(w)) if per is not None else None
+    checks = dict(steps=len(w) == SMOKE_STEPS, finite_loss=all(_m.isfinite(x['loss']) for x in w),
+                  finite_grad=all(_m.isfinite(x['grad_norm']) for x in w), nonzero_grad=all(x['grad_norm'] > 0 for x in w),
+                  adapter_only=base_grads == 0,
+                  memory=peak_bytes is None or peak_bytes <= peak_cap_bytes,
+                  time=projected is not None and guard.started + projected <= guard.train_end)
+    return dict(passed=all(checks.values()), checks=checks, step_seconds_p50=per, projected_total_seconds=projected,
+                peak_reserved_bytes=peak_bytes, scope='technical smoke: run/memory/gradients/finite/speed/budget only')
+
+
+def train_reply(model, encoded, cfg, *, guard, device='cpu', clock=time.monotonic, max_steps, log_path=None,
+                peak=lambda: None, smoke_steps=SMOKE_STEPS):
+    """cfg: method U2|U3, learning_rate, weight_decay, warmup_steps, gradient_accumulation, rank_weight,
+    rank_margin, seed. Data order is the caller's (identical for U2/U3). Returns the receipt; raises nothing on
+    a typed stop (deadline / smoke failure / max_steps): the caller saves what was trained and records why."""
+    import json as _json
+    import torch
+    from . import lora as LORA
+    if cfg['method'] not in ('U2', 'U3'):
+        raise ValueError('method must be U2 or U3')
+    torch.manual_seed(cfg['seed'])
+    named = LORA.trainable(model)
+    params = [p for _, p in named]
+    if not params or any('.lora_' not in n for n, _ in named):
+        raise ValueError('only adapter parameters may be trainable')
+    opt = torch.optim.AdamW(params, lr=cfg['learning_rate'], betas=(.9, .999), eps=1e-8, weight_decay=cfg['weight_decay'])
+    acc, step, log, stop, smoke = cfg['gradient_accumulation'], 0, [], None, None
+    tokens = dict(processed=0, chosen_target=0)
+    sink = open(log_path, 'a') if log_path else None
+    model.train()
+    try:
+        for g in range(0, len(encoded), acc):
+            if step >= max_steps:
+                stop = 'max_steps'; break
+            s0 = clock()
+            group = encoded[g:g + acc]
+            denom = sum(e['chosen'].target_tokens for e in group)
+            for pg in opt.param_groups:
+                pg['lr'] = cfg['learning_rate'] * min(1., (step + 1) / max(1, cfg['warmup_steps']))
+            opt.zero_grad(set_to_none=True)
+            total = 0.
+            for e in group:
+                guard.check()
+                nll, lp_c = _reply_logp(model, e['chosen'], device)
+                lps = []
+                for x in e['rejected']:
+                    guard.check()
+                    lps.append(_reply_logp(model, x, device)[1])
+                loss = reply_loss(nll / denom, lp_c, lps, method=cfg['method'], weight=cfg['rank_weight'] / len(group),
+                                  margin=cfg['rank_margin'])
+                loss.backward()
+                total += float(loss)
+                tokens['processed'] += len(e['chosen'].input_ids) + sum(len(x.input_ids) for x in e['rejected'])
+                tokens['chosen_target'] += e['chosen'].target_tokens
+            gn = float(torch.nn.utils.clip_grad_norm_(params, 1.0))
+            opt.step()
+            step += 1
+            entry = dict(step=step, loss=total, grad_norm=gn, lr=opt.param_groups[0]['lr'], seconds=clock() - s0,
+                         elapsed=guard.elapsed())
+            log.append(entry)
+            if sink:
+                sink.write(_json.dumps(entry) + '\n'); sink.flush()
+            if step == smoke_steps and smoke is None:
+                base_grads = sum(p.grad is not None for n, p in model.named_parameters() if '.lora_' not in n)
+                smoke = evaluate_smoke(log, planned_steps=min(max_steps, -(-len(encoded) // acc)), guard=guard,
+                                       peak_bytes=peak(), base_grads=base_grads)
+                if not smoke['passed']:
+                    stop = 'technical smoke failed'; break
+    except TrainStop as exc:
+        stop = exc.reason
+    finally:
+        if sink:
+            sink.close()
+    return dict(version=REPLY_TRAINER_VERSION, method=cfg['method'], steps=step, stop=stop or 'epoch_done',
+                seconds=round(guard.elapsed(), 3), tokens=tokens, smoke=smoke, log=log, cfg=cfg)

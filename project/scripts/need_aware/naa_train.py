@@ -11,6 +11,11 @@
               chat_ids, end token == native turn end, real LoRA coverage of A's target modules, memory and
               an upper-bound time from measured short-input forward latency (WP2 ledger).
   train-v11   A rows + A objective (U2/U3) on GPU; refuses without a bound approval before device access.
+  check-reply  2026-11-28 main path: A's reply rows (official reply + non-preferred replies) -> contract,
+              exact inference prompt ids + native turn end, compute-parity token totals, time/memory bound.
+  train-reply  U2 (reply SFT) / U3 (SFT + reply ranking) on GPU: approval bound to HEAD/data/candidate/caps,
+              exclusive GPU lock, TrainGuard hard deadline + watchdog, seed-fixed adapter init (hash
+              recorded), 20-step technical smoke, adapter identity for the generator binding.
   train       refuses without a `naa-wp4-train-approval-v1` file bound to data, config, model,
               clean HEAD and caps -- before any device access.
 """
@@ -30,7 +35,7 @@ import naa_agent as NA  # noqa: E402
 
 from metacom_pm.need_aware.agent import arms as WP2  # noqa: E402
 from metacom_pm.need_aware.agent import behavior as B  # noqa: E402
-from metacom_pm.need_aware.data.contracts import RuntimeTask, digest  # noqa: E402
+from metacom_pm.need_aware.data.contracts import RuntimeTask, digest, load_runtime  # noqa: E402
 from metacom_pm.need_aware.memory import reader as R  # noqa: E402
 from metacom_pm.need_aware.memory.writer import StoreCache  # noqa: E402
 from metacom_pm.need_aware.runtime import lora as LORA  # noqa: E402
@@ -42,6 +47,8 @@ SUFFIX_SETS = {'attn_qv': ('q_proj', 'v_proj'), 'attn_qkvo': ('q_proj', 'k_proj'
                # Qwen3.5: 24 of 32 layers are linear attention (in_proj_qkv/z/a/b, out_proj); q/v exist on 8 only
                'qv_all_layers': ('q_proj', 'v_proj', 'in_proj_qkv')}
 APPROVAL_PROTOCOL = 'naa-wp4-train-approval-v1'
+REPLY_APPROVAL_PROTOCOL = 'naa-wp4-reply-train-approval-v1'
+TRAIN_LOCK = '/opt/tokkio-data0/tokkio_projects/pmrl1-validation/limited-g0e-exclusive.lock'   # same lock as inference
 WP2_LEDGER = '/opt/tokkio-data0/naa/20261127/agent_b/runs/wp2-exec-v2-model/model/LEDGER.001.jsonl'
 
 
@@ -199,7 +206,7 @@ def cmd_train(a):
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
     model.enable_input_require_grads()
     names = LORA.apply(model, suffixes=SUFFIX_SETS[cfg['suffix_set']], r=cfg['r'], alpha=cfg['alpha'],
-                       dropout=cfg.get('dropout', 0.))
+                       dropout=cfg.get('dropout', 0.), seed=cfg['seed'])
     rows = [json.loads(l) for l in open(a.train) if l.strip()]
     forbidden = set(Path(a.forbidden_owners).read_text().split()) if a.forbidden_owners else set()
     contract, pairs = T.validate(rows, forbidden_owners=forbidden)
@@ -331,8 +338,7 @@ def cmd_train_v11(a):
     model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
     model.enable_input_require_grads()
     lc = cand['lora']
-    names = LORA.apply(model, suffixes=tuple(ap.get('target_modules', lc['target_modules'])), r=lc['rank'],
-                       alpha=lc['alpha'], dropout=lc['dropout'])
+    names = LORA.apply(model, **LORA.WP4_LORA, seed=cand['seed'])    # frozen 2026-11-28; no approval override
     cfg = dict(method=a.method, learning_rate=cand['learning_rate'], weight_decay=cand['weight_decay'],
                warmup_steps=cand['warmup_steps'], gradient_accumulation=cand['gradient_accumulation'],
                pair_weight=cand['pair_weight'], pair_margin=cand['pair_margin'], seed=cand['seed'])
@@ -340,14 +346,152 @@ def cmd_train_v11(a):
     receipt = T.train_v11(model, enc, cfg, device='cuda:0', max_steps=ap['max_steps'],
                           max_seconds=ap['max_gpu_seconds'] - reserve - (time.monotonic() - t0))
     s0 = time.monotonic()
-    meta = LORA.save(out / 'adapter', model, dict(suffixes=list(ap.get('target_modules', lc['target_modules'])),
-                                                  r=lc['rank'], alpha=lc['alpha']))
+    meta = LORA.save(out / 'adapter', model, dict(suffixes=list(LORA.WP4_LORA['suffixes']), r=LORA.WP4_LORA['r'],
+                                                  alpha=LORA.WP4_LORA['alpha']))
     NA.jdump(out / 'TRAIN_RECEIPT.json', dict(
         method=a.method, candidate_sha256=NA.file_sha(a.candidate), approval_sha256=NA.file_sha(a.approval),
         base=dict(path=b.path, revision=b.revision), lora_modules=len(names), adapter=meta, trainer=receipt,
         load_s=round(load_s, 1), save_s=round(time.monotonic() - s0, 1),
         peak_reserved_bytes=torch.cuda.max_memory_reserved(), gpu_wall_seconds=round(time.monotonic() - t0, 1),
         executor_checkout_head=head))
+
+
+# ---------------------------------------------------------------- 2026-11-28 reply-level supervision
+def reply_rows(path, store_root=None, budget=None):
+    """A's reply rows. Rows without `messages` are rendered here with the U0 renderer from B's stores
+    (task + evidence_ids), the same renderer as evaluation minus the MCQ instruction."""
+    rows = [json.loads(l) for l in open(path) if l.strip()]
+    if all('messages' in r for r in rows):
+        return rows, 'A pre-rendered'
+    cache = StoreCache(Path(store_root) / 'stores')
+    smap = {json.loads(x)['task_id']: json.loads(x)['store_id'] for x in NA.store_map(store_root).read_text().splitlines()}
+    for r in rows:
+        if 'messages' in r:
+            continue
+        task = RuntimeTask(**r['task']); store = cache.get(smap[task.task_id]); by = store.by_id()
+        units = sorted((by[x] for x in r['evidence_ids']), key=lambda u: u.order)
+        packed = R.Packed(units=tuple(units), priority_ids=tuple(r['evidence_ids']), skipped_over_budget=(), tokens=0)
+        r['messages'] = B.build('U0', task, store, packed, recall_suffix=True)[0]
+    return rows, 'B U0 renderer'
+
+
+def reply_bound(enc, short_forward_s, prefill_tok_s, *, factor=4.):
+    """Upper bound seconds for one epoch: every branch costs factor x max(short-forward latency, tokens/prefill)."""
+    per = lambda n: factor * max(short_forward_s, n / prefill_tok_s)
+    return sum(per(len(e['chosen'].input_ids)) + sum(per(len(x.input_ids)) for x in e['rejected']) for e in enc)
+
+
+def cmd_check_reply(a):
+    cand = json.loads(Path(a.candidate).read_text())
+    rows, how = reply_rows(cand['train_file'], a.store_root)
+    forbidden = set(Path(a.forbidden_owners).read_text().split()) if a.forbidden_owners else set()
+    contract = T.validate_reply(rows, forbidden_owners=forbidden, allow_plumbing=True)
+    contract['plumbing_rows'] = sum(bool(r['provenance'].get('plumbing')) for r in rows)
+    b = M.bind_inventory(M.MODELS['Qwen35'], a.inventory); native = M.NativeTokenizer(b)
+    fit = [r for r in T.group_order(rows, cand['seed']) if r['split'] == 'fit']
+    enc, align = T.encode_reply(fit, T.native_encoder(native, T.TURN_END['Qwen35'], M.COMMON_INPUT_CAP),
+                                eos_ids=b.decode()['eos_token_id'], turn_end_id=T.TURN_END['Qwen35'])
+    sf, pf = measured_short_forward(), measured_prefill()['Qwen35']
+    steps = min(cand['max_optimizer_steps'], -(-len(enc) // cand['gradient_accumulation']))
+    epoch_s = reply_bound(enc, sf['p50'], pf)
+    out = dict(schema=T.REPLY_SCHEMA, candidate_sha256=NA.file_sha(a.candidate), render=how, contract=contract,
+               alignment=align, lora=dict(LORA.WP4_LORA, suffixes=list(LORA.WP4_LORA['suffixes'])), steps=steps,
+               compute_parity='U2 and U3 run every chosen and rejected branch; U2 ranking coefficient 0',
+               time_bound=dict(per_method_train_s=round(epoch_s), basis=f"4 x max({sf['p50']} s short forward, tokens/{pf} tok/s)",
+                               smoke_steps=T.SMOKE_STEPS, load_s=38, save_close_reserve_s=130),
+               base_g_id=b.g_id, executor_checkout_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip())
+    NA.jdump(Path(a.out), out)
+    print(json.dumps({k: out[k] for k in ('render', 'alignment', 'steps', 'time_bound')}, indent=2))
+
+
+def cmd_plumbing_reply(a):
+    """PLUMBING reply rows from a W4-0 manifest's U0 rows: real task, real delivered evidence, option texts as
+    placeholder replies (no gold is read; option A is NOT the answer). For lengths/encoding only; training refuses them."""
+    _, rows = NA.load_full(a.manifest_dir)
+    tasks = {t.task_id: t for t in load_runtime(Path(a.tasks))}
+    out = []
+    for r in rows:
+        if r['arm'] != 'U0' or r['status'] != 'ready':
+            continue
+        t = tasks[r['task_id']]
+        out.append(dict(example_id='plumb:' + t.task_id, group_id='plumb:' + t.task_id, owner_id=t.persona_group,
+                        split='fit', task=t.to_dict(), evidence_ids=r['trace']['delivered_ids'],
+                        chosen=t.options[0]['text'], rejected=[o['text'] for o in t.options[1:]],
+                        provenance=dict(plumbing=True, note='placeholder replies; not supervision')))
+    NA.jsonl(Path(a.out), out)
+    print(len(out), 'PLUMBING reply rows')
+
+
+def cmd_train_reply(a):
+    """Bounded U2/U3 reply training. Every admission check happens before any lock or device access."""
+    import fcntl
+    if not a.approval or not Path(a.approval).is_file():
+        raise SystemExit('no WP4 reply-training approval file: training refused (CPU preparation only)')
+    ap = json.loads(Path(a.approval).read_text()); cand = json.loads(Path(a.candidate).read_text())
+    head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    dirty = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], text=True)
+    train_sha = NA.file_sha(cand['train_file'])
+    checks = dict(protocol=ap.get('protocol') == REPLY_APPROVAL_PROTOCOL, authorized=ap.get('authorized') is True,
+                  head=ap.get('executor_checkout_head') == head, clean=not dirty, method=ap.get('method') == a.method,
+                  candidate=ap.get('candidate_sha256') == NA.file_sha(a.candidate),
+                  data=train_sha == cand['train_sha256'] == ap.get('train_sha256'),
+                  steps=isinstance(ap.get('max_steps'), int) and 0 < ap['max_steps'] <= cand['max_optimizer_steps'],
+                  seconds=isinstance(ap.get('max_gpu_seconds'), (int, float)) and ap['max_gpu_seconds'] > 0,
+                  lora=ap.get('lora') == dict(LORA.WP4_LORA, suffixes=list(LORA.WP4_LORA['suffixes'])),
+                  evidence=bool(ap.get('researcher')) and bool(ap.get('decision_evidence')))
+    if not all(checks.values()):
+        raise SystemExit('WP4 reply-training approval does not bind this run: refused ' + json.dumps(checks))
+    out = Path(a.out)
+    if out.exists():
+        raise SystemExit('training output exists; no silent restart')
+    out.mkdir(parents=True)
+    b = M.bind_inventory(M.MODELS['Qwen35'], a.inventory); native = M.NativeTokenizer(b)
+    rows, how = reply_rows(cand['train_file'], a.store_root)
+    T.validate_reply(rows, forbidden_owners=set(Path(a.forbidden_owners).read_text().split()) if a.forbidden_owners else ())
+    ordered = T.group_order(rows, cand['seed'])                     # identical order for U2 and U3
+    enc, align = T.encode_reply([r for r in ordered if r['split'] == 'fit'],
+                                T.native_encoder(native, T.TURN_END['Qwen35'], M.COMMON_INPUT_CAP),
+                                eos_ids=b.decode()['eos_token_id'], turn_end_id=T.TURN_END['Qwen35'])
+    from metacom_pm.need_aware.runtime.backend import safe_device_guard, safe_storage_guard
+    safe_storage_guard(out)
+    lock = open(TRAIN_LOCK, 'a')
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)               # never queue behind / preempt another GPU job
+    t_lock = time.monotonic()
+    safe_device_guard(initial=True)
+    stamp = lambda name, **kw: NA.jdump(out / name, dict(utc=time.time(), elapsed=round(time.monotonic() - t_lock, 1), **kw))
+    guard = T.TrainGuard(started=t_lock, max_seconds=ap['max_gpu_seconds'], save_reserve=a.save_reserve,
+                         close_reserve=10., storage=lambda: safe_storage_guard(out), device=lambda: safe_device_guard(),
+                         on_kill=lambda: stamp('HARD_KILL.json', reason='hard deadline reached inside a call'))
+    import torch
+    from transformers import AutoModelForMultimodalLM
+    model = AutoModelForMultimodalLM.from_pretrained(b.path, local_files_only=True, dtype=torch.bfloat16,
+                                                     attn_implementation='sdpa').to('cuda:0')
+    load_s = time.monotonic() - t_lock
+    model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+    model.enable_input_require_grads()
+    names = LORA.apply(model, **LORA.WP4_LORA, seed=cand['seed'])   # seed fixed BEFORE adapter creation
+    init_sha = LORA.adapter_digest(model)
+    cfg = dict(method=a.method, learning_rate=cand['learning_rate'], weight_decay=cand['weight_decay'],
+               warmup_steps=cand['warmup_steps'], gradient_accumulation=cand['gradient_accumulation'],
+               rank_weight=cand['rank_weight'], rank_margin=cand['rank_margin'], seed=cand['seed'])
+    receipt = T.train_reply(model, enc, cfg, guard=guard, device='cuda:0', max_steps=ap['max_steps'],
+                            log_path=out / 'steps.jsonl', peak=torch.cuda.max_memory_reserved)
+    s0 = time.monotonic()
+    meta = LORA.save(out / 'adapter', model, dict(suffixes=list(LORA.WP4_LORA['suffixes']), r=LORA.WP4_LORA['r'],
+                                                  alpha=LORA.WP4_LORA['alpha'], seed=cand['seed']))
+    rec = dict(method=a.method, candidate_sha256=NA.file_sha(a.candidate), approval_sha256=NA.file_sha(a.approval),
+               train_data_sha256=train_sha, render=how, alignment=align, base_g_id=b.g_id,
+               base=dict(path=b.path, revision=b.revision), lora_modules=len(names), init_adapter_sha256=init_sha,
+               adapter=meta, adapter_config_sha256=digest(meta['config']), trainer=receipt,
+               load_s=round(load_s, 1), save_s=round(time.monotonic() - s0, 1),
+               peak_reserved_bytes=torch.cuda.max_memory_reserved(), gpu_wall_seconds=round(time.monotonic() - t_lock, 1),
+               executor_checkout_head=head)
+    NA.jdump(out / 'TRAIN_RECEIPT.json', rec)
+    NA.jdump(out / 'ADAPTER_IDENTITY.json', dict(
+        method=a.method, adapter_sha256=meta['adapter_sha256'], adapter_config_sha256=rec['adapter_config_sha256'],
+        init_adapter_sha256=init_sha, base_g_id=b.g_id, train_data_sha256=train_sha,
+        train_receipt_sha256=NA.file_sha(out / 'TRAIN_RECEIPT.json'), trainer_version=T.REPLY_TRAINER_VERSION,
+        adapter_path=str(out / 'adapter')))
 
 
 def main():
@@ -378,8 +522,18 @@ def main():
     for x in ('--candidate', '--method', '--out'):
         w.add_argument(x, required=True)
     w.add_argument('--approval'); w.add_argument('--inventory', default=inv)
+    cr = s.add_parser('check-reply'); cr.add_argument('--candidate', required=True); cr.add_argument('--out', required=True)
+    cr.add_argument('--store-root'); cr.add_argument('--forbidden-owners'); cr.add_argument('--inventory', default=inv)
+    pr = s.add_parser('plumbing-reply'); pr.add_argument('--manifest-dir', required=True)
+    pr.add_argument('--tasks', required=True); pr.add_argument('--out', required=True)
+    tr = s.add_parser('train-reply')
+    for x in ('--candidate', '--method', '--out'):
+        tr.add_argument(x, required=True)
+    tr.add_argument('--approval'); tr.add_argument('--store-root'); tr.add_argument('--forbidden-owners')
+    tr.add_argument('--save-reserve', type=float, default=120.); tr.add_argument('--inventory', default=inv)
     a = p.parse_args()
-    dict(**{'check-v11': cmd_check_v11, 'train-v11': cmd_train_v11}, inspect=cmd_inspect, **{'check-data': cmd_check_data}, estimate=cmd_estimate, train=cmd_train)[a.cmd](a)
+    dict(**{'check-reply': cmd_check_reply, 'train-reply': cmd_train_reply, 'plumbing-reply': cmd_plumbing_reply},
+         **{'check-v11': cmd_check_v11, 'train-v11': cmd_train_v11}, inspect=cmd_inspect, **{'check-data': cmd_check_data}, estimate=cmd_estimate, train=cmd_train)[a.cmd](a)
 
 
 if __name__ == '__main__':
