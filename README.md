@@ -1,3 +1,9 @@
+# Policy Manager / Need-Aware Agent — 当前研究入口（2026-11-28，v1.1）
+
+**研究名称与原三个RQ不变。** 本分支沿用NAA（Need-Aware Agent），服务长期陪伴数字人的用户理解、需求感知及自适应帮助。WP2真实开发实验已收口；下一步WP3复用GE2建立强原文供给基线，一次修复、不开展独立RAG优化课题；WP4核心是同证据下的目标条件化适用性与实际回复行为，允许经过数据支持的Generator适配。RS/Support Skills及长期状态维护等仍为总体系统资产。参见 [现行唯一主方案 v1.1](project/docs/need_aware_agent_20261127/MASTER_PLAN_ZH.md)、[本轮A/B实施任务](project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md)、[AGENTS.md](AGENTS.md)。WP2真实交付：[A PR30](https://github.com/chensiyu7812/Metacom5_3/pull/30)、[B PR31](https://github.com/chensiyu7812/Metacom5_3/pull/31)，尚待实施人员安全集成，不自动合并。新GPU、训练、付费及正式测试未授权。以下历史入口及结论原样保留，只用于历史复现，非当前执行顺序。
+
+---
+
 # Policy Manager — PM-RL1 仓库审阅入口
 
 更新：2026-11-16（Asia/Tokyo）。本次同步用于让网页版审阅本地项目的代码、研究方案和原始证据。同步范围、文件缺口及核验结果见[仓库同步说明](project/docs/REPOSITORY_SYNC_20261116_ZH.md)，逐文件清单见 [FILES.jsonl](project/docs/repository_sync_20261116/FILES.jsonl)。上传资料不代表采用新研究方案，也不产生新的实验结果。
