@@ -539,30 +539,64 @@ def cmd_export(a):
 
 
 def cmd_aggregate(a):
+    """Run statistics only (no accuracy: scoring is A's evaluation process)."""
     manifest, rows = load_full(a.manifest_dir)
     sub = 'plumbing' if a.plumbing else 'model'
     ledger = Ledger(Path(a.run_root) / sub, manifest_sha256=manifest_sha256(manifest))
     ev = ledger.events
-    res = [e for e in ev if e['event'] == 'ATTEMPT_RESULT']
-    by = defaultdict(list)
-    for e in res:
-        by[(e['model_label'], e['arm'])].append(e)
-    lat = {}
-    for k, v in sorted(by.items()):
-        g = [x['generation_ns'] / 1e9 for x in v if x.get('generation_ns') is not None]
-        f = [x['first_token_latency_ns'] / 1e9 for x in v if x.get('first_token_latency_ns') is not None]
-        lat[f'{k[0]}|{k[1]}'] = dict(n=len(v), output_tokens_median=pct([x['output_tokens'] for x in v], .5),
-                                     generation_s_p50=pct(g, .5), generation_s_p95=pct(g, .95),
-                                     first_token_s_p50=pct(f, .5) if f else 'unknown',
-                                     first_token_s_p95=pct(f, .95) if f else 'unknown',
-                                     length_stops=sum(x['finish_reason'] == 'length' for x in v))
-    summary = dict(result_kind=sub, events=dict(Counter(e['event'] for e in ev)), physical_calls=ledger.physical_calls(),
-                   gpu_seconds=ledger.gpu_seconds(), model_loads=dict(ledger.model_loads()),
-                   completed_unique=len(ledger.completed()), latency=lat,
+    done = ledger.completed()
+    failed = defaultdict(list)
+    for e in ev:
+        if e['event'] in ('ATTEMPT_FAILED', 'ATTEMPT_INVALID'):
+            failed[e['request_sha256']].append(e.get('error'))
+    exhausted = {e['logical_id'] for e in ev if e['event'] == 'EXHAUSTED'}
+    tried = ledger.attempts()
+    q = lambda v, x: round(pct(v, x), 3) if v else None
+    by = {}
+    for (m, arm) in sorted({(r['model_label'], r['arm']) for r in rows}):
+        rs = [r for r in rows if r['model_label'] == m and r['arm'] == arm]
+        ready = [r for r in rs if r['status'] == 'ready']
+        res = [done[r['request_sha256']] for r in ready if r['request_sha256'] in done]
+        gen = [e['generation_ns'] / 1e9 for e in res if e.get('generation_ns')]
+        ttf = [e['first_token_latency_ns'] / 1e9 for e in res if e.get('first_token_latency_ns')]
+        out = [e['output_tokens'] for e in res]; inp = [e['input_tokens'] for e in res]
+        tps = [e['output_tokens'] / (e['generation_ns'] / 1e9) for e in res if e.get('generation_ns')]
+        by[f'{m}|{arm}'] = dict(
+            logical=len(rs), not_evaluable=len(rs) - len(ready), runnable=len(ready), completed=len(res),
+            failed_attempts=sum(len(failed[r['request_sha256']]) for r in ready),
+            retried=sum(tried[r['request_sha256']] > 1 for r in ready),
+            exhausted=sum(r['logical_id'] in exhausted for r in ready),
+            pending=sum(r['request_sha256'] not in done and r['logical_id'] not in exhausted for r in ready),
+            length_stops=sum(e['finish_reason'] == 'length' for e in res),
+            input_tokens=dict(p50=q(inp, .5), p95=q(inp, .95), max=max(inp) if inp else None),
+            output_tokens=dict(p50=q(out, .5), p95=q(out, .95), max=max(out) if out else None, total=sum(out)),
+            generation_s=dict(p50=q(gen, .5), p95=q(gen, .95), total=round(sum(gen), 1)),
+            first_token_s=dict(p50=q(ttf, .5), p95=q(ttf, .95)) if ttf else 'unknown',
+            output_tokens_per_s_p50=q(tps, .5))
+    per_model = {}
+    for m in manifest['model_order']:
+        loads = [e for e in ev if e['event'] == 'LOAD_OK' and e['model_label'] == m]
+        res = [e for e in ev if e['event'] == 'ATTEMPT_RESULT' and e['model_label'] == m]
+        gen = sum(e['generation_ns'] for e in res if e.get('generation_ns')) / 1e9
+        per_model[m] = dict(gpu_seconds=round(ledger.gpu_seconds(m), 1), loads=len(loads),
+                            load_s=[round(e['measurement'].get('load_ns', 0) / 1e9, 1) for e in loads],
+                            peak_reserved_GB=[round(e['measurement'].get('peak_reserved_bytes', 0) / 1e9, 2) for e in loads],
+                            completed=len(res), generation_s_total=round(gen, 1),
+                            output_tokens_total=sum(e['output_tokens'] for e in res),
+                            output_tokens_per_generation_s=round(sum(e['output_tokens'] for e in res) / gen, 2) if gen else None,
+                            smoke=[{k: v for k, v in e.items() if k not in ('event_sha256', 'previous_event_sha256', 'manifest_sha256', 'version')}
+                                   for e in ev if e['event'] in ('SMOKE_PASSED', 'SMOKE_FAILED') and e['model_label'] == m],
+                            stops=[e.get('reason') for e in ev if e['event'] == 'MODEL_STOP' and e['model_label'] == m])
+    summary = dict(result_kind=sub, manifest_sha256=manifest_sha256(manifest), events=dict(Counter(e['event'] for e in ev)),
+                   physical_calls=ledger.physical_calls(), gpu_seconds_total=round(ledger.gpu_seconds(), 1),
+                   completed_unique=len(done), per_model=per_model, by_model_arm=by,
+                   global_stops=[{k: e.get(k) for k in ('scope', 'reason', 'model_label')} for e in ev if e['event'] == 'GLOBAL_STOP'],
                    failures=[dict(event=e['event'], logical_id=e.get('logical_id'), error=e.get('error')) for e in ev
-                             if e['event'] in ('ATTEMPT_FAILED', 'ATTEMPT_INVALID', 'LOAD_FAILED', 'STOP')])
+                             if e['event'] in ('ATTEMPT_FAILED', 'ATTEMPT_INVALID', 'LOAD_FAILED', 'EXHAUSTED', 'MODEL_STOP', 'GLOBAL_STOP')],
+                   timing_scope='worker-side monotonic generation time and internal first-generated-token observation; '
+                                'NOT Tokkio client end-to-end response time')
     jdump(Path(a.run_root) / sub / 'AGGREGATE.json', summary)
-    print(json.dumps({k: summary[k] for k in ('events', 'physical_calls', 'completed_unique', 'gpu_seconds')}, indent=2))
+    print(json.dumps({k: summary[k] for k in ('events', 'physical_calls', 'completed_unique', 'gpu_seconds_total')}, indent=2))
 
 
 def main():
