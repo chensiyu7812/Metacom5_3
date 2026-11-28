@@ -1,51 +1,29 @@
-# 第一轮工作指令（A = Codex；B = Claude Code）
+# NAA v1.1：WP3 / WP4 两线实施任务（2026-11-28）
 
-本文件配套 [MASTER_PLAN_ZH.md](MASTER_PLAN_ZH.md)，是 2026-11-27 研究者已同意方向的**执行任务**。两线从本提交创建独立工作分支/独立 worktree，不在旧脏工作树或主分支写入，不修改旧 frozen 实验。先读取根 AGENTS.md 的新作用域与本主方案；旧 PR #28 及旧 G6 分支保持原身份。新任务不是创建 G7 或再写资格报告。CPU 开发与公开许可数据准备立即推进；GPU、训练、付费API、正式测试开封仍待一次明确预算确认。不得假称获得许可，旧批准不移植。
+唯一现行方案：[MASTER_PLAN_ZH.md](MASTER_PLAN_ZH.md)。旧第一轮工作指令[固定原文](https://github.com/chensiyu7812/Metacom5_3/blob/222a184da24b4397c5024978e4c236847f266046/project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md)与WP2历史身份保留。本轮目的不是再写方案或改名：**在已有系统上实现一次强证据供给修复，同时形成真正可学习的用户理解/需求适用性能力，并尽早验证真实开放回复。** 新GPU、训练、付费、正式测试未授权，CPU开发、合法材料处理与运行准备可直接推进。
 
-## 长时间任务的监控纪律（2026-11-28，研究者明确要求）
+## 共同起点、分工及实施纪律
 
-- 预计以小时计的实验，AI 工作线默认每小时最多主动检查一次；无变化不重复汇报。禁止按分钟调用 AI、反复读相同日志或持续占用交互会话等待。
-- B 负责一次启动、独立运行器、自动安全监控及终局封存；A 不重复监控 GPU。A 可预置纯 CPU 确定性完成检测和封存后的自动评价，不为此持续调用模型。
-- 本地程序的预算、设备安全、失败检测、断点恢复和日志机制继续正常工作，不受 AI 检查频率限制。真正完成、异常、安全风险或需要研究者决定时，如有现成事件机制则及时交接；否则下次例行检查处理。
-- 启动并确认可独立运行后即结束当前 AI 交互任务，交还研究者控制权。不得用不断 sleep/轮询的 AI 循环模拟后台任务。正在运行的冻结实验不因本条而重启或更改执行身份。
+1. 以当前研究分支的v1.1提交为权威，核验A PR30 eb33d363、B PR31 e05ecb0e及实际本地worktree；建立共享集成起点（新branch/worktree），安全合入两线最终结果和文档。不得force/reset、覆盖本地未提交成果或合并旧实验/main。以实际合入SHA为下一轮两线起点；A/B分头分支提交，B协调集成，A审查数据/评分接口。不要重复修已修好的CI或再补历史文件，真实缺依赖才修。保留公开/私有验收差别、历史锁与原授权。
+2. A负责need_aware/data、evaluation、数据脚本及训练标签/目标；B负责memory、agent、runtime、真实训练/推理后端和共享接线；共享schema一次确定。只在现有结构上薄改。私人原文/gold/权重/逐题输出不上公开GitHub。训练、开发、正式test隔离；运行只见合法信息与源坐标，MCQ选项仅终端reader合法可见，检索不见选项/gold，C定位只进诊断。安全拒绝优先于得分。
+3. 复用WP2实际执行器、官方评分、hash账本、预算及断点恢复；新manifest绑定模型、decode、数据、代码和成本。长任务B一次启动并放回控制，A纯CPU完成检测/封存评分。AI例行检查**每小时最多一次**，不持续占会话；程序自动安全监控、真实异常或完成事件不受AI轮询限制。所有实验失败保留，不按中间正确率改题或扩大预算。
 
-## 共用接口与交接
+## A / Codex：直接制作可训练数据与科学评价
 
-- A 拥有 project/src/metacom_pm/need_aware/data/ 与 evaluation/、相应脚本/测试；B 拥有 need_aware/memory/、agent/、runtime/ 与相应脚本/测试。建议命名可调整，职责边界不能混。共享的 runtime/eval schema 由 A 按主方案第4节实现；B 先按此契约做可接入组件，不等待 A 完成全量下载。若接口需改，A/B 在同一 PR 交接清单登记，而非各自产生不兼容 schema。
-- 共同数据格式 runtime JSONL / evaluation JSONL 两套物理文件，task_id 唯一、版本固定；history resolver 只接 runtime，gold 在 scorer。选项为已打乱的所有选项，不含正确标记；检索 query 不包含答案选项。source ids/hash、native token count、实际输入 trace、失败、time 必须可 join。训练与正式 test 的目录/读取权限分离。
-- 使用项目已有公开源码、私有数据路径由本机探测；不要向公开 GitHub 上传 RAW、源数据、金答案、私人日志、密钥、权重。只传代码、聚合统计、sha、路径角色与可复跑命令。
-- 本轮各自完成真实 CPU 端到端；不是 mock、空 manifest 或文字清单。每线只交一个汇总报告及可运行代码，避免新增十几个治理文档。遇普通技术问题直接修复；只有访问许可/硬件/付费/研究构念必须研究者决定。
+- 读取两线WP2聚合、实际本地数据和固定上游生成代码。一次收口：复算C/D事后路由及一组冻结可见线索规则（开发诊断，不训练旧路由）；审查37道who:others和预先固定40个C错题，可重叠并报分母；核查全合法历史与官方构造、充分/不足/歧义、归属/任务目标、遗忘/敏感/格式与有效错误。产出实际可用标注和源坐标，记录语义不确定性。不得把已暴露开发题/人工诊断用于训练。
+- 现有4,000训练候选177 owner，先做内部fit/tune及独立开发划分；建立真实来源支持的约1k–3k匹配配对组（按可用质量，不硬凑），包括同历史不同beneficiary/目标、合法更新/许可、需用/不需用/需澄清，适当利用第三方偏好也是正例。将自然与constructed单列，来源/主体/时间/允许与禁止/可接受替代/unknown可核查。交付实际本地训练JSONL、独立评估JSONL、数据生成/校验脚本、抽审材料及覆盖统计；Direct坐标不是真值，不标合法替代为负例，不造未来。允许并行合法PrefEval等补监督，不能把许可不明源硬接入。已备60开放任务保持独立。
+- 实际构造WP3新确认120–160个独立persona（同时排除300开发和177训练及历史家族重叠；保留WP4和test余量），预选旧开发60题做官方/短协议B0/C衔接，预选Gemma约60题关键条件复验；预先锁定样本和物理/逻辑分母，不看新模型答分选题。执行short-answer评分器与严格官方parser兼容，保留旧协议原结果，避免括号/过长生成，标签不可进运行输入。评分含完整配对、未完成/unknown、格式/内容分别、证据充分性、paired CI、拟定非劣/实际意义界限及其功效依据，不能靠边际准确率决定。
+- WP4并行：交付同一证据下不同当前需求的任务评估实物、可接受行为/约束及自然回复检查表；实现U0/U1/U2/U3可比较的样本与学习目标（普通SFT vs 同数据配对监督，明确相反行为才用判别loss），完成真实样本CPU batch及可运行训练配置/脚本或B可直接使用的接口，先不占GPU。提前固定普通SFT公平对照和主要paired success/正确使用/误用/任务完成/开放质量，准备独立双盲校准材料；不新开全能Judge资格赛。
+- 交付一个报告+实际代码/数据统计/commit；和B形成一次联合可执行申请。不是继续提交空计划，无法获得可信标签的部分记录缺口并实际完成其余部分。
 
-## A / Codex — 数据与能力、官方考卷、训练准备
+## B / Claude Code：一次强基线、运行准备和实际能力接线
 
-目标：解决过去任务、标签、独立用户和学习数据不足的问题。先实际得到可训练、可评价的新数据与可复跑 scorer，不要继续旧 Judge 或四头训练。
+- 负责共同集成起点。核对GE2的窗口/前后话轮、原文区间并集、去重、时间/角色、父会话读取与NAA已有all/user_only、BM25/dense/hybrid、expand_next、Writer/Reader/runtime。复用/薄适配到实际NAA合法历史，保留所有旧身份，不另造数据库、不重跑旧GE2/G6/RS资格。RS独立Support Skills的来源/方法/程序/进入退出条件保留，当前不退回案例RAG、不扩卡、不强加到PersonaMem。
+- 在现有实际链路实现B0/B1/B1s/E0/E0s/C/C+noise（主方案§4）。核实公开Raw-RAG具体窗口、重排、原始话轮扩展、成本；原生强基线和1.5k版分开。候选复现参数不等于本机已装模型；选择可用且许可明确的一种强重排器，固定revision与真实CPU性能。C+noise采用预先固定合法同owner/cutoff背景抽样，保留C原文、顺序/位置与全部必要记录，不用gold或生成效果筛选背景；不能生成假噪声。实际CPU计算训练/旧开发的参考覆盖、完整证据组、替代/未知、容量和在线成本；参数只在训练侧tune固定，新确认只一次。不要为了达到CPU召回门槛连续换模型/反复诊断。需要训练ranker时只准备一次有清楚排序缺口的适配，未获训练授权不训练。
+- WP3 GPU准备：采用A短答案协议、预选确认任务、Qwen为主、Gemma关键臂复验，旧60协议衔接；逐请求实际native tokens、源坐标、hash、全包预计物理/逻辑调用、每G/全局预算、技术烟测及关闭时间余量。含3bd31d6c/5482fff7等真实计时修复，实际磁盘核查（不删他人/历史材料）、数据盘cache与log路径。A/B完成联合manifest、CPU真实端到端和测试。前16次技术烟测含在正式有界批次；不得使用正确率选配置；不补跑170历史缺口。
+- WP4并行：提供U0/U1（已核实Reglos式规则）及普通SFT/配对监督G的可替换接口、相同合法证据与预算渲染、训练/验证/保存checkpoint及实际生成脚本。复用已有本机可运行训练栈和真实model inventory，完成CPU数据装载、batch/目标契约、可复跑训练命令/显存时间估算；A负责监督标签和评价，B负责真实训练后端与GPU管理。候选采用一次有界LoRA/SFT普通对照+配对监督，只有显式批准后执行；不同时开发四个同步LLM、不恢复在线INSPECT_CLAIM或PPO。不将D失败的同类prompt改写作为主方法。
+- 交付一个报告+实际代码、测试、真实CPU检索/packing统计、具体可跑命令、commit/PR。联合包中可预先列出WP4同证据开放开发基线（独立训练侧开发或合法已冻结开放任务、配额分列），不要等WP3所有优化后才设计核心方法。
 
-1. 核查 PersonaMem-v2 text 数据卡与官方 repo/commit，下载实际 train/val CSV 和所需32k histories（按许可、磁盘和 pin；增量按需取 history，勿下载全部 multimodal/128k）。确认 18,500 / 2,600 / 5,000 声明是否与下载 revision 一致；输出按 persona、history family、pref_type、who、updated、sensitive/forget 类别 census、交叉重叠、缺失/重复、history 解析率。不要输出原文到公开 repo。
-2. 读取真实 inference.py、prompts.py、inference_utils.py、官方训练 preprocessing；实现等价本地 MCQ 选项构造/打乱/解析 scorer，确认与上游正常/无效输出行为一致；测试使用已知选项的人工 fixture 和真实 val 的确定性 round-trip。**用真实数据实际跑 CPU 评测入口**：只可用已知答案的 scorer 自测或合成测试输出明确标作 plumbing，不称模型 accuracy。未得到模型结果就说没有模型结果。官方生成题面另建，不传 gold/options。
-3. 按主方案冻结240 val 真实任务（180代表性+60困难，按实际 strata 与 persona，尽量>=60独立 persona；不因结果筛选），记录抽样种子、原始分母、source hashes。对 related_snippet 在合法实际 history 匹配，输出 direct_evidence coverage/歧义，不从 raw persona/gold 编造。另准备60预先分组开放任务与 train 3k–5k 候选；不训练，不读 test 标签或用 test 选择。保持 fold6 原锁。
-4. 向 B 交付实际 runtime manifest、history resolver 和 EvalTask 接口；A 保管 eval sidecar，B 不读取它（C arm 仅由 A 产出已定位合法源坐标的独立 Direct 诊断 manifest，B 看证据而非答案，不能给其他 arms）。
-5. 核实 PrefEval/OP-Bench 官方许可、数据格式与评测入口，先完成至少 PrefEval 的真实 CPU loader 小规模读取/样本计数和接口兼容；正式接入训练/测试顺序不扩大。ENPMR 只做数据许可/时间边界核实，未解决就标 blocked，不阻塞主干。ES-MemEval、ESC-Eval 现有实现复用，历史正式评价不重开。
-6. 核实本机现有 G0e 及一个不同家族或能力参照模型实际路径、revision、license、native tokenizer 和 context limit（不加载GPU、不下载巨型模型未经预算）。跟 B 对齐 common cap；准备 official MCQ/开放 G 的消息和解码方案，输出 WP2 1,920 个终局逻辑请求与去重/预计物理调用上限。模型选择说明公平性；不要选弱模型自证效果。
-7. 准备**一份**面向 WP2 后的训练实施路径：如果证据利用瓶颈成立，按官方 train 组织 grounded SFT/LoRA 与候选拒用/变化对照，说明训练目标及 checkpoint/训练预算；不先训练。避免把官方 MCQ distractor 当真实人类偏好、把 gold 偏好直接注入 runtime。按实际数据支持，缺监督就定义可执行的人工/弱监督验证，不制造真值。
+## 联合交付/研究者唯一下一次资源决策
 
-验收：真实来源/版本/数量、240 runtime+隔离 eval tasks、可复跑 scorer、真实历史匹配 coverage、CPU 实测、与 B schema 一致。交付 git commit/PR、命令、计数、失败及单一 WP2 申请所需数据。报告中标出尚未执行项；不是以“全部准备好了”代替实际输出。
-
-## B / Claude Code — 实际 Agent 代码、强基线、集成与批量运行器
-
-目标：让数据能进入真正系统，解决记忆组织、身份接线、Generator 利用、序贯控制和重复在线推理的根因；不重启在线核验。
-
-**先解决实际 import/runner 缺口**：主方案第4节记录了已核实的缺文件与历史可取回的固定 blob。公开 checkout 缺 limited_run.py / runprep_checkpoint.py / g0e.py，旧 WorkerCallBudget 只允许两任务，不能直接用于1,920调用。先实际核查本机 G6 完整工作树，从固定历史源找齐兼容依赖并实现新版本薄适配/批处理 scope，做真实 import/CLI、native tokenizer 和拒绝未授权运行测试；不擅自修改旧限制、复制旧许可或只写恢复建议。若本地资产不全，使用已有历史源码恢复；不兼容时写安全独立 adapter，并用实际 CPU 路径验证。
-
-1. 核查 f45c281a 的实际源码与本地工作树资产：ge2_memory.py (_canonical_rows/render_intervals/observe/step), ge2_retrieval.py (SharedRetrieval), ge2_sources.py, ge2_runtime.py / ge2_worker.py, pomdp_memory.py, semcap/identity.py, g4_context.py, g6_context.py, evidence_state.py。列每个复用/薄适配/不复用的原因，特别核查 G6 中 memory_record 只接测试运行器的问题。**实现新 route 的实际读写接口**，不是再做 G7；保留原 source coordinates、owner、报告时间/消息顺序、主体与用户当前性、冲突/遗忘约束；写入阶段只允许从历史到 cutoff，无 query gold。旧实验模块不可回改。
-2. 先接 A 的 RuntimeTask/EvidenceRecord 契约，编写 source resolver、索引、BM25 baseline；复用本机可用 BGE/dense encoder（无 GPU/付费授权时 CPU 能做就做，不能做则准备同预算运行）。用至少240真实 val tasks 做 CPU 检索/输入 materialization，记录实际读入原文、owner/time/重复/容量。强固定检索可选 BM25/dense/hybrid 在 train/val 的共同信息预算下比较；先用 A 提供的任务内合法证据定位诊断评估 coverage，不能将 Direct target 传给 B baseline。B不负责看 gold。
-3. 实现四个统一 arms A Context Only/B Strong Fixed RAG/C Direct Evidence/D same evidence + grounded state projection，确保 C/D 所见原文一致。D 先 deterministic identity/time projection + 简洁适用性指令；任何生成式状态 writer 单独离线缓存及版本、额外模型调用预算，不运行同步 GSWS/INSPECT_CLAIM。实现 MCQ 与 generation 的同一合法上下文接口，MCQ 选项不用于检索。完成相同请求 hash 精确复用、防重、source_id traces。对缺 direct 定位的任务只标 diagnostic not_evaluable，保留 A/B。
-4. 复用现有 GE2 worker/guard/deadline/实际日志机制；如果旧代码身份限制，写独立薄 adapter/new manifest，绝不伪造旧授权。支持真实 native tokenizer 计数、模型切换、批量、断点恢复、seed/顺序、失败/超时、TTFT/完成计时。对本地旧缓存路径/磁盘/设备占用只读核查；不杀别的作业、不占 GPU、不自发付费。明确离线写入/索引、retrieval、online control、G 的成本分开。
-5. 运行 CPU 回归及真实数据端到端“读取→检索→合法消息→请求序列→dry-run/实际CPU路径→scorer交接”；测试 wrong owner/future/gold/role/forget/缺证据、相同输入复用、无授权拒绝、容量预检。测试与 mock 不是终局。不能因 1 条 schema 错停止整个研究，修复后在同范围继续。
-6. 与 A 联合给出一次 WP2 实验包：240任务×两G×四臂上限1,920；明确模型加载、native context cap、物理调用数、总GPU秒、retry policy、日志与成本上限。目标预算为12 GPU小时候选，实际计量与本机限制决定可行缩放；不为加规模申请无关 GPU。授权后 batch 前16是同一正式开发包技术 smoke，成功继续全部剩余，无需逐组问；到硬限停止，报告实际完成/缺口。若第二 G 不可用，完成可行单 G 对照并显式留跨模型问题，不捏造比较。
-7. 提出 WP3/WP4 的实现候选（不提前训练）：若 B→C 改善做检索修复，若 C→D 改善接离线状态，若 G差异优先交 A 适配，若同信息下需要应用控制，则将当前目标/active preference/unknown 映射 use/background/ignore/clarify，同 G 比较。先规则/监督，有等预算序贯余量才启 RL。禁止无依据开发一个新的万能 Agent、扩大为所有多模态/提醒。
-
-验收：实际可运行的 adapter/renderer/runner + 真实240任务检索及 materialization 统计（若 A 数据尚未就绪，以已合法缓存实物先接线，最终须以 A 同一批次验证；不能用 mock 代替）；每臂实际消息身份/证据边界、端到端 CPU 结果、调用预算与可执行 GPU 命令。交付 git commit/PR、实际测试、失败与待批项。无真实 GPU 推理就不要宣称取得方法结果。
-
-## 联合验收（提交给研究者，不要求额外规划回合）
-
-一份短联合摘要：A/B commit、真实数据计数/owner 划分/许可、240个冻结请求及 direct coverage、强基线与模型选择、CPU回归/实际输入统计、WP2 的确切一次性预算、当前真实 blockers。若接口失败 A/B 直接修复并重试；只有真正不能在现有权限下运行才停。研究者批准 GPU 后立即按 manifest 全量执行，提交逐项配对终局/失败、真实成本与 WP3 单一针对性修复建议。无需再给研究者一份“大方案”。本次默认不批准新 GPU/训练/API，不开启旧 outcome locks，不把未发生的任务记为已完成。
+提交共同集成HEAD、A/B工作SHA、合法数据与分组、WP3对照/证据统计、WP4真实训练/评估样本及训练配置、具体GPU秒与物理调用/训练steps上限（含加载/重试/关闭；推理、训练、开放部分各自分列）。优先一次WP3+WP4开发基线真实执行包；训练数据/对照成熟时可同次申请但需明确训练授权及触发条件。若某项不具备，立即交付其余真实实现，不开启新的层层审批；不得在未批准时擅跑。得到同批明确授权后，B按自动批次执行，A封存后评分，不频繁AI轮询。达到上限停并报告。WP3用强固定基础进入WP4；若主要方法无独立收益，接受更简单方法和有限结论，不修改研究RQ或重跑直到正结果。

@@ -1,6 +1,6 @@
-# Policy Manager / Need-Aware Agent — 当前研究入口（2026-11-27）
+# Policy Manager / Need-Aware Agent — 当前研究入口（2026-11-28，v1.1）
 
-本分支基于最新 G6 收口提交 [f45c281a](https://github.com/chensiyu7812/Metacom5_3/commit/f45c281a06ee12b3ca7d59ebe8017116c6fcdffe)，不是将历史主分支覆盖。研究者已同意从单纯资源调度转向长期用户理解与需求感知记忆利用。**现行新增研究主方案**：[MASTER_PLAN_ZH.md](project/docs/need_aware_agent_20261127/MASTER_PLAN_ZH.md)；**Codex / Claude Code 工作指令**：[WORK_ORDERS_ZH.md](project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md)；[AGENTS.md](AGENTS.md) 首段定义其作用域。新 GPU、训练、正式测试与付费预算未授权。全部以下内容是原始历史入口快照，保留原结论与边界，不作为新分支的执行顺序。
+**研究名称与原三个RQ不变。** 本分支沿用NAA（Need-Aware Agent），服务长期陪伴数字人的用户理解、需求感知及自适应帮助。WP2真实开发实验已收口；下一步WP3复用GE2建立强原文供给基线，一次修复、不开展独立RAG优化课题；WP4核心是同证据下的目标条件化适用性与实际回复行为，允许经过数据支持的Generator适配。RS/Support Skills及长期状态维护等仍为总体系统资产。参见 [现行唯一主方案 v1.1](project/docs/need_aware_agent_20261127/MASTER_PLAN_ZH.md)、[本轮A/B实施任务](project/docs/need_aware_agent_20261127/WORK_ORDERS_ZH.md)、[AGENTS.md](AGENTS.md)。WP2真实交付：[A PR30](https://github.com/chensiyu7812/Metacom5_3/pull/30)、[B PR31](https://github.com/chensiyu7812/Metacom5_3/pull/31)，尚待实施人员安全集成，不自动合并。新GPU、训练、付费及正式测试未授权。以下历史入口及结论原样保留，只用于历史复现，非当前执行顺序。
 
 ---
 
