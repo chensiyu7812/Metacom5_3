@@ -112,3 +112,26 @@ $PY scripts/need_aware/naa_train.py check-data --train <A training JSONL> --stor
     --forbidden-owners <dev+confirm+test owners> --out <wp4>
 PYTHONPATH=project/src python -m pytest project/tests/test_need_aware_*.py -o addopts=   # repo root
 ```
+
+## 6. 与 A v1.1 交付的对接（2026-11-28 下午）
+
+A 的头 `2d8bba1d`（PR #34）已以 `--no-ff` 合入 B 的 v1.1 分支（`cc064139`），没有冲突，合入后 NAA 共 101 项测试通过。A 列给 B 的四项待办处理如下：
+
+1. **实际 native 请求 manifest**（`22949ae4`）：
+   - WP3 的短答案指令改用 A 的共享模块 `data.short_protocol`（`naa-short-mcq-v1`），保留共同 recall 后缀；B 的草案文本作废。
+   - `naa_wp3.py manifest` 把 A 的 1,400 个 `WP3_SLOTS` 一一绑定：逐条核对 `task_sha256`/`history_sha256` 和 logical id；请求索引带 `scoring_protocol`、`task_sha256`、`structural_reason`（`direct_unlocated`，或 `direct_over_cap` 并附 `full_direct_tokens`/`evidence_cap`/`input_cap`）。其他容量失败仍记为技术性 `capacity_exceeded`。
+   - 衔接集 240 个请求的送达单元与 WP2 B/C 完全相同；运行器 plumbing 在该 manifest 格式上 240/240 完成。
+   - `naa_wp4.py manifest` 生成开放任务 480 个请求：构造 180 × U0/U1，用 A 的 messages；自然 60 × U0/U1，用 E0s 证据并去掉回忆后缀。
+   - 两份最终 manifest 由 CPU 作业 `RUN_V11_CPU.sh` 生成（确认集 E0 supply 约 3.3 h，自然 60 约 1.4 h），完成时写出 `MANIFESTS_DONE.json`。
+2. **U1 规则绑定**：
+   - 政策只保留 Reglos 的规则列表，删掉了我先前加的“请求为他人时可用”。受益对象判断是 U3 要检验的假设，不能放进规则基线。
+   - `u1_messages` 用 writer 的同一组词汇线索（第三方、遗忘、变化）作用在 A 已渲染的行上。
+   - 静默规则在构造变体中触发 96/180（都是只有第三方陈述的证据），这是规则本身的行为，按原样保留。
+3. **LoRA 后端契约**（`195f3cd3`）：
+   - `train_v11` 直接调用 A 的 `encode_target`/`masked_action_logp`/`objective`。U2 和 U3 走同样三个分支，U2 辅助系数为 0；组顺序按固定哈希；AdamW + weight decay + warmup；用 `logits_to_keep` 只计算尾部 logits。逐例累积的损失严格等于 A 的组目标（有测试）。
+   - `check-v11` 在真实数据和真实 tokenizer 上检查：全部行的提示 = 推理时的 chat_ids，结尾 = `<|im_end|>`；与开发集和确认集 owner 无重叠。fit 只有 5 个 owner_id，A 的隔离实际按 620 个 source_family 进行。
+   - 真实架构上，A 的 q/v 目标只覆盖 8/32 层，所以提出 `qv_all_layers` 供共同冻结。
+   - 时间上界为每种方法 9,382 s。
+4. **合并可执行申请**：见 [JOINT_WP3_WP4_RESOURCE_REQUEST_ZH.md](JOINT_WP3_WP4_RESOURCE_REQUEST_ZH.md)。合计 49,600 s，替换 A 的 115,200 s 候选上限。
+
+此外发现一个需要告知 A 的问题：A 的 `encode_target` 对 Gemma 会以 `<eos>`(1) 而不是 `<turn|>`(106) 结尾。当前不影响，因为训练候选只有 Qwen。
