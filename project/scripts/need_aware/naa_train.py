@@ -7,6 +7,10 @@
               tokenizer; --plumbing-from builds clearly labelled PLUMBING rows from real
               training-side inputs (real token lengths, placeholder targets, never trainable).
   estimate    steps / tokens / seconds / memory planning from measured WP2 prefill rates.
+  check-v11   A v1.1 training contract on real tokenizers/architecture: encode_target prefix == inference
+              chat_ids, end token == native turn end, real LoRA coverage of A's target modules, memory and
+              an upper-bound time from measured short-input forward latency (WP2 ledger).
+  train-v11   A rows + A objective (U2/U3) on GPU; refuses without a bound approval before device access.
   train       refuses without a `naa-wp4-train-approval-v1` file bound to data, config, model,
               clean HEAD and caps -- before any device access.
 """
@@ -34,7 +38,9 @@ from metacom_pm.need_aware.runtime import models as M  # noqa: E402
 from metacom_pm.need_aware.runtime import training as T  # noqa: E402
 
 SUFFIX_SETS = {'attn_qv': ('q_proj', 'v_proj'), 'attn_qkvo': ('q_proj', 'k_proj', 'v_proj', 'o_proj'),
-               'attn_mlp': ('q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj')}
+               'attn_mlp': ('q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'),
+               # Qwen3.5: 24 of 32 layers are linear attention (in_proj_qkv/z/a/b, out_proj); q/v exist on 8 only
+               'qv_all_layers': ('q_proj', 'v_proj', 'in_proj_qkv')}
 APPROVAL_PROTOCOL = 'naa-wp4-train-approval-v1'
 WP2_LEDGER = '/opt/tokkio-data0/naa/20261127/agent_b/runs/wp2-exec-v2-model/model/LEDGER.001.jsonl'
 
@@ -220,6 +226,130 @@ def cmd_train(a):
         executor_checkout_head=head))
 
 
+def measured_short_forward():
+    """Upper bound for one forward of a short sequence: WP2 internal first-token latency, Qwen, inputs < 1,600."""
+    v = [json.loads(l) for l in open(WP2_LEDGER)]
+    t = sorted(e['first_token_latency_ns'] / 1e9 for e in v if e.get('event') == 'ATTEMPT_RESULT'
+               and e.get('model_label') == 'Qwen35' and e.get('first_token_latency_ns') and e['input_tokens'] < 1600)
+    return dict(p50=round(t[len(t) // 2], 4), p95=round(t[int(.95 * len(t))], 4), n=len(t))
+
+
+def cmd_check_v11(a):
+    import torch
+    from transformers import AutoConfig, AutoModelForMultimodalLM
+    from metacom_pm.need_aware.data.training_objective import encode_target
+    cand = json.loads(Path(a.candidate).read_text())
+    spec = M.MODELS['Qwen35']; b = M.bind_inventory(spec, a.inventory)
+    if b.revision != cand['revision']:
+        raise SystemExit('candidate base revision differs from the bound Qwen35 checkpoint')
+    native = M.NativeTokenizer(b)
+    out = dict(candidate_sha256=NA.file_sha(a.candidate), base=dict(model=spec.model_id, revision=b.revision, path=b.path))
+    for split in ('fit', 'tune'):
+        path = cand[f'{split}_file' if split == 'tune' else 'train_file']
+        if NA.file_sha(path) != cand[f'{"train" if split == "fit" else "tune"}_sha256']:
+            raise SystemExit(split + ' file changed after the candidate freeze')
+        rows = [json.loads(l) for l in open(path)]
+        if {r['split'] for r in rows} != {split}:
+            raise SystemExit(split + ' file mixes splits (development must never enter training)')
+        same = end = 0; seq, proc = [], []
+        for r in rows:
+            e = encode_target(native.tok, r, max_length=cand['max_seq_length'])
+            n = sum(x == -100 for x in e['labels'])
+            same += e['input_ids'][:n] == native.chat_ids(r['messages'])
+            end += e['input_ids'][-1] == T.TURN_END['Qwen35']
+            seq.append(len(e['input_ids']))
+            proc.append(len(e['input_ids']) + len(e['chosen_action']['input_ids']) + len(e['rejected_action']['input_ids']))
+        out[split] = dict(rows=len(rows), groups=len({r['group_id'] for r in rows}), owners=len({r['owner_id'] for r in rows}),
+                          prefix_equals_inference_chat_ids=same, ends_with_native_turn_end=end,
+                          pair_loss_rows=sum(bool(r['pair_loss_mask']) for r in rows),
+                          seq_tokens=dict(p50=NA.pct(seq, .5), p95=NA.pct(seq, .95), max=max(seq)),
+                          processed_tokens_three_branches=sum(proc))
+    forbidden = set(Path(a.forbidden_owners).read_text().split()) if a.forbidden_owners else set()
+    fit_owners = {json.loads(l)['owner_id'] for l in open(cand['train_file'])}
+    out['forbidden_owner_overlap'] = len(fit_owners & forbidden)
+    cfg = AutoConfig.from_pretrained(b.path, local_files_only=True)
+    with torch.device('meta'):
+        model = AutoModelForMultimodalLM.from_config(cfg)
+    cov = {}
+    for name, suf in (('A_candidate', tuple(cand['lora']['target_modules'])), ('qv_all_layers', SUFFIX_SETS['qv_all_layers']),
+                      ('attn_mlp', SUFFIX_SETS['attn_mlp'])):
+        names = LORA.target_names(model, suf)
+        layers = {n.split('.layers.')[1].split('.')[0] for n in names if '.layers.' in n}
+        cov[name] = dict(modules=len(names), layers_touched=len(layers), of_layers=cfg.text_config.num_hidden_layers,
+                         params=sum(cand['lora']['rank'] * (model.get_submodule(n).in_features
+                                                            + model.get_submodule(n).out_features) for n in names))
+    out['lora_coverage'] = cov
+    fwd = measured_short_forward()
+    per_example = 3 * 4 * fwd['p50']             # 3 branches x (fwd + bwd ~2x + checkpoint recompute)
+    fit = out['fit']['rows']; tune = out['tune']['rows']
+    out['time_upper_bound'] = dict(measured_short_forward_s=fwd, per_example_s=round(per_example, 3),
+                                   train_s_per_method=round(fit * per_example), tune_eval_s=round(tune * 3 * fwd['p50']),
+                                   steps=-(-fit // cand['gradient_accumulation']),
+                                   basis='WP2 Qwen35 internal first-token latency at <1,600 input tokens (>= one forward of '
+                                         'the <=250-token training sequences); 4x per branch; verified by a 20-step smoke')
+    out['memory'] = dict(weights_bf16_GB=18.83, note='measured WP2 LOAD_OK peak allocated; sequences <=250 tokens, '
+                         'logits_to_keep tails, LoRA+Adam < 0.1 GB; activations negligible vs 48 GB')
+    out['gemma_note'] = ('A encode_target ends with tokenizer.eos_token_id; for G0e that is <eos>(1), not the native '
+                         'turn end <turn|>(106). Not used: the training candidate is Qwen35 only.')
+    NA.jdump(Path(a.out) / 'TRAIN_CONTRACT_V11.json', out)
+    print(json.dumps(out, indent=1)[:3000])
+
+
+def cmd_train_v11(a):
+    """Bounded U2/U3 GPU training on A's frozen rows. Every check before any device access."""
+    from metacom_pm.need_aware.data.training_objective import encode_target
+    if not a.approval or not Path(a.approval).is_file():
+        raise SystemExit('no WP4 training approval file: training refused (CPU preparation only)')
+    ap = json.loads(Path(a.approval).read_text()); cand = json.loads(Path(a.candidate).read_text())
+    head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    dirty = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=no'], text=True)
+    checks = dict(protocol=ap.get('protocol') == APPROVAL_PROTOCOL, authorized=ap.get('authorized') is True,
+                  head=ap.get('executor_checkout_head') == head, clean=not dirty, method=ap.get('method') == a.method,
+                  candidate=ap.get('candidate_sha256') == NA.file_sha(a.candidate),
+                  data=NA.file_sha(cand['train_file']) == cand['train_sha256'] == ap.get('train_sha256'),
+                  steps=isinstance(ap.get('max_steps'), int) and ap['max_steps'] <= cand['max_optimizer_steps'],
+                  seconds=isinstance(ap.get('max_gpu_seconds'), (int, float)),
+                  evidence=bool(ap.get('researcher')) and bool(ap.get('decision_evidence')))
+    if not all(checks.values()):
+        raise SystemExit('WP4 training approval does not bind this run: refused ' + json.dumps(checks))
+    out = Path(a.out)
+    if (out / 'TRAIN_RECEIPT.json').exists():
+        raise SystemExit('training run already exists; no silent restart')
+    from metacom_pm.need_aware.runtime.backend import safe_device_guard, safe_storage_guard
+    safe_storage_guard(out); safe_device_guard(initial=True)
+    import torch
+    from transformers import AutoModelForMultimodalLM
+    t0 = time.monotonic()
+    spec = M.MODELS['Qwen35']; b = M.bind_inventory(spec, a.inventory); native = M.NativeTokenizer(b)
+    rows = [json.loads(l) for l in open(cand['train_file'])]
+    enc = [encode_target(native.tok, r, max_length=cand['max_seq_length']) for r in T.group_order(rows, cand['seed'])]
+    if any(e['input_ids'][-1] != T.TURN_END['Qwen35'] for e in enc):
+        raise SystemExit('target does not end with the native turn end')
+    model = AutoModelForMultimodalLM.from_pretrained(b.path, local_files_only=True, dtype=torch.bfloat16,
+                                                     attn_implementation='sdpa').to('cuda:0')
+    load_s = time.monotonic() - t0
+    model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={'use_reentrant': False})
+    model.enable_input_require_grads()
+    lc = cand['lora']
+    names = LORA.apply(model, suffixes=tuple(ap.get('target_modules', lc['target_modules'])), r=lc['rank'],
+                       alpha=lc['alpha'], dropout=lc['dropout'])
+    cfg = dict(method=a.method, learning_rate=cand['learning_rate'], weight_decay=cand['weight_decay'],
+               warmup_steps=cand['warmup_steps'], gradient_accumulation=cand['gradient_accumulation'],
+               pair_weight=cand['pair_weight'], pair_margin=cand['pair_margin'], seed=cand['seed'])
+    reserve = 180.
+    receipt = T.train_v11(model, enc, cfg, device='cuda:0', max_steps=ap['max_steps'],
+                          max_seconds=ap['max_gpu_seconds'] - reserve - (time.monotonic() - t0))
+    s0 = time.monotonic()
+    meta = LORA.save(out / 'adapter', model, dict(suffixes=list(ap.get('target_modules', lc['target_modules'])),
+                                                  r=lc['rank'], alpha=lc['alpha']))
+    NA.jdump(out / 'TRAIN_RECEIPT.json', dict(
+        method=a.method, candidate_sha256=NA.file_sha(a.candidate), approval_sha256=NA.file_sha(a.approval),
+        base=dict(path=b.path, revision=b.revision), lora_modules=len(names), adapter=meta, trainer=receipt,
+        load_s=round(load_s, 1), save_s=round(time.monotonic() - s0, 1),
+        peak_reserved_bytes=torch.cuda.max_memory_reserved(), gpu_wall_seconds=round(time.monotonic() - t0, 1),
+        executor_checkout_head=head))
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     s = p.add_subparsers(dest='cmd', required=True)
@@ -242,8 +372,14 @@ def main():
         t.add_argument(x, required=True)
     t.add_argument('--approval'); t.add_argument('--store-root', required=True); t.add_argument('--forbidden-owners')
     t.add_argument('--inventory', default=inv)
+    v = s.add_parser('check-v11'); v.add_argument('--candidate', required=True); v.add_argument('--out', required=True)
+    v.add_argument('--forbidden-owners'); v.add_argument('--inventory', default=inv)
+    w = s.add_parser('train-v11')
+    for x in ('--candidate', '--method', '--out'):
+        w.add_argument(x, required=True)
+    w.add_argument('--approval'); w.add_argument('--inventory', default=inv)
     a = p.parse_args()
-    dict(inspect=cmd_inspect, **{'check-data': cmd_check_data}, estimate=cmd_estimate, train=cmd_train)[a.cmd](a)
+    dict(**{'check-v11': cmd_check_v11, 'train-v11': cmd_train_v11}, inspect=cmd_inspect, **{'check-data': cmd_check_data}, estimate=cmd_estimate, train=cmd_train)[a.cmd](a)
 
 
 if __name__ == '__main__':

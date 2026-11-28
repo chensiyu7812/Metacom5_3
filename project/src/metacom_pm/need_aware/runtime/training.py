@@ -207,3 +207,93 @@ def estimate(*, base_params, lora_params, weight_bytes, examples, mean_tokens, e
                 steps=epochs * -(-examples // accumulation), tokens_per_epoch=int(per_epoch_tokens),
                 train_seconds=int(epochs * per_epoch_tokens / train_tokens_per_s),
                 assumption=f'{train_tokens_per_s} train tok/s (fwd+bwd+recompute ~= 4x measured prefill)')
+
+
+# ---------------------------------------------------------------- v1.1: A's U2/U3 objective (data.training_objective)
+def group_order(rows, seed):
+    """A's rule: groups in a fixed hash order, every variant kept, identical for U2 and U3."""
+    import hashlib
+    groups = defaultdict(list)
+    for r in rows:
+        groups[r['group_id']].append(r)
+    key = lambda g: hashlib.sha256(f'{seed}|{g}'.encode()).hexdigest()
+    return [r for g in sorted(groups, key=key) for r in groups[g]]
+
+
+def _tail_logits(model, ids, keep):
+    """Logits for the last `keep` positions only (identical values, far less memory than the full
+    vocabulary over the whole sequence); falls back to slicing when logits_to_keep is unsupported."""
+    try:
+        return model(input_ids=ids, logits_to_keep=keep).logits[:, -keep:]
+    except TypeError:
+        return model(input_ids=ids).logits[:, -keep:]
+
+
+def branch_terms(model, e, device):
+    """Three forward branches per example (both methods): chosen-sequence SFT, chosen action, rejected action."""
+    import torch
+    from ..data.training_objective import masked_action_logp
+    ids = torch.tensor([e['input_ids']], device=device)
+    labels = torch.tensor([e['labels']], device=device)
+    n_t = int((labels != -100).sum())
+    lg = _tail_logits(model, ids, n_t + 1)
+    tgt = labels[:, -n_t:]
+    sft = torch.nn.functional.cross_entropy(lg[:, :-1].float().reshape(-1, lg.shape[-1]), tgt.reshape(-1))
+    out = [sft.reshape(1)]
+    for k in ('chosen_action', 'rejected_action'):
+        a = e[k]
+        k_ids = torch.tensor([a['input_ids']], device=device)
+        mask = torch.tensor([a['action_mask']], device=device)
+        keep = len(a['input_ids']) - a['action_mask'].index(1) + 1
+        tl = _tail_logits(model, k_ids, keep)
+        out.append(masked_action_logp(tl.float(), k_ids[:, -keep:], mask[:, -keep:]))
+    return out, dict(tokens=len(e['input_ids']) + len(e['chosen_action']['input_ids']) + len(e['rejected_action']['input_ids']),
+                     target_tokens=n_t)
+
+
+def group_loss_terms(sft, chosen, rejected, pair_mask, *, method, weight, margin, group_size, group_pairs):
+    """Per-example share of A's objective over one accumulation group: summing these over the group equals
+    objective(stack(sft), stack(chosen), stack(rejected), stack(mask)) exactly (tested), so microbatch-1
+    backward reproduces the group objective without holding every graph."""
+    import torch.nn.functional as F
+    if method == 'U2':
+        return sft / group_size + 0. * (chosen + rejected) / group_size   # same three branches, zero-weight aux
+    pair = F.softplus(margin - chosen + rejected) * float(pair_mask)
+    return sft / group_size + weight * pair / max(group_pairs, 1)
+
+
+def train_v11(model, encoded, cfg, *, device='cpu', clock=time.monotonic, max_steps=None, max_seconds=None):
+    """cfg (A TRAINING_CANDIDATE): method U2|U3, learning_rate, weight_decay, warmup_steps, gradient_accumulation,
+    pair_weight, pair_margin, seed. Linear warmup to the base LR, then constant (A specifies no decay)."""
+    import torch
+    from . import lora as LORA
+    torch.manual_seed(cfg['seed'])
+    params = [p for _, p in LORA.trainable(model)]
+    opt = torch.optim.AdamW(params, lr=cfg['learning_rate'], betas=(.9, .999), eps=1e-8, weight_decay=cfg['weight_decay'])
+    acc, t0, step, log, stop = cfg['gradient_accumulation'], clock(), 0, [], None
+    tokens = dict(processed=0, target=0)
+    model.train()
+    for g in range(0, len(encoded), acc):
+        group = encoded[g:g + acc]
+        pairs = sum(bool(e['pair_loss_mask']) for e in group)
+        for pg in opt.param_groups:
+            pg['lr'] = cfg['learning_rate'] * min(1., (step + 1) / max(1, cfg['warmup_steps']))
+        opt.zero_grad(set_to_none=True)
+        total = 0.
+        for e in group:
+            (sft, ch, rj), info = branch_terms(model, e, device)
+            loss = group_loss_terms(sft, ch, rj, e['pair_loss_mask'], method=cfg['method'], weight=cfg['pair_weight'],
+                                    margin=cfg['pair_margin'], group_size=len(group), group_pairs=pairs)
+            loss.sum().backward()
+            total += float(loss.sum())
+            tokens['processed'] += info['tokens']; tokens['target'] += info['target_tokens']
+        torch.nn.utils.clip_grad_norm_(params, 1.0)
+        opt.step()
+        step += 1
+        log.append(dict(step=step, loss=total, lr=opt.param_groups[0]['lr']))
+        if max_steps is not None and step >= max_steps:
+            stop = 'max_steps'; break
+        if max_seconds is not None and clock() - t0 >= max_seconds:
+            stop = 'max_seconds'; break
+    return dict(version=TRAINER_VERSION + '+a-v11-objective', method=cfg['method'], steps=step,
+                stop=stop or 'epoch_done', seconds=round(clock() - t0, 3), tokens=tokens, log=log)

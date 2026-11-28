@@ -183,3 +183,55 @@ def test_u1_messages_applies_rules_to_prerendered_rows_and_policy_has_no_benefic
     out, tr = B.u1_messages(other)
     assert tr['silence'] and out[1]['content'] == B.SILENCE_NOTE and out[-1] == req
     assert 'for that person' not in B.U1_POLICY                    # beneficiary handling is U3's hypothesis, not U1
+
+
+def test_microbatch_decomposition_equals_a_group_objective():
+    from metacom_pm.need_aware.data.training_objective import objective
+    torch.manual_seed(3)
+    sft, ch, rj = torch.rand(8), -torch.rand(8), -torch.rand(8)
+    mask = torch.tensor([1, 0, 1, 1, 0, 1, 1, 1], dtype=torch.bool)
+    for method in ('U2', 'U3'):
+        want = objective(sft, ch, rj, mask, method=method, weight=.1, margin=.5)
+        got = sum(T.group_loss_terms(sft[i], ch[i], rj[i], bool(mask[i]), method=method, weight=.1, margin=.5,
+                                     group_size=8, group_pairs=int(mask.sum())) for i in range(8))
+        assert torch.allclose(got, want, atol=1e-6)
+
+
+def v11_rows():
+    """A-shaped encoded rows (encode_target output) for a tiny vocabulary."""
+    rows = []
+    for i, (act, rej) in enumerate((('USE', 'IGNORE'), ('IGNORE', 'USE')) * 2):
+        prompt = [2, 11 + i, 12, 13, 4, 3]
+        tok = {'USE': [20, 21], 'IGNORE': [22, 23]}
+        start = [30, 31]
+        chosen = start + tok[act] + [40, 41, 4]
+        alt = lambda a: dict(input_ids=prompt + start + tok[a], action_mask=[0] * (len(prompt) + 2) + [1, 1])
+        rows.append(dict(variant_id=f'v{i}', group_id=f'g{i // 2}', input_ids=prompt + chosen,
+                         labels=[-100] * len(prompt) + chosen, chosen_action=alt(act), rejected_action=alt(rej),
+                         pair_loss_mask=True))
+    return rows
+
+
+def test_train_v11_u2_u3_match_compute_and_u3_separates_actions():
+    from metacom_pm.need_aware.data.training_objective import masked_action_logp
+    cfg = dict(learning_rate=5e-2, weight_decay=.01, warmup_steps=2, gradient_accumulation=2, pair_weight=1.,
+               pair_margin=2., seed=7)
+    enc = T.group_order(v11_rows(), 7)
+    assert [r['group_id'] for r in enc] == [r['group_id'] for r in T.group_order(v11_rows(), 7)]
+    res, models = {}, {}
+    for method in ('U2', 'U3'):
+        model = tiny_model(); LORA.apply(model, suffixes=('q_proj', 'v_proj'), r=4, alpha=8)
+        for _ in range(4):
+            r = T.train_v11(model, enc, dict(cfg, method=method))
+        res[method], models[method] = r, model
+    assert res['U2']['steps'] == res['U3']['steps'] and res['U2']['tokens'] == res['U3']['tokens']
+    def margin(model):
+        model.eval(); out = []
+        with torch.no_grad():
+            for e in enc:
+                lp = [masked_action_logp(model(input_ids=torch.tensor([e[k]['input_ids']])).logits,
+                                         torch.tensor([e[k]['input_ids']]), torch.tensor([e[k]['action_mask']]))
+                      for k in ('chosen_action', 'rejected_action')]
+                out.append(float(lp[0] - lp[1]))
+        return sum(out) / len(out)
+    assert margin(models['U3']) > margin(models['U2'])
