@@ -15,16 +15,22 @@ with lexical-candidate links, explicit change statements). Implemented Reglos el
 the memory-use policy placed before the records, forget requests shown as tombstones
 (nothing deleted), records marked by those signals, and the silence rule (withhold all
 records when every delivered user record is tied to a forget request or only mentions
-another person). The policy wording is our paraphrase of the paper's rule list.
+another person). The policy wording is our paraphrase of the paper's rule list and adds no
+beneficiary rule: deciding when another person's preference serves the current request is the
+hypothesis tested by U3, so it must not be built into the rule baseline.
+For A's pre-rendered WP4 rows (system + evidence user turns + request), ``u1_messages`` applies
+the same rules with the writer's own lexical cues on each evidence turn.
 """
 from __future__ import annotations
 
+import re
+
 from ..memory import reader as R
-from ..memory.writer import link_forget_requests
+from ..memory.writer import _FORGET, _OTHER, _UPDATE, link_forget_requests
 from . import arms as WP2
 
 CONDITIONS = ('U0', 'U1', 'U2', 'U3')
-BEHAVIOR_VERSION = 'naa-wp4-behavior-v1'
+BEHAVIOR_VERSION = 'naa-wp4-behavior-v2'
 BASE_GENERATOR = 'base'
 
 U1_POLICY = (
@@ -33,8 +39,7 @@ U1_POLICY = (
     '- The records are incomplete; do not assume that something missing is false.\n'
     '- Never rely on information the user asked you to forget or not to use.\n'
     '- Do not use a preference the user said has changed or is no longer true.\n'
-    "- A preference of another person is not the user's preference; use it only when the request is "
-    'about or for that person.\n'
+    "- Another person's preferences are not the user's preferences.\n"
     '- Make no assumptions from demographics, and never repeat sensitive identifiers.')
 SILENCE_NOTE = ('No earlier records are shown for this request: the only user records available are tied to a '
                 'request to forget or describe another person.')
@@ -87,6 +92,47 @@ def u1_view(units, store):
     trace = dict(silence=silence, forget_requests_listed=len(requests),
                  forget_marked=sum(u.unit_id in forget_targets for u in shown), shown_ids=[u.unit_id for u in shown])
     return '\n'.join(lines), trace
+
+
+def _cues(text):
+    return dict(third_party=bool(_OTHER.search(text)), forget=bool(_FORGET.search(text)), change=bool(_UPDATE.search(text)))
+
+
+def u1_messages(messages):
+    """U1 over a pre-rendered row: [system, evidence user turn(s)..., request]. Returns (messages, trace)."""
+    if len(messages) < 2 or messages[0]['role'] != 'system' or messages[-1]['role'] != 'user':
+        raise ValueError('expected system + evidence turns + final request')
+    evidence = [m for m in messages[1:-1]]
+    cues = [_cues(m['content']) for m in evidence if m['role'] == 'user']
+    tied = [c for c in cues if c['third_party'] or c['forget']]
+    silence = bool(cues) and len(tied) == len(cues)
+    out = [dict(role='system', content=messages[0]['content'] + '\n\n' + U1_POLICY)]
+    if silence:
+        out.append(dict(role='user', content=SILENCE_NOTE))
+    else:
+        for m, c in zip(evidence, cues if len(cues) == len(evidence) else [_cues(x['content']) for x in evidence]):
+            marks = []
+            if c['forget']:
+                marks.append('a request to forget or not use something; it applies only to what it names')
+            if c['change']:
+                marks.append('states a change; an earlier conflicting preference on the same matter may no longer be true')
+            if c['third_party']:
+                marks.append('mentions another person; may describe them, not the user')
+            out.append(dict(role=m['role'], content=m['content'] + (f" [{'; '.join(marks)}]" if marks else '')))
+    out.append(dict(messages[-1]))
+    return out, dict(version=BEHAVIOR_VERSION, condition='U1', silence=silence, evidence_turns=len(evidence),
+                     cue_counts={k: sum(c[k] for c in cues) for k in ('third_party', 'forget', 'change')})
+
+
+def natural_messages(condition, task, store, packed, open_system):
+    """WP4 natural open tasks in the same layout as A's constructed rows: one system prompt (A's open
+    JSON contract), one evidence turn (B's frozen delivery), one request turn (no recall suffix)."""
+    block = u1_view(list(packed.units), store)[0] if condition == 'U1' else R.render(list(packed.units), 'raw')
+    system = open_system + ('\n\n' + U1_POLICY if condition == 'U1' else '')
+    if condition == 'U1':
+        block = block.replace(U1_POLICY + '\n', '', 1)          # the policy lives in the system turn for both layouts
+    return [dict(role='system', content=system), *[dict(m) for m in task.current_messages],
+            dict(role='user', content=block), dict(role='user', content=task.user_query)]
 
 
 def build(condition, task, store, packed, *, recall_suffix=False, generator_id=BASE_GENERATOR):

@@ -104,7 +104,7 @@ def test_arms_share_prompt_and_short_protocol_and_hide_options_from_retrieval(se
     tails = {m[-1]['content'].split('Current request from the user:')[1] for m in msgs.values()}
     assert len(systems) == 1 and len(tails) == 1                     # only the evidence differs
     tail = tails.pop()
-    assert tail.endswith('Final Answer: A') and 'step by step' not in tail
+    assert tail.endswith(W3.SP.SHORT_SUFFIX) and 'step by step' not in tail and 'Please recall' in tail
     assert all(o['text'] in tail for o in OPTIONS) and not any(o['text'] in query_text(task) for o in OPTIONS)
     assert extract_final_answer("Final Answer: B") == "B"            # A official upstream parser reads it
     b0 = W3.select('B0', task, store, dense_user=iu, query_vector=[1.0, 0.0], count_tokens=count)[0]

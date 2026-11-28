@@ -18,6 +18,7 @@ other arms keep the task. No MCQ option ever enters retrieval, reranking or the 
 """
 from __future__ import annotations
 
+from ..data import short_protocol as SP          # A's gold-free shared WP3 contract
 from ..data.prompts import RECALL_SUFFIX
 from ..memory import reader as R
 from . import arms as WP2
@@ -31,19 +32,17 @@ ARM_NAMES = {'B0': 'wp2_dense_user_only_8192', 'B1': 'dense_all_roles_8192', 'B1
 BUDGET = {'B0': EV.NATIVE_BUDGET, 'B1': EV.NATIVE_BUDGET, 'B1s': EV.COMPACT_BUDGET, 'E0': EV.NATIVE_BUDGET,
           'E0s': EV.COMPACT_BUDGET, 'C': EV.NATIVE_BUDGET, 'Cn': EV.NATIVE_BUDGET}
 DEPLOYABLE = {'B0', 'B1', 'B1s', 'E0', 'E0s'}
-PROMPT_VERSION = 'naa-wp3-prompt-v1'
-SHORT_PROTOCOL = 'naa-mcq-short-v1'          # MODIFIED protocol: never mixed with the official WP2 protocol
-SHORT_MAX_NEW_TOKENS = 64
+SLOT_ARM = {'Cn': 'C+noise'}                 # A's frozen slot label for the same arm
+PROMPT_VERSION = 'naa-wp3-prompt-v2'
+SHORT_PROTOCOL = SP.PROTOCOL                 # 'naa-short-mcq-v1' -- MODIFIED, never mixed with official WP2
+SHORT_MAX_NEW_TOKENS = SP.MAX_NEW_TOKENS     # 64
 SHORT_NOTE = ('Modified short-answer protocol: same question, option order and legal information as the '
               'official PersonaMem-v2 MCQ, but the reasoning request is replaced by a letter-only answer; '
               'results are labelled modified and never pooled with the official WP2 protocol.')
 
 
 def short_instruction(options):
-    return ('Please choose the best answer from the following options:\n\n'
-            + '\n'.join(f"{o['id']}. {o['text']}" for o in options)
-            + '\n\nReply with exactly one line in this form, using the letter of the best option and '
-              'nothing else (no brackets, no explanation):\nFinal Answer: A')
+    return SP.instruction(options)           # A owns the text; B only places it
 
 
 def final_user_turn(task, evidence_block):

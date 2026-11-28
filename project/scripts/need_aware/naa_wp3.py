@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-"""NAA WP3 B-line CLI (CPU only): prepare-train -> supply -> materialize.
+"""NAA WP3 B-line CLI (CPU only): prepare / prepare-train -> supply -> materialize / manifest.
 
   prepare-train  legal stores + BGE unit vectors for a fixed, seeded training-side sample
                  (one located task per owner) -- for diagnostics only, never tuning.
   supply         E0 ranking per task: 256/32 token windows -> BGE top-128 -> Qwen3-Reranker-0.6B
                  top-15 (all 128 scores kept). Resumable, one JSON per task; writes SUPPLY_DONE.json.
+  prepare        legal stores + BGE unit vectors for every MCQ task of one runtime root (A's WP3 confirm set).
+  manifest       bind A's frozen WP3 slots 1:1 to native requests (A request contract: scoring_protocol,
+                 task_sha256, structural_reason with native proof), caps from measured worst cases.
   materialize    the seven WP3 arms (B0 B1 B1s E0 E0s C Cn) x generators with the modified
                  short-answer protocol; private requests + public-safe statistics (tokens, capacity,
                  reference coverage, complete groups, Cn flags, CPU cost). --selection-only skips
@@ -94,6 +97,26 @@ def cmd_prepare_train(a):
              owners_available=len(per_owner), sampled=len(chosen), writer=WRITER_VERSION,
              cpu_seconds=round(time.monotonic() - t0, 1))
     NA.jdump(Path(a.out) / 'PREPARE_TRAIN_SUMMARY.json', s)
+    print(json.dumps(s, indent=2))
+
+
+def cmd_prepare(a):
+    t0 = time.monotonic()
+    tasks = tasks_from(Path(a.runtime_root) / 'tasks.mcq.jsonl')
+    cache = StoreCache(Path(a.out) / 'stores')
+    resolver, writer = HistoryResolver(a.runtime_root), MemoryWriter()
+    enc = BGEEncoder(NA.BGE_PATH, threads=a.threads)
+    emb = EmbeddingCache(Path(a.out) / 'embeddings', RetrievalSpec().dense_model)
+    rows = []
+    for t in tasks:
+        store = write_for_task(resolver, writer, t)
+        cache.put(store)
+        emb.get_or_build(store, store.units, enc)
+        rows.append(dict(task_id=t.task_id, store_id=store.store_id))
+    NA.jsonl(NA.store_map(a.out), rows)
+    s = dict(runtime_root=str(a.runtime_root), tasks=len(tasks), writer=WRITER_VERSION,
+             tasks_sha256=NA.file_sha(Path(a.runtime_root) / 'tasks.mcq.jsonl'), cpu_seconds=round(time.monotonic() - t0, 1))
+    NA.jdump(Path(a.out) / 'PREPARE_SUMMARY.json', s)
     print(json.dumps(s, indent=2))
 
 
@@ -236,6 +259,118 @@ def cmd_materialize(a):
     print(json.dumps({k: stats[k] for k in ('tasks', 'arms', 'cpu_seconds')}, indent=2))
 
 
+INDEX_FIELDS = ('logical_id', 'task_id', 'task_mode', 'persona_group', 'arm', 'model_label', 'model_id', 'request_sha256',
+                'status', 'duplicate_of', 'reason', 'structural_reason', 'scoring_protocol', 'task_sha256')
+
+
+def cmd_manifest(a):
+    """A's WP3_SLOTS (frozen order, task/history hashes) -> native requests + runner manifest."""
+    from metacom_pm.need_aware.runtime.authorization import MANIFEST_PROTOCOL, manifest_sha256
+    from metacom_pm.need_aware.runtime.budget import default_caps
+    t0 = time.monotonic()
+    slots = [json.loads(l) for l in open(a.slots)]
+    mat = json.loads(Path(a.materials).read_text())     # material root -> {tasks, direct, store_root, supply_out}
+    labels = ['Qwen35', 'G0e']
+    count = NA.SymmetricCounter(labels)
+    natives = {x: count.toks[i] for i, x in enumerate(labels)}
+    bindings = {x: M.bind_inventory(M.MODELS[x], a.inventory) for x in labels}
+    qenc = NA.QueryEncoder(NA.BGE_PATH)
+    env = {}
+    for root, m in mat.items():
+        env[root] = dict(store_root=m['store_root'], supply_out=m['supply_out'],
+                         tasks={t.task_id: t for t in tasks_from(m['tasks'])}, direct=located(m['direct'], 'status'),
+                         ts=task_store_map(m['store_root']), cache=StoreCache(Path(m['store_root']) / 'stores'))
+    versions = dict(writer=WRITER_VERSION, reader=R.READER_VERSION, supply=EV.SUPPLY_VERSION, prompt=W3.PROMPT_VERSION,
+                    protocol=W3.SHORT_PROTOCOL, protocol_note=W3.SHORT_NOTE, request=Q.REQUEST_VERSION,
+                    binding=M.BINDING_VERSION, b0=B0_SPEC.identity, b1=B1_SPEC.identity, reranker=EV.RERANKER_ID)
+    chosen, rows = {}, []
+    inv = {v: k for k, v in W3.SLOT_ARM.items()}
+    for slot in slots:
+        e = env[slot['material']]
+        t = e['tasks'][slot['task_id']]
+        if digest(t.to_dict()) != slot['task_sha256'] or t.history_sha256 != slot['history_sha256']:
+            raise SystemExit('slot does not match the frozen runtime task: ' + slot['logical_id'])
+        arm = inv.get(slot['arm'], slot['arm'])
+        key = (slot['material'], t.task_id, arm)
+        if key not in chosen:
+            store = e['cache'].get(e['ts'][t.task_id])
+            try:
+                vec = NA.load_vectors(e['store_root'], store)
+                qv = qenc(query_text(t))
+                iu, ia = OwnerIndex(store, B0_SPEC, unit_vectors=vec), OwnerIndex(store, B1_SPEC, unit_vectors=vec)
+                e0 = e0_ranked(e['supply_out'], t.task_id) if arm.startswith('E0') else None
+                if arm.startswith('E0') and e0 is None:
+                    raise SystemExit('E0 supply missing for ' + t.task_id)
+                packed, extra = W3.select(arm, t, store, dense_user=iu, dense_all=ia, query_vector=qv,
+                                          e0_ranked=e0[0] if e0 else None, direct_ids=e['direct'].get(t.task_id),
+                                          count_tokens=count)
+                chosen[key] = (store, packed, None)
+            except W3.WP2.NotEvaluable as exc:
+                reason = 'direct_unlocated' if 'not located' in str(exc) else 'direct_over_cap' if 'exceeds' in str(exc) \
+                    else 'direct_undeliverable'
+                proof = None
+                if reason == 'direct_over_cap':
+                    by = store.by_id()
+                    proof = dict(full_direct_tokens=sum(EV.unit_cost(count, by[x]) for x in e['direct'][t.task_id]),
+                                 evidence_cap=W3.BUDGET[arm], input_cap=M.COMMON_INPUT_CAP)
+                chosen[key] = (store, None, dict(reason=str(exc), structural_reason=reason, proof=proof))
+        store, packed, ne = chosen[key]
+        b = bindings[slot['model_label']]
+        if ne:
+            row = Q.not_evaluable(t, slot['arm'], b, ne['reason'], versions)
+            row.update(structural_reason=ne['structural_reason'], structural_proof=ne['proof'])
+        else:
+            decode = b.decode(W3.SHORT_MAX_NEW_TOKENS)
+            msgs, trace = W3.build(arm, t, store, packed)
+            trace.update(store_id=store.store_id, arm_name=W3.ARM_NAMES[arm], deployable=arm in W3.DEPLOYABLE,
+                         material=slot['material'])
+            ids = natives[slot['model_label']].chat_ids(msgs)
+            row = Q.make(t, slot['arm'], b, msgs, ids, decode, trace, M.capacity(ids, decode), versions)
+        if row['logical_id'] != slot['logical_id']:
+            raise SystemExit('logical id mismatch ' + row['logical_id'] + ' vs ' + slot['logical_id'])
+        row.update(scoring_protocol=W3.SHORT_PROTOCOL, task_sha256=slot['task_sha256'])
+        rows.append(row)
+    dedupe = Q.deduplicate(rows)
+    order = {x: i for i, x in enumerate(labels)}
+    rows.sort(key=lambda r: order[r['model_label']])              # Qwen first (primary), A's slot order within
+    out = Path(a.manifest_dir); out.mkdir(parents=True, exist_ok=False)
+    NA.jsonl(out / 'requests.private.jsonl', rows)
+    index = [{k: r.get(k) for k in INDEX_FIELDS if r.get(k) is not None or k in ('request_sha256',)} for r in rows]
+    NA.jsonl(out / 'requests.index.jsonl', index)
+    caps = default_caps(dedupe['physical_unique'], gpu_seconds=a.gpu_seconds, max_physical_calls=a.max_physical_calls,
+                        per_model_gpu_seconds=a.per_model_gpu_seconds)
+    caps.update(input_cap=M.COMMON_INPUT_CAP, backend_cap=M.BACKEND_CONTEXT_CAP, max_model_loads_per_model=2,
+                teardown_seconds=10)
+    manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
+                    scope='NAA WP3 one-shot strong evidence-supply comparison (modified short-answer protocol)',
+                    slots_sha256=NA.file_sha(a.slots), materials={k: {x: (NA.file_sha(v) if x in ('tasks', 'direct') else v)
+                                                                       for x, v in m.items()} for k, m in mat.items()},
+                    model_order=labels,
+                    bindings={x: {**{k: v for k, v in bindings[x].__dict__.items()}, 'g_id': bindings[x].g_id,
+                                  'decode': bindings[x].decode(W3.SHORT_MAX_NEW_TOKENS)} for x in labels},
+                    checkpoints={x: NA.checkpoint_headers(bindings[x]) for x in labels}, runtime=NA.runtime_pins(),
+                    versions=versions, caps=caps, counts=dedupe,
+                    order_rule='Qwen35 then G0e; within a model A frozen WP3_SLOTS order (task blocks, arms within)',
+                    requests_file='requests.private.jsonl', requests_sha256=NA.file_sha(out / 'requests.private.jsonl'),
+                    requests=[{k: r.get(k) for k in ('logical_id', 'task_id', 'task_mode', 'persona_group', 'arm',
+                                                     'model_label', 'request_sha256', 'status', 'reason')
+                               if r.get(k) is not None or k == 'request_sha256'} for r in rows])
+    manifest['scope_sha256'] = digest({k: manifest[k] for k in ('requests_sha256', 'model_order', 'caps', 'versions')})
+    NA.jdump(out / 'MANIFEST.json', manifest)
+    by = Counter((r['model_label'], r['arm'], r['status']) for r in rows)
+    toks = defaultdict(list)
+    for r in rows:
+        if 'input_ids' in r:
+            toks[(r['model_label'], r['arm'])].append(len(r['input_ids']))
+    stats = dict(manifest_sha256=manifest_sha256(manifest), counts=dedupe, cpu_seconds=round(time.monotonic() - t0, 1),
+                 status={f'{m}|{x}|{s}': n for (m, x, s), n in sorted(by.items())},
+                 structural=dict(Counter(r.get('structural_reason') for r in rows if r['status'] == 'not_evaluable')),
+                 input_tokens={f'{m}|{x}': dict(p50=q(v, .5), p95=q(v, .95), max=max(v), total=sum(v))
+                               for (m, x), v in sorted(toks.items())}, caps=caps)
+    NA.jdump(out / 'MATERIALIZE_SUMMARY.json', stats)
+    print(json.dumps({k: stats[k] for k in ('manifest_sha256', 'counts', 'structural', 'cpu_seconds')}, indent=2))
+
+
 def summarize(sel, rows, labels):
     by = defaultdict(list)
     for s in sel:
@@ -289,6 +424,14 @@ def main():
     for x in ('--store-root', '--tasks', '--out'):
         u.add_argument(x, required=True)
     u.add_argument('--task-ids'); u.add_argument('--reranker', default=RERANKER_PATH); u.add_argument('--threads', type=int, default=16)
+    r = s.add_parser('prepare'); r.add_argument('--runtime-root', required=True); r.add_argument('--out', required=True)
+    r.add_argument('--threads', type=int, default=16)
+    f = s.add_parser('manifest')
+    for x in ('--slots', '--materials', '--manifest-dir'):
+        f.add_argument(x, required=True)
+    f.add_argument('--gpu-seconds', type=int, required=True); f.add_argument('--per-model-gpu-seconds', type=int, required=True)
+    f.add_argument('--max-physical-calls', type=int, required=True)
+    f.add_argument('--inventory', default='/opt/tokkio-data0/naa/20261127/logs/native/model_inventory.json')
     m = s.add_parser('materialize')
     for x in ('--store-root', '--tasks', '--direct', '--out', '--supply-out'):
         m.add_argument(x, required=True)
@@ -297,7 +440,8 @@ def main():
     m.add_argument('--inventory', default='/opt/tokkio-data0/naa/20261127/logs/native/model_inventory.json')
     m.add_argument('--selection-only', action='store_true')
     a = p.parse_args()
-    dict(**{'prepare-train': cmd_prepare_train}, supply=cmd_supply, materialize=cmd_materialize)[a.cmd](a)
+    dict(**{'prepare-train': cmd_prepare_train}, prepare=cmd_prepare, supply=cmd_supply, materialize=cmd_materialize,
+         manifest=cmd_manifest)[a.cmd](a)
 
 
 if __name__ == '__main__':

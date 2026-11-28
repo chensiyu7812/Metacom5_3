@@ -170,3 +170,16 @@ def test_native_encoder_anchors_on_inference_prompt_and_turn_end():
     assert all(x == -100 for x in e.labels[:len(prompt)]) and e.target_tokens == 3
     with pytest.raises(ValueError, match='input cap'):
         T.native_encoder(nat, turn_end_id=ChatTok.EOT, context_limit=5)(msgs, 'ramen tonight')
+
+
+def test_u1_messages_applies_rules_to_prerendered_rows_and_policy_has_no_beneficiary_rule():
+    sys_msg = dict(role='system', content='Return JSON with action and response.')
+    req = dict(role='user', content='Please suggest a dinner place for tonight.')
+    own = [sys_msg, dict(role='user', content='I love ramen with extra garlic.'), req]
+    out, tr = B.u1_messages(own)
+    assert not tr['silence'] and out[1]['content'] == own[1]['content'] and out[-1] == req
+    assert out[0]['content'].startswith(sys_msg['content']) and B.U1_POLICY in out[0]['content']
+    other = [sys_msg, dict(role='user', content='My friend said: I only eat vegan food.'), req]
+    out, tr = B.u1_messages(other)
+    assert tr['silence'] and out[1]['content'] == B.SILENCE_NOTE and out[-1] == req
+    assert 'for that person' not in B.U1_POLICY                    # beneficiary handling is U3's hypothesis, not U1
