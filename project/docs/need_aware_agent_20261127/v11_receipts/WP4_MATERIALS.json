@@ -1,0 +1,83 @@
+{
+  "protocol": "naa-training-pair-v1",
+  "allocation_sha256": "8f583f5747cb0fed442131d4b67e69d822df873b360be4237f7b5beb60b50799",
+  "original_candidates": 4000,
+  "original_owners": 177,
+  "owner_split_counts": {
+    "fit": 125,
+    "tune": 26,
+    "development": 26
+  },
+  "personamem_filter": {
+    "quoted_or_generated_scenario_not_semantically_certified": 3218,
+    "direct_unlocated": 421,
+    "later_forget_scope_uncertain": 303,
+    "accepted_explicit_source_assertion": 3,
+    "unknown_or_non_explicit": 55
+  },
+  "personamem_explicit_units": 3,
+  "prefeval_filter": {
+    "previously_exposed_family_or_content": 12,
+    "non_first_person_scope_uncertain": 25,
+    "health_or_sensitive_scope_excluded": 45,
+    "ambiguous_mcq_join": 30,
+    "duplicate_content_family": 7,
+    "fit": 616,
+    "tune": 88,
+    "development": 88,
+    "reserve": 89
+  },
+  "prefeval_duplicate_content": 7,
+  "groups": 1591,
+  "rows": 4772,
+  "by_split": {
+    "fit": {
+      "rows": 3716,
+      "groups": 1239,
+      "families": 620
+    },
+    "tune": {
+      "rows": 528,
+      "groups": 176,
+      "families": 88
+    },
+    "development": {
+      "rows": 528,
+      "groups": 176,
+      "families": 88
+    }
+  },
+  "by_dataset": {
+    "PersonaMem-v2": 20,
+    "PrefEval-explicit": 4752
+  },
+  "actions": {
+    "USE": 1590,
+    "CLARIFY": 1591,
+    "IGNORE": 1591
+  },
+  "third_party_use_positives": 795,
+  "actual_withdrawal_boundary_groups": 1,
+  "actual_withdrawal_events_audited": 177,
+  "repeated_redacted_groups_not_training": 176,
+  "duplicate_runtime_inputs": 0,
+  "duplicate_runtime_inputs_across_splits": 0,
+  "natural_pairs": 0,
+  "constructed_pairs": 1591,
+  "natural_update_permission_pairs": 0,
+  "unknown_labels_retained_in_audit": 3997,
+  "semantic_labels_from_direct_offsets": 0,
+  "development_training_overlap": 0,
+  "calibration_items": 100,
+  "calibration_independent_completed": 0,
+  "limitations": [
+    "Constructed action supervision dominates; no claim of natural demand recognition.",
+    "PrefEval first-option response targets are weak upstream candidates, not human semantic gold.",
+    "Real withdrawal events support redacted permission-boundary groups; no before/after preference-update pairs are claimed.",
+    "Redacted withdrawal events collapse to one two-input fit microtask. No independent permission effect estimate from repeated tombstones.",
+    "PersonaMem accepted tasks are preference-summary microtasks, not full recommendation skill targets.",
+    "No training or model inference; independent calibration remains a prerequisite for executing a training candidate."
+  ],
+  "model_calls": 0,
+  "training_steps_executed": 0
+}

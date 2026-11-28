@@ -1,0 +1,74 @@
+{
+  "cwd": "/opt/tokkio-data0/tokkio_projects/Metacom5_3-naa-v11-data/project",
+  "actual_release_commands": [
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/prepare_v11.py allocate --source /opt/tokkio-data0/naa/20261127/source --old /opt/tokkio-data0/naa/20261127/artifacts --scored /opt/tokkio-data0/naa/20261127/evaluation_wp2/automatic-v2-terminal-final/scored --out /opt/tokkio-data0/naa/20261128/a_v11/ALLOCATION.json",
+      "exit_code": 0
+    },
+    {
+      "cmd": "bash /opt/tokkio-data0/naa/20261128/a_v11/jobs/materialize.sh",
+      "exit_code": 0,
+      "note": "After preserving initial failed output and documenting empty assistant position normalization."
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/review_v11_wp2.py --old /opt/tokkio-data0/naa/20261127/artifacts --scored /opt/tokkio-data0/naa/20261127/evaluation_wp2/automatic-v2-terminal-final/scored --allocation /opt/tokkio-data0/naa/20261128/a_v11/ALLOCATION.json --out /opt/tokkio-data0/naa/20261128/a_v11/wp2_review",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/finalize_wp2_review.py --packets /opt/tokkio-data0/naa/20261128/a_v11/wp2_review/PACKETS.private.jsonl --notes /opt/tokkio-data0/naa/20261128/a_v11/wp2_review/SOURCE_NOTES.private.jsonl --out /opt/tokkio-data0/naa/20261128/a_v11/wp2_annotations",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/prepare_wp4.py --old /opt/tokkio-data0/naa/20261127/artifacts --source /opt/tokkio-data0/naa/20261127/source --allocation /opt/tokkio-data0/naa/20261128/a_v11/ALLOCATION.json --prefeval /opt/tokkio-data0/naa/20261127/upstream/PrefEval --prefeval-exposed /opt/tokkio-data0/naa/20261127/prefeval/runtime/tasks.generation.jsonl --out /opt/tokkio-data0/naa/20261128/a_v11/wp4-final",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/freeze_v11_rules.py --wp3 /opt/tokkio-data0/naa/20261128/a_v11/wp3 --wp4 /opt/tokkio-data0/naa/20261128/a_v11/wp4-final --old /opt/tokkio-data0/naa/20261127/artifacts --out /opt/tokkio-data0/naa/20261128/a_v11/rules-final",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env CUDA_VISIBLE_DEVICES= HF_HUB_OFFLINE=1 PYTHONPATH=src /opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python scripts/need_aware/cpu_wp4_batch.py --targets /opt/tokkio-data0/naa/20261128/a_v11/wp4-final/targets/fit.jsonl --tokenizer /opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b --out /opt/tokkio-data0/naa/20261128/a_v11/CPU_BATCH_FINAL.json",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/validate_v11_real.py --old /opt/tokkio-data0/naa/20261127/artifacts --source /opt/tokkio-data0/naa/20261127/source --prefeval /opt/tokkio-data0/naa/20261127/upstream/PrefEval --new /opt/tokkio-data0/naa/20261128/a_v11 --out /opt/tokkio-data0/naa/20261128/a_v11/CPU_RECEIPT_RELEASE.json",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env PYTHONPATH=src /opt/tokkio-data0/naa/20261127/venv/bin/python scripts/need_aware/create_v11_candidate.py --root /opt/tokkio-data0/naa/20261128/a_v11 --out /opt/tokkio-data0/naa/20261128/a_v11/joint-final",
+      "exit_code": 0
+    },
+    {
+      "cmd": "env CUDA_VISIBLE_DEVICES= PYTHONPATH=src /opt/tokkio-data0/tokkio_envs/naa-cpu-py311/bin/python -m pytest -q tests/test_need_aware_*.py --junitxml=/opt/tokkio-data0/naa/20261128/a_v11/tests-complete.xml",
+      "exit_code": 0
+    },
+    {
+      "cmd": "/opt/tokkio-data0/naa/20261127/venv/bin/python -m compileall -q src/metacom_pm/need_aware scripts/need_aware tests/test_need_aware_v11.py",
+      "exit_code": 0
+    }
+  ],
+  "failures_and_repairs": [
+    {
+      "issue": "Concurrent fetch ref update",
+      "repair": "Verified authority object and remote ref already fetched; no reset/force."
+    },
+    {
+      "issue": "One upstream assistant message has no content",
+      "repair": "Retain raw source; empty normalized position, preserve indices; record normalization."
+    },
+    {
+      "issue": "Model Python environment has no pytest",
+      "repair": "Use installed naa-cpu-py311 pytest 8.4.2 + CPU torch; no tests skipped."
+    },
+    {
+      "issue": "12 duplicate runtime input groups / 374 rows, 8 crossing splits in superseded wp4-v2",
+      "repair": "Deduplicate preference content, exclude exposed content, keep repeated withdrawal events only in audit; final exact input duplicates=0."
+    },
+    {
+      "issue": "Read-only path lookups and one ad-hoc missing PYTHONPATH",
+      "repair": "Locate actual upstream benchmark_dataset/mcq_options path and set PYTHONPATH; subsequent source audit succeeded."
+    }
+  ],
+  "gpu_commands_executed": [],
+  "training_commands_executed": []
+}
