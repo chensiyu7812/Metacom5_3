@@ -30,7 +30,7 @@ from . import arms as WP2
 from . import behavior as B
 from .retrieval import OwnerIndex, RetrievalSpec
 
-COMPANION_VERSION = 'naa-companion-v1'
+COMPANION_VERSION = 'naa-companion-v2'
 NEED_POLICIES = ('visible_rule', 'always_memory', 'never_memory', 'always_memory_support', 'base_self_select')
 ARMS = ('STOP', 'MS', 'RS', 'MS_RS')
 SELF_SELECT_PROMPT = ('Before answering, decide what this request needs. Reply with one word only: STOP (answer '
@@ -160,7 +160,7 @@ class CompanionAgent:
         return [dict(role='system', content=WP2.system_prompt(store.situation)), *recent,
                 dict(role='user', content='\n\n'.join(parts))]
 
-    def step(self, query):
+    def step(self, query, *, task_id=None):
         decision = need_decision(self.policy, query, self_select=self._self_select)
         store = self.history.store()
         older = len(self.history.turns) - self.recent if self.recent else len(self.history.turns)
@@ -179,6 +179,22 @@ class CompanionAgent:
                      evidence_tokens=packed.tokens if packed else 0, applicability='U1+' if packed else None,
                      skill_id=skill['skill_id'] if skill else None, messages_sha256=digest(msgs),
                      user_turn=u['turn_sha256'], assistant_turn=a['turn_sha256'], history_head=self.history.head())
+        # Optional evaluation telemetry records executed operations; no synthetic role calls.
+        if task_id is not None:
+            event=lambda name,component,**kw:dict(task_id=task_id,event=name,component=component,**kw)
+            events=[event('need_understood','PM1',decision=decision)]
+            if packed is not None and packed.units:
+                events.append(event('history_read','MS',owner=self.history.owner_id,cutoff=max(older,0),
+                    source_ids=[x.unit_id for x in packed.units],
+                    source_hashes=[x.original_text_sha256 for x in packed.units]))
+            if skill is not None:
+                events.append(event('skill_read','RS',skill_id=skill['skill_id'],
+                    applicability_basis='explicit help request plus overlap with qualified skill conditions'))
+            rh=text_hash(reply)
+            events.extend([event('reply_emitted','Generator',reply_sha256=rh,g_id=out.get('g_id')),
+                event('history_appended','writer',reply_sha256=a['text_sha256'],history_head=self.history.head()),
+                event('followup_ready','PM2',history_head=self.history.head())])
+            trace['events']=events
         return dict(reply=reply, trace=trace, messages=msgs)
 
 

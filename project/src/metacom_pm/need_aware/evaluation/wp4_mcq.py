@@ -5,6 +5,24 @@ from .short_mcq import score_short,PROTOCOL
 from .wp2 import require,unique,score_cell,counts
 from ..data.contracts import digest
 from ..agent.reply_protocol import ARMS
+from ..runtime.requests import physical_identity
+
+# Display aliases only: retain B's original logical/request identities in scoring.
+ARM_ALIASES={'NoMem':'No-memory','OptOnly':'Options-only'}
+ALLOWED_ARMS=(*ARMS,*ARM_ALIASES,'U2','U3')
+ALLOWED_MODELS=('Qwen35','Qwen35+U2','Qwen35+U3')
+
+
+def validate_cell_binding(request, model, arm):
+    require(model in ALLOWED_MODELS and arm in ALLOWED_ARMS,'unplanned WP4 cell')
+    if arm in ('U2','U3'):
+        require(model=='Qwen35+'+arm,'adapted method/model mismatch')
+    else:
+        require(model=='Qwen35','control must use base Qwen35')
+    require(request.get('model_label')==model,'request model label mismatch')
+    require(request.get('g_id','').startswith('naag:'+model+':'),'unbound generator identity')
+    require(request['request_sha256']==physical_identity(request['g_id'],request['messages'],
+        request['input_ids'],request['decode']),'physical request hash mismatch')
 
 POLICY=dict(protocol='naa-wp4-reply-mcq-policy-v1',scoring_protocol=PROTOCOL,
     primary='U3-U2 on whole frozen development set',
@@ -35,11 +53,12 @@ def clusters(tasks):
 
 
 def score(tasks,evaluations,requests,predictions,*,model,arm,kind='model'):
-    require(arm in (*ARMS,'U2','U3'),'unplanned condition')
+    require(arm in ALLOWED_ARMS,'unplanned condition')
     ix={k:dict(v) for k,v in unique(requests,'logical_id').items()}
     pm=unique(predictions,'task_id')
     for t in tasks:
         r=ix[f'{t.task_id}|{arm}|{model}']
+        validate_cell_binding(r,model,arm)
         require(r['scoring_protocol']==PROTOCOL and r['task_sha256']==digest(t.to_dict()),'task/protocol changed')
         require(r['status'] in ('ready','capacity_exceeded'),'WP4 has no structural Direct holes')
         if r['status']=='capacity_exceeded':
@@ -50,7 +69,7 @@ def score(tasks,evaluations,requests,predictions,*,model,arm,kind='model'):
             r['status']='ready'  # evaluation copy only: predefined denominator is retained
         require(r.get('decode',{}).get('max_new_tokens')==64,'frozen short cap changed')
     result=score_cell(tasks,evaluations,ix,predictions,model=model,arm=arm,kind=kind,
-        allowed_arms=(*ARMS,'U2','U3'),score_function=score_short)
+        allowed_arms=ALLOWED_ARMS,allowed_models=ALLOWED_MODELS,score_function=score_short)
     c=clusters(tasks)
     for row in result:row['cluster']=c[row['task_id']]
     return result

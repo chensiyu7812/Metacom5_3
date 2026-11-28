@@ -19,6 +19,7 @@ from aggregate_wp3 import aggregate
 
 def run(a):
     out=Path(a.out);wp3=Path(a.wp3);policy=json.loads(Path(a.policy).read_text())
+    if out.exists():raise FileExistsError('preserve previous terminal scoring output')
     assert sha_file(wp3/'FREEZE.json')==policy['material_freeze_sha256']
     freeze=json.loads((wp3/'FREEZE.json').read_text())
     for rel,sha in freeze['artifacts'].items():assert sha_file(wp3/rel)==sha

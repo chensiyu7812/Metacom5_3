@@ -5,7 +5,7 @@
                     on base Qwen3.5-9B, naa-short-mcq-v1 (64 tokens), one fixed WP3 evidence arm for every
                     same-evidence condition (delivered ids checked equal across U0/U1/U1+).
   manifest-adapted  W4-E: the W4-0 inputs byte-for-byte with the U2/U3 adapted generators (U0 input -> U2/U3,
-                    plus NoMem/OptOnly diagnostics); adapted g_id from the full adapter identity, strict checks.
+                    no additional adapted diagnostic arms); adapted g_id from the full adapter identity, strict checks.
   export-open       natural open-task evaluation interface: blinded rating packets + separate unblinding key.
                     Natural tasks are judged on the reply itself (A's rubric), never by constructed-task action labels.
   manifest          (superseded W4-0 plan) A's constructed 180 variants + natural 60 x U0/U1.
@@ -222,12 +222,13 @@ def cmd_manifest_w40(a):
 
 
 # ---------------------------------------------------------------- W4-E: adapted generators on the W4-0 inputs
-ADAPTED_INPUTS = {'U0': '', 'NoMem': ':NoMem', 'OptOnly': ':OptOnly'}
+ADAPTED_INPUTS = {'U0': ''}  # fixed researcher scope: same evidence U2/U3, no automatic arm expansion
 
 
 def cmd_manifest_adapted(a):
     from metacom_pm.need_aware.runtime.authorization import MANIFEST_PROTOCOL, manifest_sha256
     from metacom_pm.need_aware.runtime.budget import default_caps
+    from metacom_pm.need_aware.runtime.training import validate_reply_comparison
     base, rows = NA.load_full(a.base_manifest_dir)
     if base['model_order'] != ['Qwen35']:
         raise SystemExit('W4-E reuses a base-Qwen35 W4-0 manifest')
@@ -241,26 +242,30 @@ def cmd_manifest_adapted(a):
     for k in ('init_adapter_sha256', 'train_data_sha256', 'base_g_id', 'trainer_version'):
         if len({i[k] for i in idents}) != 1:
             raise SystemExit('U2/U3 differ in ' + k + ' (same init, data, base and trainer required)')
-    bindings, checkpoints, out_rows = {}, {}, []
+    bindings, checkpoints, out_rows, training_receipts = {}, {}, [], []
     for i in idents:
         if NA.file_sha(Path(i['adapter_path']) / 'adapter.safetensors') != i['adapter_sha256']:
             raise SystemExit('adapter bytes differ from identity ' + i['method'])
         rec = Path(i['adapter_path']).parent / 'TRAIN_RECEIPT.json'
         if NA.file_sha(rec) != i['train_receipt_sha256']:
             raise SystemExit('training receipt differs from identity ' + i['method'])
+        training_receipts.append(json.loads(rec.read_text()))
         bnd = M.adapted_binding(spec, i, decode)
         lab = bnd['label']
         bindings[lab] = bnd
         checkpoints[lab] = dict(base['checkpoints']['Qwen35'], adapter=dict(path=i['adapter_path'], sha256=i['adapter_sha256']))
         for r in rows:
-            if r['arm'] not in ADAPTED_INPUTS or r['status'] != 'ready':
+            if r['arm'] not in ADAPTED_INPUTS:
                 continue
+            if r['status'] not in ('ready','capacity_exceeded'):
+                raise SystemExit('unexpected base status: predefined denominator must be preserved')
             arm = i['method'] + ADAPTED_INPUTS[r['arm']]
             n = dict(r, arm=arm, model_label=lab, g_id=bnd['g_id'], logical_id=Q.logical_id(r['task_id'], arm, lab),
                      request_sha256=Q.physical_identity(bnd['g_id'], r['messages'], r['input_ids'], decode),
                      input_from=r['request_sha256'], trace=dict(r['trace'], generator_id=bnd['g_id'], condition=arm))
             n.pop('duplicate_of', None)
             out_rows.append(n)
+    comparison = validate_reply_comparison(training_receipts)
     shas = [r['request_sha256'] for r in out_rows]
     if len(set(shas)) != len(shas) or set(shas) & {r['request_sha256'] for r in rows}:
         raise SystemExit('adapted requests collide with each other or with base requests')
@@ -272,10 +277,10 @@ def cmd_manifest_adapted(a):
                 teardown_seconds=10)
     versions = dict(base['versions'], adapted_binding=M.ADAPTED_BINDING_VERSION)
     manifest = dict(protocol=MANIFEST_PROTOCOL, authorized=False, research_qualified=False,
-                    scope='NAA W4-E: U2/U3 adapted Qwen35 on the byte-identical W4-0 inputs (+NoMem/OptOnly)',
+                    scope='NAA W4-E: U2/U3 adapted Qwen35 on the byte-identical W4-0 U0 inputs',
                     base_manifest_sha256=manifest_sha256(base), model_order=sorted(bindings), bindings=bindings,
                     checkpoints=checkpoints, runtime=base['runtime'], versions=versions, counts=dedupe,
-                    adapter_identities={i['method']: i for i in idents})
+                    adapter_identities={i['method']: i for i in idents},training_comparison=comparison)
     _write_manifest(out, out_rows, manifest, caps)
     print(json.dumps(dict(manifest_sha256=manifest_sha256(manifest), counts=dedupe, labels=sorted(bindings)), indent=2))
 

@@ -71,10 +71,10 @@ def validate_requests(tasks, evaluations, requests):
 
 
 def score_cell(tasks, evaluations, requests, predictions, *, model, arm, kind='model',
-               allowed_arms=ARMS, score_function=score_one):
+               allowed_arms=ARMS, score_function=score_one, allowed_models=MODELS):
     # Defaults retain the frozen WP2 interface. Later protocols explicitly bind
     # their arm set and scorer, while reusing status/provenance validation.
-    require(model in MODELS and arm in allowed_arms, 'unknown cell')
+    require(model in allowed_models and arm in allowed_arms, 'unknown cell')
     require(kind in {'model', 'plumbing'}, 'explicit result kind')
     pm = unique(predictions, 'task_id')
     require(set(pm) == {t.task_id for t in tasks}, 'export must include all frozen slots, including missing')

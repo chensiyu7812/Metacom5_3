@@ -62,7 +62,8 @@ def test_u1_plus_marks_holder_and_served_person():
     req = [dict(role='system', content='S'), dict(role='user', content='My sister is allergic to nuts.'),
            dict(role='user', content='Can you suggest a cake for my sister?')]
     out, tr = B.u1_messages(req, plus=True)
-    assert 'possibly my sister' in out[0]['content'] and "may be my sister's" in out[1]['content']
+    assert 'Lexical person cue: my sister' in out[0]['content'] and "may be my sister's" in out[1]['content']
+    assert 'not a beneficiary label' in out[0]['content']
     assert tr['withheld'] == 0
 
 

@@ -16,7 +16,10 @@ def check_trace(task,events,reply):
     for e in events:
         if e['event']=='history_read':
             if e.get('owner')!=task['owner']:violations.append('foreign_owner')
-            if e.get('cutoff')!=task['cutoff']:violations.append('wrong_cutoff')
+            # A reader can legally read a strictly shorter prefix (e.g. recent turns
+            # are supplied separately). It may never read beyond the task cutoff.
+            if not isinstance(e.get('cutoff'),int) or not 0<=e['cutoff']<=task['cutoff']:
+                violations.append('wrong_cutoff')
             if not e.get('source_ids') or not e.get('source_hashes'):violations.append('unbound_history')
         if e['event']=='skill_read':
             if e.get('skill_id') not in task.get('available_skill_ids',[]):violations.append('unavailable_skill')

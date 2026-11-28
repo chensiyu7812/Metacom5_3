@@ -309,6 +309,24 @@ REPLY_TRAINER_VERSION = 'naa-wp4-reply-trainer-v1'
 REPLY_REQUIRED = ('example_id', 'group_id', 'owner_id', 'split', 'messages', 'chosen', 'rejected', 'provenance')
 
 
+def validate_reply_comparison(receipts):
+    """A fair U3-U2 comparison requires matching realized updates, not just intended settings."""
+    if sorted(r['method'] for r in receipts)!=['U2','U3']:
+        raise ContractError('exactly one U2 and one U3 receipt required')
+    for field in ('candidate_sha256','train_data_sha256','base_g_id','init_adapter_sha256','adapter_config_sha256'):
+        if len({r[field] for r in receipts})!=1:
+            raise ContractError('U2/U3 differ in '+field)
+    trainers=[r['trainer'] for r in receipts]
+    if len({r['steps'] for r in trainers})!=1 or trainers[0]['steps']<=0:
+        raise ContractError('unequal or zero realized optimizer steps')
+    if any(r['stop'] not in ('epoch_done','max_steps') for r in trainers):
+        raise ContractError('training incomplete; do not claim a fair training effect')
+    cfg=[{k:v for k,v in r['cfg'].items() if k!='method'} for r in trainers]
+    if cfg[0]!=cfg[1]:
+        raise ContractError('U2/U3 optimizer/order/weight configuration differs')
+    return dict(matched_steps=trainers[0]['steps'],configuration=cfg[0])
+
+
 def validate_reply(rows, *, forbidden_owners=(), allow_plumbing=False):
     """Structural/leakage contract of A's reply rows (labels/quality are A's audit). PLUMBING rows (placeholder
     replies for length/encoding checks) are accepted only by CPU checks, never by training."""

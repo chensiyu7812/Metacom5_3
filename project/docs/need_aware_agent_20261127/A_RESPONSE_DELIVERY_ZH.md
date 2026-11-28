@@ -2,6 +2,8 @@
 
 本次是研究者对 v1.1 的实施修订，不改 NAA 名称、三个 RQ 或完整陪伴 Agent 目标。独立工作树 `Metacom5_3-naa-response-data` / `work/naa-response-data-20261128` 从 B `5c332bec` 建立，已包含 A PR34；四份研究入口与权威 `65424fd8` 一致。没有重复合并 PR30/31、reset、force 或改动 B 正在使用的工作树。
 
+发现 B 更新 `7a13b96c` 后，另建 `Metacom5_3-naa-response-joint`，以普通 merge `7acfcf50` 安全集成；原 A `63a8c8e0` 工作树继续服务已启动的 CPU 作业。PR35 包含这一合并。B 的冻结 W3 执行树 `9a08ee03` 未改动。以下以 `joint_release/` 为当前接线候选，`release/` 的早期 objective/预算仅作为保留的过渡资产，不能直接用于训练申请。
+
 原 1,591 组 / 4,772 条动作模板保持原文件和身份，新增本机 `HISTORICAL_RETIREMENT.json` 标记为历史构造诊断，禁止作为本轮主要训练材料。冻结 WP3 的规则和数据继续有效。本次新回复监督不使用 USE/IGNORE/CLARIFY 目标。
 
 ## 已经落地的真实材料
@@ -26,19 +28,29 @@
 
 `data/response_data.py` 保留全部官方回复及未知项。自动准入仅限很窄的非断言型建议筛选，明确是弱官方监督，非语义真值；涉及个人断言、医疗、外部时间事实、敏感/forget 的未知项保留 mask。审查的个性化正例还须其核查来源确实送达。Direct 命中本身不能准入。普通合理替代不会被自动当成错误或有害。
 
-`data/reply_objective.py` 实现普通回复 SFT（U2）及同正例 SFT + `0.1 × softplus(0.5 − lp(y+) + lp(y−))`（U3）。lp 为完整回复 token 平均 logprob；每个已核查正例只用预定第一个合格负例，未知负例不进损失。正例前向复用，仅 U3 的合格负例增加前向；额外 token 和次数单列。原生推理前缀完全一致、Qwen turn-end 248046、不静默截断、拒绝目标控制 token。
+`data/reply_bridge.py` 将实际准入的官方回复转换为 B 已实现的 `naa-wp4-reply-v1`：原请求、同一实际送达原文、chosen、最多一个经逐项核查的 rejected、来源审计。未知/合理替代不做负例。RuntimeTask 和渲染器不接收 correct_answer/who/隐藏 persona；训练标签在独立 supervision 文件中。正式采用 B `behavior.build(U0, recall_suffix=False)` 组织输入，MCQ 用同一原始证据加严格选择题协议。保留隐含偏好。
 
-候选统一 Qwen3.5-9B 固定 revision、q_proj/v_proj/in_proj_qkv、r8/alpha16、dropout0、同 seed/顺序/权重/步数、一个 epoch、accumulation8、lr1e-4、固定终点，不给 U3 额外类别权重。B 需将该接口接入有界训练器，按 accumulation group 归一化已核查 pair；旧 `train-v11` 仍是动作目标，不能直接喂新文件。A 没有启动训练或创建授权。
+联合候选采用 B 的 **token 级普通回复 SFT**，U3 加 `0.1 × softplus(0.5 − lp(y+) + lp(y−))`；lp 为回复 token 平均 logprob，rank 在 accumulation group 全样本平均，未知 pair 为零。两方法均执行相同正例/经核查负例分支，U2 rank 系数为零；这是计算匹配的实现，额外负例 token 和运行时间单报。与 A 早期 `reply_objective.py` 的逐例 SFT / 仅 U3 负例前向不同，**早期 v1 实现保留为诊断，不冒充同一个目标**。此选择发生在新训练及开发输出之前，不搜索多种损失。
+
+两方法同 Qwen3.5-9B revision、同 q_proj/v_proj/in_proj_qkv、r8/alpha16、dropout0、seed/顺序/权重/步数；一个 epoch、accumulation8、lr1e-4、固定终点。B `naa_train.py check-reply` 对最终真实数据执行原生前缀、turn-end 248046、无截断与实际 token/时间检查。`validate_reply_comparison` 检查实际步数、完成状态、初始化、数据和配置。训练器已由 B 实现，A 没有启动训练或创建授权。
 
 `agent/reply_protocol.py` 提供竞争性 U1 记忆使用规则和 U1+ 主体/服务对象匹配规则；三证据臂原文逐字相同，均不静默屏蔽第三方。No-memory 留问题/选项，Options-only 连问题一起移除。`evaluation/wp4_mcq.py` 使用严格短答案 **modified protocol**，不能与官方原协议混算。以 owner/history-family 连通分量聚类，报告共同完成配对、修复/退步、micro 与 owner-macro 差异/CI、预定分母、完成率、解析/技术失败及失败纳入分母敏感性、未知区间。主要 U3−U2，次要对照预先固定；+5pp 实际意义、总体 −5pp 非劣，不将不显著叫等效。others 元数据类别不冒充已验证第三方；updated/forget 重合不代表一般时序更新。
 
-`evaluation/agent_system.py` 检查需求处理、合法取史/技能、实际回复、历史落盘和后续交互的 trace 身份/顺序。事实短语检查只提供可复算观察，未出现不直接判事实错误，出现也不直接判帮助充分。仍需实际开放回复的帮助质量、误用及任务完成检查；缺少独立评审则如实记单人审查。当前完整 Agent 接线、新回复和 MP/ME 遥测仍是 B 联合缺口，不把 84 个合同当作完成系统实验。
+`evaluation/agent_system.py` 检查需求处理、合法取史/技能、实际回复、历史落盘和后续交互的 trace 身份/顺序。事实短语检查只提供可复算观察，未出现不直接判事实错误，出现也不直接判帮助充分。仍需实际开放回复的帮助质量、误用及任务完成检查；缺少独立评审则如实记单人审查。B 已提供 `CompanionAgent` 最小完整交互链。本次增加真实执行事件：需求选择、合法读史、技能读取、回复、hash 链写入、后续就绪，并接入 A 的确定性检查。`score_agent_system.py` 验证终局 sealed 回复和 episode 身份、保留整段真实回复，生成固定 60 个抽检包；允许如实记录单人/AI 辅助审查，不要求伪造两位独立评审。
+
+剩余系统缺口：把 84 个既有源合同接到 B 的实际 episode / RS 来源适配器；新模型开放回复；MP/ME 各自可追溯的逻辑视图和适用性遥测；有限帮助质量/误用审查。MS 原文演示链及单元测试不等于全部模块的完整系统实验证明。PrefEval 已暴露家族只作外部官方协议复核，不称独立测试。
 
 ## WP3 和联合资源交接
 
-初次查看 B 时仍在 CPU 供给阶段，未取得终局账本；不据此编造 WP3 分数，也不持续查 GPU。`finalize_wp3.py` 是 B 运行结束后的一次 CPU hook：验证原冻结、终局 hash 账本、封存、按预定 confirm/bridge 身份拆分、十格聚合与跨模型/旧协议配对。修复通用 exporter 对新臂仍硬编码 A/B/C/D 的成本表问题；不改历史 scorer 或成功定义。
+B 已从单独冻结树启动 W3；尚未消费终局事件，不编造分数或轮询 GPU。`finalize_wp3.py` 是 B 运行结束后的一次 CPU hook：验证原冻结、终局 hash 账本、封存、按预定 confirm/bridge 身份拆分、十格聚合与跨模型/旧协议配对。修复通用 exporter 对新臂仍硬编码 A/B/C/D 的成本表问题；不改历史 scorer 或成功定义。
 
-本机 `handoff/A_RESPONSE_TO_B.json`、PR33 的实际评论同步了新输入合同、50 题结果和 formal 分组重叠。自动终结程序生成一份 `JOINT_RESOURCE_CANDIDATE.json`：五臂基线 8,000 GPU 秒、U2/U3 各 10,800 秒、训练后 MCQ 与有限开放评价 16,000 秒，总候选 45,600 秒，包含加载/烟测/重试/保存/退出；这是待 B 接线和研究者批准的同一份具体申请，**不是已获联合签认或训练授权**。不把旧短输入 0.21 秒外推成 8k 输入时间上界。若两方法未到同一步数，不报告公平训练比较。当前 WP3 运行不受此候选阻塞。
+本机 `handoff/A_RESPONSE_TO_B.json` 和 PR33 评论同步接口。`await_wp3_seal.py` 在 B 的封存 completion 事件到达后自动执行 CPU 终局评分，写 `A_W3_SCORED_FOR_B.json`；最长六小时退出，不需要 AI 等候。已有 WP2、140 确认、60 协议衔接和 Gemma 复验保持原身份。
+
+B1 all-role@8192（Qwen 原生预算）仅为本次实际 CPU 供给候选。**最终供给选择仍待 W3 封存分数后与 B 按质量、完整来源覆盖、成本和不确定性共同确认**；它不自动等同于使用双 tokenizer 计数的 WP3 B1。若选较短 B1s，重新派生请求并核验同一标注来源实际送达，不改题目/标签、不依赖 Direct、不新增训练样本搜索。
+
+`finalize_reply_joint.py` 自动生成 B 原生训练文件、`TRAINING_CHECK.json`、1,360 个五臂 native 请求及一份 `JOINT_RESOURCE_CANDIDATE.json`。W4-0 沿用 B 条件批准范围（10,000 秒 / 1,500 物理尝试），本 manifest 仍 `authorized=false`，待最终供给/manifest 对接；训练各方法预算按真实 token 检查估算并包含加载/保存/退出，训练后固定 544 个同证据 MCQ + 252 个有限开放逻辑位置。不默认增添适配模型的 NoMem/OptOnly 两臂。预算、实际条数和 fit 配对数以联合回执为准，不能拿尚未完成的预定数冒充已验收。原 `release/` 中 45,600 秒估计已被此联合候选替代并保留历史。
+
+联合代码已实现；资源选择仍需 B 核对，训练和训练后评价未获批准。长上下文 backward 耗时尚未实测；token 估计不能当作实测吞吐。B 实际 smoke 和硬时限必须绑定批准文件。若 U2/U3 步数或配置不同，不生成公平训练比较请求。
 
 ## 复现与状态
 
@@ -60,6 +72,9 @@ python project/scripts/need_aware/prepare_response_data.py \
   --reuse /opt/tokkio-data0/naa/20261128/agent_b/train_diag --threads 4
 "$NATIVE_PY" project/scripts/need_aware/finalize_response_data.py \
   --root "$S" --source "$R/source" --training "$R/artifacts/training"
+# 原 63a 作业已在独立旧树运行；联合树只启动下面的接线作业，不重复上述作业。
+"$NATIVE_PY" project/scripts/need_aware/finalize_reply_joint.py \
+  --root "$S" --training "$R/artifacts/training"
 ```
 
 现有目的地不得重跑覆盖；supply 支持严格身份匹配的恢复，release 已存在则拒绝，失败目录保留再用新根目录修复。后台脚本独立执行，机器可定时检查自己的 completion 文件；AI 不持续等候或每分钟轮询。
@@ -67,3 +82,5 @@ python project/scripts/need_aware/prepare_response_data.py \
 真实工程失败：首次 shell `nohup` 启动未存活，日志为空，没有模型调用；改用 Python `subprocess.Popen(start_new_session=True)`、绝对 PYTHONPATH 和私有日志后确认存活。原始失败日志保留。CPU 测试、训练候选准备、scorer fixture 和 BGE 编码均不是 Generator 能力结果。
 
 公开仅实现、测试、无文本统计及 hash；原始历史、官方回复、逐题标注、预测、sealed 文件、权重、密钥均留本机。公开回执见 `response_receipts/`，运行完成/失败事件见本机 `FINALIZE_DONE.json` / `FINALIZE_FAILED.json`。
+
+联合集成验证：127 项 `test_need_aware_*.py` CPU 测试通过，0 跳过。首次集成测试发现新 fixture 的答案文本绑定错误及旧测试仍期待武断的 beneficiary 文案；修复 fixture 和语义断言后通过，没有放宽 scorer 或跳过测试。最终统计以本机 `TESTS.joint.final.xml` / 后续联合回执为准。

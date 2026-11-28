@@ -185,7 +185,8 @@ def test_u1_messages_marks_without_withholding_and_u1_plus_adds_served_person_ru
     assert tr['withheld'] == 0 and out[1]['content'].startswith(other[1]['content']) and out[-1] == req
     assert 'mentions another person' in out[1]['content']
     plus, tp = B.u1_messages(other, plus=True)
-    assert B.U1_PLUS_RULES in plus[0]['content'] and 'the user (it names no other person)' in plus[0]['content']
+    assert B.U1_PLUS_RULES in plus[0]['content'] and 'Lexical person cue: none detected' in plus[0]['content']
+    assert 'not a beneficiary label' in plus[0]['content']
     assert 'mentions my friend' in plus[1]['content'] and B.U1_PLUS_RULES not in B.U1_POLICY
 
 

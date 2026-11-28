@@ -1,0 +1,32 @@
+{
+  "protocol": "naa-a-b-reply-integration-receipt-v1",
+  "a_parent": "63a8c8e0a3307ccad57103114117a15aca195b9d",
+  "b_parent": "7a13b96c2ce466850c94fb049b3840e107dc7e33",
+  "safe_merge": "7acfcf50",
+  "cpu_tests": {
+    "tests": 127,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "xml_sha256": "1ff7ab79b62996a03e0d93eb496f6b2f6b59e5e85c0694b6a9deb49fba12333d",
+  "commands": [
+    "PYTHONPATH=project/src CUDA_VISIBLE_DEVICES= HF_HUB_OFFLINE=1 /opt/tokkio-data0/tokkio_envs/naa-cpu-py311/bin/python -m pytest -q project/tests/test_need_aware_*.py",
+    "finalize_reply_joint.py --help",
+    "await_wp3_seal.py --help",
+    "score_agent_system.py --help"
+  ],
+  "real_training_data_status": "4000 source candidates audited; actual supplied-evidence join/native qualification proceeds in independent CPU job",
+  "joint_runtime_status": "not an inference authorization",
+  "gpu_calls_by_a": 0,
+  "training_steps_by_a": 0,
+  "new_generator_results_claimed": 0,
+  "tests_are_not_model_capability": true,
+  "scoring_protocol": "naa-short-mcq-v1",
+  "planned_development": {
+    "tasks": 272,
+    "complete_owners": 14,
+    "base_conditions": 5
+  },
+  "wp3_material_policy_binding_verified": true
+}

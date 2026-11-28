@@ -29,26 +29,16 @@ from ..memory import reader as R
 from ..memory.writer import _FORGET, _OTHER, _UPDATE, link_forget_requests
 from . import arms as WP2
 from . import arms_wp3 as W3
+from .reply_protocol import U1 as RESPONSE_U1, U1_PLUS as RESPONSE_U1_PLUS
 
 CONDITIONS = ('U0', 'U1', 'U1+', 'NoMem', 'OptOnly', 'U2', 'U3')
 W40_CONDITIONS = ('U0', 'U1', 'U1+', 'NoMem', 'OptOnly')       # revised W4-0 (base G only)
 SAME_EVIDENCE = ('U0', 'U1', 'U1+', 'U2', 'U3')
-BEHAVIOR_VERSION = 'naa-wp4-behavior-v3'
+BEHAVIOR_VERSION = 'naa-wp4-behavior-v4'
 BASE_GENERATOR = 'base'
 
-U1_POLICY = (
-    'Memory-use policy (applies to the records below):\n'
-    "- Use the user's own current preferences when they help with the current request.\n"
-    '- The records are incomplete; do not assume that something missing is false.\n'
-    '- Never rely on information the user asked you to forget or not to use.\n'
-    '- Do not use a preference the user said has changed or is no longer true.\n'
-    "- Another person's preferences are not the user's preferences.\n"
-    '- Make no assumptions from demographics, and never repeat sensitive identifiers.')
-U1_PLUS_RULES = (
-    '- First decide whom the current request is for: the user, or another person the user names in it.\n'
-    '- A preference belongs to the person who holds it. When the request is for another person, use what the '
-    'user reported about that person; when it is for the user, use the user\'s own preferences, not those of '
-    'people the user mentions.')
+U1_POLICY = 'Memory-use policy (applies to the records below):\n' + RESPONSE_U1
+U1_PLUS_RULES = RESPONSE_U1_PLUS
 SILENCE_NOTE = ('No earlier records are shown for this request: the only user records available are tied to a '
                 'request to forget or describe another person.')
 OPTIONS_ONLY_SYSTEM = 'You are a helpful assistant.'
@@ -66,14 +56,15 @@ def person_cue(text):
 
 def served_line(query):
     who = person_cue(query)
-    return ('Whom the current request is for (from its wording): ' +
-            (f'possibly {who}, the person it names.' if who else 'the user (it names no other person).'))
+    return ('Lexical person cue: ' + (who if who else 'none detected') +
+            '. This is not a beneficiary label. Infer whom the request serves from its full meaning; '
+            'mentioning someone does not mean the request is for them, and names may lack a lexical cue.')
 
 
 def _marks(u, *, linked, plus):
     marks = []
     if u.unit_id in linked:
-        marks.append('the user later asked not to use this')
+        marks.append('possible lexical link to a later forget request; verify the referent and scope before applying it')
     if 'forget_request' in u.constraint_candidates:
         marks.append('a request to forget or not use something; it applies only to what it names')
     if 'explicit_change_statement' in u.constraint_candidates:
