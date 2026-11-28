@@ -1,0 +1,29 @@
+name: NAA CPU contracts and evaluation
+on:
+  pull_request:
+    paths:
+      - "project/src/metacom_pm/need_aware/**"
+      - "project/scripts/need_aware/**"
+      - "project/tests/test_need_aware_*.py"
+      - ".github/workflows/naa-cpu-tests.yml"
+jobs:
+  naa-cpu:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: project/src
+      CUDA_VISIBLE_DEVICES: ""
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install 'pytest>=8,<9' 'pydantic>=2.8,<3'
+      - run: python -m compileall -q project/src/metacom_pm/need_aware project/scripts/need_aware
+      - run: python -m pytest project/tests/test_need_aware_*.py -ra -o addopts= --junitxml=naa-tests.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: naa-cpu-tests
+          path: naa-tests.xml
