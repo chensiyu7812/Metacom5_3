@@ -1,6 +1,6 @@
 # A 线 WP2 评价实现与执行交接
 
-评价规则在查看真实模型输出前由 `629d20f7` 冻结，SHA256 为 `18d863f6f9547040c7d11aab85c4a68e501560dd7e0fa113962f7e1d40474cd3`，见 [WP2_EVALUATION_RULES.json](WP2_EVALUATION_RULES.json)。本文件记录当前已执行工作；最终模型统计与 WP3 决策尚待 B 封存输出，不能用 CPU/plumbing 结果替代。
+评价规则在查看真实模型输出前由 `629d20f7` 冻结，SHA256 为 `18d863f6f9547040c7d11aab85c4a68e501560dd7e0fa113962f7e1d40474cd3`，见 [WP2_EVALUATION_RULES.json](WP2_EVALUATION_RULES.json)。本文件记录已执行的实现和命令；2026-11-28 已完成真实模型终局评分与结果审查，见 [A_WP2_RESULTS_ZH.md](A_WP2_RESULTS_ZH.md) 和 [完整数表](wp2_results/statistics.md)。1,618/1,788 个可执行位置完成，1 次失败、169 个未执行、132 个结构性位置分别保留。
 
 ## 实际实现
 
@@ -28,7 +28,7 @@ A 已通过 PR #31 评论及共享 `handoff/A_WP2_EVALUATION_STATUS.json` 交接
 
 本地原数据/新评价回归 33 passed；`8de35594` 的 [NAA CPU CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46026871974) 与 [PM CI](https://github.com/chensiyu7812/Metacom5_3/actions/runs/46026871951) 通过。一次真实冻结材料与原 B plumbing 导出的接口联调处理 1,920 槽位、1,788 plumbing 完成、132 结构性位置，8 个主比较的配对数为 240、240、207、207、207、207、207、207；11.659 秒。随后已用实际 v2 plumbing 哈希链跑通封存→评价完整接口，1,788 次 plumbing 调用对应 1,920 完整槽位。两次都是接口验证，没有模型能力成绩，也没有重复 GPU 资格验证。
 
-`seal_wp2_export.py` 不依赖 B 改动当前运行器：只读账本、校验 hash chain、取首个有效结果，保留 timeout/invalid/interrupted/unattempted 和所有失败尝试。附实际 token/生成时间/内部首 token 计时及账本 GPU 秒；未知延迟不填零，v2 teardown 未计入部分明确单列限制。`watch_wp2_evaluation.py` 已作为独立 CPU 后处理启动，禁用 CUDA；等待 B `RUN_SUMMARY` 后才封存/评分/生成本地表格，中途只输出技术完成计数。它不启动 GPU、不修改推理、不给训练授权，也不自动对外发布。完整模型研究解释和 WP3 决策仍须在封存结果审阅后完成。
+`seal_wp2_export.py` 不依赖 B 改动当前运行器：只读账本、校验 hash chain、取首个有效结果，保留 timeout/invalid/interrupted/unattempted 和所有失败尝试。附实际 token/生成时间/内部首 token 计时及账本 GPU 秒；未知延迟不填零，v2 teardown 未计入部分明确单列限制。`watch_wp2_evaluation.py` 已作为独立 CPU 后处理启动，禁用 CUDA；等待 B `RUN_SUMMARY` 后才封存/评分/生成本地表格，中途只输出技术完成计数。它不启动 GPU、不修改推理、不给训练授权，也不自动对外发布。该 CPU 后处理已在 B RUN_SUMMARY 后完成；本轮研究解释与唯一 WP3 建议已提交结果报告。旧 PROGRESS 中 accuracy_inspected=false 仅描述运行期间技术监测状态，不描述最终研究审阅。
 
 以下命令在 A worktree 的 `project/` 中运行。私有材料根目录记为 `NAA=/opt/tokkio-data0/naa/20261127`；普通 Python 环境为 `$NAA/venv/bin/python`。
 
@@ -52,4 +52,43 @@ PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/evaluate_wp2.py \
 
 错误审查新增回归首次执行漏设 `PYTHONPATH=src`，collection 报 `ModuleNotFoundError: metacom_pm`；使用上面的完整命令重跑后 33 项通过，没有删除或跳过测试。
 
-当前未完成：B 封存真实模型输出后的严格评分、失败归因、跨模型配对结果及基于真实错误的单一 WP3 修复建议。尚无训练决定或训练执行。
+当前未执行边界：170 个可执行位置因 Gemma 预算终止未完成，其中 1 个尝试失败、169 个从未调用；开放生成评价、WP3 推理/训练未执行。严格评分、失败分解、跨模型配对及单一 WP3 建议均已交付。B 报告中的未完成计数及 EOS 边际比较纠正已通过 PR #31 评论和本地 handoff 发送；A 终局结果以本次封存与配对表为准。
+
+
+## 已执行的真实终局后处理
+
+自动 CPU 后处理使用以下参数（输出目录已经存在且封存，复跑时必须换新目录，禁止覆盖）：
+
+```bash
+NAA=/opt/tokkio-data0/naa/20261127
+FINAL="$NAA/evaluation_wp2/automatic-v2-terminal-final"
+PYTHONPATH=src CUDA_VISIBLE_DEVICES= "$NAA/venv/bin/python" scripts/need_aware/watch_wp2_evaluation.py \
+  --artifacts "$NAA/artifacts" \
+  --policy docs/need_aware_agent_20261127/WP2_EVALUATION_RULES.json \
+  --manifest-dir "$NAA/agent_b/manifests/wp2-exec-v2" \
+  --ledger-root "$NAA/agent_b/runs/wp2-exec-v2-model/model" --out "$FINAL"
+
+PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/review_wp2_errors.py \
+  --artifacts "$NAA/artifacts" --manifest-dir "$NAA/agent_b/manifests/wp2-exec-v2" \
+  --export-dir "$FINAL/sealed" --scored-dir "$FINAL/scored" \
+  --out "$NAA/evaluation_wp2/error-review-v2"
+
+PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/check_wp2_format.py \
+  --export-dir "$FINAL/sealed" --upstream "$NAA/upstream/PersonaMem-v2" \
+  --out "$FINAL/FINAL_FORMAT_DIAGNOSTIC.json"
+
+PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/close_wp2.py \
+  --manifest "$NAA/agent_b/manifests/wp2-exec-v2/MANIFEST.json" \
+  --aggregate "$FINAL/scored/aggregate.json" \
+  --ledger-dir "$NAA/agent_b/runs/wp2-exec-v2-model/model" \
+  --out "$FINAL/TERMINAL_RECEIPT.json"
+
+PYTHONPATH=src "$NAA/venv/bin/python" scripts/need_aware/report_wp2.py \
+  --aggregate "$FINAL/scored/aggregate.json" --out "$FINAL/MODEL_STATISTICS_FINAL.md"
+```
+
+结果：watcher 收到 STOPPED 终局后封存并评分；175 个源审查包生成成功，重新核验冻结材料及逐题评分无差异；1,618 条真实输出与官方方法解析一致；终局重算 1,619 次物理尝试、1,618 次完成、132 个结构性位置。所有发布统计与本地原文件 SHA256 一致。[终局回执](wp2_results/terminal_receipt.json) 明确披露 Gemma 单模型计时超额至少 0.532 秒及 teardown 上界，不用总预算合规掩盖单模型超额。格式诊断和报告新增展示未修改冻结 scorer、分母、样本或 CI 方法。
+
+审查材料 `ERROR_REVIEW.private.jsonl`、逐题 `SOURCE_AUDIT.private.jsonl` 以及各模型 `scored.*.private.jsonl`、封存预测均在 `$NAA/evaluation_wp2/` 下。公开只提交聚合表与校验摘要；不发布 raw gold/history/output 或逐题身份。原 240 任务仍由已有 FREEZE 引用，未重生成。
+
+最终提交前新增终局成本回归后，本地数据/评价测试为 **34 passed**。该回归明确区分已失败与从未尝试，检验即使总预算足够也如实报告单模型超额，并拒绝 pending 计数不一致。

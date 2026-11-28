@@ -9,6 +9,7 @@ import ast
 from collections import Counter, defaultdict
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 
@@ -46,11 +47,18 @@ def check(export, upstream):
             group['official_format_valid'] += predicted in ('A', 'B', 'C', 'D')
             group['official_parse_invalid'] += predicted not in ('A', 'B', 'C', 'D')
             group['empty_output'] += not output.strip()
+            # Descriptive audit only: upstream's literal prompt example has
+            # brackets which its parser does not accept. Never extract a new
+            # scored choice or repair any response here.
+            group['invalid_with_literal_bracket_final'] += (
+                predicted not in ('A', 'B', 'C', 'D') and
+                re.search(r'Final Answer:\s*\[[A-D]\]\s*$', output, re.IGNORECASE) is not None)
     return dict(result_kind='model_technical_only', model_capability_result=False, gold_read=False,
                 accuracy_computed=False, upstream_commit=commit, manifest_sha256=seal['manifest_sha256'],
                 ledger_head_sha256=seal['ledger_head_sha256'], snapshot_final=seal['final'],
                 completed_outputs=sum(c['completed'] for c in counts.values()),
                 official_parser_disagreements=mismatch, by_cell_finish={k: dict(v) for k, v in counts.items()},
+                literal_bracket_audit='Post-result descriptive format audit; no alternative answer or accuracy. The pinned prompt shows Final Answer: [Letter], but its parser rejects literal brackets.',
                 interpretation='Format failures are actual returned-output failures under the unchanged official parser; not transport failures. No correctness inference or relaxed scoring.')
 
 

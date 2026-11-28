@@ -10,7 +10,11 @@ def percent(x):
 
 
 def interval(x):
-    return '—' if x is None else '['+', '.join(percent(v) for v in x)+']'
+    return '—' if x is None else '['+', '.join(f'{100*v:.2f}' for v in x)+'] pp'
+
+
+def points(x):
+    return '—' if x is None else f'{100*x:.2f} pp'
 
 
 def render(report):
@@ -36,7 +40,17 @@ def render(report):
               '|---|---:|---:|---:|---:|---:|---:|']
     for s in report['primary_paired']:
         p = '—' if s['mcnemar_p_holm_8'] is None else f"{s['mcnemar_p_holm_8']:.4g}"
-        lines.append(f"| {s['population']}/{s['left'].replace('|','/')}→{s['right'].replace('|','/')} | {s['predefined_evaluable_pairs']}/{s['complete_pairs']} | {s['repairs']}/{s['regressions']} | {percent(s['paired_difference'])} | {interval(s['ci95'])} | {p} | {percent(s['fixed_denominator_difference_sensitivity'])} |")
+        lines.append(f"| {s['population']}/{s['left'].replace('|','/')}→{s['right'].replace('|','/')} | {s['predefined_evaluable_pairs']}/{s['complete_pairs']} | {s['repairs']}/{s['regressions']} | {points(s['paired_difference'])} | {interval(s['ci95'])} | {p} | {points(s['fixed_denominator_difference_sensitivity'])} |")
+    lines += ['', '## 配对敏感性与共同完成集合', '',
+              'EOS 仅比较双方均 EOS 的相同任务，属于完成方式选择后的描述性子集。禁止用不同 EOS 样本的边际准确率相减。未知结果上下界保留全部预定分母，不能将未执行视为已知错误。', '',
+              '| 左→右 | EOS 同题配对 N | EOS 配对差异 | 全预定分母未知结果差异界限 |', '|---|---:|---:|---:|']
+    for s in report['primary_paired']:
+        lines.append(f"| {s['left'].replace('|','/')}→{s['right'].replace('|','/')} | {s['eos_only_pairs']} | {points(s['eos_only_difference'])} | {interval(s['unknown_outcome_difference_bounds'])} |")
+    common = report['common_completed_tables']['both_models_eight_cells']
+    lines += ['', f"两模型四臂共同完成 {common['common_completed']}/{common['predefined_evaluable']} 题，排除技术未完成 {common['excluded_incomplete']} 题；这是完成子集，不重定义冻结分母。", '',
+              '| 模型/条件 | 同一集合完成 N | 正确 | 准确率 |', '|---|---:|---:|---:|']
+    for key, s in common['cells'].items():
+        lines.append(f"| {key.replace('|','/')} | {s['completed']} | {s['correct']} | {percent(s['accuracy_on_completed'])} |")
     lines += ['', '## 代表性与困难层', '', '180 题代表性层与 60 题困难层分别呈现；困难混合比例不是自然发生率。每层先报 A/B 全集，再报四臂共同可评价的 Direct 子集，仅在同一任务集内比较。', '',
               '| 模型/条件/层 | 可评价 N | 完成 N | 正确 | 完成准确率 | 固定分母敏感性 |', '|---|---:|---:|---:|---:|---:|']
     for group, arms in [('representative', 'AB'), ('hard', 'AB'), ('direct/representative', 'ABCD'), ('direct/hard', 'ABCD')]:
@@ -44,7 +58,7 @@ def render(report):
             for arm in arms:
                 s = report['cell_summaries'][model+'|'+arm][group]
                 lines.append(f"| {model}/{arm}/{group} | {s['predefined_evaluable']} | {s['completed']} | {s['correct']} | {percent(s['accuracy_on_completed'])} | {percent(s['fixed_denominator_success_sensitivity'])} |")
-    lines += ['', '## 技术完整性与范围', '', '| 模型/条件 | 技术失败分类 | 长度停止 | EOS 完成 N/准确率 |', '|---|---|---:|---:|']
+    lines += ['', '## 技术完整性与范围', '', '下表 EOS 是各单元边际描述，跨条件推断须使用上面的同题 EOS 配对。', '', '| 模型/条件 | 技术失败分类 | 长度停止 | EOS 完成 N/准确率 |', '|---|---|---:|---:|']
     for key, groups in report['cell_summaries'].items():
         s = groups['all']
         fail = ', '.join(f'{k}:{v}' for k, v in s['failures'].items()) or '0'

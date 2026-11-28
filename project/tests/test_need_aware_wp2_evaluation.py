@@ -203,3 +203,41 @@ def test_cost_accounting_preserves_interrupted_timeout_and_unknown_latency():
     assert m['ledger_accounted_gpu_seconds'] == 351
     assert m['per_model']['Qwen35']['load_failures'] == 1
     assert m['per_cell']['G0e|A']['internal_first_token_seconds']['p50'] is None
+
+
+def test_terminal_reconciliation_discloses_overrun_and_separates_never_attempted():
+    import runpy
+    from pathlib import Path
+    close = runpy.run_path(str(Path(__file__).parents[1]/'scripts/need_aware/close_wp2.py'))['close']
+    manifest = dict(model_order=['G0e', 'Qwen35'], caps=dict(
+        per_model_gpu_seconds=2, max_gpu_seconds=5, max_physical_calls=4))
+    # Synthetic accounting regression only, never a model-capability result.
+    events = [dict(event='LOAD_START', model_label='G0e'),
+              *[dict(event='ATTEMPT_START') for _ in range(3)],
+              dict(event='MODEL_SESSION_END', model_label='G0e', session_elapsed_s=2.5,
+                   utc='2026-01-01T00:00:02.500000+00:00'),
+              dict(event='LOAD_START', model_label='Qwen35', utc='2026-01-01T00:00:03+00:00'),
+              dict(event='MODEL_SESSION_END', model_label='Qwen35', session_elapsed_s=1,
+                   utc='2026-01-01T00:00:04+00:00'),
+              dict(event='RUN_SUMMARY', result_kind='model', event_sha256='head', completed_unique=2,
+                   physical_calls=3, pending_logical=['failed', 'never'], status='STOPPED',
+                   utc='2026-01-01T00:00:04.100000+00:00')]
+    for i, e in enumerate(events):
+        e['seq'] = i
+    report = dict(result_kind='model', snapshot_final=True, manifest_sha256=digest(manifest),
+                  ledger_head_sha256='head', physical_attempts=3, export_seal_sha256='seal',
+                  evaluation_policy_sha256='policy', cell_summaries={'test': {'all': dict(
+                      planned_slots=5, predefined_evaluable=4, completed=2,
+                      structural_not_evaluable=1, failures=dict(runtime_error=1, unattempted=1), retries=0)}},
+                  execution_metrics={'per_model': {'G0e': {'ledger_accounted_gpu_seconds': 2.5},
+                                                   'Qwen35': {'ledger_accounted_gpu_seconds': 1}}})
+    result = close(manifest, report, events)
+    assert result['counts']['technical_uncompleted'] == 2
+    assert result['counts']['failures'] == dict(runtime_error=1, unattempted=1)
+    assert result['counts']['structural_not_evaluable'] == 1
+    assert result['cost_by_model']['G0e']['ledger_cap_excess_seconds'] == .5
+    assert result['cost_by_model']['G0e']['conservative_cap_excess_seconds_upper'] == 1
+    assert result['conservative_gpu_seconds_upper'] == pytest.approx(4.1)
+    events[-1]['pending_logical'].append('duplicate')
+    with pytest.raises(ValueError, match='pending mismatch'):
+        close(manifest, report, events)
