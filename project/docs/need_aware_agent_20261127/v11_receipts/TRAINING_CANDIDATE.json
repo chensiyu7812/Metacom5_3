@@ -1,0 +1,57 @@
+{
+  "protocol": "naa-wp4-training-candidate-v1",
+  "authority_commit": "65424fd807e5e14284b70a9a184288bf0ce7a95e",
+  "authorization": "not_granted",
+  "base_model": "Qwen/Qwen3.5-9B",
+  "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "train_file": "/opt/tokkio-data0/naa/20261128/a_v11/wp4-final/targets/fit.jsonl",
+  "tune_file": "/opt/tokkio-data0/naa/20261128/a_v11/wp4-final/targets/tune.jsonl",
+  "train_sha256": "1590474adb66b84dd9ac7fc031e72566051473c76f8bcf9246cb0e36cdaf75ce",
+  "tune_sha256": "3564fbb5271894f500638d9689f267fad6e487351ac9ddef1cc3760ddbe6d675",
+  "rows": 3716,
+  "groups": 1239,
+  "methods": [
+    "U2",
+    "U3"
+  ],
+  "same_chosen_examples": true,
+  "same_prompt": true,
+  "same_model_initialization": true,
+  "seed": 20261128,
+  "group_order": "fixed hash; preserve all variants; same order for both methods",
+  "max_seq_length": 2048,
+  "epochs": 1,
+  "max_optimizer_steps": 500,
+  "microbatch": 1,
+  "gradient_accumulation": 8,
+  "planned_optimizer_steps_per_method": 465,
+  "optimizer": "adamw",
+  "learning_rate": 0.0002,
+  "weight_decay": 0.01,
+  "warmup_steps": 25,
+  "lora": {
+    "rank": 8,
+    "alpha": 16,
+    "dropout": 0.0,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ]
+  },
+  "u2_objective": "mean chosen response SFT",
+  "u3_objective": "same SFT + .1 * masked softplus(.5 - chosen_action_logp + incompatible_action_logp)",
+  "pair_weight": 0.1,
+  "pair_margin": 0.5,
+  "negative_scope": "Explicitly incompatible action tokens only, no alternative natural reply negatives.",
+  "max_input_target_tokens_per_method": 7610368,
+  "fairness": "U2/U3 same chosen examples/steps/token cap/seed/base and same three forward passes. U2 auxiliary action branches have zero coefficient and zero gradient; ordinary SFT objective unchanged. B must retain auxiliary forward/backward work for matched tokens/compute, with compile disabled; record actual wall/FLOPs. No output-based checkpoint choice.",
+  "auxiliary_forwards_per_example": 2,
+  "u2_auxiliary_coefficient": 0.0,
+  "torch_compile": false,
+  "checkpoint_selection": "last completed fixed epoch/step, no dev-score selection",
+  "requires": [
+    "explicit new training authorization",
+    "B backend/module/memory/time audit",
+    "independent calibration of source targets; no fabricated reviewer completion"
+  ]
+}
