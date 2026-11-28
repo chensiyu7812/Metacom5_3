@@ -41,6 +41,19 @@ def safe_storage_guard(run_root):
         raise SafetyStop('storage guard: ' + str(exc)) from exc
 
 
+def check_adapter_load(spec, adapter, result):
+    """Strict adapted-generator identity: binding, manifest checkpoint and the worker's merge must agree."""
+    bound = spec.get('adapter')
+    if not adapter and not bound:
+        L.require('adapter' not in (result.get('loading') or {}), 'base generator loaded an adapter')
+        return
+    L.require(bool(adapter) and bool(bound), 'adapter bound in only one of binding / checkpoint')
+    L.require(bound['adapter_sha256'] == adapter['sha256'], 'binding and checkpoint adapter differ')
+    merged = (result.get('loading') or {}).get('adapter') or {}
+    L.require(merged.get('adapter_sha256') == adapter['sha256'], 'worker merged a different adapter')
+    L.require(merged.get('merged_modules', 0) > 0, 'adapter merged no module')
+
+
 class NAAHFBackend(SubprocessGE2HF):
     kind = 'hf_real_naa'
 
@@ -89,6 +102,7 @@ class NAAHFBackend(SubprocessGE2HF):
                        boot_id=clock.boot_id, deadline_ns=int(min(self.deadline, time.monotonic() + seconds) * 1e9))
         result = self._exchange(command, seconds)
         done = clock.stamp()
+        check_adapter_load(self.spec, command['adapter'], result)
         result.update(supervisor_load_ns=duration_ns(spawn, done),
                       supervisor_load_scope='spawn + guard + worker load + IPC, inclusive')
         return result
