@@ -306,3 +306,16 @@ def test_teardown_is_inside_occupied_gpu_time(tmp_path):
     crashed.add('LOAD_START', model_label='G0e', session_id='s', session_elapsed_s=0., max_seconds=900.)
     crashed.add('TEARDOWN_START', model_label='G0e', session_id='s', session_elapsed_s=50., max_seconds=10.)
     assert crashed.gpu_seconds('G0e') == 60.
+
+
+def test_no_load_or_request_inside_teardown_reserve(tmp_path):
+    rows = two_model_rows(2)
+    m = manifest(rows, models=('G0e', 'Qwen35'))
+    m['caps'].update(smoke_calls=0, per_model_gpu_seconds=1000, teardown_seconds=10)
+    lg = Ledger(tmp_path, manifest_sha256=AU.manifest_sha256(m))
+    lg.add('MODEL_SESSION_END', model_label='G0e', session_id='old', session_elapsed_s=995.)   # 5 s < reserve
+    s = runner.run(m, dict(approval(m), max_gpu_seconds=3000), lg, lambda label, **k: PlumbingBackend({}),
+                   clock=Tick(1.), result_kind='plumbing')
+    assert 'teardown reserve' in s['model_stops']['G0e'] and s['global_stop'] is None
+    assert not any(e['event'] == 'LOAD_START' and e['model_label'] == 'G0e' for e in lg.events)
+    assert any(e['event'] == 'ATTEMPT_RESULT' and e['model_label'] == 'Qwen35' for e in lg.events)

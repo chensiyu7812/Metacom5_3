@@ -172,13 +172,19 @@ def _model(model_label, rows, manifest, ledger, budget, backend_factory, *, cloc
 
 def _session(model_label, queue, ledger, budget, backend_factory, *, clock, guard, caps, consecutive):
     session = 'sess-' + uuid.uuid4().hex[:12]
+    g, m = budget.seconds_left(model_label)
+    reserve = caps.get('teardown_seconds', TEARDOWN_SECONDS)
+    if g - reserve < 1.:
+        raise GlobalStop('global GPU seconds cap (teardown reserve)')
+    if m - reserve < 1.:
+        raise ModelStop('per-model GPU seconds share (teardown reserve)')
     t0 = clock()
-    left = min(budget.seconds_left(model_label))
+    left = min(g, m)
     backend = backend_factory(model_label, deadline=time.monotonic() + left, guard_bound_s=math.ceil(left))
     end = dict(reason='queue drained')
     elapsed = lambda: clock() - t0
     try:
-        load_s = min(caps['load_seconds'], left)
+        load_s = min(caps['load_seconds'], left - reserve)
         ledger.add('LOAD_START', model_label=model_label, session_id=session, session_elapsed_s=0., max_seconds=load_s)
         try:
             loaded = backend.load(load_s)
@@ -209,7 +215,11 @@ def _session(model_label, queue, ledger, budget, backend_factory, *, clock, guar
                            session_id=session, session_elapsed_s=elapsed())
                 queue.pop(0); continue
             g, m = budget.seconds_left(model_label, session, elapsed())
-            timeout = max(1., min(caps['request_seconds'], g, m))
+            if g - reserve < 1.:
+                raise GlobalStop('global GPU seconds cap (teardown reserve)')
+            if m - reserve < 1.:
+                raise ModelStop('per-model GPU seconds share (teardown reserve)')
+            timeout = min(caps['request_seconds'], g - reserve, m - reserve)
             ledger.add('ATTEMPT_START', logical_id=row['logical_id'], task_id=row['task_id'], arm=row['arm'],
                        model_label=model_label, request_sha256=row['request_sha256'], attempt=attempt,
                        session_id=session, session_elapsed_s=elapsed(), input_tokens=len(row['input_ids']),
