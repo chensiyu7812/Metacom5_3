@@ -60,6 +60,29 @@ QWEN35 = ModelSpec(
 
 MODELS = {m.label: m for m in (G0E, QWEN35)}
 
+ADAPTED_BINDING_VERSION = 'naa-adapted-binding-v1'
+ADAPTER_IDENTITY_KEYS = ('method', 'adapter_sha256', 'adapter_config_sha256', 'init_adapter_sha256', 'base_g_id',
+                         'train_data_sha256', 'train_receipt_sha256', 'trainer_version')
+
+
+def adapted_binding(spec, adapter, decode):
+    """Manifest binding for base G + one trained adapter (WP4 U2/U3).
+
+    The base ModelSpec (and so the base g_id of every WP2/W3/W4-0 request) is unchanged; the adapted
+    g_id digests the base g_id together with the adapter bytes, its config, its initial state, the
+    training data and the training receipt. physical_identity() includes g_id, so U0/U2/U3 requests
+    with byte-identical inputs can never be de-duplicated into one another."""
+    missing = [k for k in ADAPTER_IDENTITY_KEYS if not adapter.get(k)]
+    if missing:
+        raise ValueError('adapter identity incomplete: ' + ','.join(missing))
+    if adapter['base_g_id'] != spec.g_id:
+        raise ValueError('adapter was trained on a different base binding')
+    ident = {k: adapter[k] for k in ADAPTER_IDENTITY_KEYS}
+    g_id = f"naag:{spec.label}+{adapter['method']}:" + digest(dict(version=ADAPTED_BINDING_VERSION, adapter=ident,
+                                                                     cap=BACKEND_CONTEXT_CAP))
+    return {**asdict(spec), 'label': f"{spec.label}+{adapter['method']}", 'base_label': spec.label,
+            'g_id': g_id, 'base_g_id': spec.g_id, 'adapter': ident, 'decode': decode}
+
 
 def bind_inventory(spec, inventory_path):
     """Attach A's measured file hashes; refuse silent substitution."""

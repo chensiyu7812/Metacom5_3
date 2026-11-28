@@ -15,7 +15,7 @@ from ..data.contracts import digest
 from .wp2 import require, unique
 
 
-def execution_metrics(events):
+def execution_metrics(events, arms=('A', 'B', 'C', 'D')):
     """Aggregate timings/attempt failures, without exporting text, task IDs or errors."""
     def quantile(values, q):
         values = sorted(values)
@@ -41,7 +41,7 @@ def execution_metrics(events):
                               failed_attempts=sum(e['event'] in {'ATTEMPT_FAILED', 'ATTEMPT_INVALID'} for e in rows),
                               smoke=[{k: e.get(k) for k in ('event', 'calls', 'results', 'length_stops', 'empty_outputs')}
                                      for e in rows if e['event'] in {'SMOKE_PASSED', 'SMOKE_FAILED'}])
-        for arm in ('A', 'B', 'C', 'D'):
+        for arm in arms:
             result = [e for e in rows if e['event'] == 'ATTEMPT_RESULT' and e['arm'] == arm]
             by_cell[model+'|'+arm] = dict(completed=len(result),
                 input_tokens=dist([e['input_tokens'] for e in result]),
@@ -161,7 +161,7 @@ def seal_export(manifest_dir, ledger_root, out, *, kind, final=False):
                 ledger_events=len(events), ledger_snapshot_sha256=ledger_sha, ignored_torn_tails=tails,
                 physical_calls=sum(e['event'] == 'ATTEMPT_START' for e in events),
                 failed_attempt_events=dict(Counter(e['event'] for e in events if e['event'] in {'ATTEMPT_FAILED', 'ATTEMPT_INVALID', 'LOAD_FAILED'})),
-                execution_metrics=execution_metrics(events),
+                execution_metrics=execution_metrics(events, arms=sorted({r['arm'] for r in requests})),
                 files=files, source='B validated first-result ledger; read-only A export adapter; no answer-dependent selection')
     write('EXPORT_SUMMARY.json', (json.dumps(seal, indent=2)+'\n').encode())
     return seal

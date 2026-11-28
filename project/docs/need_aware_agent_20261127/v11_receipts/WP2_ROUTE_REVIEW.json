@@ -1,0 +1,41 @@
+{
+  "protocol": "naa-v11-bounded-wp2-review-v1",
+  "allocation_sha256": "8f583f5747cb0fed442131d4b67e69d822df873b360be4237f7b5beb60b50799",
+  "selected_who_others": 37,
+  "selected_C_errors": 40,
+  "overlap": 15,
+  "union": 62,
+  "full_histories_verified": 62,
+  "routing": {
+    "G0e": {
+      "paired_tasks": 168,
+      "C_correct": 117,
+      "D_correct": 113,
+      "posthoc_CD_upper_correct": 129,
+      "true_who_route_correct": 125,
+      "visible_cue_route_correct": 120,
+      "visible_cue_selected_D": 11,
+      "visible_cue_disagrees_with_who": 19
+    },
+    "Qwen35": {
+      "paired_tasks": 207,
+      "C_correct": 132,
+      "D_correct": 118,
+      "posthoc_CD_upper_correct": 140,
+      "true_who_route_correct": 134,
+      "visible_cue_route_correct": 134,
+      "visible_cue_selected_D": 14,
+      "visible_cue_disagrees_with_who": 25
+    }
+  },
+  "visible_route_rule": {
+    "version": "naa-visible-third-party-v1",
+    "pattern": "(?is)(?:found|came across|received|got)\\b.{0,100}\\b(?:blog|email|message|passage)|\\b(?:my friend|my colleague|my sister|my brother)\\b",
+    "input": "Only user-role text in delivered C sources; no gold, who label, or model output",
+    "action": "D on a visible match, otherwise C; ambiguous cue errors retained; retrospective only"
+  },
+  "interpretation": "All routing is retrospective development diagnosis, never a learned routing PM or confirmatory result. Semantic labels require actual source review; full lexical scan cannot prove absence.",
+  "packets_sha256": "6e6f1e2114156fc87a113080472652538a03beae67ccc83890d9d2e1f9315f86",
+  "new_model_calls": 0,
+  "training_use_prohibited": true
+}

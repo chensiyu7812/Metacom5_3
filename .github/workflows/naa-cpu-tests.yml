@@ -19,6 +19,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      # The v1.1 training-objective regression exercises actual autograd.
+      # Match the CPU-only PyTorch version already pinned by PM tests.
+      - name: Install CPU PyTorch for gradient regressions
+        run: >-
+          python -m pip install
+          --index-url https://download.pytorch.org/whl/cpu
+          "torch==2.3.1+cpu"
       - run: python -m pip install 'pytest>=8,<9' 'pydantic>=2.8,<3'
       - run: python -m compileall -q project/src/metacom_pm/need_aware project/scripts/need_aware
       - run: python -m pytest project/tests/test_need_aware_*.py -ra -o addopts= --junitxml=naa-tests.xml

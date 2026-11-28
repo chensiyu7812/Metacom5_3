@@ -70,8 +70,11 @@ def validate_requests(tasks, evaluations, requests):
     return ix
 
 
-def score_cell(tasks, evaluations, requests, predictions, *, model, arm, kind='model'):
-    require(model in MODELS and arm in ARMS, 'unknown cell')
+def score_cell(tasks, evaluations, requests, predictions, *, model, arm, kind='model',
+               allowed_arms=ARMS, score_function=score_one, allowed_models=MODELS):
+    # Defaults retain the frozen WP2 interface. Later protocols explicitly bind
+    # their arm set and scorer, while reusing status/provenance validation.
+    require(model in allowed_models and arm in allowed_arms, 'unknown cell')
     require(kind in {'model', 'plumbing'}, 'explicit result kind')
     pm = unique(predictions, 'task_id')
     require(set(pm) == {t.task_id for t in tasks}, 'export must include all frozen slots, including missing')
@@ -100,7 +103,7 @@ def score_cell(tasks, evaluations, requests, predictions, *, model, arm, kind='m
             require(n > 0 or p.get('reused_exact') is True, 'completion without physical attempt/reuse')
             require(p.get('finish_reason') in {'eos', 'length'}, 'unvalidated finish reason')
             require(failure is None, 'completed slot has terminal failure')
-            result = score_one(p['output'], task, ev)
+            result = score_function(p['output'], task, ev)
             outcome = 'correct' if result['correct'] else 'wrong_answer' if result['parse_valid'] else 'parse_failure'
         else:
             require(p['output'] == '' and p.get('finish_reason') is None, 'failed/structural slot contains selected output')

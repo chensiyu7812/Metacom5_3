@@ -1,0 +1,93 @@
+{
+  "authority_commit": "65424fd807e5e14284b70a9a184288bf0ce7a95e",
+  "paired_inference": {
+    "bootstrap_seed": 20261128,
+    "bootstrap_replicates": 10000
+  },
+  "minimum_meaningful_difference": 0.05,
+  "noninferiority_margin": 0.05,
+  "confidence": 0.95,
+  "technical_failures": "Unknown; completed-case, predefined eligible denominator with failures zero, and unknown bounds all reported.",
+  "structural": "Not model errors. Comparisons first intersect predefined evaluable sets, then complete pairs.",
+  "multiplicity": "Holm within each fixed family; confidence intervals unadjusted; exploratory strata clearly separate.",
+  "evidence_sufficiency": "Source-certified sufficient / insufficient / ambiguous / unknown; Direct location never a semantic label.",
+  "power_grid": [
+    {
+      "n": 60,
+      "discordance": 0.1,
+      "normal_approx_mde_80": 0.11437422868392018,
+      "n_for_five_pp_80": 314
+    },
+    {
+      "n": 60,
+      "discordance": 0.2,
+      "normal_approx_mde_80": 0.16174958539076179,
+      "n_for_five_pp_80": 628
+    },
+    {
+      "n": 60,
+      "discordance": 0.3,
+      "normal_approx_mde_80": 0.19810197515705139,
+      "n_for_five_pp_80": 942
+    },
+    {
+      "n": 60,
+      "discordance": 0.5,
+      "normal_approx_mde_80": 0.2557485502113518,
+      "n_for_five_pp_80": 1570
+    },
+    {
+      "n": 140,
+      "discordance": 0.1,
+      "normal_approx_mde_80": 0.07487550864232195,
+      "n_for_five_pp_80": 314
+    },
+    {
+      "n": 140,
+      "discordance": 0.2,
+      "normal_approx_mde_80": 0.10588995981155559,
+      "n_for_five_pp_80": 628
+    },
+    {
+      "n": 140,
+      "discordance": 0.3,
+      "normal_approx_mde_80": 0.12968818521106418,
+      "n_for_five_pp_80": 942
+    },
+    {
+      "n": 140,
+      "discordance": 0.5,
+      "normal_approx_mde_80": 0.16742672717410487,
+      "n_for_five_pp_80": 1570
+    }
+  ],
+  "power_note": "Paired Bernoulli normal approximation using discordance; underpowered for 5pp at n=140/60. No equivalence from nonsignificance, no new data-driven sample expansion.",
+  "model_outputs_seen": false,
+  "new_gpu_authorized": false,
+  "protocol": "naa-wp4-open-evaluation-v1",
+  "rubric": "naa-open-rubric-v1",
+  "training_freeze_sha256": "3f76b6799a52eae60c6f406f3f15db3dbb1583a2a785e0a822237801c33b2739",
+  "open_groups": 60,
+  "open_variants": 180,
+  "natural_open": 60,
+  "constructed_and_natural": "Always separate; never pool synthetic group counts as independent people.",
+  "primary_contrast": "U2->U3 same complete matched groups, family cluster bootstrap; all variants must meet task and applicability criteria.",
+  "secondary_contrasts": [
+    "U0->U1",
+    "U1->U2"
+  ],
+  "success_rule": "paired success point gain >=5pp and CI lower>0, appropriate-use and completion lower>-5pp, no misuse/over-refusal tradeoff.",
+  "dimensions": [
+    "paired_success",
+    "task_complete",
+    "appropriate_use",
+    "misuse",
+    "unnecessary_clarification",
+    "over_refusal",
+    "natural_quality"
+  ],
+  "rater_rule": "Two independent blinded raters; disagreement/insufficient evidence remains unknown until separately recorded adjudication. Candidate calibration is not independent scoring.",
+  "no_proxy": "Action JSON accuracy is mechanical only, never semantic task success.",
+  "actual_model_baseline_requests": 480,
+  "post_training_requests": 480
+}

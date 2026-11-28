@@ -1,0 +1,78 @@
+{
+  "protocol": "naa-v11-joint-candidate-a-materials-v1",
+  "authorization": "not_granted",
+  "status": "A data/evaluation/CPU objective ready; B executable request manifest and backend resource attestation pending",
+  "authority": "65424fd807e5e14284b70a9a184288bf0ce7a95e",
+  "integration": "51b385b8bd57d60a133206c36003ea1b33a1e8bf",
+  "materials": {
+    "ALLOCATION.json": "8f583f5747cb0fed442131d4b67e69d822df873b360be4237f7b5beb60b50799",
+    "wp3/FREEZE.json": "f298b8d9373ea1e3f0e200b297d5cbe671e97fd57015685d324cf1f20a6246f8",
+    "wp4-final/FREEZE.json": "3f76b6799a52eae60c6f406f3f15db3dbb1583a2a785e0a822237801c33b2739",
+    "rules-final/FREEZE.json": "cc1ac4e36819028ab2521d0a06da63a849b1644956604b53597f160336661751",
+    "CPU_BATCH_FINAL.json": "30cf0b3b7bac86c228ba1790cc56bdf6a2fc6b18ed27f445564b71647f089973"
+  },
+  "wp3": {
+    "logical_slots": 1400,
+    "before_native_pack_executable": 1377,
+    "structural_unlocated": 23,
+    "physical_attempt_ceiling": 1500,
+    "gpu_wall_ceiling_seconds": 57600,
+    "per_model_seconds": {
+      "Qwen35": 43200,
+      "G0e": 14400
+    },
+    "smoke_attempts_per_model": 16
+  },
+  "wp4_baseline": {
+    "methods": [
+      "U0",
+      "U1"
+    ],
+    "logical_slots": 480,
+    "physical_attempt_ceiling": 500,
+    "gpu_wall_ceiling_seconds": 14400
+  },
+  "wp4_training": {
+    "methods": [
+      "U2",
+      "U3"
+    ],
+    "fit_rows": 3716,
+    "optimizer_steps_ceiling_per_method": 500,
+    "gpu_wall_ceiling_seconds_per_method": 14400,
+    "total_ceiling_seconds": 28800,
+    "config_sha256": "f68ce9f3f46fb3b221071a21932edd8d7901ca4aa5f76bbb63a75d91fd2b5792"
+  },
+  "wp4_post_training": {
+    "methods": [
+      "U2",
+      "U3"
+    ],
+    "logical_slots": 480,
+    "physical_attempt_ceiling": 500,
+    "gpu_wall_ceiling_seconds": 14400
+  },
+  "combined_ceiling_seconds": 115200,
+  "inference_physical_attempt_ceiling": 2500,
+  "devices": "one A6000, B exclusive manager",
+  "budget_status": "A proposed upper ceilings, NOT measured forecasts or B-agreed authorization. B must bind actual native requests, load/teardown reserves and timed estimates before submitting executable joint package.",
+  "constraints": [
+    "zero paid API",
+    "no formal test",
+    "no private transfer",
+    "no historical 170-slot rerun",
+    "no unapproved GPU or optimizer"
+  ],
+  "triggers": {
+    "inference": "new explicit researcher authorization bound to B actual request manifest",
+    "training": "new explicit training authorization + two-rater calibration + B backend/resource acceptance",
+    "post_training": "same sealed independent tasks; do not select checkpoint by their outcomes"
+  },
+  "missing_B": [
+    "native WP3 token/packing request identities",
+    "U1 verified Reglos implementation binding",
+    "LoRA training backend and exact module/memory/clock audit",
+    "joint execute commands and resource signature"
+  ],
+  "no_claim": "This is a populated A-side input/target/budget candidate, not a jointly accepted executable manifest."
+}
