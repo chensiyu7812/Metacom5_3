@@ -1,0 +1,145 @@
+{
+  "authority_commit": "65424fd807e5e14284b70a9a184288bf0ce7a95e",
+  "paired_inference": {
+    "bootstrap_seed": 20261128,
+    "bootstrap_replicates": 10000
+  },
+  "minimum_meaningful_difference": 0.05,
+  "noninferiority_margin": 0.05,
+  "confidence": 0.95,
+  "technical_failures": "Unknown; completed-case, predefined eligible denominator with failures zero, and unknown bounds all reported.",
+  "structural": "Not model errors. Comparisons first intersect predefined evaluable sets, then complete pairs.",
+  "multiplicity": "Holm within each fixed family; confidence intervals unadjusted; exploratory strata clearly separate.",
+  "evidence_sufficiency": "Source-certified sufficient / insufficient / ambiguous / unknown; Direct location never a semantic label.",
+  "power_grid": [
+    {
+      "n": 60,
+      "discordance": 0.1,
+      "normal_approx_mde_80": 0.11437422868392018,
+      "n_for_five_pp_80": 314
+    },
+    {
+      "n": 60,
+      "discordance": 0.2,
+      "normal_approx_mde_80": 0.16174958539076179,
+      "n_for_five_pp_80": 628
+    },
+    {
+      "n": 60,
+      "discordance": 0.3,
+      "normal_approx_mde_80": 0.19810197515705139,
+      "n_for_five_pp_80": 942
+    },
+    {
+      "n": 60,
+      "discordance": 0.5,
+      "normal_approx_mde_80": 0.2557485502113518,
+      "n_for_five_pp_80": 1570
+    },
+    {
+      "n": 140,
+      "discordance": 0.1,
+      "normal_approx_mde_80": 0.07487550864232195,
+      "n_for_five_pp_80": 314
+    },
+    {
+      "n": 140,
+      "discordance": 0.2,
+      "normal_approx_mde_80": 0.10588995981155559,
+      "n_for_five_pp_80": 628
+    },
+    {
+      "n": 140,
+      "discordance": 0.3,
+      "normal_approx_mde_80": 0.12968818521106418,
+      "n_for_five_pp_80": 942
+    },
+    {
+      "n": 140,
+      "discordance": 0.5,
+      "normal_approx_mde_80": 0.16742672717410487,
+      "n_for_five_pp_80": 1570
+    }
+  ],
+  "power_note": "Paired Bernoulli normal approximation using discordance; underpowered for 5pp at n=140/60. No equivalence from nonsignificance, no new data-driven sample expansion.",
+  "model_outputs_seen": false,
+  "new_gpu_authorized": false,
+  "protocol": "naa-wp3-evaluation-v1",
+  "scoring_protocol": "naa-short-mcq-v1",
+  "short_suffix": "Please choose the best answer. Reply with exactly one line: Final Answer: A (replace A with B, C, or D if needed). Do not include brackets or reasoning.",
+  "max_new_tokens": 64,
+  "material_freeze_sha256": "f298b8d9373ea1e3f0e200b297d5cbe671e97fd57015685d324cf1f20a6246f8",
+  "populations": {
+    "confirmation": 140,
+    "gemma_subset": 60,
+    "bridge": 60
+  },
+  "primary_paired_family": [
+    [
+      "Qwen35|B0",
+      "Qwen35|B1"
+    ],
+    [
+      "Qwen35|B1",
+      "Qwen35|B1s"
+    ],
+    [
+      "Qwen35|B1",
+      "Qwen35|E0"
+    ],
+    [
+      "Qwen35|E0",
+      "Qwen35|E0s"
+    ],
+    [
+      "Qwen35|E0s",
+      "Qwen35|C"
+    ],
+    [
+      "Qwen35|C",
+      "Qwen35|C+noise"
+    ]
+  ],
+  "noninferiority_contrasts": [
+    [
+      "Qwen35|E0",
+      "Qwen35|E0s"
+    ]
+  ],
+  "cross_model_family": [
+    "B0",
+    "E0s",
+    "C"
+  ],
+  "cross_model_rule": "Preselected same 60 task IDs, joint eligible, then both completed. No separate marginal denominators.",
+  "bridge_family": [
+    {
+      "model": "G0e",
+      "arm": "B0",
+      "old": "official",
+      "new": "naa-short-mcq-v1"
+    },
+    {
+      "model": "G0e",
+      "arm": "C",
+      "old": "official",
+      "new": "naa-short-mcq-v1"
+    },
+    {
+      "model": "Qwen35",
+      "arm": "B0",
+      "old": "official",
+      "new": "naa-short-mcq-v1"
+    },
+    {
+      "model": "Qwen35",
+      "arm": "C",
+      "old": "official",
+      "new": "naa-short-mcq-v1"
+    }
+  ],
+  "bridge_rule": "Reuse exact old B/C outputs and scoring; 60 preselected same tasks. New short protocol scored separately. Not protocol equivalence.",
+  "expected_logical": 1400,
+  "expected_executable_before_capacity": 1377,
+  "capacity_rule": "Full C over native cap -> structural with explicit token receipt; never truncate C or silently substitute task."
+}

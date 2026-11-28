@@ -1,0 +1,55 @@
+{
+  "protocol": "naa-v11-real-cpu-acceptance-v1",
+  "hash_verified_artifacts": {
+    "artifacts": 487,
+    "wp3": 210,
+    "wp4-final": 14,
+    "rules-final": 7
+  },
+  "confirmation_owners": 140,
+  "confirmation_direct_records_checked": 390,
+  "old_tasks_answers_options_histories_unchanged": true,
+  "training_rows": 4772,
+  "source_refs_verified": 796,
+  "permission_rows_redacted": 2,
+  "owner_family_split_leaks": 0,
+  "runtime_target_field_leaks": 0,
+  "original_4000_candidate_audit_complete": true,
+  "wp2_review_annotations": 62,
+  "native_cpu_batch": {
+    "protocol": "naa-wp4-real-sample-cpu-batch-v1",
+    "source_sha256": "1590474adb66b84dd9ac7fc031e72566051473c76f8bcf9246cb0e36cdaf75ce",
+    "tokenizer_path": "/opt/tokkio-data0/tokkio_models/paper1_judges/qwen35_9b",
+    "rows_checked": 3716,
+    "batch_rows": 12,
+    "batch_groups": 4,
+    "token_lengths": {
+      "min": 143,
+      "max": 242,
+      "total": 671779
+    },
+    "cap": 2048,
+    "chosen_sequences_sha256": "0ac36a8bb516d402fad7b543f5d18f159bf47e8a471be19937e726c975858e8f",
+    "u2_u3_identical_chosen_sequences": true,
+    "sft_target_tokens": 86074,
+    "auxiliary_action_sequence_tokens": 1213524,
+    "processed_training_tokens_per_method": 1885303,
+    "ordinary_sft_control": "Same auxiliary forward/backward graph with zero coefficient; no auxiliary gradient for U2.",
+    "objective_plumbing": {
+      "synthetic_loss_inputs": true,
+      "not_model_outputs": true,
+      "u2": 1.0,
+      "u3": 1.0974076986312866,
+      "chosen_gradient_negative": true,
+      "rejected_gradient_positive": true
+    },
+    "model_loaded": false,
+    "optimizer_created": false,
+    "model_updates": 0,
+    "gpu_used": false
+  },
+  "real_model_outputs_scored_this_v11_run": 0,
+  "new_model_calls": 0,
+  "new_model_training_steps": 0,
+  "scope": "Real-data materialization/source/identity/CPU-target acceptance. No mock or target-as-prediction result is a model capability result."
+}
