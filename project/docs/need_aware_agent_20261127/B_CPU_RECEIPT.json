@@ -1,0 +1,1123 @@
+{
+  "admission_checks": {
+    "no_approval": "AdmissionError before run root/device access",
+    "old_G1_approval": "AdmissionError: approval protocol (old approvals cannot transfer)"
+  },
+  "embeddings": {
+    "built": 300,
+    "cpu_seconds": 1169.15,
+    "device": "cpu",
+    "model": "BAAI/bge-small-en-v1.5@5c38ec7c405ec4b44b94cc5a9bb96e735b38267a",
+    "reused": 0,
+    "stores": 300,
+    "threads": 20,
+    "truncated_at_512": 3614,
+    "units": 69261
+  },
+  "formal_test_opened": false,
+  "generation_prep": {
+    "by_model_arm": {
+      "G0e|A": {
+        "delivered_units": {
+          "max": 43,
+          "median": 34
+        },
+        "evidence_tokens": {
+          "max": 8183,
+          "median": 7987
+        },
+        "input_tokens": {
+          "max": 8319,
+          "median": 8068,
+          "min": 7782,
+          "p95": 8285
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {},
+        "ready": 60,
+        "status": {
+          "ready": 60
+        }
+      },
+      "G0e|B": {
+        "delivered_units": {
+          "max": 133,
+          "median": 113
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7432
+        },
+        "input_tokens": {
+          "max": 8369,
+          "median": 7576,
+          "min": 5615,
+          "p95": 8360
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {},
+        "ready": 60,
+        "status": {
+          "ready": 60
+        }
+      },
+      "G0e|C": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1071,
+          "median": 371
+        },
+        "input_tokens": {
+          "max": 1242,
+          "median": 542,
+          "min": 334,
+          "p95": 982
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 6
+        },
+        "ready": 54,
+        "status": {
+          "not_evaluable": 6,
+          "ready": 54
+        }
+      },
+      "G0e|D": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1071,
+          "median": 371
+        },
+        "input_tokens": {
+          "max": 1452,
+          "median": 737,
+          "min": 513,
+          "p95": 1186
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 6
+        },
+        "ready": 54,
+        "status": {
+          "not_evaluable": 6,
+          "ready": 54
+        }
+      },
+      "Qwen35|A": {
+        "delivered_units": {
+          "max": 43,
+          "median": 34
+        },
+        "evidence_tokens": {
+          "max": 8183,
+          "median": 7987
+        },
+        "input_tokens": {
+          "max": 8325,
+          "median": 8081,
+          "min": 7634,
+          "p95": 8282
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {},
+        "ready": 60,
+        "status": {
+          "ready": 60
+        }
+      },
+      "Qwen35|B": {
+        "delivered_units": {
+          "max": 133,
+          "median": 113
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7432
+        },
+        "input_tokens": {
+          "max": 8268,
+          "median": 7417,
+          "min": 5496,
+          "p95": 8177
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {},
+        "ready": 60,
+        "status": {
+          "ready": 60
+        }
+      },
+      "Qwen35|C": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1071,
+          "median": 371
+        },
+        "input_tokens": {
+          "max": 1218,
+          "median": 520,
+          "min": 322,
+          "p95": 987
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 6
+        },
+        "ready": 54,
+        "status": {
+          "not_evaluable": 6,
+          "ready": 54
+        }
+      },
+      "Qwen35|D": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1071,
+          "median": 371
+        },
+        "input_tokens": {
+          "max": 1426,
+          "median": 728,
+          "min": 499,
+          "p95": 1189
+        },
+        "logical": 60,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 6
+        },
+        "ready": 54,
+        "status": {
+          "not_evaluable": 6,
+          "ready": 54
+        }
+      }
+    },
+    "counts": {
+      "exact_duplicates": 0,
+      "logical_ready": 456,
+      "physical_unique": 456
+    },
+    "manifest_sha256": "c8653993ccd75e4124e2ada3c2409f46d514a3ac98e484396d3f62fa5944055f",
+    "requested_now": 0
+  },
+  "gpu_seconds": 0,
+  "host_risks": {
+    "gpu": "RTX A6000 GPU-ba5f65be..., 0 compute processes at check time",
+    "root_partition_available": "1.4G (storage_guard floor 1 GiB); owner must resolve, no automatic cleanup"
+  },
+  "integrated": [
+    "5c7195984af60ebc84cc12cdd0b16ae550cbdc30 (30 restored sources)",
+    "origin/work/naa-data-20261127 @ ddc4864c (A contracts/scorer/WP2 slots)"
+  ],
+  "kind": "NAA B-line CPU receipt (aggregates only; no raw text, answers or model outputs)",
+  "model_calls": 0,
+  "paid_api_calls": 0,
+  "plumbing_end_to_end": {
+    "completed_unique": 1788,
+    "final": {
+      "ATTEMPT_RESULT": 1788,
+      "ATTEMPT_RETURNED": 1788,
+      "ATTEMPT_START": 1788,
+      "LOAD_OK": 2,
+      "LOAD_START": 2,
+      "MODEL_SESSION_END": 2,
+      "NOT_EVALUABLE": 132,
+      "RUN_START": 1,
+      "RUN_SUMMARY": 1
+    },
+    "injected_failure": "failed request retried once then EXHAUSTED; no model load when nothing may run",
+    "interrupt_resume": "SIGINT after 365 results; resume: 1 in-flight request retried, 0 completed recomputed, 132 NOT_EVALUABLE not duplicated (1789 physical / 1788 unique)",
+    "namespace": "bwrap, network unshared, evaluation/training/source absent",
+    "physical_calls": 1788,
+    "result_kind": "plumbing"
+  },
+  "restored_dependency_verification": {
+    "after_merging_b05f5f21": {
+      "github_pr31": "pytest pass, naa-cpu pass",
+      "public_gate": "verify_v3_public_ci.py: public_code_acceptance=passed (986 passed, 41 listed deferrals locally)",
+      "strict_private_replay": "1027 passed / 0 skipped with server private roots; verify_v3_junit.py passed"
+    },
+    "executor_files_not_in_tree": 33,
+    "local_ci_replay": {
+      "env": "Python 3.11.15, torch 2.3.1+cpu, pip install -e .[dev]",
+      "full_paper1_rl1_v3_suite": "2842 passed / 3 skipped / 1 deselected",
+      "integration_base_validation": "failed_checks=[]",
+      "v3_with_server_private_roots": "1017 passed / 0 skipped; junit gate passes",
+      "v3_without_private_roots": "976 passed / 41 skipped -> junit gate rejects skip (same as GitHub run 45993476547: 974 passed / 43 skipped)"
+    },
+    "of_which_imported_by_any_tree_code": 0,
+    "restored_files": 30,
+    "sha256_equal_to_executed_executor_snapshots": "30/30 (GE2, GSWS, dynamic, SC36, terminal, capability package PLANs)"
+  },
+  "retrieval": {
+    "chosen_for_B": {
+      "any_hit": 1.0,
+      "backend": "dense",
+      "budget": 8192,
+      "mean_direct_recall": 0.5,
+      "spec": "naaret:92cf81e8113db7d512bdb3cdcc4776f73af4548500bc884660fa6b06f24ea124",
+      "unit_filter": "user_only",
+      "user_statement_recall": 1.0
+    },
+    "corrected_rule": "user-statement recall -> any-hit -> simpler (Direct spans also count assistant replies, which a user-only index cannot retrieve by construction); selection on evidence coverage only, no model output exists",
+    "declared_rule": "max mean Direct-span recall -> any-hit -> simpler",
+    "declared_rule_pick_8192": "dense/all/expand=True (recall .687, any-hit .812, user-statement recall .682)",
+    "direct_located": 207,
+    "symmetric_token_counter": "G0e,Qwen35",
+    "table": [
+      {
+        "any_hit": 0,
+        "budget": 1024,
+        "condition": "A_recency",
+        "mean_direct_recall": 0.0,
+        "mean_tokens": 827.0,
+        "n": 207,
+        "user_statement_recall": 0.0
+      },
+      {
+        "any_hit": 0.43,
+        "budget": 1024,
+        "condition": "hybrid/all/expand=False",
+        "mean_direct_recall": 0.246,
+        "mean_tokens": 1016.1,
+        "n": 207,
+        "user_statement_recall": 0.2407
+      },
+      {
+        "any_hit": 0.3623,
+        "budget": 1024,
+        "condition": "hybrid/all/expand=True",
+        "mean_direct_recall": 0.2585,
+        "mean_tokens": 1015.5,
+        "n": 207,
+        "user_statement_recall": 0.2488
+      },
+      {
+        "any_hit": 0.5556,
+        "budget": 1024,
+        "condition": "hybrid/user_only/expand=False",
+        "mean_direct_recall": 0.2093,
+        "mean_tokens": 1015.3,
+        "n": 207,
+        "user_statement_recall": 0.4187
+      },
+      {
+        "any_hit": 0.4203,
+        "budget": 1024,
+        "condition": "dense/all/expand=False",
+        "mean_direct_recall": 0.2935,
+        "mean_tokens": 1015.4,
+        "n": 207,
+        "user_statement_recall": 0.285
+      },
+      {
+        "any_hit": 0.2995,
+        "budget": 1024,
+        "condition": "bm25/user_only/expand=True",
+        "mean_direct_recall": 0.1651,
+        "mean_tokens": 1016.1,
+        "n": 207,
+        "user_statement_recall": 0.1731
+      },
+      {
+        "any_hit": 0.3092,
+        "budget": 1024,
+        "condition": "bm25/all/expand=True",
+        "mean_direct_recall": 0.188,
+        "mean_tokens": 1015.5,
+        "n": 207,
+        "user_statement_recall": 0.1828
+      },
+      {
+        "any_hit": 0.43,
+        "budget": 1024,
+        "condition": "bm25/user_only/expand=False",
+        "mean_direct_recall": 0.1481,
+        "mean_tokens": 1015.6,
+        "n": 207,
+        "user_statement_recall": 0.2963
+      },
+      {
+        "any_hit": 0.3865,
+        "budget": 1024,
+        "condition": "hybrid/user_only/expand=True",
+        "mean_direct_recall": 0.2424,
+        "mean_tokens": 1015.8,
+        "n": 207,
+        "user_statement_recall": 0.2625
+      },
+      {
+        "any_hit": 0.6039,
+        "budget": 1024,
+        "condition": "dense/user_only/expand=False",
+        "mean_direct_recall": 0.2456,
+        "mean_tokens": 1015.6,
+        "n": 207,
+        "user_statement_recall": 0.4911
+      },
+      {
+        "any_hit": 0.3816,
+        "budget": 1024,
+        "condition": "dense/all/expand=True",
+        "mean_direct_recall": 0.314,
+        "mean_tokens": 1015.7,
+        "n": 207,
+        "user_statement_recall": 0.314
+      },
+      {
+        "any_hit": 0.3623,
+        "budget": 1024,
+        "condition": "bm25/all/expand=False",
+        "mean_direct_recall": 0.1675,
+        "mean_tokens": 1016.0,
+        "n": 207,
+        "user_statement_recall": 0.1852
+      },
+      {
+        "any_hit": 0.401,
+        "budget": 1024,
+        "condition": "dense/user_only/expand=True",
+        "mean_direct_recall": 0.2911,
+        "mean_tokens": 1015.6,
+        "n": 207,
+        "user_statement_recall": 0.3116
+      },
+      {
+        "any_hit": 0,
+        "budget": 2048,
+        "condition": "A_recency",
+        "mean_direct_recall": 0.0,
+        "mean_tokens": 1829.1,
+        "n": 207,
+        "user_statement_recall": 0.0
+      },
+      {
+        "any_hit": 0.5556,
+        "budget": 2048,
+        "condition": "hybrid/all/expand=False",
+        "mean_direct_recall": 0.3378,
+        "mean_tokens": 2039.6,
+        "n": 207,
+        "user_statement_recall": 0.3205
+      },
+      {
+        "any_hit": 0.4976,
+        "budget": 2048,
+        "condition": "hybrid/all/expand=True",
+        "mean_direct_recall": 0.3651,
+        "mean_tokens": 2038.7,
+        "n": 207,
+        "user_statement_recall": 0.3446
+      },
+      {
+        "any_hit": 0.7005,
+        "budget": 2048,
+        "condition": "hybrid/user_only/expand=False",
+        "mean_direct_recall": 0.2814,
+        "mean_tokens": 2039.5,
+        "n": 207,
+        "user_statement_recall": 0.5628
+      },
+      {
+        "any_hit": 0.5604,
+        "budget": 2048,
+        "condition": "dense/all/expand=False",
+        "mean_direct_recall": 0.3829,
+        "mean_tokens": 2039.2,
+        "n": 207,
+        "user_statement_recall": 0.3551
+      },
+      {
+        "any_hit": 0.3913,
+        "budget": 2048,
+        "condition": "bm25/user_only/expand=True",
+        "mean_direct_recall": 0.2464,
+        "mean_tokens": 2040.3,
+        "n": 207,
+        "user_statement_recall": 0.2649
+      },
+      {
+        "any_hit": 0.401,
+        "budget": 2048,
+        "condition": "bm25/all/expand=True",
+        "mean_direct_recall": 0.254,
+        "mean_tokens": 2039.2,
+        "n": 207,
+        "user_statement_recall": 0.2504
+      },
+      {
+        "any_hit": 0.5652,
+        "budget": 2048,
+        "condition": "bm25/user_only/expand=False",
+        "mean_direct_recall": 0.2186,
+        "mean_tokens": 2040.3,
+        "n": 207,
+        "user_statement_recall": 0.4372
+      },
+      {
+        "any_hit": 0.4783,
+        "budget": 2048,
+        "condition": "hybrid/user_only/expand=True",
+        "mean_direct_recall": 0.3398,
+        "mean_tokens": 2039.4,
+        "n": 207,
+        "user_statement_recall": 0.3567
+      },
+      {
+        "any_hit": 0.7585,
+        "budget": 2048,
+        "condition": "dense/user_only/expand=False",
+        "mean_direct_recall": 0.3285,
+        "mean_tokens": 2038.8,
+        "n": 207,
+        "user_statement_recall": 0.657
+      },
+      {
+        "any_hit": 0.4928,
+        "budget": 2048,
+        "condition": "dense/all/expand=True",
+        "mean_direct_recall": 0.4022,
+        "mean_tokens": 2039.5,
+        "n": 207,
+        "user_statement_recall": 0.3792
+      },
+      {
+        "any_hit": 0.4396,
+        "budget": 2048,
+        "condition": "bm25/all/expand=False",
+        "mean_direct_recall": 0.2178,
+        "mean_tokens": 2040.1,
+        "n": 207,
+        "user_statement_recall": 0.2303
+      },
+      {
+        "any_hit": 0.5121,
+        "budget": 2048,
+        "condition": "dense/user_only/expand=True",
+        "mean_direct_recall": 0.3881,
+        "mean_tokens": 2040.2,
+        "n": 207,
+        "user_statement_recall": 0.4098
+      },
+      {
+        "any_hit": 0,
+        "budget": 4096,
+        "condition": "A_recency",
+        "mean_direct_recall": 0.0,
+        "mean_tokens": 3856.7,
+        "n": 207,
+        "user_statement_recall": 0.0
+      },
+      {
+        "any_hit": 0.6522,
+        "budget": 4096,
+        "condition": "hybrid/all/expand=False",
+        "mean_direct_recall": 0.4388,
+        "mean_tokens": 4088.2,
+        "n": 207,
+        "user_statement_recall": 0.4034
+      },
+      {
+        "any_hit": 0.6135,
+        "budget": 4096,
+        "condition": "hybrid/all/expand=True",
+        "mean_direct_recall": 0.4847,
+        "mean_tokens": 4087.0,
+        "n": 207,
+        "user_statement_recall": 0.4581
+      },
+      {
+        "any_hit": 0.8986,
+        "budget": 4096,
+        "condition": "hybrid/user_only/expand=False",
+        "mean_direct_recall": 0.3981,
+        "mean_tokens": 4086.7,
+        "n": 207,
+        "user_statement_recall": 0.7963
+      },
+      {
+        "any_hit": 0.6763,
+        "budget": 4096,
+        "condition": "dense/all/expand=False",
+        "mean_direct_recall": 0.4895,
+        "mean_tokens": 4088.0,
+        "n": 207,
+        "user_statement_recall": 0.4573
+      },
+      {
+        "any_hit": 0.4879,
+        "budget": 4096,
+        "condition": "bm25/user_only/expand=True",
+        "mean_direct_recall": 0.3349,
+        "mean_tokens": 4087.7,
+        "n": 207,
+        "user_statement_recall": 0.351
+      },
+      {
+        "any_hit": 0.5266,
+        "budget": 4096,
+        "condition": "bm25/all/expand=True",
+        "mean_direct_recall": 0.3583,
+        "mean_tokens": 4087.8,
+        "n": 207,
+        "user_statement_recall": 0.3245
+      },
+      {
+        "any_hit": 0.8164,
+        "budget": 4096,
+        "condition": "bm25/user_only/expand=False",
+        "mean_direct_recall": 0.3321,
+        "mean_tokens": 4088.2,
+        "n": 207,
+        "user_statement_recall": 0.6643
+      },
+      {
+        "any_hit": 0.6087,
+        "budget": 4096,
+        "condition": "hybrid/user_only/expand=True",
+        "mean_direct_recall": 0.4593,
+        "mean_tokens": 4088.0,
+        "n": 207,
+        "user_statement_recall": 0.471
+      },
+      {
+        "any_hit": 0.9082,
+        "budget": 4096,
+        "condition": "dense/user_only/expand=False",
+        "mean_direct_recall": 0.4211,
+        "mean_tokens": 4086.9,
+        "n": 207,
+        "user_statement_recall": 0.8422
+      },
+      {
+        "any_hit": 0.6377,
+        "budget": 4096,
+        "condition": "dense/all/expand=True",
+        "mean_direct_recall": 0.5149,
+        "mean_tokens": 4087.7,
+        "n": 207,
+        "user_statement_recall": 0.4944
+      },
+      {
+        "any_hit": 0.5556,
+        "budget": 4096,
+        "condition": "bm25/all/expand=False",
+        "mean_direct_recall": 0.3056,
+        "mean_tokens": 4087.8,
+        "n": 207,
+        "user_statement_recall": 0.2979
+      },
+      {
+        "any_hit": 0.6184,
+        "budget": 4096,
+        "condition": "dense/user_only/expand=True",
+        "mean_direct_recall": 0.4996,
+        "mean_tokens": 4087.7,
+        "n": 207,
+        "user_statement_recall": 0.5153
+      },
+      {
+        "any_hit": 0.0048,
+        "budget": 8192,
+        "condition": "A_recency",
+        "mean_direct_recall": 0.0036,
+        "mean_tokens": 7986.0,
+        "n": 207,
+        "user_statement_recall": 0.0024
+      },
+      {
+        "any_hit": 0.7681,
+        "budget": 8192,
+        "condition": "hybrid/all/expand=False",
+        "mean_direct_recall": 0.556,
+        "mean_tokens": 8183.8,
+        "n": 207,
+        "user_statement_recall": 0.5145
+      },
+      {
+        "any_hit": 0.7729,
+        "budget": 8192,
+        "condition": "hybrid/all/expand=True",
+        "mean_direct_recall": 0.6329,
+        "mean_tokens": 8182.9,
+        "n": 207,
+        "user_statement_recall": 0.6208
+      },
+      {
+        "any_hit": 1,
+        "budget": 8192,
+        "condition": "hybrid/user_only/expand=False",
+        "mean_direct_recall": 0.5,
+        "mean_tokens": 7096.9,
+        "n": 207,
+        "user_statement_recall": 1.0
+      },
+      {
+        "any_hit": 0.8213,
+        "budget": 8192,
+        "condition": "dense/all/expand=False",
+        "mean_direct_recall": 0.6457,
+        "mean_tokens": 8183.4,
+        "n": 207,
+        "user_statement_recall": 0.6127
+      },
+      {
+        "any_hit": 0.6329,
+        "budget": 8192,
+        "condition": "bm25/user_only/expand=True",
+        "mean_direct_recall": 0.4803,
+        "mean_tokens": 8184.3,
+        "n": 207,
+        "user_statement_recall": 0.4928
+      },
+      {
+        "any_hit": 0.6618,
+        "budget": 8192,
+        "condition": "bm25/all/expand=True",
+        "mean_direct_recall": 0.4775,
+        "mean_tokens": 8184.0,
+        "n": 207,
+        "user_statement_recall": 0.4549
+      },
+      {
+        "any_hit": 1,
+        "budget": 8192,
+        "condition": "bm25/user_only/expand=False",
+        "mean_direct_recall": 0.4976,
+        "mean_tokens": 7097.2,
+        "n": 207,
+        "user_statement_recall": 0.9952
+      },
+      {
+        "any_hit": 0.7681,
+        "budget": 8192,
+        "condition": "hybrid/user_only/expand=True",
+        "mean_direct_recall": 0.6304,
+        "mean_tokens": 8183.8,
+        "n": 207,
+        "user_statement_recall": 0.6353
+      },
+      {
+        "any_hit": 1,
+        "budget": 8192,
+        "condition": "dense/user_only/expand=False",
+        "mean_direct_recall": 0.5,
+        "mean_tokens": 7097.1,
+        "n": 207,
+        "user_statement_recall": 1.0
+      },
+      {
+        "any_hit": 0.8116,
+        "budget": 8192,
+        "condition": "dense/all/expand=True",
+        "mean_direct_recall": 0.6868,
+        "mean_tokens": 8183.6,
+        "n": 207,
+        "user_statement_recall": 0.682
+      },
+      {
+        "any_hit": 0.6618,
+        "budget": 8192,
+        "condition": "bm25/all/expand=False",
+        "mean_direct_recall": 0.3845,
+        "mean_tokens": 8183.7,
+        "n": 207,
+        "user_statement_recall": 0.3671
+      },
+      {
+        "any_hit": 0.7826,
+        "budget": 8192,
+        "condition": "dense/user_only/expand=True",
+        "mean_direct_recall": 0.6767,
+        "mean_tokens": 8182.9,
+        "n": 207,
+        "user_statement_recall": 0.6852
+      }
+    ],
+    "tasks": 240,
+    "timing_ms": {
+      "query_encode_s": {
+        "mean_ms": 29.103,
+        "n": 240,
+        "p95_ms": 35.041
+      },
+      "rank_s:A": {
+        "mean_ms": 0.145,
+        "n": 240,
+        "p95_ms": 0.17
+      },
+      "rank_s:bm25": {
+        "mean_ms": 7.02,
+        "n": 960,
+        "p95_ms": 13.533
+      },
+      "rank_s:dense": {
+        "mean_ms": 7.942,
+        "n": 960,
+        "p95_ms": 12.974
+      },
+      "rank_s:hybrid": {
+        "mean_ms": 9.986,
+        "n": 960,
+        "p95_ms": 17.158
+      }
+    }
+  },
+  "starting_commit": "3dded9b28606d670dc0ed57bcaf8197a7926f4fd",
+  "tests": {
+    "A": 13,
+    "minimal_ci_env": "40 passed (pytest+pydantic only)",
+    "new_B": 27
+  },
+  "wp2_manifest": {
+    "by_model_arm": {
+      "G0e|A": {
+        "delivered_units": {
+          "max": 54,
+          "median": 34
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7987
+        },
+        "input_tokens": {
+          "max": 8913,
+          "median": 8414,
+          "min": 7926,
+          "p95": 8654
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {},
+        "ready": 240,
+        "status": {
+          "ready": 240
+        }
+      },
+      "G0e|B": {
+        "delivered_units": {
+          "max": 154,
+          "median": 114
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7189
+        },
+        "input_tokens": {
+          "max": 8942,
+          "median": 7639,
+          "min": 5504,
+          "p95": 8669
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {},
+        "ready": 240,
+        "status": {
+          "ready": 240
+        }
+      },
+      "G0e|C": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1022,
+          "median": 384
+        },
+        "input_tokens": {
+          "max": 1580,
+          "median": 850,
+          "min": 521,
+          "p95": 1207
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 33
+        },
+        "ready": 207,
+        "status": {
+          "not_evaluable": 33,
+          "ready": 207
+        }
+      },
+      "G0e|D": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1022,
+          "median": 384
+        },
+        "input_tokens": {
+          "max": 1784,
+          "median": 1052,
+          "min": 700,
+          "p95": 1414
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 33
+        },
+        "ready": 207,
+        "status": {
+          "not_evaluable": 33,
+          "ready": 207
+        }
+      },
+      "Qwen35|A": {
+        "delivered_units": {
+          "max": 54,
+          "median": 34
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7987
+        },
+        "input_tokens": {
+          "max": 8972,
+          "median": 8413,
+          "min": 7983,
+          "p95": 8662
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {},
+        "ready": 240,
+        "status": {
+          "ready": 240
+        }
+      },
+      "Qwen35|B": {
+        "delivered_units": {
+          "max": 154,
+          "median": 114
+        },
+        "evidence_tokens": {
+          "max": 8192,
+          "median": 7189
+        },
+        "input_tokens": {
+          "max": 8665,
+          "median": 7527,
+          "min": 5378,
+          "p95": 8523
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {},
+        "ready": 240,
+        "status": {
+          "ready": 240
+        }
+      },
+      "Qwen35|C": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1022,
+          "median": 384
+        },
+        "input_tokens": {
+          "max": 1545,
+          "median": 847,
+          "min": 522,
+          "p95": 1192
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 33
+        },
+        "ready": 207,
+        "status": {
+          "not_evaluable": 33,
+          "ready": 207
+        }
+      },
+      "Qwen35|D": {
+        "delivered_units": {
+          "max": 6,
+          "median": 4
+        },
+        "evidence_tokens": {
+          "max": 1022,
+          "median": 384
+        },
+        "input_tokens": {
+          "max": 1747,
+          "median": 1039,
+          "min": 699,
+          "p95": 1397
+        },
+        "logical": 240,
+        "not_evaluable_reasons": {
+          "direct evidence not located (diagnostic not_evaluable)": 33
+        },
+        "ready": 207,
+        "status": {
+          "not_evaluable": 33,
+          "ready": 207
+        }
+      }
+    },
+    "caps": {
+      "backend_cap": 16384,
+      "consecutive_failure_stop": 3,
+      "input_cap": 12000,
+      "load_seconds": 900,
+      "max_attempts_per_request": 2,
+      "max_gpu_seconds": 43200,
+      "max_model_loads_per_model": 3,
+      "max_physical_calls": 1920,
+      "max_retries_total": 132,
+      "request_seconds": 300
+    },
+    "checkpoints": {
+      "G0e": {
+        "allowed_missing": [
+          "lm_head.weight"
+        ],
+        "allowed_unused_count": 0,
+        "files": [
+          "model.safetensors"
+        ],
+        "header_sha256": [
+          "d8b49f990225888acc5734bd55e2c269404d24b5a7dc2d3122be4f75500d8fb4"
+        ],
+        "tensor_data_read": false,
+        "tensors": 677
+      },
+      "Qwen35": {
+        "allowed_missing": [],
+        "allowed_unused_count": 15,
+        "files": [
+          "model.safetensors-00001-of-00004.safetensors",
+          "model.safetensors-00002-of-00004.safetensors",
+          "model.safetensors-00003-of-00004.safetensors",
+          "model.safetensors-00004-of-00004.safetensors"
+        ],
+        "header_sha256": [
+          "9bcf722bdd0eee137b7f0e225f4bfb50683b9b33c42de0d560498ce92a8c63b0",
+          "6fb55b1326b7e6b47a38ce4723552eada6c80d09e58eda1d46f25cb8d3e06658",
+          "fd6ddcdceb46ce1b198534560343050523cbf70d15e9435d7716b693d4a67bab",
+          "245c737a43e483e0a9e743be9c75a366d56bec2ea238086dda8b5c2bc224571a"
+        ],
+        "tensor_data_read": false,
+        "tensors": 775
+      }
+    },
+    "counts": {
+      "exact_duplicates": 0,
+      "logical_ready": 1788,
+      "physical_unique": 1788
+    },
+    "decode": {
+      "G0e": {
+        "do_sample": false,
+        "enable_thinking": false,
+        "eos_token_id": [
+          1,
+          50,
+          106
+        ],
+        "max_new_tokens": 1024,
+        "num_beams": 1,
+        "pad_token_id": 0,
+        "repetition_penalty": 1.0,
+        "seed": 0,
+        "suppress_tokens": [
+          258883,
+          258882
+        ]
+      },
+      "Qwen35": {
+        "do_sample": false,
+        "enable_thinking": false,
+        "eos_token_id": [
+          248044,
+          248046
+        ],
+        "max_new_tokens": 1024,
+        "num_beams": 1,
+        "pad_token_id": 248044,
+        "repetition_penalty": 1.0,
+        "seed": 0,
+        "suppress_tokens": []
+      }
+    },
+    "g_ids": {
+      "G0e": "naag:G0e:09b4e26528fd05a35a3a95fff2a477ed55cbe09527af96c28704678f5ff21868",
+      "Qwen35": "naag:Qwen35:8ab8d77bb4e7d2b741e1f4582a659d874cdecb49e704f03202d1598bae513ceb"
+    },
+    "logical_slots_sha256": "6dbd6b13c3262cb2bbb2e76670e0644888c1b7a117903a1308512bdbf928b5de",
+    "manifest_sha256": "9839c088aee11f1b0ae8f2b82ba39cbce8afbf904e4e4a216cd240ed09734996",
+    "materialized_twice_identical_request_hashes": true,
+    "model_order": [
+      "G0e",
+      "Qwen35"
+    ],
+    "order_rule": "A frozen WP2 logical slot order (seeded task shuffle, shuffled arms per task, model-major)",
+    "requests_sha256": "0215976c8b6e74cf67ee2d978382218008ea84151070ee4860d72a6ff052c723",
+    "runtime": {
+      "packages": {
+        "safetensors": "0.8.0",
+        "tokenizers": "0.23.2",
+        "torch": "2.7.1+cu128",
+        "transformers": "5.17.0"
+      },
+      "python": "3.12.14",
+      "python_executable": "/opt/tokkio-data0/tokkio_envs/paper1-judges-py312/bin/python",
+      "worker_module": "metacom_pm.need_aware.runtime.hf_worker"
+    },
+    "scope_sha256": "9531e30ec28343da622a5d59e98d86d3997b9e497bdd0d6726653a2b904d5120",
+    "versions": {
+      "binding": "naa-generator-binding-v1",
+      "evidence_budget": 8192,
+      "prompt": "naa-arms-prompt-v1",
+      "reader": "naa-memory-reader-v1",
+      "render_note": "Official PersonaMem-v2 MCQ instruction text is used verbatim, but placed at the end of the final user turn because native chat templates (Qwen3.5) reject a trailing system message.",
+      "request": "naa-request-v1",
+      "retrieval": "naaret:92cf81e8113db7d512bdb3cdcc4776f73af4548500bc884660fa6b06f24ea124",
+      "writer": "naa-memory-writer-v1"
+    }
+  },
+  "writer": {
+    "assistant_units": 34513,
+    "constraint_candidates": {
+      "forget_request": 5130,
+      "possible_update": 94
+    },
+    "cpu_seconds": 5.7,
+    "excluded": {
+      "system_profile_not_deployable": 300
+    },
+    "forget_requests": 5130,
+    "forget_requests_linked": 112,
+    "owners": 300,
+    "query_or_options_seen_by_writer": false,
+    "reported_at_non_null": 0,
+    "situation": {
+      "U_unknown_supporter_identity": 300
+    },
+    "stores": 300,
+    "stores_with_forget_candidate": 299,
+    "tasks": 300,
+    "units_total": 69261,
+    "user_units": 34748,
+    "writer_version": "naa-memory-writer-v1"
+  }
+}
